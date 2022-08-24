@@ -2,18 +2,14 @@
 local SWEP = SWEP
 local ScavData = ScavData
 
-local state
-if CLIENT then
-	state = "Client - "
-else
-	state = "Server - "
-end
+local INVREADSIZE = 16 -- -32768 to 32767 --size for reading from ScavInventories
+local IDREADSIZE = 9 -- -256 to 255 --inv ids
 
 CreateConVar("scav_itemdebug",0,FCVAR_REPLICATED)
 
 local function debugprint(infotype,message)
 	if GetConVar("scav_itemdebug"):GetBool() then
-		print(state..infotype..": "..message)
+		print(infotype..": "..message)
 	end
 end
 
@@ -76,7 +72,7 @@ function INVENTORY:AddOnClient(pl)
 	end
 	
 	net.Start("scv_invadd")
-		net.WriteInt(self.ID,16)
+		net.WriteInt(self.ID,INVREADSIZE)
 		net.WriteEntity(self.Owner)
 	net.Send(pl or self:GetRecipientFilter())
 	
@@ -89,7 +85,7 @@ end
 if CLIENT then
 	net.Receive("scv_invadd",function()
 	
-		local id = net.ReadInt(16)
+		local id = net.ReadInt(INVREADSIZE)
 		local inv = ScavInventories[id]
 		local owner = net.ReadEntity()
 		
@@ -121,7 +117,7 @@ function ReinitializeScavInventory(inv)
 end
 
 function INVENTORY:FindVacantID()
-	for i=1,255 do
+	for i=1,math.pow(2,IDREADSIZE-1) do
 		if not self.itemids[i] then
 			return i
 		end
@@ -151,7 +147,7 @@ function INVENTORY:Remove() --Calling this on the server will send a net message
 	
 	if SERVER and (type(rf) == "Player" or type(rf) == "CRecipientFilter") then
 		net.Start("scv_invrem")
-			net.WriteInt(self.ID,16)
+			net.WriteInt(self.ID,INVREADSIZE)
 		net.Send(rf)
 	end
 
@@ -165,7 +161,7 @@ end
 	
 if CLIENT then
 	net.Receive("scv_invrem",function()
-		local inv = ScavInventories[net.ReadInt(16)]
+		local inv = ScavInventories[net.ReadInt(INVREADSIZE)]
 		if inv then
 			inv:Remove()
 		end
@@ -198,13 +194,13 @@ end
 
 function INVENTORY:ClearOnClient(pl)
 	net.Start("scv_invclr")
-		net.WriteInt(self.inv:GetID(),16)
+		net.WriteInt(self.inv:GetID(),INVREADSIZE)
 	net.Send(pl or self:GetRecipientFilter())
 end
 	
 if CLIENT then
 	net.Receive("scv_invclr",function()
-		local inv = ScavInventories[net:ReadInt(16)]
+		local inv = ScavInventories[net:ReadInt(INVREADSIZE)]
 		if inv then
 			for _,v in ipairs(inv:GetItemIDs()) do
 				v:Remove()
@@ -245,8 +241,8 @@ function INVENTORY:ShiftItems(amt,pl)
 	
 	if SERVER then
 		net.Start("scv_invshft")
-			net.WriteInt(self.ID,16)
-			net.WriteInt(amt,9)
+			net.WriteInt(self.ID,INVREADSIZE)
+			net.WriteInt(amt,IDREADSIZE)
 		net.Send(self:GetRecipientFilter())
 	end
 	
@@ -258,9 +254,9 @@ end
 	
 if CLIENT then
 	net.Receive("scv_invshft",function()
-		local inv = ScavInventories[net.ReadInt(16)]
+		local inv = ScavInventories[net.ReadInt(INVREADSIZE)]
 		if inv then
-			local amt = net.ReadInt(9)
+			local amt = net.ReadInt(IDREADSIZE)
 			inv:ShiftItems(amt)
 		end
 	end)
@@ -272,11 +268,11 @@ if SERVER then
 
 	function INVENTORY:SendSnapshot()
 		net.Start("scv_snap")
-			net.WriteInt(self.ID,16)
+			net.WriteInt(self.ID,INVREADSIZE)
 			local amt = #self.items
-			net.WriteInt(amt,9)
+			net.WriteInt(amt,IDREADSIZE)
 			for i=1,amt do
-				net.WriteInt(self.items[i].ID,9)
+				net.WriteInt(self.items[i].ID,IDREADSIZE)
 			end
 		net.Send(self:GetRecipientFilter())
 	end
@@ -284,14 +280,14 @@ if SERVER then
 else
 
 	net.Receive("scv_snap",function()
-		local inv = ScavInventories[net.ReadInt(16)]
-		local amt = net.ReadInt(9)
+		local inv = ScavInventories[net.ReadInt(INVREADSIZE)]
+		local amt = net.ReadInt(IDREADSIZE)
 		if inv then
 			for k,v in pairs(inv.items) do
 				inv.items[k] = nil
 			end
 			for i=1,amt do
-				inv.items[i] = inv.itemids[net.ReadInt(9)]
+				inv.items[i] = inv.itemids[net.ReadInt(IDREADSIZE)]
 			end
 		end
 	end)
@@ -367,12 +363,12 @@ function ITEM:AddOnClient(pl)
 	if not IsValid(pl) then return end
 
 	net.Start("scv_itmadd")
-		net.WriteInt(self:GetParentID(),16)
-		net.WriteInt(self.ID,9)
+		net.WriteInt(self:GetParentID(),INVREADSIZE)
+		net.WriteInt(self.ID,IDREADSIZE)
 		if self.pos ~= 1 then  --instead of sending the absolute position, which could get messy, we'll send the ID of the item we're above, 0 if we're not above anything
-			net.WriteInt(self.parent.items[self.pos-1]:GetID(),9)
+			net.WriteInt(self.parent.items[self.pos-1]:GetID(),IDREADSIZE)
 		else
-			net.WriteInt(0,9)
+			net.WriteInt(0,IDREADSIZE)
 		end
 		net.WriteString(self.ammo)
 		net.WriteInt(self.subammo,16)
@@ -390,18 +386,18 @@ if CLIENT then
 
 	net.Receive("scv_itmadd",function()
 	
-		local invid = net.ReadInt(16)
+		local invid = net.ReadInt(INVREADSIZE)
 		
 		local inv = ScavInventories[invid]
 		if not inv then
 			return
 		end
-		local id = net.ReadInt(9)
+		local id = net.ReadInt(IDREADSIZE)
 		if inv.itemids[id] then
 			inv.itemids[id]:Remove()
 		end
 		
-		local idofprev = net.ReadInt(9)
+		local idofprev = net.ReadInt(IDREADSIZE)
 		local model = net.ReadString()
 		local subammo = net.ReadInt(16)
 		local data = net.ReadInt(16)
@@ -465,8 +461,8 @@ function ITEM:Remove(silent,pl,ignoredelay) --Calling this on the server will se
 	if SERVER then
 		if not silent then
 			net.Start("scv_itmrem")
-				net.WriteInt(self.parent.ID,16)
-				net.WriteInt(self.ID,9)
+				net.WriteInt(self.parent.ID,INVREADSIZE)
+				net.WriteInt(self.ID,IDREADSIZE)
 			net.Send(pl or self.parent:GetRecipientFilter())
 		end
 	end
@@ -562,9 +558,9 @@ end
 	
 if CLIENT then
 	net.Receive("scv_itmrem",function()
-		local inv = ScavInventories[net.ReadInt(16)]
+		local inv = ScavInventories[net.ReadInt(INVREADSIZE)]
 		if inv then
-			local id = net.ReadInt(9)
+			local id = net.ReadInt(IDREADSIZE)
 				timer.Simple(0.05, function()if inv.itemids[id] then inv.itemids[id]:Remove() end end)
 		end
 	end)
@@ -637,8 +633,8 @@ function ITEM:SetSubammo(amount) --not networked
 		net.Start("scv_setsub")
 			local rf = RecipientFilter()
 			rf:AddAllPlayers()
-			net.WriteInt(self.parent.ID,16)
-			net.WriteInt(self.ID,9)
+			net.WriteInt(self.parent.ID,INVREADSIZE)
+			net.WriteInt(self.ID,IDREADSIZE)
 			net.WriteInt(self.subammo,16)
 		net.Send(rf)
 	end
@@ -767,8 +763,8 @@ function ITEM:TakeSubammo(amount)
 		net.Start("scv_setsub")
 			local rf = RecipientFilter()
 			rf:AddAllPlayers()
-			net.WriteInt(self.parent.ID,16)
-			net.WriteInt(self.ID,9)
+			net.WriteInt(self.parent.ID,INVREADSIZE)
+			net.WriteInt(self.ID,IDREADSIZE)
 			net.WriteInt(self.subammo,16)
 		net.Send(rf)
 	end
@@ -783,8 +779,8 @@ end
 	
 if CLIENT then
 	net.Receive("scv_setsub",function()
-		local inv = ScavInventories[net.ReadInt(16)]
-		local id = net.ReadInt(9)
+		local inv = ScavInventories[net.ReadInt(INVREADSIZE)]
+		local id = net.ReadInt(IDREADSIZE)
 		local amt = net.ReadInt(16)
 		if inv and id and amt and inv.itemids and inv.itemids[id] then
 			inv.itemids[id]:SetSubammo(amt)
