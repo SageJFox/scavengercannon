@@ -5327,6 +5327,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 					ScavData.CollectFuncs["models/weapons/mininglaser/mininglaser.mdl"] = ScavData.CollectFuncs["models/props_c17/utilityconnecter006.mdl"]
 				end
 				ScavData.RegisterFiremode(tab,"models/props_lab/tpplug.mdl")
+				ScavData.RegisterFiremode(tab,"models/props_lab/tpplugholder.mdl")
 				ScavData.RegisterFiremode(tab,"models/props_c17/utilityconnecter006.mdl")
 				ScavData.RegisterFiremode(tab,"models/props_c17/utilityconnecter006c.mdl")
 				ScavData.RegisterFiremode(tab,"models/props_c17/substation_circuitbreaker01a.mdl")
@@ -5941,16 +5942,10 @@ PrecacheParticleSystem("scav_exp_plasma")
 							{"models/props_vehicles/carparts_axel01a.mdl",1,0},
 							{"models/items/car_battery01.mdl",20,0}}
 				end
+
 				--Breaking up big cluster props into smaller ones
-				ScavData.CollectFuncs["models/zombie/classic.mdl"] = function(self,ent)
-					--main reason for these zombie pickups is that we can't get the bodygroup in the gun, so we'll separate the headcrab if it's present
-					local items = {{"models/zombie/classic_legs.mdl",1,0},
-									{"models/zombie/classic_torso.mdl",1,0}}
-					if tobool(ent:GetBodygroup(ent:FindBodygroupByName("headcrab1"))) then
-						table.insert(items,{"models/headcrabclassic.mdl",1,0})
-					end
-					return items
-				end
+
+				--main reason for these zombie pickups is that we can't get the bodygroup in the gun, so we'll separate the headcrab if it's present
 				ScavData.CollectFuncs["models/zombie/classic_torso.mdl"] = function(self,ent)
 					local items = {{"models/zombie/classic_torso.mdl",1,0}}
 					if tobool(ent:GetBodygroup(ent:FindBodygroupByName("headcrab1"))) then
@@ -5958,12 +5953,9 @@ PrecacheParticleSystem("scav_exp_plasma")
 					end
 					return items
 				end
-				ScavData.CollectFuncs["models/zombie/fast.mdl"] = function(self,ent)
-					local items = {{"models/gibs/fast_zombie_legs.mdl",1,0},
-									{"models/gibs/fast_zombie_torso.mdl",1,0}}
-					if tobool(ent:GetBodygroup(ent:FindBodygroupByName("headcrab1"))) then
-						table.insert(items,{"models/headcrab.mdl",1,0})
-					end
+				ScavData.CollectFuncs["models/zombie/classic.mdl"] = function(self,ent)
+					local items = ScavData.CollectFuncs["models/zombie/classic_torso.mdl"](self,ent)
+					table.insert(items,2,{"models/zombie/classic_legs.mdl",1,0})
 					return items
 				end
 				ScavData.CollectFuncs["models/zombie/fast_torso.mdl"] = function(self,ent)
@@ -5971,6 +5963,11 @@ PrecacheParticleSystem("scav_exp_plasma")
 					if tobool(ent:GetBodygroup(ent:FindBodygroupByName("headcrab1"))) then
 						table.insert(items,{"models/headcrab.mdl",1,0})
 					end
+					return items
+				end
+				ScavData.CollectFuncs["models/zombie/fast.mdl"] = function(self,ent)
+					local items = ScavData.CollectFuncs["models/zombie/fast_torso.mdl"](self,ent)
+					table.insert(items,2,{"models/gibs/fast_zombie_legs.mdl",1,0})
 					return items
 				end
 				ScavData.CollectFuncs["models/props_junk/garbage128_composite001a.mdl"] = function(self,ent)
@@ -6487,9 +6484,12 @@ PrecacheParticleSystem("scav_exp_plasma")
 				
 				--Soldier
 				ScavData.CollectFuncs["models/player/soldier.mdl"] = function(self,ent)
-					return {{"models/weapons/w_models/w_rocket.mdl",4,0},
-							{"models/weapons/c_models/c_shotgun/c_shotgun.mdl",6,0},
-							{"models/weapons/c_models/c_bugle/c_bugle.mdl",10,0}}
+					local items =  {{"models/weapons/c_models/c_shotgun/c_shotgun.mdl",6,0},
+									{"models/weapons/c_models/c_buffpack/c_buffpack.mdl",1,0},
+									{"models/weapons/c_models/c_bugle/c_bugle.mdl",10,0}}
+					table.remove(items,math.random(#items))	
+					table.insert(items,1,{"models/weapons/w_models/w_rocket.mdl",4,0})
+					return items
 				end
 				ScavData.CollectFuncs["models/bots/soldier/bot_soldier.mdl"] = ScavData.CollectFuncs["models/player/soldier.mdl"]
 				ScavData.CollectFuncs["models/bots/soldier_boss/bot_soldier_boss.mdl"] = ScavData.CollectFuncs["models/player/soldier.mdl"]

@@ -1311,7 +1311,7 @@ if CLIENT then
 			--Seeking Rocket Screen
 			elseif item and item.Name == "#scav.scavcan.rocket" then
 				local seeking = false
-				for i,v in pairs(self.inv.items) do
+				for _, v in pairs(self.inv.items) do
 					if ScavData.models[v.ammo] and ScavData.models[v.ammo].Name == "#scav.scavcan.computer" then
 						seeking = ScavData.models[v.ammo].On
 						break

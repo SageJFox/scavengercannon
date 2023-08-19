@@ -822,11 +822,32 @@ local eject = "brass"
 			local identify = {
 				--[HL2] = 0,
 				--[[TF2 Stock]]["models/weapons/shells/shell_shotgun.mdl"] = 1,
+				["models/weapons/w_models/w_shotgun.mdl"] = 1,
+				["models/weapons/c_models/c_shotgun/c_shotgun.mdl"] = 1,
+				["models/workshop/weapons/c_models/c_trenchgun/c_trenchgun.mdl"] = 1,
+				["models/weapons/c_models/c_pep_scattergun.mdl"] = 1,
+				["models/workshop/weapons/c_models/c_pep_scattergun/c_pep_scattergun.mdl"] = 1,
 				--[[Widowmaker]]["models/weapons/c_models/c_dex_shotgun/c_dex_shotgun.mdl"] = 2,
 				["models/workshop_partner/weapons/c_models/c_dex_shotgun/c_dex_shotgun.mdl"] = 2,
 				--[[HL:S]]["models/shotgunshell.mdl"] = 3,
 				--[[FoF]]--["models/weapons/shotgun_shell2.mdl"] = 4,
+				--[[TF2 Scattergun]]["models/weapons/c_models/c_scattergun.mdl"] = 5,
+				["models/weapons/w_models/w_scattergun.mdl"] = 5,
+				--[[TF2 FaN]]["models/weapons/c_models/c_double_barrel.mdl"] = 6,
+				["models/weapons/c_models/c_xms_double_barrel.mdl"] = 6,
+				--[[TF2 Soda Popper]]["models/weapons/c_models/c_soda_popper/c_soda_popper.mdl"] = 7,
+				["models/workshop/weapons/c_models/c_soda_popper/c_soda_popper.mdl"] = 7,
 				--TODO: with this, can split up TF2/FoF's various shotguns much more easily
+				--[[todo: TF2 Reserve Shooter]]["models/weapons/c_models/c_reserve_shooter/c_reserve_shooter.mdl"] = 1,
+				["models/workshop/weapons/c_models/c_reserve_shooter/c_reserve_shooter.mdl"] = 1,
+				--[[todo: TF2 Family Business]]["models/weapons/c_models/c_russian_riot/c_russian_riot.mdl"] = 1,
+				["models/workshop/weapons/c_models/c_russian_riot/c_russian_riot.mdl"] = 1,
+				--[[todo: TF2 Shortstop]]["models/weapons/c_models/c_shortstop/c_shortstop.mdl"] = 1,
+				["models/workshop/weapons/c_models/c_shortstop/c_shortstop.mdl"] = 1,
+				--[[todo: TF2 Backscatter]]["models/workshop/weapons/c_models/c_scatterdrum/c_scatterdrum.mdl"] = 1,
+				--[[todo: TF2 Frontier Justice]]["models/weapons/c_models/c_frontierjustice/c_frontierjustice.mdl"] = 1,
+				["models/weapons/c_models/c_frontierjustice/c_frontierjustice_xmas.mdl"] = 1,
+				["models/weapons/w_models/w_frontierjustice.mdl"] = 1,
 			}
 			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
 			tab.MaxAmmo = 125
@@ -856,6 +877,15 @@ local eject = "brass"
 							end,
 							[3] = function(self)
 								self.Owner:EmitSound("weapons/scock1.wav")
+							end,
+							[5] = function(self)
+								self.Owner:EmitSound("weapons/scatter_gun_reload.wav")
+							end,
+							[6] = function(self)
+								self.Owner:EmitSound("weapons/scatter_gun_double_tube_close.wav")
+							end,
+							[7] = function(self)
+								self.Owner:EmitSound("weapons/scatter_gun_double_tube_close.wav")
 							end,
 						}
 						soundfx[tab.Identify[item.ammo]](self)
@@ -943,6 +973,35 @@ local eject = "brass"
 							end
 						end)
 					end,
+					[5] = function(self)
+						if SERVER then
+							self.Owner:EmitSound(self.Owner:GetStatusEffect("DamageX") and "weapons/scatter_gun_shoot_crit.wav" or "weapons/scatter_gun_shoot.wav")
+						end
+						timer.Simple(0.4,function()
+							if SERVER then self.Owner:EmitSound("weapons/scatter_gun_reload.wav") end
+							tf2shelleject(self,"shotgun")
+						end)
+					end,
+					[6] = function(self)
+						if SERVER then
+							self.Owner:EmitSound(self.Owner:GetStatusEffect("DamageX") and "weapons/scatter_gun_double_shoot_crit.wav" or "weapons/scatter_gun_double_shoot.wav")
+						end
+						--TODO: double barrel eject/reload sounds every other shot
+						--[[timer.Simple(0.4,function()
+							if SERVER then self.Owner:EmitSound("weapons/scatter_gun_reload.wav") end
+							tf2shelleject(self,"shotgun")
+						end)]]
+					end,
+					[7] = function(self)
+						if SERVER then
+							self.Owner:EmitSound(self.Owner:GetStatusEffect("DamageX") and "weapons/scatter_gun_double_bonk_shoot_crit.wav" or "weapons/scatter_gun_double_bonk_shoot.wav")
+						end
+						--TODO: double barrel eject/reload sounds every other shot
+						--[[timer.Simple(0.4,function()
+							if SERVER then self.Owner:EmitSound("weapons/scatter_gun_reload.wav") end
+							tf2shelleject(self,"shotgun")
+						end)]]
+					end,
 				}
 				shootfx[tab.Identify[item.ammo]](self)
 				if SERVER then return self:TakeSubammo(item,1) end
@@ -959,9 +1018,9 @@ local eject = "brass"
 				ScavData.CollectFuncs["models/weapons/c_models/c_scattergun.mdl"] = ScavData.CollectFuncs["models/weapons/w_models/w_shotgun.mdl"] --6 shotgun shells from a shotgun(TF2)
 				ScavData.CollectFuncs["models/weapons/w_models/w_scattergun.mdl"] = ScavData.CollectFuncs["models/weapons/w_models/w_shotgun.mdl"] --6 shotgun shells from a shotgun(TF2)
 				ScavData.CollectFuncs["models/workshop/weapons/c_models/c_trenchgun/c_trenchgun.mdl"] = ScavData.CollectFuncs["models/weapons/w_models/w_shotgun.mdl"] --6 shotgun shells from a Panic Attack
-				ScavData.CollectFuncs["models/weapons/c_models/c_double_barrel.mdl"] = function(self,ent) return {{"models/weapons/shells/shell_shotgun.mdl",2,0}} end --2 shotgun shells from the FaN
+				ScavData.CollectFuncs["models/weapons/c_models/c_double_barrel.mdl"] = function(self,ent) return {{self.christmas and "models/weapons/c_models/c_xms_double_barrel.mdl" or ScavData.FormatModelname(ent:GetModel()),2,self.christmas and ent:GetSkin() % 2 or ent:GetSkin()}} end --2 shotgun shells from the FaN
 				ScavData.CollectFuncs["models/weapons/c_models/c_xms_double_barrel.mdl"] = ScavData.CollectFuncs["models/weapons/c_models/c_double_barrel.mdl"]
-				ScavData.CollectFuncs["models/weapons/c_models/c_soda_popper/c_soda_popper.mdl"] = ScavData.CollectFuncs["models/weapons/c_models/c_double_barrel.mdl"]
+				ScavData.CollectFuncs["models/weapons/c_models/c_soda_popper/c_soda_popper.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),2,ent:GetSkin()}} end --2 shotgun shells from the Soda Popper
 				ScavData.CollectFuncs["models/workshop/weapons/c_models/c_soda_popper/c_soda_popper.mdl"] = ScavData.CollectFuncs["models/weapons/c_models/c_soda_popper/c_soda_popper.mdl"]
 				ScavData.CollectFuncs["models/weapons/c_models/c_pep_scattergun.mdl"] = function(self,ent) return {{"models/weapons/shells/shell_shotgun.mdl",4,0}} end --4 shotgun shells from the BFB
 				ScavData.CollectFuncs["models/workshop/weapons/c_models/c_pep_scattergun/c_pep_scattergun.mdl"] = ScavData.CollectFuncs["models/weapons/c_models/c_pep_scattergun.mdl"]
@@ -972,7 +1031,7 @@ local eject = "brass"
 				ScavData.CollectFuncs["models/weapons/c_models/c_shortstop/c_shortstop.mdl"] = function(self,ent) return {{"models/weapons/shells/shell_shotgun.mdl",4,0}} end --4 shotgun shells from the Shortstop
 				ScavData.CollectFuncs["models/workshop/weapons/c_models/c_shortstop/c_shortstop.mdl"] = ScavData.CollectFuncs["models/weapons/c_models/c_shortstop/c_shortstop.mdl"]
 				ScavData.CollectFuncs["models/workshop/weapons/c_models/c_scatterdrum/c_scatterdrum.mdl"] = ScavData.CollectFuncs["models/weapons/c_models/c_shortstop/c_shortstop.mdl"]
-				ScavData.CollectFuncs["models/weapons/c_models/c_frontierjustice/c_frontierjustice.mdl"] = function(self,ent) return {{"models/weapons/shells/shell_shotgun.mdl",3,0}} end --3 shotgun shells from the Frontier Justice
+				ScavData.CollectFuncs["models/weapons/c_models/c_frontierjustice/c_frontierjustice.mdl"] = function(self,ent) return {{self.christmas and "models/weapons/c_models/c_frontierjustice/c_frontierjustice_xmas.mdl" or ScavData.FormatModelname(ent:GetModel()),3,0}} end --3 shotgun shells from the Frontier Justice
 				ScavData.CollectFuncs["models/weapons/c_models/c_frontierjustice/c_frontierjustice_xmas.mdl"] = ScavData.CollectFuncs["models/weapons/c_models/c_frontierjustice/c_frontierjustice.mdl"]
 				ScavData.CollectFuncs["models/weapons/w_models/w_frontierjustice.mdl"] = ScavData.CollectFuncs["models/weapons/c_models/c_frontierjustice/c_frontierjustice.mdl"]
 				ScavData.CollectFuncs["models/weapons/c_models/c_dex_shotgun/c_dex_shotgun.mdl"] = ScavData.GiveOneOfItemInf --infinite shotgun shells from a Widowmaker
@@ -993,6 +1052,26 @@ local eject = "brass"
 		ScavData.RegisterFiremode(tab,"models/weapons/w_shotgun.mdl")
 		--TF2
 		ScavData.RegisterFiremode(tab,"models/weapons/shells/shell_shotgun.mdl")
+		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_shotgun/c_shotgun.mdl")
+		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_scattergun.mdl")
+		ScavData.RegisterFiremode(tab,"models/weapons/w_models/w_scattergun.mdl")
+		ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_trenchgun/c_trenchgun.mdl")
+		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_double_barrel.mdl")
+		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_xms_double_barrel.mdl")
+		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_soda_popper/c_soda_popper.mdl")
+		ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_soda_popper/c_soda_popper.mdl")
+		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_pep_scattergun.mdl")
+		ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_pep_scattergun/c_pep_scattergun.mdl")
+		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_reserve_shooter/c_reserve_shooter.mdl")
+		ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_reserve_shooter/c_reserve_shooter.mdl")
+		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_russian_riot/c_russian_riot.mdl")
+		ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_russian_riot/c_russian_riot.mdl")
+		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_shortstop/c_shortstop.mdl")
+		ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_shortstop/c_shortstop.mdl")
+		ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_scatterdrum/c_scatterdrum.mdl")
+		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_frontierjustice/c_frontierjustice.mdl")
+		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_frontierjustice/c_frontierjustice_xmas.mdl")
+		ScavData.RegisterFiremode(tab,"models/weapons/w_models/w_frontierjustice.mdl")
 		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_dex_shotgun/c_dex_shotgun.mdl")
 		ScavData.RegisterFiremode(tab,"models/workshop_partner/weapons/c_models/c_dex_shotgun/c_dex_shotgun.mdl")
 		--FoF
