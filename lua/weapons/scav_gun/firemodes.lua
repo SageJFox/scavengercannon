@@ -877,6 +877,54 @@ end
 		ScavData.RegisterFiremode(tab,"models/weapons/w_slam.mdl")
 
 --[[==============================================================================================
+	--Proximity & Tripmine screen adjust
+==============================================================================================]]--
+
+if CLIENT then
+	hook.Add("ScavScreenDrawOverrideIdle","ScavScreenProxTripMine",function(self)
+
+		if self:GetCurrentItem() == nil or self:GetCurrentItem():GetFiremodeInfo() == nil or 
+		(self:GetCurrentItem():GetFiremodeInfo().Name ~= "#scav.scavcan.proxmine" and
+		self:GetCurrentItem():GetFiremodeInfo().Name ~= "#scav.scavcan.tripmine") then return end
+		
+		self:DrawIdle()
+		--draw empty slots
+		for i = 1, 6 do
+			surface.DrawCircle(16+32*i,80,13,color_black)
+			surface.DrawCircle(16+32*i,80,12,color_black)
+			surface.DrawCircle(16+32*i,80,11,color_black)
+		end
+		--draw filled
+		local owner = self:GetOwner()
+		if not IsValid(owner) then return end
+		local splodes = 0
+		--scav_tripmine, scav_proximity_mine
+		for _, v in ipairs(ents.FindByClass("scav_*mine")) do
+			if not IsValid(v) then continue end
+			if v.Owner == owner then splodes = splodes + 1 end
+		end
+		for i = 1, splodes do
+			local x, y, radius, seg = 16+32*i, 80, 8, 32
+			local cir = {}
+
+			table.insert( cir, { x = x, y = y, u = 0.5, v = 0.5 } )
+			for i = 0, seg do
+				local a = math.rad( ( i / seg ) * -360 )
+				table.insert( cir, { x = x + math.sin( a ) * radius, y = y + math.cos( a ) * radius, u = math.sin( a ) / 2 + 0.5, v = math.cos( a ) / 2 + 0.5 } )
+			end
+
+			local a = math.rad( 0 ) -- This is needed for non absolute segment counts
+			table.insert( cir, { x = x + math.sin( a ) * radius, y = y + math.cos( a ) * radius, u = math.sin( a ) / 2 + 0.5, v = math.cos( a ) / 2 + 0.5 } )
+
+			surface.SetDrawColor( color_black )
+			draw.NoTexture()
+			surface.DrawPoly( cir )
+		end
+		return true
+	end)
+end
+
+--[[==============================================================================================
 	--Energy Drink/Stim Pack
 ==============================================================================================]]--
 		
@@ -5334,6 +5382,8 @@ PrecacheParticleSystem("scav_exp_plasma")
 				ScavData.RegisterFiremode(tab,"models/props_c17/substation_stripebox01a.mdl")
 				--Ep2
 				ScavData.RegisterFiremode(tab,"models/props_lab/incubatorplug.mdl")
+				ScavData.RegisterFiremode(tab,"models/props_lab/power_cable001a.mdl")
+				ScavData.RegisterFiremode(tab,"models/props_lab/power_cable002a.mdl")
 				--TF2
 				ScavData.RegisterFiremode(tab,"models/props_hydro/substation_transformer01.mdl")
 				ScavData.RegisterFiremode(tab,"models/props_swamp/bug_zapper.mdl")
