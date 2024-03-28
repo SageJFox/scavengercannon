@@ -1417,6 +1417,7 @@ if CLIENT then
 	end
 
 	function SWEP:PreDrawViewModel(vm,wep,pl)
+		self:DrawScreen()
 	end
 
 	function SWEP:PostDrawViewModel(vm,wep,pl)
@@ -1442,7 +1443,8 @@ if CLIENT then
 
 	function SWEP:DrawWorldModel()
 
-		if IsValid(pl) and IsValid(self.wmodel) and IsValid(self.Owner) then
+		if IsValid(self.wmodel) and IsValid(self.Owner) then
+			self:DrawScreen()
 
 			self.wmodel:SetPoseParameter("panel", self:GetPoseParameter("panel"))
 			self.wmodel:SetPoseParameter("block", self:GetPoseParameter("block"))
@@ -1465,7 +1467,6 @@ if CLIENT then
 
 	function SWEP:DrawHUD()
 		self:DrawCrosshairs()
-		self:DrawScreen()
 	end
 
 	-------------------------------------
