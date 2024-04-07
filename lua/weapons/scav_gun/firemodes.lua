@@ -4009,11 +4009,14 @@ PrecacheParticleSystem("scav_exp_plasma")
 						proj:Spawn()
 						if IsValid(proj) then
 							proj:SetOwner(self.Owner)
-							if data.mass then proj:GetPhysicsObject():SetMass(data.mass) end
-							proj:GetPhysicsObject():AddGameFlag(bit.bor(FVPHYSICS_PENETRATING,FVPHYSICS_WAS_THROWN))
-							proj:GetPhysicsObject():SetVelocity((self:GetAimVector()+randvec)*2500+self.Owner:GetVelocity())
-							proj:GetPhysicsObject():SetBuoyancyRatio(0)
-							proj:GetPhysicsObject():EnableDrag(data.drag)
+							local physobj = proj:GetPhysicsObject()
+							if IsValid(physobj) then
+								if data.mass then physobj:SetMass(data.mass) end
+								physobj:AddGameFlag(bit.bor(FVPHYSICS_PENETRATING,FVPHYSICS_WAS_THROWN))
+								physobj:SetVelocity((self:GetAimVector()+randvec)*2500+self.Owner:GetVelocity())
+								physobj:SetBuoyancyRatio(0)
+								physobj:EnableDrag(data.drag)
+							end
 							proj:Fire("kill",1,"3")
 							--gamemode.Call("ScavFired",self.Owner,proj)
 						end
@@ -4070,6 +4073,11 @@ PrecacheParticleSystem("scav_exp_plasma")
 				["models/props/de_inferno/claypot02.mdl"] = 6,
 				--[[Clay Pot 3]]["models/props/de_inferno/claypot03.mdl"] = 7,
 				--[[Projector]]["models/props/cs_office/projector.mdl"] = 8,
+				--[[Pallet]]["models/props_junk/wood_pallet001a.mdl"] = 9,
+				--[[CSS Pallet]]["models/props/de_prodigy/wood_pallet_01.mdl"] = 10,
+				--basically the same as CSS, but do it separately in case they have L4D mounted and not CSS
+				--[[L4D Pallet]]["models/props_industrial/pallet01.mdl"] = 11,
+				--[[L4D bricks]]["models/props_industrial/brickpallets_break01.mdl"] = 12,
 			}
 			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
 			tab.MaxAmmo = 10
@@ -4118,6 +4126,26 @@ PrecacheParticleSystem("scav_exp_plasma")
 							data.mdl = "models/props/cs_office/projector_"
 							data.ang:Add(Angle(90,0,0))
 						end,
+						[9] = function(data)
+							data.chunks = {"chunka","chunka1","chunka3","chunkb2","chunkb3","shard01"}
+							data.mdl = "models/props_junk/wood_pallet001a_"
+							data.ang:Add(Angle(90,0,0))
+						end,
+						[10] = function(data)
+							data.chunks = {"02","03","04","05","06","07","08","09","10","11","12"}
+							data.mdl = "models/props/de_prodigy/wood_pallet_debris_"
+							data.ang:Add(Angle(90,0,0))
+						end,
+						[11] = function(data)
+							data.chunks = {"02","04","06","09","10","11","12"}
+							data.mdl = "models/props_industrial/pallet01_gib"
+							data.ang:Add(Angle(90,0,0))
+						end,
+						[12] = function(data)
+							data.chunks = {"09","10","11","12","13","14"}
+							data.mdl = "models/props_industrial/brickpallets_break"
+							data.ang:Add(Angle(0,90,90))
+						end,
 					}
 					local tab = ScavData.models[self.inv.items[1].ammo]
 					propdetails[tab.Identify[item.ammo]](data)
@@ -4136,10 +4164,13 @@ PrecacheParticleSystem("scav_exp_plasma")
 						proj:Spawn()
 						if IsValid(proj) then
 							proj:SetOwner(self.Owner)
-							proj:GetPhysicsObject():SetMass(7)
-							proj:GetPhysicsObject():AddGameFlag(FVPHYSICS_WAS_THROWN)
-							proj:GetPhysicsObject():SetVelocity((self:GetAimVector()+randvec)*2500)
-							proj:GetPhysicsObject():SetBuoyancyRatio(0)
+							local physobj = proj:GetPhysicsObject()
+							if IsValid(physobj) then
+								physobj:SetMass(7)
+								physobj:AddGameFlag(FVPHYSICS_WAS_THROWN)
+								physobj:SetVelocity((self:GetAimVector()+randvec)*2500)
+								physobj:SetBuoyancyRatio(0)
+							end
 							proj:Fire("kill",1,"2")
 							--gamemode.Call("ScavFired",self.Owner,proj)
 						end
@@ -4154,6 +4185,48 @@ PrecacheParticleSystem("scav_exp_plasma")
 					return self:TakeSubammo(item,1)
 				end
 			end
+			if SERVER then
+				--CSS
+				ScavData.CollectFuncs["models/props/cs_assault/moneypallet.mdl"] = function(self,ent) return {
+					{ScavData.FormatModelname("models/props/cs_assault/money.mdl"),1,0,5},
+					{ScavData.FormatModelname("models/props/de_prodigy/wood_pallet_01.mdl"),1,0}
+				} end
+				ScavData.CollectFuncs["models/props/cs_assault/moneypalleta.mdl"] = ScavData.CollectFuncs["models/props/cs_assault/moneypallet.mdl"]
+				ScavData.CollectFuncs["models/props/cs_assault/moneypalletb.mdl"] = ScavData.CollectFuncs["models/props/cs_assault/moneypallet.mdl"]
+				ScavData.CollectFuncs["models/props/cs_assault/moneypalletc.mdl"] = ScavData.CollectFuncs["models/props/cs_assault/moneypallet.mdl"]
+				ScavData.CollectFuncs["models/props/cs_assault/moneypalletd.mdl"] = ScavData.CollectFuncs["models/props/cs_assault/moneypallet.mdl"]
+				ScavData.CollectFuncs["models/props/cs_assault/moneypallet02.mdl"] = ScavData.CollectFuncs["models/props/cs_assault/moneypallet.mdl"]
+				ScavData.CollectFuncs["models/props/cs_assault/moneypallet02a.mdl"] = ScavData.CollectFuncs["models/props/cs_assault/moneypallet.mdl"]
+				ScavData.CollectFuncs["models/props/cs_assault/moneypallet02b.mdl"] = ScavData.CollectFuncs["models/props/cs_assault/moneypallet.mdl"]
+				ScavData.CollectFuncs["models/props/cs_assault/moneypallet02c.mdl"] = ScavData.CollectFuncs["models/props/cs_assault/moneypallet.mdl"]
+				ScavData.CollectFuncs["models/props/cs_assault/moneypallet02d.mdl"] = ScavData.CollectFuncs["models/props/cs_assault/moneypallet.mdl"]
+				ScavData.CollectFuncs["models/props/cs_assault/moneypallet02e.mdl"] = ScavData.CollectFuncs["models/props/cs_assault/moneypallet.mdl"]
+				ScavData.CollectFuncs["models/props/cs_assault/moneypallet03.mdl"] = ScavData.CollectFuncs["models/props/cs_assault/moneypallet.mdl"]
+				ScavData.CollectFuncs["models/props/cs_assault/moneypallet03a.mdl"] = ScavData.CollectFuncs["models/props/cs_assault/moneypallet.mdl"]
+				ScavData.CollectFuncs["models/props/cs_assault/moneypallet03b.mdl"] = ScavData.CollectFuncs["models/props/cs_assault/moneypallet.mdl"]
+				ScavData.CollectFuncs["models/props/cs_assault/moneypallet03c.mdl"] = ScavData.CollectFuncs["models/props/cs_assault/moneypallet.mdl"]
+				ScavData.CollectFuncs["models/props/cs_assault/moneypallet03d.mdl"] = ScavData.CollectFuncs["models/props/cs_assault/moneypallet.mdl"]
+				ScavData.CollectFuncs["models/props/cs_assault/moneypallet03e.mdl"] = ScavData.CollectFuncs["models/props/cs_assault/moneypallet.mdl"]
+				--TF2
+				ScavData.CollectFuncs["models/props_farm/pallet001.mdl"] = function(self,ent) return {{ScavData.FormatModelname("models/props_junk/wood_pallet001a.mdl"),1,0}} end
+				ScavData.CollectFuncs["models/props_mvm/sack_stack_pallet.mdl"] = ScavData.CollectFuncs["models/props_farm/pallet001.mdl"]
+				--L4D/2
+				ScavData.CollectFuncs["models/props_industrial/pallet_stack01.mdl"] = function(self,ent) return {{ScavData.FormatModelname("models/props_industrial/pallet01.mdl"),10,0}} end
+				ScavData.CollectFuncs["models/props_industrial/pallet_stack_docks.mdl"] = ScavData.CollectFuncs["models/props_industrial/pallet_stack01.mdl"]
+				ScavData.CollectFuncs["models/props_industrial/pallet_barrels_water01.mdl"] = function(self,ent) return {
+					{ScavData.FormatModelname("models/props_industrial/pallet_barrels_water01_single.mdl"),1,0,4},
+					{ScavData.FormatModelname("models/props_industrial/pallet01.mdl"),1,0}
+				} end
+				ScavData.CollectFuncs["models/props_industrial/pallet_barrels_water01_docks.mdl"] = ScavData.CollectFuncs["models/props_industrial/pallet_barrels_water01.mdl"]
+				ScavData.CollectFuncs["models/props_industrial/brickpallets.mdl"] = function(self,ent) return {{ScavData.FormatModelname("models/props_industrial/brickpallets_break01.mdl"),8,0}} end
+				ScavData.CollectFuncs["models/props_industrial/brickpallets_break02.mdl"] = function(self,ent) return {{ScavData.FormatModelname("models/props_industrial/brickpallets_break01.mdl"),1,0}} end
+				ScavData.CollectFuncs["models/props_industrial/brickpallets_break03.mdl"] = ScavData.CollectFuncs["models/props_industrial/brickpallets_break02.mdl"]
+				ScavData.CollectFuncs["models/props_industrial/brickpallets_break04.mdl"] = ScavData.CollectFuncs["models/props_industrial/brickpallets_break02.mdl"]
+				ScavData.CollectFuncs["models/props_industrial/brickpallets_break05.mdl"] = ScavData.CollectFuncs["models/props_industrial/brickpallets_break02.mdl"]
+				ScavData.CollectFuncs["models/props_industrial/brickpallets_break06.mdl"] = ScavData.CollectFuncs["models/props_industrial/brickpallets_break02.mdl"]
+				ScavData.CollectFuncs["models/props_industrial/brickpallets_break07.mdl"] = ScavData.CollectFuncs["models/props_industrial/brickpallets_break02.mdl"]
+				ScavData.CollectFuncs["models/props_industrial/brickpallets_break08.mdl"] = ScavData.CollectFuncs["models/props_industrial/brickpallets_break02.mdl"]
+			end
 			tab.Cooldown = 1.25
 			ScavData.RegisterFiremode(tab,"models/props_wasteland/prison_toilet01.mdl")
 			ScavData.RegisterFiremode(tab,"models/props_c17/furnituretoilet001a.mdl")
@@ -4161,18 +4234,22 @@ PrecacheParticleSystem("scav_exp_plasma")
 			ScavData.RegisterFiremode(tab,"models/props_wasteland/prison_sink001a.mdl")
 			ScavData.RegisterFiremode(tab,"models/props_wasteland/prison_sink001b.mdl")
 			ScavData.RegisterFiremode(tab,"models/props_junk/vent001.mdl")
+			ScavData.RegisterFiremode(tab,"models/props_junk/wood_pallet001a.mdl")
 			--CSS
 			ScavData.RegisterFiremode(tab,"models/props/de_inferno/wine_barrel.mdl")
 			ScavData.RegisterFiremode(tab,"models/props/de_inferno/claypot01.mdl")
 			ScavData.RegisterFiremode(tab,"models/props/de_inferno/claypot02.mdl")
 			ScavData.RegisterFiremode(tab,"models/props/de_inferno/claypot03.mdl")
 			ScavData.RegisterFiremode(tab,"models/props/cs_office/projector.mdl")
+			ScavData.RegisterFiremode(tab,"models/props/de_prodigy/wood_pallet_01.mdl")
 			--L4D/2
 			ScavData.RegisterFiremode(tab,"models/props_interiors/urinal01.mdl")
 			ScavData.RegisterFiremode(tab,"models/props_interiors/toilet.mdl")
 			ScavData.RegisterFiremode(tab,"models/props_interiors/toilet_b.mdl")
 			ScavData.RegisterFiremode(tab,"models/props_interiors/toilet_b_breakable01.mdl")
 			ScavData.RegisterFiremode(tab,"models/props_interiors/toilet_elongated.mdl")
+			ScavData.RegisterFiremode(tab,"models/props_industrial/pallet01.mdl")
+			ScavData.RegisterFiremode(tab,"models/props_industrial/brickpallets_break01.mdl")
 			--Portal
 			ScavData.RegisterFiremode(tab,"models/props/toilet_body_reference.mdl")
 			--ASW
@@ -5879,7 +5956,10 @@ PrecacheParticleSystem("scav_exp_plasma")
 						return {{ScavData.FormatModelname(ent:GetModel()),10,ent:GetSkin()}}
 					end
 				end
-				ScavData.CollectFuncs["models/props/de_train/pallet_barrels.mdl"] = function(self,ent) return {{"models/props/de_train/barrel.mdl",4,math.random(2,5)}} end
+				ScavData.CollectFuncs["models/props/de_train/pallet_barrels.mdl"] = function(self,ent) return {
+					{ScavData.FormatModelname("models/props/de_train/barrel.mdl"),4,math.random(2,5)},
+					{ScavData.FormatModelname("models/props/de_prodigy/wood_pallet_01.mdl"),1,0}
+				} end
 			end
 			tab.Cooldown = 0.1
 			ScavData.RegisterFiremode(tab,"models/props/de_train/barrel.mdl")
@@ -6220,7 +6300,8 @@ PrecacheParticleSystem("scav_exp_plasma")
 					return {{"models/props/cs_assault/dryer_box.mdl",1,0},
 							{"models/props/cs_assault/washer_box2.mdl",1,0,2},
 							{"models/props/cs_militia/dryer.mdl",25,0,2},
-							{"models/props/cs_assault/money.mdl",1,0,5}}
+							{"models/props/cs_assault/money.mdl",1,0,5},
+							{"models/props/de_prodigy/wood_pallet_01.mdl",1,0,1}}
 				end
 				--TF2
 				ScavData.CollectFuncs["models/props_2fort/tire002.mdl"] = function(self,ent) return {{"models/props_2fort/tire001.mdl",1,0,5}} end

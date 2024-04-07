@@ -786,6 +786,7 @@ local eject = "brass"
 					self.Owner:SendHUDOverlay(Color(0,100,255,100),0.25)
 					return self:TakeSubammo(item,1)
 				end
+				--DoD:S
 				ScavData.CollectFuncs["models/player/american_assault.mdl"] = function(self,ent) return {{"models/helmets/helmet_american.mdl",1,0}} end
 				ScavData.CollectFuncs["models/player/american_mg.mdl"] = ScavData.CollectFuncs["models/player/american_assault.mdl"]
 				ScavData.CollectFuncs["models/player/american_rifleman.mdl"] = ScavData.CollectFuncs["models/player/american_assault.mdl"]
