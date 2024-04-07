@@ -1319,8 +1319,8 @@ if CLIENT then
 				end
 				if seeking then
 					self:DrawAutoTargetScreen(seeking)
-				elseif hook.Run("ScavScreenDrawOverrideIdle",true) then
-					hook.Run("ScavScreenDrawOverrideIdle")
+				elseif hook.Run("ScavScreenDrawOverrideIdle",self,true) then
+					hook.Run("ScavScreenDrawOverrideIdle",self)
 				else
 					self:DrawIdle()
 					idle = true
