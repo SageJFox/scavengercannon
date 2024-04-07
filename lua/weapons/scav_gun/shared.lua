@@ -252,6 +252,13 @@ function SWEP:ProcessLinking(item)
 				local newinfo = ScavData.models[newitem.ammo]
 				local oldinfo = ScavData.models[item.ammo]
 
+				if not newinfo or not oldinfo then
+					item:Remove()
+					self.ChargeAttack = nil
+					self.chargeitem = nil
+					return false
+				end
+
 				local newname = newinfo.Name and newinfo.Name or "#scav.scavcan.unknown"
 				local oldname = oldinfo.Name and oldinfo.Name or "#scav.scavcan.unknown"
 
@@ -295,6 +302,12 @@ function SWEP:ProcessLinking(item)
 
 				local newinfo = ScavData.models[predicteditem.ammo]
 				local oldinfo = ScavData.models[item.ammo]
+
+				if not newinfo or not oldinfo then
+					self.ChargeAttack = nil
+					self.chargeitem = nil
+					return false
+				end
 
 				local newname = newinfo.Name and newinfo.Name or "#scav.scavcan.unknown"
 				local oldname = oldinfo.Name and oldinfo.Name or "#scav.scavcan.unknown"
@@ -679,7 +692,8 @@ if CLIENT then
 
 			local shoottime = CurTime()
 			local item = self.chargeitem or self.inv.items[self.predicteditem]
-			local cooldown = self:ChargeAttack(item) * self:GetCooldownScale()
+			if not self.inv.items[1] then self.ChargeAttack = nil end
+			local cooldown = (self.inv.items[1] and self:ChargeAttack(item) or 0) * self:GetCooldownScale()
 			self.nextfire = CurTime() + cooldown
 			self.receivednextfire = UnPredictedCurTime()
 
