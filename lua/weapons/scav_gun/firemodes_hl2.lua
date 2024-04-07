@@ -1394,7 +1394,7 @@ local eject = "brass"
 					if not item.isfiring then
 						if item:GetSubammo() < 100 then
 							if SERVER then
-								item:SetSubammo(math.min(item:GetSubammo()+1,self.MaxAmmo))
+								item:SetSubammo(math.min(item:GetSubammo()+1,item:GetFiremodeInfo().MaxAmmo))
 								net.Start("scv_setsubammo")
 									net.WriteEntity(self)
 									net.WriteInt(item.subammo,16)
