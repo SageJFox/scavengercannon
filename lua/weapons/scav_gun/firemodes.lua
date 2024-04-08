@@ -3268,6 +3268,18 @@ end
 	-- Blast Shower
 ==============================================================================================]]--
 
+if SERVER then
+	util.AddNetworkString("ScavStopTheRain")
+	hook.Add("PostPlayerDeath","ScavStopTheRain",function(ply)
+		net.Start("ScavStopTheRain")
+		net.Send(ply)
+	end)
+else
+	net.Receive("ScavStopTheRain",function()
+		hook.Remove( "RenderScreenspaceEffects", "ScavDrips")
+	end)
+end
+
 		local tab = {}
 			tab.Name = "#scav.scavcan.shower"
 			tab.anim = ACT_VM_IDLE
@@ -3324,8 +3336,8 @@ end
 							self.Owner:EmitSound("ambient/water/rain_drip"..math.random(1,4)..".wav",75,100,0.5)
 							self:SetChargeAttack()
 							self:SetBarrelRestSpeed(0)
-						else
-							hook.Remove( "RenderScreenspaceEffects", "ScavDrips")
+							net.Start("ScavStopTheRain")
+							net.Send(self.Owner)
 						end
 						return 2
 					else

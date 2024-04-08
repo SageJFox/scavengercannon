@@ -731,8 +731,16 @@ if CLIENT then
 		self:DestroyWModel()
 		if IsValid(self.Owner) and IsValid(self.Owner:GetViewModel()) then
 			self.Owner:GetViewModel():SetSubMaterial(0)
+			if self.Owner == LocalPlayer() then hook.Remove( "RenderScreenspaceEffects", "ScavDrips") end
 		end
 		return false
+	end
+
+	function SWEP:OnRemove()
+		if IsValid(self.Owner) and self.Owner == LocalPlayer() then
+			self.Owner:GetViewModel():SetSubMaterial(0)
+			hook.Remove( "RenderScreenspaceEffects", "ScavDrips")
+		end
 	end
 
 	function SWEP:PrimaryAttack()
