@@ -206,6 +206,7 @@ end
 				ScavData.CollectFuncs["models/pickups/pickup_powerup_supernova.mdl"] = ScavData.CollectFuncs["models/weapons/w_models/w_rocketlauncher.mdl"]
 				--Portal
 				ScavData.CollectFuncs["models/props_bts/rocket_sentry.mdl"] = function(self,ent) return {{"models/props_bts/rocket.mdl",5,0}} end --5 rockets from Portal rocket sentry
+				ScavData.CollectFuncs["models/props/tripwire_turret.mdl"] = function(self,ent) return {{"models/props_bts/rocket.mdl",5,0}} end --5 rockets from Portal rocket sentry
 				--DoD:S
 				ScavData.CollectFuncs["models/weapons/w_bazooka.mdl"] = function(self,ent) return {{"models/weapons/w_bazooka_rocket.mdl",1,0}} end --1 rocket from Bazooka
 				ScavData.CollectFuncs["models/weapons/w_pschreck.mdl"] = function(self,ent) return {{"models/weapons/w_panzerschreck_rocket.mdl",1,0}} end --1 rocket from Panzer
@@ -3908,7 +3909,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 			end
 			if SERVER then
 				--TF2
-				ScavData.CollectFuncs["models/weapons/w_models/w_syringegun.mdl"] = function(self,ent) return {{ent:GetModel(),40,ent:GetSkin()}} end
+				ScavData.CollectFuncs["models/weapons/w_models/w_syringegun.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),40,ent:GetSkin()}} end
 				ScavData.CollectFuncs["models/weapons/c_models/c_syringegun/c_syringegun.mdl"] = ScavData.CollectFuncs["models/weapons/w_models/w_syringegun.mdl"]
 				ScavData.CollectFuncs["models/weapons/c_models/c_leechgun/c_leechgun.mdl"] = ScavData.CollectFuncs["models/weapons/w_models/w_syringegun.mdl"]
 				ScavData.CollectFuncs["models/weapons/c_models/c_proto_syringegun/c_proto_syringegun.mdl"] = ScavData.CollectFuncs["models/weapons/w_models/w_syringegun.mdl"]
@@ -3939,6 +3940,8 @@ PrecacheParticleSystem("scav_exp_plasma")
 				--[[Skylight]]["models/props/cs_militia/skylight_glass.mdl"] = 5,
 				--[[Atlas]]["models/props_unique/airport/atlas.mdl"] = 6,
 				--[[NP Column]]["models/props_debris/concrete_column001a_core.mdl"] = 7,
+				--[[Defective Turret]]["models/npcs/turret/turret_skeleton.mdl"] = 8,
+				["models/npcs/turret/turret_backwards.mdl"] = 8,
 			}
 			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
 			tab.MaxAmmo = 6
@@ -3995,13 +3998,22 @@ PrecacheParticleSystem("scav_exp_plasma")
 							data.ang:Add(Angle(0,0,90)) --horizontal spread
 							data.mass = 25
 						end,
+						[8] = function(data)
+							data.chunks = {"1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26"}
+							data.mdl = "models/npcs/turret/turret_fx_break_gib"
+							data.mass = 25
+						end,
 					}
 					local tab = ScavData.models[self.inv.items[1].ammo]
 					propdetails[tab.Identify[item.ammo]](data)
-					for i=1,#data.chunks,1 do
+					local chunkspawn = table.Copy(data.chunks)
+					while #chunkspawn > 7 do table.remove(chunkspawn,math.random(#chunkspawn)) end --only have a max of 7 chunks
+					--chunk 1 of the Portal 2 turrets has some special effects on it that'd be nice to always have
+					if tab.Identify[item.ammo] == 8 then chunkspawn[1] = "1" end
+					for i=1,#chunkspawn,1 do
 						local randvec = Vector(math.Rand(-0.1,0.1),math.Rand(-0.1,0.1),math.Rand(-0.1,0.1))
 						local proj = self:CreateEnt("prop_physics")
-						proj:SetModel(data.mdl .. data.chunks[i] .. ".mdl")
+						proj:SetModel(data.mdl .. chunkspawn[i] .. ".mdl")
 						proj:SetPos(data.pos + self:GetAimVector()*30+(randvec))
 						proj:SetAngles(data.ang)
 						proj:SetPhysicsAttacker(self.Owner)
@@ -4031,6 +4043,25 @@ PrecacheParticleSystem("scav_exp_plasma")
 					timer.Simple(1.75, function() if IsValid(self) then self.Owner:EmitSound("weapons/shotgun/shotgun_cock.wav",100,120) end end)
 					return self:TakeSubammo(item,1)
 				end
+				--Portal 2
+				ScavData.CollectFuncs["models/npcs/turret/turret_skeleton.mdl"] = function(self,ent)
+					local num = tostring(math.random(18))
+					if #num == 1 then num = "0"..num end
+					self.Owner:EmitSound("vo/turret_defective/sp_sabotage_factory_defect_test"..num..".wav",100,65)
+					return {{ScavData.FormatModelname(ent:GetModel()),1,0}}
+				end
+				ScavData.CollectFuncs["models/npcs/turret/turret_backwards.mdl"] = ScavData.CollectFuncs["models/npcs/turret/turret_skeleton.mdl"]
+				ScavData.CollectFuncs["models/npcs/turret/turret_debris_lrg.mdl"] = function(self,ent)
+					local givetab = {{ScavData.FormatModelname(math.random(2) == 1 and "models/npcs/turret/turret_skeleton.mdl" or "models/npcs/turret/turret_backwards.mdl"),math.random(3,10),0}}
+					if math.random(3) == 1 then table.insert(givetab,{ScavData.FormatModelname("models/npcs/turret/turret.mdl"),math.random(25,75),0}) end
+					return givetab
+				end
+				ScavData.CollectFuncs["models/npcs/turret/turret_debris_med.mdl"] = function(self,ent)
+					local givetab = {{ScavData.FormatModelname(math.random(2) == 1 and "models/npcs/turret/turret_skeleton.mdl" or "models/npcs/turret/turret_backwards.mdl"),math.random(2,6),0}}
+					if math.random(4) == 1 then table.insert(givetab,{ScavData.FormatModelname("models/npcs/turret/turret.mdl"),math.random(25,75),0}) end
+					return givetab
+				end
+				ScavData.CollectFuncs["models/npcs/turret/turret_debris_sml.mdl"] = function(self,ent) return {{ScavData.FormatModelname(math.random(2) == 1 and "models/npcs/turret/turret_skeleton.mdl" or "models/npcs/turret/turret_backwards.mdl"),math.random(1,4),0}} end
 			end
 			tab.Cooldown = 2
 		ScavData.RegisterFiremode(tab,"models/props_combine/breenbust.mdl")
@@ -4043,6 +4074,9 @@ PrecacheParticleSystem("scav_exp_plasma")
 		ScavData.RegisterFiremode(tab,"models/props/cs_militia/skylight_glass.mdl")
 		--L4D/2
 		ScavData.RegisterFiremode(tab,"models/props_unique/airport/atlas.mdl")
+		--Portal 2
+		ScavData.RegisterFiremode(tab,"models/npcs/turret/turret_skeleton.mdl")
+		ScavData.RegisterFiremode(tab,"models/npcs/turret/turret_backwards.mdl")
 		--FoF
 		if IsMounted(240) then --CSS
 			ScavData.RegisterFiremode(tab,"models/elpaso/plant01.mdl") --Chunks aren't in FoF, prop isn't breakable

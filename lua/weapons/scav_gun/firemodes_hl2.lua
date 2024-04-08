@@ -15,7 +15,11 @@ local eject = "brass"
 				--[[Level 1 Sentry]]["models/buildables/sentry1.mdl"] = 1,
 				--[[Level 2 Sentry]]["models/buildables/sentry2.mdl"] = 2,
 				--[[Portal Turret]]["models/props/turret_01.mdl"] = 3,
+				["models/props_bts/bts_turret.mdl"] = 3,
+				["models/npcs/turret/turret.mdl"] = 3,
+				["models/npcs/turret/turret_boxed.mdl"] = 3,
 				--[[HLS Turret]]["models/sentry.mdl"] = 4,
+				--[[ASW Turret]]["models/swarm/sentrygun/remoteturret.mdl"] = 5,
 			}
 			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
 			tab.anim = ACT_VM_RECOIL1
@@ -64,6 +68,10 @@ local eject = "brass"
 							if SERVER then self.Owner:EmitSound("turret/tu_fire1.wav",75,160,1) end
 							bullet.TracerName = "Tracer"
 						end,
+						[5] = function(self)
+							if SERVER then self.Owner:EmitSound("weapons/3d/turret/mgsingle.wav",75,160,1) end
+							bullet.TracerName = "Tracer"
+						end,
 					}
 					shootfx[tab.Identify[item.ammo]](self)
 					if SERVER or not game.SinglePlayer() then
@@ -80,7 +88,7 @@ local eject = "brass"
 				if not continuefiring and SERVER then
 					self:SetChargeAttack()
 				end
-				return tab.Identify[item.ammo] == 1 and 0.25 or 0.1
+				return tab.Identify[item.ammo] == 1 and 0.25 or tab.Identify[item.ammo] == 5 and 0.083333 or 0.1
 			end
 			tab.FireFunc = function(self,item)
 				self:SetChargeAttack(ScavData.models[self.inv.items[1].ammo].ChargeAttack,item)						
@@ -106,11 +114,16 @@ local eject = "brass"
 						[4] = function(self)
 							self.Owner:EmitSound("turret/tu_ping.wav")
 						end,
+						[5] = function(self)
+							self.Owner:EmitSound("weapons/3d/turret/lowammo.wav")
+						end,
 					}
 					beepfx[tab.Identify[item.ammo]](self)
 				end
 			end
 				ScavData.CollectFuncs["models/combine_turrets/floor_turret.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),100,ent:GetSkin()}} end
+				ScavData.CollectFuncs["models/props_lab/labturret.mdl"] = ScavData.CollectFuncs["models/combine_turrets/floor_turret.mdl"]
+				ScavData.CollectFuncs["models/combine_turrets/ground_turret.mdl"] = ScavData.CollectFuncs["models/combine_turrets/floor_turret.mdl"]
 				--TF2
 				ScavData.CollectFuncs["models/buildables/sentry1.mdl"] = ScavData.CollectFuncs["models/combine_turrets/floor_turret.mdl"]
 				ScavData.CollectFuncs["models/buildables/sentry1_heavy.mdl"] = function(self,ent) return {{"models/buildables/sentry1.mdl",100,ent:GetSkin()}} end
@@ -122,18 +135,34 @@ local eject = "brass"
 				ScavData.CollectFuncs["models/buildables/sentry3_heavy.mdl"] = function(self,ent) return {{"models/buildables/sentry2.mdl",100,ent:GetSkin()}} end
 				--Portal
 				ScavData.CollectFuncs["models/props/turret_01.mdl"] = ScavData.CollectFuncs["models/combine_turrets/floor_turret.mdl"]
+				ScavData.CollectFuncs["models/props_bts/bts_turret.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),math.random(25,75),ent:GetSkin()}} end
+				--Portal 2
+				ScavData.CollectFuncs["models/npcs/turret/turret.mdl"] = ScavData.CollectFuncs["models/combine_turrets/floor_turret.mdl"]
+				ScavData.CollectFuncs["models/npcs/turret/turret_boxed.mdl"] = ScavData.CollectFuncs["models/combine_turrets/floor_turret.mdl"]
+				ScavData.CollectFuncs["models/npcs/turret/turret_fx_fizzler.mdl"] = function(self,ent) return {{ScavData.FormatModelname("models/npcs/turret/turret.mdl"),100,ent:GetSkin()}} end
 				--HLS
 				ScavData.CollectFuncs["models/sentry.mdl"] = ScavData.CollectFuncs["models/combine_turrets/floor_turret.mdl"]
+				--ASW
+				ScavData.CollectFuncs["models/swarm/sentrygun/remoteturret.mdl"] = ScavData.CollectFuncs["models/combine_turrets/floor_turret.mdl"]
+				ScavData.CollectFuncs["models/swarm/sentrygun/sentryguncase.mdl"] = function(self,ent) return {{ScavData.FormatModelname("models/swarm/sentrygun/remoteturret.mdl"),100,ent:GetSkin()}} end
 			end
 			tab.Cooldown = 0
 		ScavData.RegisterFiremode(tab,"models/combine_turrets/floor_turret.mdl")
+		ScavData.RegisterFiremode(tab,"models/props_lab/labturret.mdl")
+		ScavData.RegisterFiremode(tab,"models/combine_turrets/ground_turret.mdl")
 		--TF2
 		ScavData.RegisterFiremode(tab,"models/buildables/sentry1.mdl")
 		ScavData.RegisterFiremode(tab,"models/buildables/sentry2.mdl")
 		--Portal
 		ScavData.RegisterFiremode(tab,"models/props/turret_01.mdl")
+		ScavData.RegisterFiremode(tab,"models/props_bts/bts_turret.mdl")
+		--Portal 2
+		ScavData.RegisterFiremode(tab,"models/npcs/turret/turret.mdl")
+		ScavData.RegisterFiremode(tab,"models/npcs/turret/turret_boxed.mdl")
 		--HLS
 		ScavData.RegisterFiremode(tab,"models/sentry.mdl")
+		--ASW
+		ScavData.RegisterFiremode(tab,"models/swarm/sentrygun/remoteturret.mdl")
 		
 		
 --[[==============================================================================================
