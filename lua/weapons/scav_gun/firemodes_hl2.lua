@@ -522,8 +522,8 @@ local eject = "brass"
 						end
 					end
 				end
-				tab.allantlions = function() for l,m in ipairs(ents.FindByClass("npc_antlion")) do ScavData.models["models/weapons/w_bugbait.mdl"].antlionfriend(m) end end
-				tab.PostRemove = tab.allantlions
+				/*tab.allantlions = function() for l,m in ipairs(ents.FindByClass("npc_antlion")) do ScavData.models["models/weapons/w_bugbait.mdl"].antlionfriend(m) end end
+				tab.PostRemove = tab.allantlions*/
 				tab.FireFunc = function(self,item)
 					self.Owner:ViewPunch(Angle(-5,math.Rand(-0.1,0.1),0))
 						local proj = self:CreateEnt("npc_grenade_bugbait")
@@ -537,9 +537,9 @@ local eject = "brass"
 						self.Owner:EmitSound(self.shootsound)
 					return self:TakeSubammo(item,1)
 				end
-				ScavData.CollectFuncs["models/weapons/w_bugbait.mdl"] = function(self,ent) ScavData.GiveOneOfItemInf(self,ent) ScavData.models["models/weapons/w_bugbait.mdl"].allantlions() end
-				hook.Add("OnEntityCreated","scav_bugbait",tab.antlionfriend)
-				hook.Add("PlayerSpawn","scav_bugbait2",tab.allantlions)
+				ScavData.CollectFuncs["models/weapons/w_bugbait.mdl"] = /*function(self,ent)*/ ScavData.GiveOneOfItemInf/*(self,ent) ScavData.models["models/weapons/w_bugbait.mdl"].allantlions() end*/
+				/*hook.Add("OnEntityCreated","scav_bugbait",tab.antlionfriend)
+				hook.Add("PlayerSpawn","scav_bugbait2",tab.allantlions)*/
 				ScavData.CollectFuncs["models/antlion_guard.mdl"] = ScavData.CollectFuncs["models/weapons/w_bugbait.mdl"]
 				--BUG TODO: doesn't currently make antlions friendly
 			end

@@ -889,6 +889,7 @@ if CLIENT then
 		self:GetCurrentItem():GetFiremodeInfo().Name ~= "#scav.scavcan.tripmine") then return end
 		
 		self:DrawIdle()
+		draw.NoTexture()
 		--draw empty slots
 		for i = 1, 6 do
 			surface.DrawCircle(16+32*i,80,13,color_black)
@@ -904,23 +905,8 @@ if CLIENT then
 			if not IsValid(v) then continue end
 			if v.Owner == owner then splodes = splodes + 1 end
 		end
-		for i = 1, splodes do
-			local x, y, radius, seg = 16+32*i, 80, 8, 32
-			local cir = {}
-
-			table.insert( cir, { x = x, y = y, u = 0.5, v = 0.5 } )
-			for i = 0, seg do
-				local a = math.rad( ( i / seg ) * -360 )
-				table.insert( cir, { x = x + math.sin( a ) * radius, y = y + math.cos( a ) * radius, u = math.sin( a ) / 2 + 0.5, v = math.cos( a ) / 2 + 0.5 } )
-			end
-
-			local a = math.rad( 0 ) -- This is needed for non absolute segment counts
-			table.insert( cir, { x = x + math.sin( a ) * radius, y = y + math.cos( a ) * radius, u = math.sin( a ) / 2 + 0.5, v = math.cos( a ) / 2 + 0.5 } )
-
-			surface.SetDrawColor( color_black )
-			draw.NoTexture()
-			surface.DrawPoly( cir )
-		end
+			local rad = 8
+		for i = 1, splodes do draw.RoundedBox(rad,16+32*i-rad,80-rad,rad*2,rad*2,color_black) end
 		return true
 	end)
 end
@@ -5376,7 +5362,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 				tracep.mins = Vector(-2,-2,-2)
 				tracep.maxs = Vector(2,2,2)
 				function tab.ChargeAttack(self,item)
-					if SERVER then --SERVER
+					if SERVER then
 						tracep.start = self.Owner:GetShootPos()
 						tracep.endpos = tracep.start+self.Owner:GetAimVector()*10000
 						tracep.filter = self.Owner
@@ -5671,7 +5657,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 							end
 							ParticleEffect("scav_exp_rad",tr.HitPos,Angle(0,0,0),Entity(0))
 							table.insert(tracep.filter,ent)
-							if (tr.Entity:GetClass() == "npc_strider") then
+							if not IsValid(tr.Entity) or (tr.Entity:GetClass() == "npc_strider") then
 								break
 							end
 						else
