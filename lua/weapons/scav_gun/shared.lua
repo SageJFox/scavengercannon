@@ -1561,7 +1561,7 @@ if CLIENT then
 		end
 	end
 
-	vgui.Register("scavitemicon",ITEMICON,"spawnicon")
+	vgui.Register("scavitemicon",ITEMICON,"SpawnIcon")
 
 	local PANEL = {}
 	PANEL.Weapon = NULL
@@ -2849,3 +2849,4 @@ if SERVER then
 end
 
 include("firemodes.lua") --load last
+
