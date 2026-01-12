@@ -186,6 +186,7 @@ local eject = "brass"
 					proj:SetModel(item.ammo)
 					proj.Owner = self.Owner
 					proj:SetOwner(self.Owner)
+					proj:SetPhysicsAttacker(self.Owner)
 					proj.Inflictor = proj
 					proj.Attacker = self.Owner
 					proj:SetPos(self:GetProjectileShootPos())

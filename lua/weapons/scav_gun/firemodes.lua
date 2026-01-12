@@ -421,6 +421,7 @@ end
 						proj:SetPos(self.Owner:GetShootPos()-self:GetAimVector()*15+self:GetAimVector():Angle():Right()*2-self:GetAimVector():Angle():Up()*2)
 						proj:SetAngles(self:GetAimVector():Angle())
 						proj:SetOwner(self.Owner)
+						proj:SetPhysicsAttacker(self.Owner)
 						--proj:SetSkin(item.data)
 						proj:SetSkin(item.data)
 						proj:Spawn()
@@ -734,6 +735,7 @@ end
 				tab.FireFunc = function(self,item)
 					self.Owner:ViewPunch(Angle(-20,math.Rand(-0.1,0.1),0))
 					local proj = self:CreateEnt("scav_projectile_payload")
+					proj:SetPhysicsAttacker(self.Owner)
 					proj:SetModel(item.ammo)
 					proj.Owner = self.Owner
 					proj:SetOwner(self.Owner)
@@ -2673,6 +2675,7 @@ end
 						proj:SetPos(pos)
 						proj:SetModel(item.ammo)
 						proj:SetSkin(item.data)
+						proj:SetPhysicsAttacker(self.Owner)
 						--proj:SetPos(self.Owner:GetShootPos()-self:GetAimVector()*15+self:GetAimVector():Angle():Right()*6-self:GetAimVector():Angle():Up()*8)
 						local ang = self:GetAimVector():Angle()
 						ang:Add(Angle(-90,0,0))
@@ -4313,7 +4316,6 @@ PrecacheParticleSystem("scav_exp_plasma")
 		local creditfix = {
 			--["grenade_helicopter"] = true, --TODO: credit is given to #scav_gun (or the grenade itself when not on this list), not the player, when the explosion kills. When the prop slap kills, player gets credit.
 			["prop_ragdoll"] = true,
-			--["scav_projectile_mag"] = true, --TODO: credit is given to #scav_gun (or the magnusson itself when not on this list), not the player, when the prop slap kills. The explosion is properly credited.
 			["npc_tripmine"] = true,
 			["scav_projectile_flare2"] = true
 			}
