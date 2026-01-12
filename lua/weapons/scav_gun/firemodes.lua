@@ -1396,6 +1396,8 @@ end
 				ScavData.CollectFuncs["models/alyx_interior.mdl"] = ScavData.CollectFuncs["models/alyx.mdl"]
 				ScavData.CollectFuncs["models/alyx_ep2.mdl"] = ScavData.CollectFuncs["models/alyx.mdl"]
 				ScavData.CollectFuncs["models/player/alyx.mdl"] = ScavData.CollectFuncs["models/alyx.mdl"]
+				ScavData.CollectFuncs["models/props_rooftop/roof_dish001.mdl"] = ScavData.GiveOneOfItemInf
+				ScavData.CollectFuncs["models/props_rooftop/satellitedish02.mdl"] = ScavData.GiveOneOfItemInf
 				--CSS
 				ScavData.CollectFuncs["models/props/cs_office/projector_remote.mdl"] = ScavData.GiveOneOfItemInf
 				ScavData.CollectFuncs["models/weapons/w_defuser.mdl"] = ScavData.GiveOneOfItemInf
@@ -1404,10 +1406,17 @@ end
 				ScavData.CollectFuncs["models/weapons/c_models/c_wrangler.mdl"] = ScavData.CollectFuncs["models/weapons/w_models/w_wrangler.mdl"]
 				ScavData.CollectFuncs["models/weapons/c_models/c_wrangler_xmas.mdl"] = ScavData.GiveOneOfItemInf
 				ScavData.CollectFuncs["models/workshop/weapons/c_models/c_invasion_wrangler/c_invasion_wrangler.mdl"] = ScavData.GiveOneOfItemInf
+				ScavData.CollectFuncs["models/props_spytech/satellite_dish001.mdl"] = ScavData.GiveOneOfItemInf
 				--L4D/2
 				ScavData.CollectFuncs["models/props_junk/garbage_remotecontrol01a.mdl"] = ScavData.GiveOneOfItemInf
+				ScavData.CollectFuncs["models/props_rooftop/satellitedish_large01.mdl"] = ScavData.GiveOneOfItemInf
+				--ASW
+				ScavData.CollectFuncs["models/props/utilities/satellite_dish001a.mdl"] = ScavData.GiveOneOfItemInf
+				ScavData.CollectFuncs["models/props/utilities/satellite_dish002a.mdl"] = ScavData.GiveOneOfItemInf
 			end
 		ScavData.RegisterFiremode(tab,"models/alyx_emptool_prop.mdl")
+		ScavData.RegisterFiremode(tab,"models/props_rooftop/roof_dish001.mdl")
+		ScavData.RegisterFiremode(tab,"models/props_rooftop/satellitedish02.mdl")
 		--CSS
 		ScavData.RegisterFiremode(tab,"models/props/cs_office/projector_remote.mdl")
 		ScavData.RegisterFiremode(tab,"models/weapons/w_defuser.mdl")
@@ -1416,7 +1425,13 @@ end
 		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_wrangler.mdl")
 		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_wrangler_xmas.mdl")
 		ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_invasion_wrangler/c_invasion_wrangler.mdl")
+		ScavData.RegisterFiremode(tab,"models/props_spytech/satellite_dish001.mdl")
+		--L4D/2
 		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_remotecontrol01a.mdl")
+		ScavData.RegisterFiremode(tab,"models/props_rooftop/satellitedish_large01.mdl")
+		--ASW
+		ScavData.RegisterFiremode(tab,"models/props/utilities/satellite_dish001a.mdl")
+		ScavData.RegisterFiremode(tab,"models/props/utilities/satellite_dish002a.mdl")
 	end
 		
 		
@@ -2981,9 +2996,13 @@ end
 			if SERVER then
 				ScavData.CollectFuncs["models/props_combine/combine_binocular01.mdl"] = ScavData.GiveOneOfItemInf
 				ScavData.CollectFuncs["models/props_c17/light_magnifyinglamp02.mdl"] = ScavData.GiveOneOfItemInf
+				ScavData.CollectFuncs["models/gibs/gunship_gibs_eye.mdl"] = ScavData.GiveOneOfItemInf
+				ScavData.CollectFuncs["models/gibs/gunship_gibs_sensorarray.mdl"] = ScavData.GiveOneOfItemInf
 			end
 			ScavData.RegisterFiremode(tab,"models/props_combine/combine_binocular01.mdl")
 			ScavData.RegisterFiremode(tab,"models/props_c17/light_magnifyinglamp02.mdl")
+			ScavData.RegisterFiremode(tab,"models/gibs/gunship_gibs_eye.mdl")
+			ScavData.RegisterFiremode(tab,"models/gibs/gunship_gibs_sensorarray.mdl")
 		
 --[[==============================================================================================
 	-- Medkits
@@ -5265,6 +5284,12 @@ PrecacheParticleSystem("scav_exp_plasma")
 							return {{"models/police.mdl",1,0}}
 						end
 					end
+					ScavData.CollectFuncs["models/gibs/manhack_gib01.mdl"] = function(self,ent) return {{"models/manhack.mdl",25,0}} end
+					ScavData.CollectFuncs["models/gibs/manhack_gib02.mdl"] = ScavData.CollectFuncs["models/gibs/manhack_gib01.mdl"]
+					ScavData.CollectFuncs["models/gibs/manhack_gib03.mdl"] = ScavData.CollectFuncs["models/gibs/manhack_gib01.mdl"]
+					ScavData.CollectFuncs["models/gibs/manhack_gib04.mdl"] = ScavData.CollectFuncs["models/gibs/manhack_gib01.mdl"]
+					ScavData.CollectFuncs["models/gibs/manhack_gib05.mdl"] = ScavData.CollectFuncs["models/gibs/manhack_gib01.mdl"]
+					ScavData.CollectFuncs["models/gibs/manhack_gib06.mdl"] = ScavData.CollectFuncs["models/gibs/manhack_gib01.mdl"]
 					--Ep2
 					ScavData.CollectFuncs["models/props_forest/circularsaw01.mdl"] = ScavData.CollectFuncs["models/props_junk/sawblade001a.mdl"]
 					--CSS
