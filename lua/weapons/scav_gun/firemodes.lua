@@ -4971,7 +4971,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 					--Ep2
 					ScavData.CollectFuncs["models/props_silo/acunit01.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),200,ent:GetSkin()}} end
 					ScavData.CollectFuncs["models/props_silo/acunit02.mdl"] = ScavData.CollectFuncs["models/props_c17/furniturefridge001a.mdl"]
-					ScavData.CollectFuncs["models/props_forest/refrigerator01.mdl"] = ScavData.CollectFuncs["models/props/cs_assault/acunit01.mdl"]
+					ScavData.CollectFuncs["models/props_forest/refrigerator01.mdl"] = ScavData.CollectFuncs["models/props_silo/acunit01.mdl"]
 					--CSS
 					ScavData.CollectFuncs["models/props/cs_assault/acunit01.mdl"] = ScavData.CollectFuncs["models/props_silo/acunit01.mdl"]
 					ScavData.CollectFuncs["models/props/cs_assault/acunit02.mdl"] = ScavData.CollectFuncs["models/props_silo/acunit02.mdl"]
