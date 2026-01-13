@@ -392,20 +392,11 @@ if SERVER then
 			item.subammo = item.subammo - amount
 		end
 
-		if game.SinglePlayer() then
-			local rf = RecipientFilter()
-			rf:AddAllPlayers()
-			net.Start("scv_setsubammo")
-				net.WriteEntity(self)
-				net.WriteInt(item.subammo,16)
-			net.Send(rf)
-		else
-			net.Start("scv_setsubammo")
-				net.WriteEntity(self)
-				net.WriteInt(item.subammo,16)
-				net.WriteInt(item.pos,8)
-			net.Send(self.Owner)
-		end
+		net.Start("scv_setsubammo")
+			net.WriteEntity(self)
+			net.WriteInt(item.subammo,16)
+			net.WriteInt(item.pos,8)
+		net.Send(self.Owner)
 
 		if item == item and item.subammo <= 0 then
 			return true
@@ -2062,6 +2053,11 @@ if SERVER then
 
 						if subammocounts[i] > 0 then
 							v:SetSubammo(math.min(maxammo, v.subammo + subammocounts[i]))
+							net.Start("scv_setsubammo")
+								net.WriteEntity(self)
+								net.WriteInt(v.subammo, 16)
+								net.WriteInt(v.pos, 8)
+							net.Send(self.Owner)
 						end
 						subammocounts[i] = subammocounts[i] - maxtoadd
 					end
