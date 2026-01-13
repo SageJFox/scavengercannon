@@ -1025,24 +1025,15 @@ if CLIENT then
 		self:Lock(start,endtime)
 	end)
 
-	if game.SinglePlayer() then
-		net.Receive("scv_setsubammo", function()
-			local self = net.ReadEntity()
-			local int = net.ReadInt(16)
-			if IsValid(self) and int and self.inv.items[1] then
-				self.inv.items[1].subammo = int
-			end
-		end)
-	else
-		net.Receive("scv_setsubammo", function()
-			local self = net.ReadEntity()
-			local int = net.ReadInt(16)
-			local pos = net.ReadInt(8)
-			if IsValid(self) and int and self.inv.items[pos] then
-				self.inv.items[pos].subammo = int
-			end
-		end)
-	end
+	net.Receive("scv_setsubammo", function()
+		local self = net.ReadEntity()
+		local int = net.ReadInt(16)
+		local pos = net.ReadInt(8)
+		if game.SinglePlayer() and pos == 0 then pos = 1 end
+		if IsValid(self) and int and self.inv.items[pos] then
+			self.inv.items[pos].subammo = int
+		end
+	end)
 
 	local function applyeffect(ent)
 		if IsValid(ent) then
