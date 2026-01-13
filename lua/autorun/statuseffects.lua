@@ -632,7 +632,7 @@ local STATUS = {}
 					end
 				end
 				if ent:IsNPC() then
-					gamemode.Call("OnNPCKilled",ent,attacker,inflictor)
+					gamemode.Call("OnNPCKilled",ent, dmginfo:GetAttacker(), dmginfo:GetInflictor())
 				end
 				ent:Remove()
 				rag:Remove()
