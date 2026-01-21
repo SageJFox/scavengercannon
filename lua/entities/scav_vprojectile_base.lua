@@ -113,7 +113,7 @@ if SERVER then
 	ENT.target = NULL
 	ENT.SpeedScale = 1
 	ENT.PhysTrigger = true
-	ENT.TouchTrigger = true
+	ENT.TouchTrigger = false
 	ENT.RemoveOnImpact = true
 	ENT.StopOnPhys = true
 	ENT.NoDrawOnDeath = false
@@ -187,7 +187,8 @@ if SERVER then
 	end
 
 	function ENT:Touch(hitent)
-		if not self.hashit and self.TouchTrigger and hitent:GetSolid() ~= SOLID_NONE and hitent:GetSolid() ~= SOLID_VPHYSICS and hitent ~= self.Owner then
+		if not IsValid(hitent) then return end
+		if not self.hashit and (self.TouchTrigger and hitent:GetSolid() == SOLID_BSP) or hitent:GetSolid() ~= SOLID_BSP and hitent:GetSolid() ~= SOLID_NONE and hitent ~= self.Owner then
 			self:OnTouch(hitent)
 			self.CollisionPos = self:GetPos()
 			self:ProcessImpact(hitent)
