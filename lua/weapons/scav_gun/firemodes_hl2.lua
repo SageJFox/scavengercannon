@@ -980,7 +980,9 @@ local eject = "brass"
 							if IsValid(self) then
 								if SERVER then
 									self.Owner:EmitSound("weapons/scock1.wav")
-								else
+								end
+								if CLIENT ~= game.SinglePlayer() then
+									if not self.Owner:GetViewModel() then return end
 									local ef = EffectData()
 									local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
 									if attach == nil then
