@@ -197,7 +197,7 @@ function Status2.PurgeEnt(self)
 		return
 	end
 	for i=1,#self.StatusTable do
-		self.StatusTable[1]:Finish()
+		if self.StatusTable[1].Finish then self.StatusTable[1]:Finish() end
 		Status2.RemoveInstance(self.StatusTable[1])
 	end
 end
