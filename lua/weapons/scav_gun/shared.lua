@@ -2408,6 +2408,7 @@ if SERVER then
 	function SWEP:OnRestore()
 		self.nextfire = 0
 		self.nextfireearly = 0
+		self.inv = self.inv or ScavInventory(self)
 
 		saverestore.AddRestoreHook("scavsave_"..self.Owner:SteamID64(), function(save)
 			local savedinv = saverestore.ReadTable(save)
@@ -2463,7 +2464,8 @@ if SERVER then
 			self:SetBlockPose(0,2)
 		end
 
-		if not self.soundloops.barrelspin then
+		if not (self.soundloops and self.soundloops.barrelspin) then
+			self.soundloops = self.soundloops or {}
 			self.soundloops.barrelspin = CreateSound(self.Owner,"npc/combine_gunship/engine_rotor_loop1.wav")
 		end
 
@@ -2472,7 +2474,8 @@ if SERVER then
 		self.seqendtime = 0
 		self:SetHoldType(self.HoldType)
 
-		if not self.inv.AddOnClient then
+		if not (self.inv and self.inv.AddOnClient) then
+			self.inv = self.inv or ScavInventory(self)
 			ReinitializeScavInventory(self.inv)
 		end
 
@@ -2492,6 +2495,7 @@ if SERVER then
 	end
 
 	function SWEP:Holster(wep)
+		if not self.soundloops then self.soundloops = {} end
 
 		self:KillEffect()
 
@@ -2529,6 +2533,7 @@ if SERVER then
 		if self.nextfire > CurTime() then return end
 
 		if not self.bsoundplay then
+			if not self.soundloops then self.soundloops = {} end
 			if self.soundloops.barrelspin then
 				self.soundloops.barrelspin:PlayEx(1,70)
 			end

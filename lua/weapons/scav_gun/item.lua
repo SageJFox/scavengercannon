@@ -109,6 +109,7 @@ function ScavInventory(weapon)
 end
 
 function ReinitializeScavInventory(inv)
+	if not inv or type(inv) ~= "table" then ErrorNoHaltWithStack("No Scav Inventory to Reinitialize, got " .. type(inv) .. ", expected table!") end
 	table.Inherit(inv,INVENTORY)
 	for _,v in ipairs(inv.items) do
 		v.parent = inv
