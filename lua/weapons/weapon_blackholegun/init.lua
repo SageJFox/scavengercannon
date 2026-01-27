@@ -112,3 +112,12 @@ function SWEP:Scavenge(ent)
 	self:AddAmmo(ent:GetPhysicsObject():GetMass())
 	ent:Remove()
 end
+
+
+function SWEP:CreateSoundRattle()
+	if IsValid(self.Owner) then return CreateSound(self.Owner,"ambient/machines/train_wheels_loop1.wav") end
+end
+
+function SWEP:CreateSoundCharge()
+	if IsValid(self.Owner) then return CreateSound(self.Owner,"ambient/levels/labs/teleport_active_loop1.wav") end
+end

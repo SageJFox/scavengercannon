@@ -153,7 +153,7 @@ function INVENTORY:Remove() --Calling this on the server will send a net message
 	end
 
 	for _,v in pairs(self.itemids) do
-		v:Remove(true)
+		v:Remove(true, nil, true)
 	end
 	
 	ScavInventories[self.ID] = nil

@@ -1919,6 +1919,12 @@ if SERVER then
 	SWEP.BlockPose 			= 0
 	SWEP.BlockTo 			= 0
 
+	function SWEP:CreateBarrelSpinSound()
+		if IsValid(self.Owner) then
+			return CreateSound(self.Owner,"npc/combine_gunship/engine_rotor_loop1.wav")
+		end
+	end
+
 	util.AddNetworkString("scv_ht")
 
 	function SWEP:SetHoldType(htype)
@@ -2466,7 +2472,7 @@ if SERVER then
 
 		if not (self.soundloops and self.soundloops.barrelspin) then
 			self.soundloops = self.soundloops or {}
-			self.soundloops.barrelspin = CreateSound(self.Owner,"npc/combine_gunship/engine_rotor_loop1.wav")
+			self.soundloops.barrelspin = self:CreateBarrelSpinSound()
 		end
 
 		self:Reskin(self.Owner:AccountID())
@@ -2534,9 +2540,8 @@ if SERVER then
 
 		if not self.bsoundplay then
 			if not self.soundloops then self.soundloops = {} end
-			if self.soundloops.barrelspin then
-				self.soundloops.barrelspin:PlayEx(1,70)
-			end
+			if not self.soundloops.barrelspin then self.soundloops.barrelspin = self:CreateBarrelSpinSound() end
+			self.soundloops.barrelspin:PlayEx(1,70)
 			self.bsoundplay = true
 		end
 
