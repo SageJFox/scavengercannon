@@ -253,7 +253,7 @@ if CLIENT then
 				if not v.Infinite then
 					draw.DrawText(math.max(math.floor(v.EndTime - CurTime()),0),"Trebuchet18",x + 48,y + 8,color_white,TEXT_ALIGN_RIGHT)
 				else
-					draw.DrawText("∞","Trebuchet18",x + 48,y + 16,color_white,TEXT_ALIGN_RIGHT)
+					draw.DrawText("#scav.scavcan.inf","Trebuchet18",x + 48,y + 16,color_white,TEXT_ALIGN_RIGHT)
 				end
 			end
 			
