@@ -460,6 +460,32 @@ function ITEM:Remove(silent,pl,ignoredelay) --Calling this on the server will se
 
 	local delay = not ignoredelay
 	if SERVER then
+		--Check for Recycling Bin
+		local garbage = nil
+		for _, v in pairs(self.parent.Owner.inv.items) do
+			if ScavData.models[v.ammo] and ScavData.models[v.ammo].Name == "#scav.scavcan.recyclebin" then
+				garbage = ScavData.models[v.ammo].On
+				break
+			end
+		end
+		if garbage then
+			--If we've got an Alchemy or Black Hole Gun, give it to'em
+			local spent = false
+			for _, v in ipairs(ents.FindByClass("weapon_alchemygun")) do
+				if v.Owner == self.parent.Owner.Owner then
+					spent = self.parent.Owner:give(v, self.ammo, self.data)
+					break
+				end
+			end
+			if not spent then
+				for _, v in ipairs(ents.FindByClass("weapon_blackholegun")) do
+					if v.Owner == self.parent.Owner.Owner then
+						spent = self.parent.Owner:give(v, self.ammo, self.data)
+						break
+					end
+				end
+			end
+		end
 		if not silent then
 			net.Start("scv_itmrem")
 				net.WriteInt(self.parent.ID,INVREADSIZE)

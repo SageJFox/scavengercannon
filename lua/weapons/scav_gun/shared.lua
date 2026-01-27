@@ -1279,6 +1279,39 @@ if CLIENT then
 		end
 	end
 
+	function SWEP:DrawRecycleBinScreen(on)
+		if not GetConVar("cl_scav_colorblindmode"):GetBool() then
+			if on then
+				DrawScreenBKG(greenscr)
+			else
+				DrawScreenBKG(redscr)
+			end
+		else
+			if on then
+				DrawScreenBKG(greenscr_colorblind)
+			else
+				DrawScreenBKG(redscr_colorblind)
+			end
+		end
+		local vpos = 12
+		local fontsize = "ScavScreenFontSm"
+		if #language.GetPhrase("scav.scavcan.recycling") > 14 then
+			fontsize = "ScavScreenFontSmX"
+			vpos = vpos + 8
+		end
+		local _, use = math.modf(CurTime())
+		local col = color_black
+		if not on and use < .5 then
+			col = color_white
+		end
+		draw.DrawText(language.GetPhrase("scav.scavcan.recycling"),fontsize,128,vpos,col,TEXT_ALIGN_CENTER)
+		if on then
+			draw.DrawText(language.GetPhrase("scav.scavcan.on"),"ScavScreenFont",128,20+vpos,col,TEXT_ALIGN_CENTER)
+		else
+			draw.DrawText(language.GetPhrase("scav.scavcan.off"),"ScavScreenFont",128,20+vpos,col,TEXT_ALIGN_CENTER)
+		end
+	end
+
 	local idle = idle or true
 
 	function SWEP:DrawScreen()
@@ -1302,6 +1335,9 @@ if CLIENT then
 			--Auto-Targeting System screen
 			elseif item and item.Name == "#scav.scavcan.computer" then
 				self:DrawAutoTargetScreen(item.On)
+			--Recycling Bin screen
+			elseif item and item.Name == "#scav.scavcan.recyclebin" then
+				self:DrawRecycleBinScreen(item.On)
 			--Cooldown screen
 			elseif ((self.nextfire - CurTime() > 0.25 and self.nextfireearly == 0) or self.nextfireearly - CurTime() > 0.25) and not self.ChargeAttack then
 				self:DrawCooldown()
@@ -1919,6 +1955,24 @@ if SERVER then
 	SWEP.BlockPose 			= 0
 	SWEP.BlockTo 			= 0
 
+	--Sending prop info to another Scav Gun
+	function SWEP:give(v, mdl, skin)
+		if not IsValid(self) or not IsValid(v) then return end
+		if v.Owner == self.Owner then
+			local ent = ents.Create("prop_physics")
+			if not IsValid(ent) then return end
+			ent:SetModel(mdl)
+			ent:SetSkin(skin)
+			ent:SetNoDraw(true)
+			ent:Spawn()
+			timer.Simple(0,function()
+				if not IsValid(v) or not IsValid(ent) then return end
+				v:Scavenge(ent)
+			end)
+			return true --could technically fail, but in those situations any other gun would probably just fail too anyway
+		end
+	end
+
 	function SWEP:CreateBarrelSpinSound()
 		if IsValid(self.Owner) then
 			return CreateSound(self.Owner,"npc/combine_gunship/engine_rotor_loop1.wav")
@@ -2081,6 +2135,34 @@ if SERVER then
 		for i=1,math.min(number, availableslots) do
 
 			if subammocounts[i] and subammocounts[i] > 0 then
+
+				--Check for a Recycling Bin
+				local garbage = nil
+				for _, v in pairs(self.inv.items) do
+					if ScavData.models[v.ammo] and ScavData.models[v.ammo].Name == "#scav.scavcan.recyclebin" then
+						garbage = ScavData.models[v.ammo].On
+						break
+					end
+				end
+				if not ScavData.models[modelname] and garbage then
+					--If we've got an Alchemy or Black Hole Gun, give it to'em
+					local spent = false
+					for _, v in ipairs(ents.FindByClass("weapon_alchemygun")) do
+						if v.Owner == self.Owner then
+							spent = self:give(v, modelname, data)
+							break
+						end
+					end
+					if not spent then
+						for _, v in ipairs(ents.FindByClass("weapon_blackholegun")) do
+							if v.Owner == self.Owner then
+								spent = self:give(v, modelname, data)
+								break
+							end
+						end
+					end
+					return
+				end
 
 				local item = ScavItem(self.inv, pos)
 

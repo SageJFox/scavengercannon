@@ -1045,7 +1045,8 @@ end
 				--CSS
 				ScavData.CollectFuncs["models/props/cs_office/trash_can.mdl"] = function(self,ent)
 					return {{"models/props/cs_office/trash_can_p7.mdl",1,ent:GetSkin(),1},
-							{"models/props/cs_office/trash_can_p8.mdl",1,ent:GetSkin(),1}}
+							{"models/props/cs_office/trash_can_p8.mdl",1,ent:GetSkin(),1},
+							{"models/props/cs_office/trash_can_p.mdl",SCAV_SHORT_MAX,ent:GetSkin(),1}}
 				end
 				--TF2
 				ScavData.CollectFuncs["models/weapons/c_models/c_energy_drink/c_energy_drink.mdl"] = function(self,ent) return {{(self.christmas and ent:GetSkin() < 2) and "models/weapons/c_models/c_xms_energy_drink/c_xms_energy_drink.mdl" or ScavData.FormatModelname(ent:GetModel()),1,ent:GetSkin()}} end
@@ -6072,6 +6073,76 @@ PrecacheParticleSystem("scav_exp_plasma")
 		ScavData.RegisterFiremode(tab,"models/weapons/minigun/minigun.mdl")
 		--FoF
 		ScavData.RegisterFiremode(tab,"models/weapons/gatling_top.mdl")
+--[[==============================================================================================
+	--Recycle Bin
+==============================================================================================]]--
+	
+		local tab = {}
+			tab.Name = "#scav.scavcan.recyclebin"
+			tab.anim = ACT_VM_IDLE
+			tab.Level = 2
+			tab.On = true
+			tab.FireFunc = function(self,item)
+				tab.On = not tab.On
+				if SERVER then
+					self.Owner:EmitSound(tab.On and "buttons/button5.wav" or "buttons/button8.wav")
+				end
+				return false
+			end
+			if SERVER then
+				ScavData.CollectFuncs["models/props_junk/trashbin01a.mdl"] = ScavData.GiveOneOfItemInf
+				ScavData.CollectFuncs["models/props_trainstation/trashcan_indoor001a.mdl"] = ScavData.GiveOneOfItemInf
+				ScavData.CollectFuncs["models/props_trainstation/trashcan_indoor001b.mdl"] = ScavData.GiveOneOfItemInf
+				ScavData.CollectFuncs["models/props_junk/trashcluster01a.mdl"] = ScavData.GiveOneOfItemInf
+				ScavData.CollectFuncs["models/props_junk/trashdumpster01a.mdl"] = ScavData.GiveOneOfItemInf
+				ScavData.CollectFuncs["models/props_junk/trashdumpster02.mdl"] = ScavData.GiveOneOfItemInf
+				ScavData.CollectFuncs["models/props_lab/plotter.mdl"] = ScavData.GiveOneOfItemInf
+				--CSS
+				ScavData.CollectFuncs["models/props/cs_office/trash_can_p.mdl"] = ScavData.GiveOneOfItemInf
+				--TF2
+				ScavData.CollectFuncs["models/props_2fort/wastebasket01.mdl"] = ScavData.GiveOneOfItemInf
+				ScavData.CollectFuncs["models/props_soho/trashbag001.mdl"] = ScavData.GiveOneOfItemInf
+				--L4D/2
+				ScavData.CollectFuncs["models/props_interiors/trashcan01.mdl"] = ScavData.GiveOneOfItemInf
+				ScavData.CollectFuncs["models/props_interiors/trashcankitchen01.mdl"] = ScavData.GiveOneOfItemInf
+				ScavData.CollectFuncs["models/props_junk/dumpster.mdl"] = ScavData.GiveOneOfItemInf
+				ScavData.CollectFuncs["models/props_junk/dumpster_2.mdl"] = ScavData.GiveOneOfItemInf
+				ScavData.CollectFuncs["models/props_junk/trashcluster01a_corner.mdl"] = ScavData.GiveOneOfItemInf
+				ScavData.CollectFuncs["models/props_street/garbage_can.mdl"] = ScavData.GiveOneOfItemInf
+				ScavData.CollectFuncs["models/props_street/garbage_can_static.mdl"] = ScavData.GiveOneOfItemInf
+				ScavData.CollectFuncs["models/props_street/trashbin01.mdl"] = ScavData.GiveOneOfItemInf
+				ScavData.CollectFuncs["models/props_urban/garbage_can001.mdl"] = ScavData.GiveOneOfItemInf
+				ScavData.CollectFuncs["models/props_urban/garbage_can002.mdl"] = ScavData.GiveOneOfItemInf
+				--ASW
+				ScavData.CollectFuncs["models/props/furniture/misc/bathroombin.mdl"] = ScavData.GiveOneOfItemInf
+			end
+			tab.Cooldown = 0.25
+
+		ScavData.RegisterFiremode(tab,"models/props_junk/trashbin01a.mdl")
+		ScavData.RegisterFiremode(tab,"models/props_trainstation/trashcan_indoor001a.mdl")
+		ScavData.RegisterFiremode(tab,"models/props_trainstation/trashcan_indoor001b.mdl")
+		ScavData.RegisterFiremode(tab,"models/props_junk/trashcluster01a.mdl")
+		ScavData.RegisterFiremode(tab,"models/props_junk/trashdumpster01a.mdl")
+		ScavData.RegisterFiremode(tab,"models/props_junk/trashdumpster02.mdl")
+		ScavData.RegisterFiremode(tab,"models/props_lab/plotter.mdl")
+		--CSS
+		ScavData.RegisterFiremode(tab,"models/props/cs_office/trash_can_p.mdl")
+		--TF2
+		ScavData.RegisterFiremode(tab,"models/props_2fort/wastebasket01.mdl")
+		ScavData.RegisterFiremode(tab,"models/props_soho/trashbag001.mdl")
+		--L4D/2
+		ScavData.RegisterFiremode(tab,"models/props_interiors/trashcan01.mdl")
+		ScavData.RegisterFiremode(tab,"models/props_interiors/trashcankitchen01.mdl")
+		ScavData.RegisterFiremode(tab,"models/props_junk/dumpster.mdl")
+		ScavData.RegisterFiremode(tab,"models/props_junk/dumpster_2.mdl")
+		ScavData.RegisterFiremode(tab,"models/props_junk/trashcluster01a_corner.mdl")
+		ScavData.RegisterFiremode(tab,"models/props_street/garbage_can.mdl")
+		ScavData.RegisterFiremode(tab,"models/props_street/garbage_can_static.mdl")
+		ScavData.RegisterFiremode(tab,"models/props_street/trashbin01.mdl")
+		ScavData.RegisterFiremode(tab,"models/props_urban/garbage_can001.mdl")
+		ScavData.RegisterFiremode(tab,"models/props_urban/garbage_can002.mdl")
+		--ASW
+		ScavData.RegisterFiremode(tab,"models/props/furniture/misc/bathroombin.mdl")
 
 		
 --[[==============================================================================================
