@@ -3078,83 +3078,83 @@ end
 ==============================================================================================]]--
 	
 		medkit = {
-			[0] = function(healent)
-				if SERVER then
+			[0] = function(healent, noheal)
+				if SERVER and IsValid(healent) and not noheal then
 					healent:SetHealth(math.min(healent:GetMaxHealth(),healent:Health()+25))
 					healent:EmitSound("items/smallmedkit1.wav")
 				end
-				return 2
+				return 2, 25
 			end,
-			[1] = function(healent)
-				if SERVER and IsValid(healent) then
+			[1] = function(healent, noheal)
+				if SERVER and IsValid(healent) and not noheal then
 					healent:SetHealth(math.min(healent:GetMaxHealth(),healent:Health()+10))
 					healent:EmitSound("items/smallmedkit1.wav")
 				end
-				return 1
+				return 1, 10
 			end,
-			[2] = function(healent)
-				if SERVER and IsValid(healent) then
+			[2] = function(healent, noheal)
+				if SERVER and IsValid(healent) and not noheal then
 					healent:SetHealth(math.min(healent:GetMaxHealth(),healent:Health()+healent:GetMaxHealth()*0.205)) --20.5%
 					healent:EmitSound("items/smallmedkit1.wav")
 				end
-				return 1
+				return 1, IsValid(healent) and (healent:GetMaxHealth() * 0.205) or 20.5
 			end,
-			[3] = function(healent)
-				if SERVER and IsValid(healent) then
+			[3] = function(healent, noheal)
+				if SERVER and IsValid(healent) and not noheal then
 					healent:SetHealth(math.min(healent:GetMaxHealth(),healent:Health()+healent:GetMaxHealth()*0.5))
 					healent:EmitSound("items/smallmedkit1.wav")
 				end
-				return 2
+				return 2, IsValid(healent) and (healent:GetMaxHealth() * 0.5) or 50
 			end,
-			[4] = function(healent)
-				if SERVER and IsValid(healent) then
+			[4] = function(healent, noheal)
+				if SERVER and IsValid(healent) and not noheal then
 					healent:SetHealth(healent:GetMaxHealth())
 					healent:EmitSound("items/smallmedkit1.wav")
 				end
-				return 3
+				return 3, IsValid(healent) and healent:GetMaxHealth() or 100
 			end,
-			[5] = function(healent)
-				if SERVER and IsValid(healent) then
+			[5] = function(healent, noheal)
+				if SERVER and IsValid(healent) and not noheal then
 					healent:SetHealth(math.min(healent:GetMaxHealth(),healent:Health()+math.max(1,math.floor((healent:GetMaxHealth()-healent:Health())*0.8)))) --heal 80% of our current damage (or at least 1 health)
 					healent:EmitSound("items/smallmedkit1.wav")
 				end
-				return 2
+				return 2, IsValid(healent) and (math.max(1,math.floor((healent:GetMaxHealth()-healent:Health())*0.8))) or 80
 			end,
-			[6] = function(healent)
-				if SERVER and IsValid(healent) then
+			[6] = function(healent, noheal)
+				if SERVER and IsValid(healent) and not noheal then
 					healent:SetHealth(math.min(healent:GetMaxHealth(),healent:Health()+50)) --TODO: Make this revive?
 					healent:EmitSound("weapons/defibrillator/defibrillator_use.wav")
 				end
-				return 2
+				return 2, 50
 			end,
-			[7] = function(healent)
-				if SERVER and IsValid(healent) then
+			[7] = function(healent, noheal)
+				if SERVER and IsValid(healent) and not noheal then
 					healent:SetHealth(math.min(healent:GetMaxHealth(),healent:Health()+6))
 					healent:EmitSound("items/smallmedkit1.wav")
 				end
-				return .5
+				return .5, 6
 			end,
-			[8] = function(healent)
-				if SERVER and IsValid(healent) then
+			[8] = function(healent, noheal)
+				if SERVER and IsValid(healent) and not noheal then
 					healent:SetHealth(math.min(healent:GetMaxHealth(),healent:Health()+4))
 					healent:EmitSound("items/smallmedkit1.wav")
 				end
-				return .5
+				return .5, 4
 			end,
-			[9] = function(healent)
-				if SERVER and IsValid(healent) then
+			[9] = function(healent, noheal)
+				if SERVER and IsValid(healent) and not noheal then
 					healent:SetHealth(math.min(healent:GetMaxHealth(),healent:Health()+1))
 					healent:EmitSound("items/smallmedkit1.wav")
 				end
-				return .5
+				return .5, 1
 			end,
-			[10] = function(healent)
-				if SERVER and IsValid(healent) then
+			[10] = function(healent, noheal)
+				if SERVER and IsValid(healent) and not noheal then
 					healent:SetHealth(math.min(healent:GetMaxHealth(),healent:Health()+50))
 					healent:InflictStatusEffect("Disease",-5,1)
 					healent:EmitSound("items/smallmedkit1.wav")
 				end
-				return 2
+				return 2, 50
 			end,
 		}
 
@@ -3187,7 +3187,6 @@ end
 			tab.vmax = Vector(12,12,12)
 			tab.FireFunc = function(self,item)
 				local healent = self.Owner
-				--local tab = ScavData.models[self.inv.items[1].ammo]
 				local tracep = {}
 				tracep.start = self.Owner:GetShootPos()
 				tracep.endpos = self.Owner:GetShootPos()+self:GetAimVector()*100
@@ -3217,6 +3216,11 @@ end
 				if SERVER then
 					return self:TakeSubammo(item,1)
 				end
+			end
+			tab.ReturnHealth = function(self, item)
+				if not IsValid(self.Owner) then return 0 end
+				local _, heal = medkit[ScavData.models[self.inv.items[1].ammo].Identify[item.ammo]](self.Owner, true)
+				return heal
 			end
 			if SERVER then
 				--Ep2
@@ -3280,7 +3284,6 @@ end
 			tab.vmax = Vector(12,12,12)
 			tab.FireFunc = function(self,item)
 				local healent = self.Owner
-				--local tab = ScavData.models[self.inv.items[1].ammo]
 				local tracep = {}
 				tracep.start = self.Owner:GetShootPos()
 				tracep.endpos = self.Owner:GetShootPos()+self:GetAimVector()*100
@@ -3555,6 +3558,9 @@ end
 					end
 				end
 			end
+			tab.ReturnHealth = function(self, item)
+				return 50
+			end
 			if SERVER then
 				--CSS
 				ScavData.CollectFuncs["models/props/cs_italy/bananna_bunch.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),5,0}} end
@@ -3740,6 +3746,9 @@ end
 						return self:TakeSubammo(item,1)
 					end
 				end
+			end
+			tab.ReturnHealth = function(self, item)
+				return 25
 			end
 			if SERVER then
 				--L4D/2
@@ -6592,10 +6601,10 @@ PrecacheParticleSystem("scav_exp_plasma")
 					}
 					local items = {}
 					if ScavData.FormatModelname(ent:GetModel()) == "models/items/item_item_crate.mdl" then
-						if self.Owner:Health() * 1.3 <= self.Owner:GetMaxHealth() then -- about 76% health or lower
+						if (self.Owner:Health() + self:PotentialHealing()) * 1.3 <= self.Owner:GetMaxHealth() then -- about 76% health or lower
 							table.insert(items,{"models/items/healthkit.mdl",1,0})
 						end
-						if self.Owner:Armor() * 3 <= self.Owner:GetMaxArmor() then
+						if (self.Owner:Armor() + self:PotentialArmor()) * 3 <= self.Owner:GetMaxArmor() then
 							table.insert(items,{"models/items/battery.mdl",1,0})
 						end
 						for i=1,math.random(3) do
@@ -6669,10 +6678,10 @@ PrecacheParticleSystem("scav_exp_plasma")
 						{"models/props_forest/stove01.mdl",20,0},
 					}
 					local items = {}
-					if self.Owner:Health() * 1.3 <= self.Owner:GetMaxHealth() then -- about 76% health or lower
+					if (self.Owner:Health() + self:PotentialHealing()) * 1.3 <= self.Owner:GetMaxHealth() then -- about 76% health or lower
 						table.insert(items,{"models/items/healthkit.mdl",1,0})
 					end
-					if self.Owner:Armor() * 3 <= self.Owner:GetMaxArmor() then
+					if (self.Owner:Armor() + self:PotentialArmor()) * 3 <= self.Owner:GetMaxArmor() then
 						table.insert(items,{"models/items/battery.mdl",1,0})
 					end
 					for i=1,math.random(3) do
@@ -6719,10 +6728,10 @@ PrecacheParticleSystem("scav_exp_plasma")
 					}
 					local items = {}
 					if ScavData.FormatModelname(ent:GetModel()) ~= "models/props_manor/vase_01.mdl" then
-						if self.Owner:Health() * 1.3 <= self.Owner:GetMaxHealth() then -- about 76% health or lower
+						if (self.Owner:Health() + self:PotentialHealing()) * 1.3 <= self.Owner:GetMaxHealth() then -- about 76% health or lower
 							table.insert(items,{"models/items/medkit_small.mdl",1,0})
 						end
-						if self.Owner:Armor() * 3 <= self.Owner:GetMaxArmor() then
+						if (self.Owner:Armor()+ self:PotentialArmor()) * 3  <= self.Owner:GetMaxArmor() then
 							table.insert(items,{"models/pickups/pickup_powerup_defense.mdl",1,0})
 						end
 						for i=0,math.random(3) do

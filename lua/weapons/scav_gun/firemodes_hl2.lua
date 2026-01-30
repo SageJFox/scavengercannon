@@ -790,32 +790,39 @@ local eject = "brass"
 			}
 			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
 			tab.MaxAmmo = 6
+			tab.ReturnArmor = function(self, item)
+				t = ScavData.models[self.inv.items[1].ammo]
+				local amount = {
+					[0] = 15,
+					[1] = 50,
+					[2] = 50,
+					[3] = 25
+				}
+				return amount[t.Identify[item.ammo]]
+			end
 			if SERVER then
 				tab.FireFunc = function(self,item)
-					tab = ScavData.models[self.inv.items[1].ammo]
+					t = ScavData.models[self.inv.items[1].ammo]
 					if self.Owner:Armor() >= self.Owner:GetMaxArmor() then
 						self.Owner:EmitSound("buttons/button11.wav")
 						return false
 					end
+					self.Owner:SetArmor(math.min(self.Owner:GetMaxArmor(), self.Owner:Armor() + t.ReturnArmor(self,item)))
 					local itemfx = {
 						[0] = function(self)
-							self.Owner:SetArmor(math.min(self.Owner:GetMaxArmor(),self.Owner:Armor()+15))
 							self.Owner:EmitSound("items/battery_pickup.wav")
 						end,
 						[1] = function(self)
-							self.Owner:SetArmor(math.min(self.Owner:GetMaxArmor(),self.Owner:Armor()+50))
 							self.Owner:EmitSound( math.random(2) == 1 and "weapons/battalions_backup_red.wav" or "weapons/battalions_backup_blue.wav")
 						end,
 						[2] = function(self)
-							self.Owner:SetArmor(math.min(self.Owner:GetMaxArmor(),self.Owner:Armor()+50))
 							self.Owner:EmitSound("items/powerup_pickup_reduced_damage.wav")
 						end,
 						[3] = function(self)
-							self.Owner:SetArmor(math.min(self.Owner:GetMaxArmor(),self.Owner:Armor()+25))
 							self.Owner:EmitSound("physics/helmet.wav")
 						end,
 					}
-					itemfx[tab.Identify[item.ammo]](self)
+					itemfx[t.Identify[item.ammo]](self)
 					self.Owner:SendHUDOverlay(Color(0,100,255,100),0.25)
 					return self:TakeSubammo(item,1)
 				end
@@ -1759,6 +1766,9 @@ local eject = "brass"
 				end
 				return false
 			end
+			tab.ReturnHealth = function(self, item)
+				return 1 --counting functions already account for subammo
+			end
 			if SERVER then
 				ScavData.CollectFuncs["models/props_combine/health_charger001.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),math.Round(GetConVar("sk_healthcharger"):GetFloat()) or 50,ent:GetSkin()}} end --(default 50) health for chargers
 			end
@@ -1869,6 +1879,9 @@ local eject = "brass"
 						end]]--
 				end
 				return false
+			end
+			tab.ReturnArmor = function(self, item)
+				return 1 --counting functions already account for subammo
 			end
 			if SERVER then
 				ScavData.CollectFuncs["models/props_combine/suit_charger001.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),math.Round(GetConVar("sk_suitcharger"):GetFloat()) or 75,ent:GetSkin()}} end --(default 75) battery for chargers

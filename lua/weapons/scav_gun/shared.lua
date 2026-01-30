@@ -335,6 +335,28 @@ function SWEP:ProcessLinking(item)
 
 end
 
+function SWEP:PotentialHealing()
+	local potential = 0
+	for k, v in ipairs(self.inv.items) do
+		if ScavData.models[v.ammo].ReturnHealth then
+			potential = potential + ScavData.models[v.ammo].ReturnHealth(self, v) * v:GetSubammo()
+		end
+	end
+	--print("potential healing:", potential)
+	return potential
+end
+
+function SWEP:PotentialArmor()
+	local potential = 0
+	for k, v in ipairs(self.inv.items) do
+		if ScavData.models[v.ammo].ReturnArmor then
+			potential = potential + ScavData.models[v.ammo].ReturnArmor(self, v) * v:GetSubammo()
+		end
+	end
+	--print("potential armor:", potential)
+	return potential
+end
+
 if SERVER then
 
 	ScavData.GiveOneOfItem = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()), 1, ent:GetSkin()}} end
