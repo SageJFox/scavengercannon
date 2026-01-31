@@ -59,6 +59,7 @@ local eject = "brass"
 		ScavData.RegisterFiremode(tab,"models/weapons/w_c4_planted.mdl")
 		--TF2
 		ScavData.RegisterFiremode(tab,"models/flag/briefcase.mdl")
+		ScavData.RegisterFiremode(tab,"models/props_doomsday/australium_container.mdl")
 		--DoD:S
 		ScavData.RegisterFiremode(tab,"models/weapons/w_tnt.mdl")
 		--L4D/2
