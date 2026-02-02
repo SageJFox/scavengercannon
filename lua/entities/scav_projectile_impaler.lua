@@ -159,7 +159,7 @@ if SERVER then
 			b_trace.start = self:GetPos()
 			b_trace.endpos = self:GetPos() + vel
 			b_trace.filter = {self, self.Owner}
-			b_trace.mask = MASK_SHOT_HULL
+			b_trace.mask = MASK_SHOT_PORTAL
 			b_trace.mins = self:OBBMins() / 8
 			b_trace.maxs = self:OBBMaxs() / 8
 			b_tr = util.TraceHull(b_trace)
