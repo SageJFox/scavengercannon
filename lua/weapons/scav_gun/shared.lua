@@ -338,7 +338,7 @@ end
 function SWEP:PotentialHealing()
 	local potential = 0
 	for k, v in ipairs(self.inv.items) do
-		if ScavData.models[v.ammo].ReturnHealth then
+		if ScavData.models[v.ammo] and ScavData.models[v.ammo].ReturnHealth then
 			potential = potential + ScavData.models[v.ammo].ReturnHealth(self, v) * v:GetSubammo()
 		end
 	end
@@ -349,7 +349,7 @@ end
 function SWEP:PotentialArmor()
 	local potential = 0
 	for k, v in ipairs(self.inv.items) do
-		if ScavData.models[v.ammo].ReturnArmor then
+		if ScavData.models[v.ammo] and ScavData.models[v.ammo].ReturnArmor then
 			potential = potential + ScavData.models[v.ammo].ReturnArmor(self, v) * v:GetSubammo()
 		end
 	end
