@@ -96,11 +96,11 @@ if SERVER then
 	
 	--HL2
 	offsetmodels["models/crossbow_bolt.mdl"] = {Vector(0,-10,0)}
-	offsetmodels["models/props_junk/harpoon002a.mdl"] = {Vector(0,-30,0)}
+	offsetmodels["models/props_junk/harpoon002a.mdl"] = {Vector(0,-30,0), bit.bor(DMG_BULLET, DMG_AIRBOAT, DMG_BLAST)} --Let harpoons hunt Gunships
 	
 	--CSS
-	offsetmodels["models/weapons/w_knife_ct.mdl"] = {Vector(0,-8,-5), DMG_SLASH}
-	offsetmodels["models/weapons/w_knife_t.mdl"] = {Vector(0,0,-8), DMG_SLASH}
+	offsetmodels["models/weapons/w_knife_ct.mdl"] = {Vector(0,-8,-5), bit.bor(DMG_SLASH, DMG_BULLET)}
+	offsetmodels["models/weapons/w_knife_t.mdl"] = {Vector(0,0,-8), bit.bor(DMG_SLASH, DMG_BULLET)}
 	
 	--TF2
 	offsetmodels["models/weapons/c_models/c_scimitar/c_scimitar.mdl"] = {Vector(0,-15,0), DMG_SLASH}
@@ -110,23 +110,23 @@ if SERVER then
 	offsetmodels["models/workshop/weapons/c_models/c_croc_knife/c_croc_knife.mdl"] = {Vector(0,-15,0), DMG_SLASH}
 	offsetmodels["models/weapons/c_models/c_wood_machete/c_wood_machete.mdl"] = {Vector(0,-15,0), DMG_SLASH}
 	offsetmodels["models/workshop/weapons/c_models/c_wood_machete/c_wood_machete.mdl"] = {Vector(0,-15,0), DMG_SLASH}
-	offsetmodels["models/weapons/w_models/w_knife.mdl"] = {Vector(0,0,-8), DMG_SLASH}
+	offsetmodels["models/weapons/w_models/w_knife.mdl"] = {Vector(0,0,-8), bit.bor(DMG_SLASH, DMG_BULLET)}
 	offsetmodels["models/workshop_partner/weapons/c_models/c_prinny_knife/c_prinny_knife.mdl"] = {Vector(0,0,-8), DMG_SLASH}
 	offsetmodels["models/weapons/c_models/c_acr_hookblade/c_acr_hookblade.mdl"] = {Vector(0,0,-8), DMG_SLASH}
-	offsetmodels["models/workshop/weapons/c_models/c_acr_hookblade/c_acr_hookblade.mdl"] = {Vector(0,0,-8), DMG_SLASH}
-	offsetmodels["models/weapons/c_models/c_ava_roseknife/c_ava_roseknife.mdl"] = {Vector(0,0,-8), DMG_SLASH}
-	offsetmodels["models/weapons/c_models/c_ava_roseknife/c_ava_roseknife_v.mdl"] = {Vector(0,0,-8), DMG_SLASH}
-	offsetmodels["models/workshop/weapons/c_models/c_ava_roseknife/c_ava_roseknife.mdl"] = {Vector(0,0,-8), DMG_SLASH}
-	offsetmodels["models/weapons/c_models/c_switchblade/c_switchblade.mdl"] = {Vector(0,0,-8), DMG_SLASH}
-	offsetmodels["models/workshop/weapons/c_models/c_switchblade/c_switchblade.mdl"] = {Vector(0,0,-8), DMG_SLASH}
+	offsetmodels["models/workshop/weapons/c_models/c_acr_hookblade/c_acr_hookblade.mdl"] = {Vector(0,0,-8), bit.bor(DMG_SLASH, DMG_BULLET)}
+	offsetmodels["models/weapons/c_models/c_ava_roseknife/c_ava_roseknife.mdl"] = {Vector(0,0,-8), bit.bor(DMG_SLASH, DMG_BULLET)}
+	offsetmodels["models/weapons/c_models/c_ava_roseknife/c_ava_roseknife_v.mdl"] = {Vector(0,0,-8), bit.bor(DMG_SLASH, DMG_BULLET)}
+	offsetmodels["models/workshop/weapons/c_models/c_ava_roseknife/c_ava_roseknife.mdl"] = {Vector(0,0,-8), bit.bor(DMG_SLASH, DMG_BULLET)}
+	offsetmodels["models/weapons/c_models/c_switchblade/c_switchblade.mdl"] = {Vector(0,0,-8), bit.bor(DMG_SLASH, DMG_BULLET)}
+	offsetmodels["models/workshop/weapons/c_models/c_switchblade/c_switchblade.mdl"] = {Vector(0,0,-8), bit.bor(DMG_SLASH, DMG_BULLET)}
 	offsetmodels["models/weapons/c_models/c_sd_cleaver/c_sd_cleaver.mdl"] = {Vector(0,0,-8), DMG_SLASH}
 	offsetmodels["models/weapons/c_models/c_sd_cleaver/v_sd_cleaver.mdl"] = {Vector(0,0,-8), DMG_SLASH}
 	offsetmodels["models/workshop_partner/weapons/c_models/c_sd_cleaver/c_sd_cleaver.mdl"] = {Vector(0,0,-8), DMG_SLASH}
 	offsetmodels["models/workshop_partner/weapons/c_models/c_sd_cleaver/v_sd_cleaver.mdl"] = {Vector(0,0,-8), DMG_SLASH}
-	offsetmodels["models/weapons/c_models/c_shogun_kunai/c_shogun_kunai.mdl"] = {Vector(0,0,-8), DMG_SLASH}
-	offsetmodels["models/weapons/c_models/c_voodoo_pin/c_voodoo_pin.mdl"] = {Vector(0,0,-8), DMG_SLASH}
-	offsetmodels["models/workshop/weapons/c_models/c_voodoo_pin/c_voodoo_pin.mdl"] = {Vector(0,0,-8), DMG_SLASH}
-	offsetmodels["models/weapons/c_models/c_eternal_reward/c_eternal_reward.mdl"] = {Vector(0,0,-8), DMG_SLASH}
+	offsetmodels["models/weapons/c_models/c_shogun_kunai/c_shogun_kunai.mdl"] = {Vector(0,0,-8), bit.bor(DMG_SLASH, DMG_BULLET)}
+	offsetmodels["models/weapons/c_models/c_voodoo_pin/c_voodoo_pin.mdl"] = {Vector(0,0,-8), bit.bor(DMG_SLASH, DMG_BULLET)}
+	offsetmodels["models/workshop/weapons/c_models/c_voodoo_pin/c_voodoo_pin.mdl"] = {Vector(0,0,-8), bit.bor(DMG_SLASH, DMG_BULLET)}
+	offsetmodels["models/weapons/c_models/c_eternal_reward/c_eternal_reward.mdl"] = {Vector(0,0,-8), bit.bor(DMG_SLASH, DMG_BULLET)}
 	offsetmodels["models/weapons/c_models/c_claymore/c_claymore.mdl"] = {Vector(0,0,-20), DMG_SLASH}
 	offsetmodels["models/weapons/c_models/c_claymore/c_claymore_xmas.mdl"] = {Vector(0,0,-20), DMG_SLASH}
 	offsetmodels["models/weapons/c_models/c_scout_sword/c_scout_sword.mdl"] = {Vector(0,0,-20), DMG_SLASH}
@@ -143,7 +143,7 @@ if SERVER then
 	offsetmodels["models/weapons/melee/w_pitchfork.mdl"] = {Vector(0,0,-30), DMG_SLASH}
 	
 	--Lost Coast
-	offsetmodels["models/lostcoast/fisherman/harpoon.mdl"] = {Vector(0,0,-20)}
+	offsetmodels["models/lostcoast/fisherman/harpoon.mdl"] = {Vector(0,0,-20), bit.bor(DMG_BULLET, DMG_AIRBOAT, DMG_BLAST)}
 	
 	local b_trace 	= {}
 	local b_tr 		= {}
@@ -193,7 +193,7 @@ if SERVER then
                 self.Trail:Fire("Kill",1,1)
             end
 
-			if hitsky or not self:IsInWorld() or not ent then
+			if hitsky or (not self:IsInWorld() and not ent) then
 				self:SetNoDraw(true)
 				self:Remove()
 			end
@@ -256,7 +256,7 @@ if SERVER then
 
 			dmg:SetDamagePosition(hitpos)
 			dmg:SetDamageForce(self.Vel * 10)
-            dmg:SetDamageType(DMG_SLASH)
+            dmg:SetDamageType(self.ImpactDamageType or DMG_SLASH)
             dmg:SetDamage(self.DmgAmt)
 
             efdata = EffectData()
@@ -273,7 +273,7 @@ if SERVER then
                 local tracew = {}
                 tracew.start = hitpos
                 tracew.endpos = hitpos + (self.Vel * (self:GetLength()/500 or 0.1))
-                tracew.mask = MASK_SHOT_HULL
+                tracew.mask = (not self.ImpactDamageType or bit.band(self.ImpactDamageType, DMG_BULLET)) and MASK_SHOT_PORTAL or MASK_SHOT_HULL
 
                 tracew.filter = function(tr_ent)
                     if tr_ent ~= ent then
