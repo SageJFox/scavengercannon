@@ -285,6 +285,10 @@ if SERVER then
 
                 if self.DmgAmt >= ent:Health() and trw.Hit and not self.NoPin then
 
+					if ent:IsNPC() then
+						gamemode.Call("OnNPCKilled",ent, dmg:GetAttacker(), dmg:GetInflictor())
+					end
+
                     local pos = hitpos
                     local offpos = pos - (hitpos - trw.HitPos)
 
@@ -372,6 +376,7 @@ if SERVER then
                                     oldrag:Remove()
                                 end
                             else
+                                ent:DropWeapon()
                                 ent:Remove()
                             end
 
