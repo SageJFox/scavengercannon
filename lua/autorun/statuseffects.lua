@@ -12,6 +12,7 @@
 --damage fix
 DMG_FREEZE = 16
 DMG_CHEMICAL = 1048576
+DMG_SLOWFREEZE = 4194304
 
 AddCSLuaFile()
 
@@ -578,20 +579,26 @@ local STATUS = {}
 			self:NextThink(CurTime()+0.01)
 			return true
 		end
-		local noshatter = {DMG_FREEZE, DMG_SLOWFREEZE, DMG_ENERGYBEAM, DMG_DIRECT, DMG_BURN, DMG_SLOWBURN, DMG_POISON, DMG_RADIATION, DMG_PARALYZE, DMG_DROWN, DMG_DROWNRECOVER, DMG_NERVEGAS, DMG_CHEMICAL}
+		local shatter = bit.bnot(bit.bor(DMG_FREEZE, DMG_SLOWFREEZE, DMG_ENERGYBEAM, --[[DMG_DIRECT,]] DMG_BURN, DMG_SLOWBURN, DMG_POISON, DMG_RADIATION, DMG_PARALYZE, DMG_DROWN, DMG_DROWNRECOVER, DMG_NERVEGAS, DMG_CHEMICAL))
 		hook.Add("EntityTakeDamage","FrozenDmg",function(ent,dmginfo)
-			if ent.Status_frozen and not table.HasValue(noshatter,dmginfo:GetDamageType()) then
+			if not ent.Status_frozen then return end
+			--greatly increase damage from a "shattering" type
+			if bit.band(shatter, dmginfo:GetDamageType()) > 0 then
 				dmginfo:ScaleDamage(10)
 			end
-			if ent.Status_frozen and ((dmginfo:GetDamageType() == DMG_DIRECT) or (dmginfo:GetDamageType() == DMG_BURN) or (dmginfo:GetDamageType() == DMG_SLOWBURN)) then
-				ent:InflictStatusEffect("Frozen",-1,1)
-				ent:InflictStatusEffect("Acid",1,0.025) --sizzle
+			--melt ice, no damage
+			if bit.band(dmginfo:GetDamageType(), bit.bor(--[[DMG_DIRECT,]] DMG_BURN, DMG_SLOWBURN)) > 0 then
+				ent:InflictStatusEffect("Frozen", -1 * dmginfo:GetDamage(), 1)
+				ent:InflictStatusEffect("Acid", 1, 0.025) --sizzle
+				if ent:GetStatusEffect("Frozen") then return true end
+
+			end
+			--ignore further freeze damage
+			if bit.band(dmginfo:GetDamageType(), DMG_FREEZE) > 0 and not dmginfo:GetInflictor():IsVehicle() then
 				return true
 			end
-			if ent.Status_frozen and (dmginfo:GetDamageType() == DMG_FREEZE) then
-				return true
-			end
-			if ent.Status_frozen and (ent:IsNPC() or ent:IsNextBot()) and (dmginfo:GetDamage() > ent:Health()) then
+			--shatter NPCs on kill
+			if (ent:IsNPC() or ent:IsNextBot()) and (dmginfo:GetDamage() > ent:Health()) then
 				if ent:IsNPC() then
 					ent:SetSchedule(SCHED_NONE)
 				end
@@ -641,45 +648,46 @@ local STATUS = {}
 			end
 			return
 		end)
-		hook.Add("PlayerDeath","FreezeShatter",function(pl,inflictor,attacker)
-			if pl.Status_frozen then
-				local self = pl.Status_frozen
-				pl:EmitSound("physics/glass/glass_sheet_break1.wav")
-				local rag = ents.Create("prop_ragdoll")
-				rag:SetModel(pl:GetModel())
-				rag:SetPos(pl:GetPos())
-				rag:SetAngles(pl:GetAngles())
-				rag:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
-				rag:Spawn()
-				for i=0,rag:GetPhysicsObjectCount()-1 do
-					local bone = rag:TranslatePhysBoneToBone(i)
-					local phys = rag:GetPhysicsObjectNum(i)
-					if phys then
-						local bpos,bang = pl:GetBonePosition(bone)
-						local data = EffectData()
-						if bpos then
-							data:SetOrigin(bpos)
-							data:SetStart(pl:GetVelocity():GetNormalized()*100)
-						end
-						if bang then
-							data:SetNormal(bang:Forward())
-						end
-						util.Effect("ef_frozen_chunk",data)
+		--shatter players on kill
+		local function plyfreezeshatter(pl, inflictor, attacker)
+			if not pl.Status_frozen then return end
+			pl:EmitSound("physics/glass/glass_sheet_break1.wav")
+			local rag = ents.Create("prop_ragdoll")
+			rag:SetModel(pl:GetModel())
+			rag:SetPos(pl:GetPos())
+			rag:SetAngles(pl:GetAngles())
+			rag:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
+			rag:Spawn()
+			for i=0,rag:GetPhysicsObjectCount()-1 do
+				local bone = rag:TranslatePhysBoneToBone(i)
+				local phys = rag:GetPhysicsObjectNum(i)
+				if phys then
+					local bpos,bang = pl:GetBonePosition(bone)
+					local data = EffectData()
+					if bpos then
+						data:SetOrigin(bpos)
+						data:SetStart(pl:GetVelocity():GetNormalized() * 100)
 					end
-				end
-				rag:Remove()
-				if IsValid(self.Owner:GetRagdollEntity()) then
-					pl:GetRagdollEntity():Remove()
+					if bang then
+						data:SetNormal(bang:Forward())
+					end
+					util.Effect("ef_frozen_chunk", data)
 				end
 			end
-		end)
+			rag:Remove()
+			if IsValid(pl:GetRagdollEntity()) then
+				pl:GetRagdollEntity():Remove()
+			end
+		end
+		hook.Add("PlayerDeath", "FreezeShatter", plyfreezeshatter)
+		hook.Add("PlayerSilentDeath", "FreezeShatter", plyfreezeshatter)
 	end
 	
 	function STATUS:Finish()
 		if not IsValid(self.Owner) then
 			return
 		end
-		self.Owner.Status_frozen = false
+		self.Owner.Status_frozen = nil
 		if SERVER then
 			if not self.Owner:GetStatusEffect("Acid") then
 				self.Owner:EmitSound("physics/glass/glass_sheet_break1.wav")
@@ -833,16 +841,16 @@ local STATUS = {}
 		end
 	end
 	if SERVER then
-		hook.Add("EntityTakeDamage","FireDmg",function(ent,dmginfo)
-			if ent:GetStatusEffect("Burning") and dmginfo:GetDamageType() == DMG_FREEZE and not dmginfo:GetInflictor():IsVehicle() then --Note that DMG_FREEZE is the same as DMG_VEHICLE!
-				ent:InflictStatusEffect("Burning",-1,1)
-				ent:InflictStatusEffect("Acid",1,0.025) --sizzle
+		hook.Add("EntityTakeDamage", "ScavFireDmg", function(ent,dmginfo)
+			if ent:GetStatusEffect("Burning") and bit.band(dmginfo:GetDamageType(), DMG_FREEZE) > 0 and not dmginfo:GetInflictor():IsVehicle() then --Note that DMG_FREEZE is the same as DMG_VEHICLE!
+				ent:InflictStatusEffect("Burning",dmginfo:GetDamage() or 1 * -1,1)
+				ent:InflictStatusEffect("Acid", 1, 0.025) --sizzle
 				return true
 			end
 			return
 		end)
 
-		hook.Add("Touch","FireTouch",function(ent) --TODO: only seems to be called for props with it enabled in their flags.
+		hook.Add("Touch", "ScavFireTouch", function(ent) --TODO: only seems to be called for props with it enabled in their flags.
 				local dmg = DamageInfo()
 					dmg:SetDamageType(DMG_BURN)
 					dmg:SetInflictor(self)
@@ -856,8 +864,8 @@ local STATUS = {}
 		if SERVER then
 			self.Owner:ExtinguishOld()
 		end
-		hook.Remove("EntityTakeDamage","FireDmg")
-		hook.Remove("Touch","FireTouch")
+		hook.Remove("EntityTakeDamage", "ScavFireDmg")
+		hook.Remove("Touch", "ScavFireTouch")
 	end
 	
 	function STATUS:Add(duration,value)
@@ -1318,9 +1326,12 @@ if CLIENT then
 			render.SetColorModulation(0.68,0.88,1)
 			render.SetBlend(0.6)
 			render.MaterialOverride(matfreeze)
-			for k,v in ipairs(ents.GetAll()) do
+			for k, v in ipairs(ents.GetAll()) do
 				if v:GetStatusEffect("Frozen") then
 					v:DrawModel()
+					for _, a in ipairs(v:GetChildren()) do
+						if IsValid(a) then a:DrawModel() end
+					end
 				end
 			end
 			render.SetColorModulation(1,1,1)

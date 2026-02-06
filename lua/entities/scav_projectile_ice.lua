@@ -55,7 +55,7 @@ if SERVER then
 		local pos = self:GetPos()
 		dmg:SetDamagePosition(self:GetPos())
 		dmg:SetDamageForce(vector_origin)
-		dmg:SetDamageType(DMG_ENERGYBEAM)
+		dmg:SetDamageType(DMG_FREEZE)
 		if not hitent.Status_frozen then
 			dmg:SetDamage(math.min(hitent:Health()-1,35))
 		else

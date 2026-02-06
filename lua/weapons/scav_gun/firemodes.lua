@@ -399,9 +399,11 @@ end
 					return self:TakeSubammo(item,1)
 				end
 				ScavData.CollectFuncs["models/maxofs2d/hover_classic.mdl"] = ScavData.GiveOneOfItemInf
+				ScavData.CollectFuncs["models/xqm/rails/gumball_1.mdl"] = ScavData.GiveOneOfItemInf
 				--TF2
 				ScavData.CollectFuncs["models/weapons/c_models/c_xms_cold_shoulder/c_xms_cold_shoulder.mdl"] = function(self,ent) return {{self.christmas and "models/workshop/weapons/c_models/c_xms_cold_shoulder/c_xms_cold_shoulder_festivizer.mdl" or ScavData.FormatModelname(ent:GetModel()),SCAV_SHORT_MAX,ent:GetSkin()}} end
 				ScavData.CollectFuncs["models/workshop/weapons/c_models/c_xms_cold_shoulder/c_xms_cold_shoulder.mdl"] = ScavData.CollectFuncs["models/weapons/c_models/c_xms_cold_shoulder/c_xms_cold_shoulder.mdl"]
+				ScavData.CollectFuncs["models/workshop/weapons/c_models/c_xms_cold_shoulder/c_xms_cold_shoulder_festivizer.mdl"] = ScavData.GiveOneOfItemInf
 				--CSS
 				ScavData.CollectFuncs["models/props/cs_office/snowman_body.mdl"] = ScavData.GiveOneOfItemInf
 				ScavData.CollectFuncs["models/props/cs_office/snowman_face.mdl"] = ScavData.GiveOneOfItemInf
@@ -414,6 +416,7 @@ end
 			end
 			tab.Cooldown = 1
 		ScavData.RegisterFiremode(tab,"models/maxofs2d/hover_classic.mdl")
+		ScavData.RegisterFiremode(tab,"models/xqm/rails/gumball_1.mdl")
 		--TF2
 		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_xms_cold_shoulder/c_xms_cold_shoulder.mdl")
 		ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_xms_cold_shoulder/c_xms_cold_shoulder.mdl")
