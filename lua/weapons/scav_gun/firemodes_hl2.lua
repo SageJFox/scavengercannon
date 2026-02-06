@@ -791,7 +791,7 @@ local eject = "brass"
 			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
 			tab.MaxAmmo = 6
 			tab.ReturnArmor = function(self, item)
-				t = ScavData.models[self.inv.items[1].ammo]
+				local t = ScavData.models[item.ammo]
 				local amount = {
 					[0] = 15,
 					[1] = 50,
