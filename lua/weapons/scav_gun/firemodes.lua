@@ -5067,29 +5067,25 @@ PrecacheParticleSystem("scav_exp_plasma")
 							local pos = tr.HitPos*1
 							local ice = NULL
 							local model = "models/scav/iceplatform.mdl"
-							for k,v in ipairs(ents.FindInSphere(pos,10)) do
-								if v:GetModel() and (model == string.lower(v:GetModel())) then
+							for _, v in ipairs(ents.FindInSphere(pos, 8)) do
+								if v:GetClass() == "scav_iceplatform" then
 									ice = v
-									break
+									-- Refresh nearby ice platforms
+									v:NextThink(CurTime() + v.LifeTime)
 								end
 							end
 							if not IsValid(ice) then
 								ice = ents.Create("scav_iceplatform")
-								ice:SetModel(model)
 								ice:SetPos(pos)
-								ice:SetAngles(Angle(0,math.random(0,360),0))
-								ice:SetMaterial("models/shiny")
-								ice:SetColor(Color(175,227,255,200))
-								ice:SetRenderMode(RENDERMODE_TRANSALPHA)
 								ice:Spawn()
-								ice.StatusImmunities = {["Frozen"] = true}
-								ice.NoScav = true
-								ice:GetPhysicsObject():SetMaterial("gmod_ice")
-								ice:SetMoveType(MOVETYPE_NONE)
 							end
 						end
 						if not (tr.Entity:IsPlayer() or tr.Entity:IsNPC() or tr.Entity:IsNextBot()) then
 							self:SetPiercing(false)
+						end
+						-- Refresh hit ice platforms
+						if IsValid(tr.Entity) and tr.Entity:GetClass() == "scav_iceplatform" then
+							tr.Entity:NextThink(CurTime() + tr.Entity.LifeTime)
 						end
 						return
 					end

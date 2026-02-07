@@ -16,6 +16,7 @@ PrecacheParticleSystem("scav_exp_ice")
 function ENT:OnInit()
 	if SERVER then
 		self.lastupdate = CurTime()
+		self.Submerged = self:WaterLevel() > 2
 	else
 		ParticleEffectAttach("scav_ice_1",PATTACH_ABSORIGIN_FOLLOW,self,0)
 	end
@@ -51,6 +52,10 @@ if SERVER then
 		if IsValid(hitent) and hitent:GetClass() == "phys_bone_follower" then
 			hitent = hitent:GetOwner()
 		end
+		if hitent:GetClass() == "scav_iceplatform" then
+			hitent:NextThink(CurTime() + hitent.LifeTime) 
+			return true
+		end
 		local dmg = DamageInfo()
 		local pos = self:GetPos()
 		dmg:SetDamagePosition(self:GetPos())
@@ -75,4 +80,29 @@ if SERVER then
 		return true
 	end
 
+	--Create a platform on the surface
+	--TODO: this is bad and there has to be a better way to do it, but I can't find it and have already spent hours on this
+	function ENT:Think()
+		if not self.Submerged and self:WaterLevel() > 1 and self.prevpos then
+			local findsurface = {}
+				findsurface.start = self.prevpos
+				findsurface.endpos = self:GetPos()
+				findsurface.filter = {self, self.Owner}
+				findsurface.mask = CONTENTS_WATER
+
+			local tr = util.TraceLine(findsurface)
+			print(tr.HitTexture)
+			debugoverlay.Line(tr.StartPos, findsurface.endpos, 2, Color(0,0,255), true)
+			debugoverlay.Cross(tr.HitPos, 16, 2, Color(0,0,255), true)
+			if tr.FractionLeftSolid < 1 then
+				local ice = ents.Create("scav_iceplatform")
+				if IsValid(ice) then
+					ice:SetPos(tr.HitPos)
+					ice:Spawn()
+					self:Remove()
+				end
+			end
+		end
+		self.prevpos = self:GetPos()
+	end
 end

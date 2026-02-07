@@ -130,9 +130,7 @@ if SERVER then
 				physobj:EnableMotion(false)
 				self.CollisionPos = self:GetPos()
 			end
-			if not self.hashit then
-				timer.Simple(0, function() self:ProcessImpact(data.HitEntity) end)
-			end
+			timer.Simple(0, function() self:ProcessImpact(data.HitEntity) end)
 		end
 	end
 
