@@ -91,7 +91,7 @@ if SERVER then
 				findsurface.mask = CONTENTS_WATER
 
 			local tr = util.TraceLine(findsurface)
-			print(tr.HitTexture)
+			--print(tr.HitTexture)
 			debugoverlay.Line(tr.StartPos, findsurface.endpos, 2, Color(0,0,255), true)
 			debugoverlay.Cross(tr.HitPos, 16, 2, Color(0,0,255), true)
 			if tr.FractionLeftSolid < 1 then
