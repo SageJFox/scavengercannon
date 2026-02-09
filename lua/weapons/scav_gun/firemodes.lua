@@ -3237,7 +3237,7 @@ end
 			end
 			tab.ReturnHealth = function(self, item)
 				if not IsValid(self.Owner) then return 0 end
-				local _, heal = medkit[ScavData.models[self.inv.items[1].ammo].Identify[item.ammo]](self.Owner, true)
+				local _, heal = medkit[ScavData.models[item.ammo].Identify[item.ammo]](self.Owner, true)
 				return heal
 			end
 			if SERVER then
