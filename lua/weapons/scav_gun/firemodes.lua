@@ -532,7 +532,7 @@ end
 						self.Owner:EmitSound("ambient/machines/catapult_throw.wav")
 					
 
-					elseif item.ammo == "models/props_junk/harpoon002a.mdl" then
+					elseif item.ammo == "models/props_junk/harpoon002a.mdl" or item.ammo == "models/lostcoast/fisherman/harpoon.mdl" then
 						self.Owner:EmitSound("ambient/machines/catapult_throw.wav")
 						proj.DmgAmt = 100
 					end
@@ -790,6 +790,11 @@ end
 				ScavData.CollectFuncs["models/props_trainyard/bomb_cart.mdl"] = function(self,ent) return {{"models/props_trainyard/cart_bomb_separate.mdl",1,0}} end
 				ScavData.CollectFuncs["models/props_trainyard/bomb_cart_red.mdl"] = ScavData.CollectFuncs["models/props_trainyard/bomb_cart.mdl"]
 				ScavData.CollectFuncs["models/custom/dirty_bomb_cart.mdl"] = ScavData.CollectFuncs["models/props_trainyard/bomb_cart.mdl"]
+				ScavData.CollectFuncs["models/xqm/jetbody3.mdl"] = function(self,ent) return {{"models/props_phx/amraam.mdl",1,0,4}} end
+				ScavData.CollectFuncs["models/xqm/jetbody3_s2.mdl"] = ScavData.CollectFuncs["models/xqm/jetbody3.mdl"]
+				ScavData.CollectFuncs["models/xqm/jetbody3_s3.mdl"] = ScavData.CollectFuncs["models/xqm/jetbody3.mdl"]
+				ScavData.CollectFuncs["models/xqm/jetbody3_s4.mdl"] = ScavData.CollectFuncs["models/xqm/jetbody3.mdl"]
+				ScavData.CollectFuncs["models/xqm/jetbody3_s5.mdl"] = ScavData.CollectFuncs["models/xqm/jetbody3.mdl"]
 			end
 			tab.Cooldown = 5
 		ScavData.RegisterFiremode(tab,"models/props_phx/misc/flakshell_big.mdl")
@@ -974,6 +979,7 @@ end
 			local identify = {
 				--[Coffee] = 0,
 				--[[Drink]]["models/props_junk/garbage_energydrinkcan001a.mdl"] = 1,
+				["models/mechanics/various/211.mdl"] = 1,
 				["models/weapons/c_models/c_energy_drink/c_energy_drink.mdl"] = 1,
 				["models/weapons/c_models/c_xms_energy_drink/c_xms_energy_drink.mdl"] = 1,
 				--[[Needle]]["models/props_junk/garbage_syringeneedle001a.mdl"] = 2,
@@ -1059,6 +1065,7 @@ end
 		ScavData.RegisterFiremode(tab,"models/items/powerup_speed.mdl")
 		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_syringeneedle001a.mdl")
 		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_energydrinkcan001a.mdl")
+		ScavData.RegisterFiremode(tab,"models/mechanics/various/211.mdl")
 		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_coffeemug001a.mdl")
 		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_plasticbottle003a.mdl")
 		ScavData.RegisterFiremode(tab,"models/props_junk/shoe001a.mdl")
@@ -1814,7 +1821,9 @@ end
 					return self:TakeSubammo(item,1)
 				end
 								
-				ScavData.CollectFuncs["models/props_c17/substation_transformer01d.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),15,ent:GetSkin()}} end
+				ScavData.CollectFuncs["models/props_c17/substation_transformer01b.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),15,ent:GetSkin()}} end
+				ScavData.CollectFuncs["models/props_c17/substation_transformer01c.mdl"] = ScavData.CollectFuncs["models/props_c17/substation_transformer01b.mdl"]
+				ScavData.CollectFuncs["models/props_c17/substation_transformer01d.mdl"] = ScavData.CollectFuncs["models/props_c17/substation_transformer01b.mdl"]
 				ScavData.CollectFuncs["models/weapons/w_stunbaton.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),8,ent:GetSkin()}} end
 				ScavData.CollectFuncs["models/props_c17/consolebox01a.mdl"] = ScavData.CollectFuncs["models/weapons/w_stunbaton.mdl"]
 				ScavData.CollectFuncs["models/props_c17/consolebox03a.mdl"] = ScavData.CollectFuncs["models/props_c17/consolebox01a.mdl"]
@@ -1826,6 +1835,11 @@ end
 				ScavData.CollectFuncs["models/props_lab/powerbox02c.mdl"] = ScavData.CollectFuncs["models/props_c17/consolebox01a.mdl"]
 				ScavData.CollectFuncs["models/props_lab/powerbox02d.mdl"] = ScavData.CollectFuncs["models/props_c17/consolebox01a.mdl"]
 				ScavData.CollectFuncs["models/props_lab/powerbox03a.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),5,ent:GetSkin()}} end
+				ScavData.CollectFuncs["models/props_canal/generator01.mdl"] = ScavData.GiveOneOfItemInf
+				ScavData.CollectFuncs["models/props_canal/generator02.mdl"] = ScavData.GiveOneOfItemInf
+				ScavData.CollectFuncs["models/props_c17/substation_transformer01a.mdl"] = ScavData.GiveOneOfItemInf
+				--CSS
+				ScavData.CollectFuncs["models/props/de_prodigy/transformer.mdl"] = ScavData.GiveOneOfItemInf
 				--TF2
 				ScavData.CollectFuncs["models/weapons/c_models/c_drg_pomson/c_drg_pomson.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),4,0}} end --TODO: put pomson on its own firemode. Don't forget cloak drain!
 				ScavData.CollectFuncs["models/workshop/weapons/c_models/c_drg_pomson/c_drg_pomson.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),4,0}} end
@@ -1847,6 +1861,8 @@ end
 			end
 			tab.Cooldown = 0.5
 			
+		ScavData.RegisterFiremode(tab,"models/props_c17/substation_transformer01b.mdl")
+		ScavData.RegisterFiremode(tab,"models/props_c17/substation_transformer01c.mdl")
 		ScavData.RegisterFiremode(tab,"models/props_c17/substation_transformer01d.mdl")
 		ScavData.RegisterFiremode(tab,"models/weapons/w_stunbaton.mdl")
 		ScavData.RegisterFiremode(tab,"models/props_c17/consolebox01a.mdl")
@@ -1859,6 +1875,11 @@ end
 		ScavData.RegisterFiremode(tab,"models/props_lab/powerbox02c.mdl")
 		ScavData.RegisterFiremode(tab,"models/props_lab/powerbox02d.mdl")
 		ScavData.RegisterFiremode(tab,"models/props_lab/powerbox03a.mdl")
+		ScavData.RegisterFiremode(tab,"models/props_canal/generator01.mdl")
+		ScavData.RegisterFiremode(tab,"models/props_canal/generator02.mdl")
+		ScavData.RegisterFiremode(tab,"models/props_c17/substation_transformer01a.mdl")
+		--CSS
+		ScavData.RegisterFiremode(tab,"models/props/de_prodigy/transformer.mdl")
 		--TF2
 		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_drg_pomson/c_drg_pomson.mdl")
 		ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_drg_pomson/c_drg_pomson.mdl")
@@ -2507,6 +2528,7 @@ end
 				ScavData.CollectFuncs["models/props_wasteland/cranemagnet01a.mdl"] = ScavData.GiveOneOfItemInf
 				--TF2
 				ScavData.CollectFuncs["models/props_mining/cranehook001.mdl"] = ScavData.GiveOneOfItemInf
+				ScavData.CollectFuncs["models/props_trainyard/pulley_block001.mdl"] = ScavData.GiveOneOfItemInf
 				ScavData.CollectFuncs["models/props_forest/claw.mdl"] = ScavData.GiveOneOfItemInf
 				--L4D/2
 				ScavData.CollectFuncs["models/infected/smoker.mdl"] = ScavData.CollectFuncs["models/props_wasteland/cranemagnet01a.mdl"]
@@ -2560,6 +2582,7 @@ end
 		ScavData.RegisterFiremode(tab,"models/props_wasteland/cranemagnet01a.mdl")
 		--TF2
 		ScavData.RegisterFiremode(tab,"models/props_mining/cranehook001.mdl")
+		ScavData.RegisterFiremode(tab,"models/props_trainyard/pulley_block001.mdl")
 		ScavData.RegisterFiremode(tab,"models/props_forest/claw.mdl")
 		--L4D/2
 		ScavData.RegisterFiremode(tab,"models/infected/smoker.mdl")
@@ -2666,6 +2689,7 @@ end
 				ScavData.CollectFuncs["models/weapons/c_models/c_shogun_warhorn/c_shogun_warhorn.mdl"] = ScavData.CollectFuncs["models/weapons/c_models/c_bugle/c_bugle.mdl"]
 				ScavData.CollectFuncs["models/workshop_partner/weapons/c_models/c_shogun_warhorn/c_shogun_warhorn.mdl"] = ScavData.CollectFuncs["models/weapons/c_models/c_shogun_warhorn/c_shogun_warhorn.mdl"]
 				ScavData.CollectFuncs["models/props_spytech/intercom.mdl"] = ScavData.CollectFuncs["models/props/food_can/food_can.mdl"]
+				ScavData.CollectFuncs["models/props_sunshine/bell001.mdl"] = ScavData.CollectFuncs["models/props_spytech/fire_bell01.mdl"]
 				--L4D2
 				ScavData.CollectFuncs["models/props_fairgrounds/amp_plexi.mdl"] = ScavData.CollectFuncs["models/props/cs_office/radio.mdl"]
 				ScavData.CollectFuncs["models/props_fairgrounds/amp_stack.mdl"] = ScavData.CollectFuncs["models/props_fairgrounds/amp_plexi.mdl"]
@@ -2697,11 +2721,20 @@ end
 		ScavData.RegisterFiremode(tab,"models/props/de_inferno/bell_largeb.mdl")
 		ScavData.RegisterFiremode(tab,"models/props/de_inferno/bell_small.mdl")
 		ScavData.RegisterFiremode(tab,"models/props/de_inferno/bell_smallb.mdl")
+		--TF2
+		ScavData.RegisterFiremode(tab,"models/props_spytech/fire_bell01.mdl")
+		ScavData.RegisterFiremode(tab,"models/props_spytech/fire_bell02.mdl")
+		ScavData.RegisterFiremode(tab,"models/props_spytech/siren001.mdl")
+		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_bugle/c_bugle.mdl")
+		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_battalion_bugle/c_battalion_bugle.mdl")
+		ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_battalion_bugle/c_battalion_bugle.mdl")
+		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_shogun_warhorn/c_shogun_warhorn.mdl")
+		ScavData.RegisterFiremode(tab,"models/workshop_partner/weapons/c_models/c_shogun_warhorn/c_shogun_warhorn.mdl")
+		ScavData.RegisterFiremode(tab,"models/props_spytech/intercom.mdl")
+		ScavData.RegisterFiremode(tab,"models/props_sunshine/bell001.mdl")
 		--DoD:S
 		ScavData.RegisterFiremode(tab,"models/props_italian/anzio_bell.mdl")
 		ScavData.RegisterFiremode(tab,"models/props_italian/gramophone.mdl")
-		--FoF
-		ScavData.RegisterFiremode(tab,"models/monastery/bell_large.mdl")
 		--L4D2
 		ScavData.RegisterFiremode(tab,"models/props_fairgrounds/amp_plexi.mdl")
 		ScavData.RegisterFiremode(tab,"models/props_fairgrounds/amp_stack.mdl")
@@ -2719,20 +2752,12 @@ end
 		--Portal
 		ScavData.RegisterFiremode(tab,"models/props/radio_reference.mdl")
 		ScavData.RegisterFiremode(tab,"models/props/food_can/food_can.mdl")
-		--TF2
-		ScavData.RegisterFiremode(tab,"models/props_spytech/fire_bell01.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_spytech/fire_bell02.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_spytech/siren001.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_bugle/c_bugle.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_battalion_bugle/c_battalion_bugle.mdl")
-		ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_battalion_bugle/c_battalion_bugle.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_shogun_warhorn/c_shogun_warhorn.mdl")
-		ScavData.RegisterFiremode(tab,"models/workshop_partner/weapons/c_models/c_shogun_warhorn/c_shogun_warhorn.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_spytech/intercom.mdl")
 		--HL:S
 		ScavData.RegisterFiremode(tab,"models/houndeye.mdl")
 		--Portal 2
 		ScavData.RegisterFiremode(tab,"models/props_underground/intercom_panel.mdl")
+		--FoF
+		ScavData.RegisterFiremode(tab,"models/monastery/bell_large.mdl")
 
 --[[==============================================================================================
 	--Gas Canister 
@@ -3581,7 +3606,7 @@ end
 			end
 			if SERVER then
 				--CSS
-				ScavData.CollectFuncs["models/props/cs_italy/bananna_bunch.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),5,0}} end
+				ScavData.CollectFuncs["models/props/cs_italy/bananna_bunch.mdl"] = function(self,ent) return {{"models/props/cs_italy/bananna.mdl",5,0}} end
 				--TF2
 				ScavData.CollectFuncs["models/weapons/c_models/c_sandwich/c_sandwich.mdl"] = function(self,ent) return {{self.christmas and "models/weapons/c_models/c_sandwich/c_sandwich_xmas.mdl" or ScavData.FormatModelname(ent:GetModel()),1,math.random(0,1)}} end
 				ScavData.CollectFuncs["models/items/plate.mdl"] = function(self,ent) return {{self.christmas and "models/items/plate_sandwich_xmas.mdl" or ScavData.FormatModelname(ent:GetModel()),1,math.random(0,1)}} end
@@ -3596,7 +3621,6 @@ end
 		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_milkcarton002a.mdl")
 		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_takeoutcarton001a.mdl")
 		--CSS
-		ScavData.RegisterFiremode(tab,"models/props/cs_italy/bananna_bunch.mdl")
 		ScavData.RegisterFiremode(tab,"models/props/cs_italy/bananna.mdl")
 		--TF2
 		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_sandwich/c_sandwich.mdl")
@@ -3623,6 +3647,7 @@ end
 		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_bread/c_bread_pretzel.mdl")
 		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_bread/c_bread_ration.mdl")
 		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_bread/c_bread_russianblack.mdl")
+		ScavData.RegisterFiremode(tab,"models/props_2fort/lunchbag.mdl")
 		--L4D/2
 		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_takeoutbox01a.mdl")
 		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_cerealbox01a.mdl")
@@ -5104,6 +5129,15 @@ PrecacheParticleSystem("scav_exp_plasma")
 					ScavData.CollectFuncs["models/props_silo/acunit01.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),200,ent:GetSkin()}} end
 					ScavData.CollectFuncs["models/props_silo/acunit02.mdl"] = ScavData.CollectFuncs["models/props_c17/furniturefridge001a.mdl"]
 					ScavData.CollectFuncs["models/props_forest/refrigerator01.mdl"] = ScavData.CollectFuncs["models/props_silo/acunit01.mdl"]
+					--TF2
+					ScavData.CollectFuncs["models/props_soho/acunit001.mdl"] = ScavData.CollectFuncs["models/props_silo/acunit01.mdl"]
+					ScavData.CollectFuncs["models/props_soho/acunit001b.mdl"] = ScavData.CollectFuncs["models/props_silo/acunit01.mdl"]
+					ScavData.CollectFuncs["models/props_soho/acunit002.mdl"] = ScavData.CollectFuncs["models/props_silo/acunit01.mdl"]
+					ScavData.CollectFuncs["models/props_soho/acunit002b.mdl"] = ScavData.CollectFuncs["models/props_silo/acunit01.mdl"]
+					ScavData.CollectFuncs["models/props_soho/acunit003.mdl"] = ScavData.CollectFuncs["models/props_silo/acunit01.mdl"]
+					ScavData.CollectFuncs["models/props_soho/acunit003b.mdl"] = ScavData.CollectFuncs["models/props_silo/acunit01.mdl"]
+					ScavData.CollectFuncs["models/props_soho/acunit004.mdl"] = ScavData.CollectFuncs["models/props_silo/acunit01.mdl"]
+					ScavData.CollectFuncs["models/props_soho/acunit004b.mdl"] = ScavData.CollectFuncs["models/props_silo/acunit01.mdl"]
 					--CSS
 					ScavData.CollectFuncs["models/props/cs_assault/acunit01.mdl"] = ScavData.CollectFuncs["models/props_silo/acunit01.mdl"]
 					ScavData.CollectFuncs["models/props/cs_assault/acunit02.mdl"] = ScavData.CollectFuncs["models/props_silo/acunit02.mdl"]
@@ -5133,6 +5167,15 @@ PrecacheParticleSystem("scav_exp_plasma")
 			ScavData.RegisterFiremode(tab,"models/props_silo/acunit01.mdl")
 			ScavData.RegisterFiremode(tab,"models/props_silo/acunit02.mdl")
 			ScavData.RegisterFiremode(tab,"models/props_forest/refrigerator01.mdl")
+			--TF2
+			ScavData.RegisterFiremode(tab,"models/props_soho/acunit001.mdl")
+			ScavData.RegisterFiremode(tab,"models/props_soho/acunit001b.mdl")
+			ScavData.RegisterFiremode(tab,"models/props_soho/acunit002.mdl")
+			ScavData.RegisterFiremode(tab,"models/props_soho/acunit002b.mdl")
+			ScavData.RegisterFiremode(tab,"models/props_soho/acunit003.mdl")
+			ScavData.RegisterFiremode(tab,"models/props_soho/acunit003b.mdl")
+			ScavData.RegisterFiremode(tab,"models/props_soho/acunit004.mdl")
+			ScavData.RegisterFiremode(tab,"models/props_soho/acunit004b.mdl")
 			--CSS
 			ScavData.RegisterFiremode(tab,"models/props/cs_assault/acunit01.mdl")
 			ScavData.RegisterFiremode(tab,"models/props/cs_assault/acunit02.mdl")
@@ -5649,6 +5692,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 					--L4D/2
 					ScavData.CollectFuncs["models/props_shacks/bug_lamp01.mdl"] = ScavData.CollectFuncs["models/props_swamp/bug_zapper.mdl"]
 					ScavData.CollectFuncs["models/props_c17/substation_circuitbreaker03.mdl"] = ScavData.CollectFuncs["models/props_c17/substation_circuitbreaker01a.mdl"]
+					ScavData.CollectFuncs["models/props_street/phonepole1_tall.mdl"] = ScavData.GiveOneOfItemInf
 					--ASW
 					ScavData.CollectFuncs["models/items/teslacoil/teslacoil.mdl"] = ScavData.CollectFuncs["models/props_c17/utilityconnecter006.mdl"]
 					ScavData.CollectFuncs["models/weapons/mininglaser/mininglaser.mdl"] = ScavData.CollectFuncs["models/props_c17/utilityconnecter006.mdl"]
@@ -5684,6 +5728,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 				--L4D/2
 				ScavData.RegisterFiremode(tab,"models/props_shacks/bug_lamp01.mdl")
 				ScavData.RegisterFiremode(tab,"models/props_c17/substation_circuitbreaker03.mdl")
+				ScavData.RegisterFiremode(tab,"models/props_street/phonepole1_tall.mdl")
 				--ASW
 				ScavData.RegisterFiremode(tab,"models/items/teslacoil/teslacoil.mdl")
 				ScavData.RegisterFiremode(tab,"models/weapons/mininglaser/mininglaser.mdl")
@@ -6797,6 +6842,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 					end
 				end
 				ScavDataCollectCopy("models/props_gameplay/resupply_locker.mdl","models/props_halloween/halloween_gift.mdl")
+				ScavDataCollectCopy("models/props_medieval/medieval_resupply.mdl","models/props_halloween/halloween_gift.mdl")
 				ScavDataCollectCopy("models/items/tf_gift.mdl","models/props_halloween/halloween_gift.mdl")
 				ScavDataCollectCopy("models/props_manor/vase_01.mdl","models/props_halloween/halloween_gift.mdl")
 				--L4D2 Gift
