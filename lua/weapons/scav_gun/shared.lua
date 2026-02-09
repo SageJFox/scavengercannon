@@ -119,7 +119,6 @@ devskins = {
 
 function SWEP:Reskin(steamid)
 	if devskins[steamid] ~= nil then
-		self:SetSubMaterial(0,devskins[steamid])
 		if IsValid(self.Owner:GetViewModel()) and self.Owner:GetActiveWeapon():GetClass() == "scav_gun" then
 			self.Owner:GetViewModel():SetSubMaterial(0,devskins[steamid])
 		end
@@ -1514,7 +1513,12 @@ if CLIENT then
 			self.wmodel:SetParent(self:GetOwner()) --just a heads up, if you parent it to the weapon its pose parameters won't work because of bonemerging to existing bones
 			local meffects = bit.bor(EF_BONEMERGE,EF_NODRAW,EF_NOSHADOW)
 			self.wmodel:AddEffects(meffects)
-			self.wmodel:SetSkin(self:GetSkin())
+			if IsValid(self.Owner) then
+				local steamid = self.Owner:AccountID()
+				if devskins[steamid] ~= nil then
+					self.wmodel:SetSubMaterial(0,devskins[steamid])
+				end
+			end
 		end
 	end
 
