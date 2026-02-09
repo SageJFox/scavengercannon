@@ -4127,6 +4127,21 @@ PrecacheParticleSystem("scav_exp_plasma")
 				["models/npcs/monsters/monster_a_box.mdl"] = 8,
 				["models/npcs/monsters/monster_a_head.mdl"] = 8,
 				--[[Barricade]]["models/props_wasteland/barricade002a.mdl"] = 9,
+				--[[Boat]]["models/props_canal/boat001a.mdl"] = 10,
+				["models/props_canal/boat001b.mdl"] = 10,
+				["models/props_canal/boat002b.mdl"] = 10,
+				["models/props_fairgrounds/swan_boat.mdl"] = 10,
+				["models/props_swamp/row_boat_ref.mdl"] = 10,
+				["models/props_urban/boat002.mdl"] = 10,
+				["models/props_vehicles/boat_covered.mdl"] = 10,
+				["models/props_vehicles/boat_power.mdl"] = 10,
+				["models/props_vehicles/boat_ski.mdl"] = 10,
+				["models/props_vehicles/boat_smash.mdl"] = 10,
+				["models/lostcoast/props_wasteland/boat_wooden01a.mdl"] = 10,
+				["models/lostcoast/props_wasteland/boat_wooden02a.mdl"] = 10,
+				["models/lostcoast/props_wasteland/boat_wooden01a_static.mdl"] = 10,
+				["models/props_italian/boat_wooden03a.mdl"] = 10,
+				["models/leon/boat_normal.mdl"] = 10,
 			}
 			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
 			tab.MaxAmmo = 6
@@ -4192,6 +4207,11 @@ PrecacheParticleSystem("scav_exp_plasma")
 							data.chunks = {"1","2","3","4","5","6"}
 							data.mdl = "models/props_wasteland/barricade002a_chunk0"
 							data.ang:Add(Angle(0,90,0))
+							data.mass = 25
+						end,
+						[10] = function(data)
+							data.chunks = {"1","2","3","4","5","6","7","8"}
+							data.mdl = "models/props_canal/boat001b_chunk0"
 							data.mass = 25
 						end,
 					}
@@ -4262,6 +4282,12 @@ PrecacheParticleSystem("scav_exp_plasma")
 		ScavData.RegisterFiremode(tab,"models/props_debris/concrete_spawnplug001a.mdl")
 		ScavData.RegisterFiremode(tab,"models/props_debris/concrete_column001a_core.mdl")
 		ScavData.RegisterFiremode(tab,"models/props_wasteland/barricade002a.mdl")
+		ScavData.RegisterFiremode(tab,"models/props_canal/boat001a.mdl")
+		ScavData.RegisterFiremode(tab,"models/props_canal/boat001b.mdl")
+		ScavData.RegisterFiremode(tab,"models/props_canal/boat002b.mdl")
+		--Lost Coast
+		ScavData.RegisterFiremode(tab,"models/lostcoast/props_wasteland/boat_wooden01a.mdl")
+		ScavData.RegisterFiremode(tab,"models/lostcoast/props_wasteland/boat_wooden02a.mdl")
 		--CSS
 		ScavData.RegisterFiremode(tab,"models/props/cs_office/plant01.mdl")
 		ScavData.RegisterFiremode(tab,"models/props/de_inferno/flower_barrel.mdl")
@@ -4269,16 +4295,27 @@ PrecacheParticleSystem("scav_exp_plasma")
 		ScavData.RegisterFiremode(tab,"models/props/cs_militia/skylight_glass.mdl")
 		--L4D/2
 		ScavData.RegisterFiremode(tab,"models/props_unique/airport/atlas.mdl")
+		ScavData.RegisterFiremode(tab,"models/props_fairgrounds/swan_boat.mdl")
+		ScavData.RegisterFiremode(tab,"models/props_swamp/row_boat_ref.mdl")
+		ScavData.RegisterFiremode(tab,"models/props_urban/boat002.mdl")
+		ScavData.RegisterFiremode(tab,"models/props_vehicles/boat_covered.mdl")
+		ScavData.RegisterFiremode(tab,"models/props_vehicles/boat_power.mdl")
+		ScavData.RegisterFiremode(tab,"models/props_vehicles/boat_ski.mdl")
+		ScavData.RegisterFiremode(tab,"models/props_vehicles/boat_smash.mdl")
+		ScavData.RegisterFiremode(tab,"models/lostcoast/props_wasteland/boat_wooden01a_static.mdl")
 		--Portal 2
 		ScavData.RegisterFiremode(tab,"models/npcs/turret/turret_skeleton.mdl")
 		ScavData.RegisterFiremode(tab,"models/npcs/turret/turret_backwards.mdl")
 		ScavData.RegisterFiremode(tab,"models/npcs/monsters/monster_a.mdl")
 		ScavData.RegisterFiremode(tab,"models/npcs/monsters/monster_a_box.mdl")
 		ScavData.RegisterFiremode(tab,"models/npcs/monsters/monster_a_head.mdl")
+		--DoD:S
+		ScavData.RegisterFiremode(tab,"models/props_italian/boat_wooden03a.mdl")
 		--FoF
 		if IsMounted(240) then --CSS
 			ScavData.RegisterFiremode(tab,"models/elpaso/plant01.mdl") --Chunks aren't in FoF, prop isn't breakable
 		end
+		ScavData.RegisterFiremode(tab,"models/leon/boat_normal.mdl")
 	
 	
 	
