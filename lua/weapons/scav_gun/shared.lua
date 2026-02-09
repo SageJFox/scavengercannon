@@ -1128,17 +1128,17 @@ if CLIENT then
 
 	hook.Add("ScavScreenDrawOverride","NoOverride", function(self,check)
 		local runcheck = check or false
-		if check then return nil end
+		if runcheck then return nil end
 	end)
 
 	hook.Add("ScavScreenDrawOverrideIdle","NoOverride", function(self,check)
 		local runcheck = check or false
-		if check then return nil end
+		if runcheck then return nil end
 	end)
 
 	hook.Add("ScavScreenDrawOverridePost","NoOverride", function(self,check)
 		local runcheck = check or false
-		if check then return nil end
+		if runcheck then return nil end
 	end)
 
 	hook.Add("ScavScreenDrawOverridePost","RadStatic",function(self)
@@ -1268,7 +1268,7 @@ if CLIENT then
 		end
 	end
 
-		function SWEP:DrawAutoTargetScreen(on)
+	function SWEP:DrawAutoTargetScreen(on)
 		if not GetConVar("cl_scav_colorblindmode"):GetBool() then
 			if on then
 				DrawScreenBKG(greenscr)
@@ -1354,6 +1354,13 @@ if CLIENT then
 			--Screen Draw Override Hook
 			elseif hook.Run("ScavScreenDrawOverride",self,true) then
 				hook.Run("ScavScreenDrawOverride",self)
+			--Screen Draw item function
+			elseif #self.inv.items > 0 and 
+				IsValid(self.inv.items[1]) and 
+				self.inv.items[1].GetFiremodeTable and 
+				self.inv.items[1]:GetFiremodeTable() and 
+				self.inv.items[1]:GetFiremodeTable().Screen then
+					self.inv.items[1]:GetFiremodeTable().Screen(self, self:GetCurrentItem())
 			--Auto-Targeting System screen
 			elseif item and item.Name == "#scav.scavcan.computer" then
 				self:DrawAutoTargetScreen(item.On)
@@ -1401,6 +1408,14 @@ if CLIENT then
 			--Screen Post Draw Hook
 			if hook.Run("ScavScreenDrawOverridePost",self,true) then
 				hook.Run("ScavScreenDrawOverridePost",self)
+			end
+			--Screen Post Draw item function
+			if #self.inv.items > 0 and 
+				IsValid(self.inv.items[1]) and 
+				self.inv.items[1].GetFiremodeTable and 
+				self.inv.items[1]:GetFiremodeTable() and 
+				self.inv.items[1]:GetFiremodeTable().ScreenAdd then
+					self.inv.items[1]:GetFiremodeTable().ScreenAdd(self, self:GetCurrentItem())
 			end
 		cam.End2D()
 		render.SetRenderTarget(rend)
@@ -2510,7 +2525,7 @@ if SERVER then
 			saverestore.AddSaveHook("scavsave_"..self.Owner:SteamID64(), function(save)
 				saverestore.WriteTable(self.inv,save)
 				saverestore.SaveEntity(self,save)
-				print(save)
+				--print(save)
 			end)
 		end
 	end
@@ -2927,15 +2942,14 @@ if SERVER then
 		local modelname = ScavData.FormatModelname(ent:GetModel())
 
 		if ScavData.CollectFuncs[modelname] then
-			--ScavData.CollectFuncs[modelname](self,ent)
-			local collect = ScavData.CollectFuncs[modelname](self,ent)
+			local collect = ScavData.CollectFuncs[modelname](self, ent)
 			for i=1,#collect do
 				self:AddItem(collect[i])
 			end
 		elseif string.find(modelname,"*%d",0,false) then
-			self:AddItem(modelname,1,0)
+			self:AddItem(modelname, 1, 0)
 		else
-			self:AddItem(modelname,1,ent:GetSkin())
+			self:AddItem(modelname, 1, ent:GetSkin())
 		end
 
 		if ScavData.CollectFX[modelname] then
