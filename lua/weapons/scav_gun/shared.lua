@@ -2713,6 +2713,8 @@ if SERVER then
 
 			local item = self:GetCurrentItem()
 
+			if not item then return end
+
 			if ScavData.models[item.ammo] and ScavData.models[item.ammo].Level > self:GetNWLevel() then
 				self.Owner:EmitSound("vehicles/APC/apc_shutdown.wav",80)
 				self:SendWeaponAnim(ACT_VM_FIDGET)
