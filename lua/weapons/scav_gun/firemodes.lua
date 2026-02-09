@@ -1289,7 +1289,11 @@ end
 			tab.anim = ACT_VM_IDLE
 			tab.Level = 7
 			tab.Cooldown = 0.05
-			local identify = {} -- all remotes are the same
+			local identify = {
+				--[Remote] = 0,
+				--[[keyboard]]["models/props_c17/computer01_keyboard.mdl"] = 1,
+				["models/props/cs_office/computer_keyboard.mdl"] = 1,
+			}
 			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
 			local tracep = {}
 			tracep.mins = Vector(-2,-2,-2)
@@ -1392,9 +1396,9 @@ end
 						--	self.ef_wires:Kill()
 						--end
 						if dist > 1000000 then
-							self:EmitSound("buttons/combine_button_locked.wav")
+							self:EmitSound(tab.Identify[item.ammo] == 0 and "buttons/combine_button_locked.wav" or "hl1/fvox/fuzz.wav")
 						elseif IsValid(self.HackTarget) and (self.HackingProgress > self.HackTime) then
-							self:EmitSound("buttons/combine_button1.wav")
+							self:EmitSound(tab.Identify[item.ammo] == 0 and "buttons/combine_button1.wav" or "ambient/machines/keyboard7_clicks_enter.wav")
 							success = true
 							local interaction = interactions[string.lower(self.HackTarget:GetClass())]
 							if interaction then
@@ -1403,7 +1407,7 @@ end
 								self.HackTarget:Fire("Use",nil,0)
 							end
 						else
-							self:EmitSound("buttons/combine_button_locked.wav")
+							self:EmitSound(tab.Identify[item.ammo] == 0 and "buttons/combine_button_locked.wav" or "hl1/fvox/fuzz.wav")
 						end
 						self:SetChargeAttack()
 						self.HackingProgress = 0
@@ -1420,7 +1424,7 @@ end
 						if IsValid(wep) then
 							wep:SetChargeAttack()
 							wep.HackingProgress = 0
-							wep:EmitSound(success and "buttons/combine_button1.wav" or "buttons/combine_button_locked.wav")
+							wep:EmitSound(success and (tab.Identify[item.ammo] == 0 and "buttons/combine_button1.wav" or "ambient/machines/keyboard7_clicks_enter.wav") or (tab.Identify[item.ammo] == 0 and "buttons/combine_button_locked.wav" or "hl1/fvox/fuzz.wav"))
 							wep.nextfire = CurTime() + 1 * wep:GetCooldownScale()
 						end
 					end)
@@ -1439,12 +1443,12 @@ end
 					self:SendWeaponAnim(ACT_VM_FIDGET)
 					tab.Cooldown = 0.05
 				else
-					self:EmitSound("buttons/combine_button_locked.wav")
+					self:EmitSound(tab.Identify[item.ammo] == 0 and "buttons/combine_button_locked.wav" or "hl1/fvox/fuzz.wav")
 					tab.Cooldown = 1
 					return false
 				end
 				if SERVER then
-					self.ef_radio = self:CreateToggleEffect("scav_stream_radio")
+					self.ef_radio = self:CreateToggleEffect(tab.Identify[item.ammo] == 0 and "scav_stream_radio" or "scav_stream_keyboard")
 					--self.ef_wires = self:CreateToggleEffect("scav_stream_cord")
 					--if IsValid(self.ef_wires) and IsValid(self.HackTarget) then
 					--	self.ef_wires:Setendent(self.HackTarget)
@@ -1485,6 +1489,7 @@ end
 				ScavData.CollectFuncs["models/props/utilities/satellite_dish001a.mdl"] = ScavData.GiveOneOfItemInf
 				ScavData.CollectFuncs["models/props/utilities/satellite_dish002a.mdl"] = ScavData.GiveOneOfItemInf
 			end
+		ScavData.RegisterFiremode(tab,"models/props_c17/computer01_keyboard.mdl")
 		ScavData.RegisterFiremode(tab,"models/alyx_emptool_prop.mdl")
 		ScavData.RegisterFiremode(tab,"models/props_rooftop/roof_dish001.mdl")
 		ScavData.RegisterFiremode(tab,"models/props_rooftop/satellitedish02.mdl")

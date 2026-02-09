@@ -2557,7 +2557,7 @@ if SERVER then
 
 	function SWEP:CreateToggleEffect(name)
 		local ef = ents.Create(name)
-		if ef then
+		if IsValid(ef) then
 			ef:SetOwner(self)
 			ef:Spawn()
 			return ef
