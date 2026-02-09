@@ -5144,22 +5144,23 @@ PrecacheParticleSystem("scav_exp_plasma")
 							dmg:SetDamageForce(vector_origin)
 							dmg:SetDamagePosition(tr.HitPos)
 							dmg:SetDamageType(DMG_FREEZE)
-							tr.Entity:TakeDamageInfo(dmg)
+							ent:TakeDamageInfo(dmg)
 							local slowfactor = 0.8
 							local slowstatus = ent:GetStatusEffect("Slow")
 							if slowstatus then
 								slowfactor = slowstatus.Value*0.8
 							end
-							ent:InflictStatusEffect("Slow",0.1,slowfactor,self:GetOwner())
+							ent:InflictStatusEffect("Slow",0.35,slowfactor,self:GetOwner())
 							local slow = ent:GetStatusEffect("Slow")
 							if slow then
 								if ent:IsPlayer() and (slow.Value < 0.3) then
 									ent:InflictStatusEffect("Frozen",0.1,0,self:GetOwner())
-								elseif not ent:IsPlayer() and ((ent:IsNPC() and ((ent:Health() < 10) or (slow.EndTime > CurTime()+10))) or not ent:IsNPC()) then
+								elseif not ent:IsPlayer() and ((ent:IsNPC() and ((ent:Health() < 10) or (slow.EndTime > CurTime()+3))) or not ent:IsNPC()) then
 									ent:InflictStatusEffect("Frozen",0.2,0,self:GetOwner())
 								end
 							end
 						end
+						-- Create ice platforms on water
 						if tr.MatType == MAT_SLOSH then
 							local pos = tr.HitPos*1
 							local ice = NULL
@@ -5172,9 +5173,11 @@ PrecacheParticleSystem("scav_exp_plasma")
 								end
 							end
 							if not IsValid(ice) then
-								ice = ents.Create("scav_iceplatform")
-								ice:SetPos(pos)
-								ice:Spawn()
+								local ice = ents.Create("scav_iceplatform")
+								if IsValid(ice) then
+									ice:SetPos(pos)
+									ice:Spawn()
+								end
 							end
 						end
 						if not (tr.Entity:IsPlayer() or tr.Entity:IsNPC() or tr.Entity:IsNextBot()) then
