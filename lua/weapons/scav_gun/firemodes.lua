@@ -3595,12 +3595,25 @@ end
 --[[==============================================================================================
 	-- Sandwich
 ==============================================================================================]]--
-		
+		local sandwichheal = {
+			[0] = 50,
+			[1] = 25,
+			[2] = 10
+		}
 		local tab = {}
+		
 			tab.Name = "#scav.scavcan.sandvich"
 			tab.anim = ACT_VM_IDLE
 			tab.Level = 1
-			local identify = {} --all sandwich?es are the same
+			local identify = {
+				--[Sandvich] = 0,
+				--[[Banana]]["models/weapons/c_models/c_banana/c_banana.mdl"] = 1,
+				["models/items/banana/banana.mdl"] = 1,
+				["models/items/banana/plate_banana.mdl"] = 1,
+				["models/props/cs_italy/bananna.mdl"] = 1,
+				--[[Junk Food]]["models/props_equipment/snack_machine.mdl"] = 2,
+				["models/props_equipment/snack_machine2.mdl"] = 2,
+			}
 			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
 			tab.MaxAmmo = 3
 			tab.FireFunc = function(self,item)
@@ -3613,14 +3626,14 @@ end
 				else
 					tab.Cooldown = 2
 					if SERVER then
-						self.Owner:SetHealth(math.min(self.Owner:GetMaxHealth(),self.Owner:Health()+50))
+						self.Owner:SetHealth(math.min(self.Owner:GetMaxHealth(),self.Owner:Health()+sandwichheal[ScavData.models[item.ammo].Identify[item.ammo]]))
 						self.Owner:EmitSound(IsMounted(440) --[[TF2]] and "vo/SandwichEat09.mp3" or "physics/flesh/flesh_squishy_impact_hard"..math.random(1,4)..".wav",75,100,1,CHAN_VOICE)
 						return self:TakeSubammo(item,1)
 					end
 				end
 			end
 			tab.ReturnHealth = function(self, item)
-				return 50
+				return sandwichheal[ScavData.models[item.ammo].Identify[item.ammo]]
 			end
 			if SERVER then
 				--CSS
