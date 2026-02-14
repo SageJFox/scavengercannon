@@ -49,28 +49,31 @@ local eject = "brass"
 				end
 			end
 			tab.Cooldown = 5
-		ScavData.RegisterFiremode(tab,"models/dav0r/tnt/tnt.mdl")
-		ScavData.RegisterFiremode(tab,"models/dav0r/tnt/tnttimed.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/w_suitcase_passenger.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_c17/briefcase001a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_c17/suitcase001a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_c17/suitcase_passenger_physics.mdl")
+		ScavData.RegisterFiremode(tab, "models/dav0r/tnt/tnt.mdl")
+		ScavData.RegisterFiremode(tab, "models/dav0r/tnt/tnttimed.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_suitcase_passenger.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_c17/briefcase001a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_c17/suitcase001a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_c17/suitcase_passenger_physics.mdl")
 		--CSS
-		ScavData.RegisterFiremode(tab,"models/weapons/w_c4_planted.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_c4_planted.mdl")
 		--TF2
-		ScavData.RegisterFiremode(tab,"models/flag/briefcase.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_doomsday/australium_container.mdl")
+		ScavData.RegisterFiremode(tab, "models/flag/briefcase.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_doomsday/australium_container.mdl")
 		--DoD:S
-		ScavData.RegisterFiremode(tab,"models/weapons/w_tnt.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_tnt.mdl")
 		--L4D/2
-		ScavData.RegisterFiremode(tab,"models/props_unique/airport/luggage1.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_unique/airport/luggage1_floating.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_unique/airport/luggage2.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_unique/airport/luggage2_floating.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_unique/airport/luggage3.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_unique/airport/luggage3_floating.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_unique/airport/luggage4.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_unique/airport/luggage4_floating.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_unique/airport/luggage1.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_unique/airport/luggage1_floating.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_unique/airport/luggage2.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_unique/airport/luggage2_floating.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_unique/airport/luggage3.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_unique/airport/luggage3_floating.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_unique/airport/luggage4.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_unique/airport/luggage4_floating.mdl")
+		--ASW
+		ScavData.RegisterFiremode(tab, "models/swarmprops/miscdeco/bridgeexplosivesmesh.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/explosive/explosive.mdl")
 		
 
 --[[==============================================================================================
@@ -114,13 +117,13 @@ local eject = "brass"
 				end
 			end
 			tab.Cooldown = 0.75
-		ScavData.RegisterFiremode(tab,"models/weapons/w_eq_smokegrenade.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/w_eq_smokegrenade_thrown.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_eq_smokegrenade.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_eq_smokegrenade_thrown.mdl")
 		--DoD:S
-		ScavData.RegisterFiremode(tab,"models/weapons/p_smoke_us.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/p_smoke_ger.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/w_smoke_ger.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/w_smoke_us.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/p_smoke_us.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/p_smoke_ger.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_smoke_ger.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_smoke_us.mdl")
 		
 --[[==============================================================================================
 	--P90
@@ -182,11 +185,8 @@ local eject = "brass"
 				self:SetChargeAttack(tab.ChargeAttack,item)
 				return false
 			end
-			if SERVER then
-				ScavData.CollectFuncs["models/weapons/w_smg_p90.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),50,0}} end
-			end
 			tab.Cooldown = 0
-		ScavData.RegisterFiremode(tab,"models/weapons/w_smg_p90.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_smg_p90.mdl", 50)
 
 --[[==============================================================================================
 	--AK-47
@@ -250,15 +250,10 @@ local eject = "brass"
 				self:SetChargeAttack(tab.ChargeAttack,item)
 				return false
 			end
-			if SERVER then
-				ScavData.CollectFuncs["models/weapons/w_rif_ak47.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),25,0}} end
-				--L4D2
-				ScavData.CollectFuncs["models/w_models/weapons/w_rifle_ak47.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),40,0}} end
-			end
 			tab.Cooldown = 0
-		ScavData.RegisterFiremode(tab,"models/weapons/w_rif_ak47.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_rif_ak47.mdl", 25)
 		--L4D2
-		ScavData.RegisterFiremode(tab,"models/w_models/weapons/w_rifle_ak47.mdl")
+		ScavData.RegisterFiremode(tab, "models/w_models/weapons/w_rifle_ak47.mdl", 40)
 
 --[[==============================================================================================
 	--AUG
@@ -320,11 +315,8 @@ local eject = "brass"
 				self:SetChargeAttack(tab.ChargeAttack,item)
 				return false
 			end
-			if SERVER then
-				ScavData.CollectFuncs["models/weapons/w_rif_aug.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),30,0}} end
-			end
 			tab.Cooldown = 0
-		ScavData.RegisterFiremode(tab,"models/weapons/w_rif_aug.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_rif_aug.mdl", 30)
 
 --[[==============================================================================================
 	--AWP
@@ -373,19 +365,12 @@ local eject = "brass"
 						end
 						if SERVER then return self:TakeSubammo(item,1) end
 					end
-			if SERVER then
-				ScavData.CollectFuncs["models/weapons/w_snip_awp.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),10,0}} end
-				--L4D2
-				ScavData.CollectFuncs["models/w_models/weapons/w_sniper_awp.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),20,0}} end
-				--TF2
-				ScavData.CollectFuncs["models/weapons/c_models/c_csgo_awp/c_csgo_awp.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),10,0}} end
-			end
 			tab.Cooldown = 1.455
-		ScavData.RegisterFiremode(tab,"models/weapons/w_snip_awp.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_snip_awp.mdl", 10)
 		--L4D2
-		ScavData.RegisterFiremode(tab,"models/w_models/weapons/w_sniper_awp.mdl")
+		ScavData.RegisterFiremode(tab, "models/w_models/weapons/w_sniper_awp.mdl", 20)
 		--TF2
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_csgo_awp/c_csgo_awp.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_csgo_awp/c_csgo_awp.mdl", 25)
 
 --[[==============================================================================================
 	--Desert Eagle
@@ -435,13 +420,10 @@ local eject = "brass"
 					self:AddInaccuracy(0.1,0.2)
 					if SERVER then return self:TakeSubammo(item,1) end
 				end
-			if SERVER then
-				ScavData.CollectFuncs["models/weapons/w_pist_deagle.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),7,0}} end
-				ScavData.CollectFuncs["models/w_models/weapons/w_desert_eagle.mdl"]	= function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),8,0}} end
-			end
 			tab.Cooldown = 0.7
-		ScavData.RegisterFiremode(tab,"models/weapons/w_pist_deagle.mdl")
-		ScavData.RegisterFiremode(tab,"models/w_models/weapons/w_desert_eagle.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_pist_deagle.mdl", 7)
+		--L4D/2
+		ScavData.RegisterFiremode(tab, "models/w_models/weapons/w_desert_eagle.mdl", 8)
 
 --[[==============================================================================================
 	--Elites
@@ -499,24 +481,14 @@ local eject = "brass"
 						end
 					end
 				end
-			if SERVER then
-				ScavData.CollectFuncs["models/weapons/w_pist_elite_single.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),15,0}} end
-				ScavData.CollectFuncs["models/weapons/w_pist_elite.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),30,0}} end
-				ScavData.CollectFuncs["models/weapons/w_pist_elite_dropped.mdl"] = ScavData.CollectFuncs["models/weapons/w_pist_elite.mdl"]
-				ScavData.CollectFuncs["models/weapons/w_eq_eholster_elite.mdl"] = ScavData.CollectFuncs["models/weapons/w_pist_elite_single.mdl"]
-				--L4D/2
-				ScavData.CollectFuncs["models/w_models/weapons/w_dual_pistol_1911.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),30,0}} end
-				ScavData.CollectFuncs["models/w_models/weapons/w_pistol_1911.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),15,0}} end
-			end
 			tab.Cooldown = 0.3
-		ScavData.RegisterFiremode(tab,"models/weapons/w_pist_elite_single.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/w_pist_elite.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/w_pist_elite_dropped.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/w_pist_elite_single.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_pist_elite_single.mdl", 15)
+		ScavData.RegisterFiremode(tab, "models/weapons/w_pist_elite.mdl", 30)
+		ScavData.RegisterFiremode(tab, "models/weapons/w_pist_elite_dropped.mdl", 30)
+		ScavData.RegisterFiremode(tab, "models/weapons/w_eq_eholster_elite.mdl", 15)
 		--L4D/2
-		ScavData.RegisterFiremode(tab,"models/w_models/weapons/w_dual_pistol_1911.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/w_eq_eholster_elite.mdl")
-		ScavData.RegisterFiremode(tab,"models/w_models/weapons/w_pistol_1911.mdl")
+		ScavData.RegisterFiremode(tab, "models/w_models/weapons/w_dual_pistol_1911.mdl", 30)
+		ScavData.RegisterFiremode(tab, "models/w_models/weapons/w_pistol_1911.mdl", 15)
 		
 --[[==============================================================================================
 	--FAMAS
@@ -578,11 +550,8 @@ local eject = "brass"
 				self:SetChargeAttack(tab.ChargeAttack,item)
 				return false
 			end
-			if SERVER then
-				ScavData.CollectFuncs["models/weapons/w_rif_famas.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),25,0}} end
-			end
 			tab.Cooldown = 0
-		ScavData.RegisterFiremode(tab,"models/weapons/w_rif_famas.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_rif_famas.mdl", 25)
 
 --[[==============================================================================================
 	--FiveSeven
@@ -631,11 +600,8 @@ local eject = "brass"
 					self:AddInaccuracy(0.1,0.2)
 					if SERVER then return self:TakeSubammo(item,1) end
 				end
-			if SERVER then
-				ScavData.CollectFuncs["models/weapons/w_pist_fiveseven.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),20,0}} end
-			end
 			tab.Cooldown = 0.3
-		ScavData.RegisterFiremode(tab,"models/weapons/w_pist_fiveseven.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_pist_fiveseven.mdl", 20)
 
 --[[==============================================================================================
 	--Galil
@@ -697,11 +663,8 @@ local eject = "brass"
 				self:SetChargeAttack(tab.ChargeAttack,item)
 				return false
 			end
-			if SERVER then
-				ScavData.CollectFuncs["models/weapons/w_rif_galil.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),35,0}} end
-			end
 			tab.Cooldown = 0
-		ScavData.RegisterFiremode(tab,"models/weapons/w_rif_galil.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_rif_galil.mdl", 35)
 
 --[[==============================================================================================
 	--Glock
@@ -750,15 +713,10 @@ local eject = "brass"
 					self:AddInaccuracy(0.1,0.2)
 					if SERVER then return self:TakeSubammo(item,1) end
 				end
-			if SERVER then
-				ScavData.CollectFuncs["models/weapons/w_pist_glock18.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),20,0}} end
-				--L4D2
-				ScavData.CollectFuncs["models/w_models/weapons/w_pistol_b.mdl"]	= function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),15,0}} end
-			end
 			tab.Cooldown = 0.3
-		ScavData.RegisterFiremode(tab,"models/weapons/w_pist_glock18.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_pist_glock18.mdl", 20)
 		--L4D2
-		ScavData.RegisterFiremode(tab,"models/w_models/weapons/w_pistol_b.mdl")
+		ScavData.RegisterFiremode(tab, "models/w_models/weapons/w_pistol_b.mdl", 15)
 
 --[[==============================================================================================
 	--m3super90
@@ -785,9 +743,6 @@ local eject = "brass"
 					end
 					self:MuzzleFlash2()
 					self.Owner:SetAnimation(PLAYER_ATTACK1)
-					if SERVER then
-						self.Owner:EmitSound("Weapon_M3.Single")
-					end
 					if CLIENT ~= game.SinglePlayer() then
 						timer.Simple(.5,function() 
 							if IsValid(self) then
@@ -802,13 +757,13 @@ local eject = "brass"
 							end
 						end)
 					end
-					if SERVER then return self:TakeSubammo(item,1) end
+					if SERVER then
+						self.Owner:EmitSound("Weapon_M3.Single")
+						return self:TakeSubammo(item,1)
+					end
 				end
-			if SERVER then
-				ScavData.CollectFuncs["models/weapons/w_shot_m3super90.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),8,0}} end
-			end
 			tab.Cooldown = 0.88
-		ScavData.RegisterFiremode(tab,"models/weapons/w_shot_m3super90.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_shot_m3super90.mdl", 8)
 
 --[[==============================================================================================
 	--M4A1
@@ -872,15 +827,10 @@ local eject = "brass"
 				self:SetChargeAttack(tab.ChargeAttack,item)
 				return false
 			end
-			if SERVER then
-				ScavData.CollectFuncs["models/weapons/w_rif_m4a1.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),30,0}} end
-				--L4D
-				ScavData.CollectFuncs["models/w_models/weapons/w_rifle_m16a2.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),50,0}} end
-			end
 			tab.Cooldown = 0
-		ScavData.RegisterFiremode(tab,"models/weapons/w_rif_m4a1.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_rif_m4a1.mdl", 30)
 		--L4D
-		ScavData.RegisterFiremode(tab,"models/w_models/weapons/w_rifle_m16a2.mdl")
+		ScavData.RegisterFiremode(tab, "models/w_models/weapons/w_rifle_m16a2.mdl", 50)
 
 --[[==============================================================================================
 	--Silenced M4A1
@@ -942,11 +892,8 @@ local eject = "brass"
 				self:SetChargeAttack(tab.ChargeAttack,item)
 				return false
 			end
-			if SERVER then
-				ScavData.CollectFuncs["models/weapons/w_rif_m4a1_silencer.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),30,0}} end
-			end
 			tab.Cooldown = 0
-		ScavData.RegisterFiremode(tab,"models/weapons/w_rif_m4a1_silencer.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_rif_m4a1_silencer.mdl", 30)
 
 --[[==============================================================================================
 	--M249 Para
@@ -1012,15 +959,10 @@ local eject = "brass"
 				self:SetChargeAttack(tab.ChargeAttack,item)
 				return false
 			end
-			if SERVER then
-				ScavData.CollectFuncs["models/weapons/w_mach_m249para.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),100,0}} end
-				--L4D2
-				ScavData.CollectFuncs["models/w_models/weapons/w_m60.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),150,0}} end
-			end
 			tab.Cooldown = 0
-		ScavData.RegisterFiremode(tab,"models/weapons/w_mach_m249para.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_mach_m249para.mdl", 100)
 		--L4D2
-		ScavData.RegisterFiremode(tab,"models/w_models/weapons/w_m60.mdl")
+		ScavData.RegisterFiremode(tab, "models/w_models/weapons/w_m60.mdl", 150)
 		
 --[[==============================================================================================
 	--MAC10
@@ -1084,17 +1026,10 @@ local eject = "brass"
 				self:SetChargeAttack(tab.ChargeAttack,item)
 				return false
 			end
-			if SERVER then
-				ScavData.CollectFuncs["models/weapons/w_smg_mac10.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),30,0}} end
-				--L4D/2
-				ScavData.CollectFuncs["models/w_models/weapons/w_smg_uzi.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),50,0}} end
-				ScavData.CollectFuncs["models/w_models/weapons/w_smg_a.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),50,0}} end
-			end
 			tab.Cooldown = 0
-		ScavData.RegisterFiremode(tab,"models/weapons/w_smg_mac10.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_smg_mac10.mdl", 30)
 		--L4D/2
-		ScavData.RegisterFiremode(tab,"models/w_models/weapons/w_smg_uzi.mdl")
-		ScavData.RegisterFiremode(tab,"models/w_models/weapons/w_smg_a.mdl")
+		ScavData.RegisterFiremode(tab, "models/w_models/weapons/w_smg_uzi.mdl", 50)
 
 --[[==============================================================================================
 	--MP5
@@ -1158,15 +1093,10 @@ local eject = "brass"
 				self:SetChargeAttack(tab.ChargeAttack,item)
 				return false
 			end
-			if SERVER then
-				ScavData.CollectFuncs["models/weapons/w_smg_mp5.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),30,0}} end
-				--L4D2
-				ScavData.CollectFuncs["models/w_models/weapons/w_smg_mp5.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),50,0}} end
-			end
 			tab.Cooldown = 0
-		ScavData.RegisterFiremode(tab,"models/weapons/w_smg_mp5.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_smg_mp5.mdl", 30)
 		--L4D2
-		ScavData.RegisterFiremode(tab,"models/w_models/weapons/w_smg_mp5.mdl")
+		ScavData.RegisterFiremode(tab, "models/w_models/weapons/w_smg_mp5.mdl", 50)
 
 --[[==============================================================================================
 	--p228
@@ -1217,15 +1147,10 @@ local eject = "brass"
 					self:AddInaccuracy(0.1,0.2)
 					if SERVER then return self:TakeSubammo(item,1) end
 				end
-			if SERVER then
-				ScavData.CollectFuncs["models/weapons/w_pist_p228.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),13,0}} end
-				--L4D2
-				ScavData.CollectFuncs["models/w_models/weapons/w_pistol_a.mdl"]	= function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),15,0}} end --p220
-			end
 			tab.Cooldown = 0.3
-		ScavData.RegisterFiremode(tab,"models/weapons/w_pist_p228.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_pist_p228.mdl", 13)
 		--L4D2
-		ScavData.RegisterFiremode(tab,"models/w_models/weapons/w_pistol_a.mdl")
+		ScavData.RegisterFiremode(tab, "models/w_models/weapons/w_pistol_a.mdl", 15) --p220
 
 --[[==============================================================================================
 	--Scout
@@ -1274,17 +1199,11 @@ local eject = "brass"
 						end
 						if SERVER then return self:TakeSubammo(item,1) end
 					end
-			if SERVER then
-				ScavData.CollectFuncs["models/weapons/w_snip_scout.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),10,0}} end
-				--L4D/2
-				ScavData.CollectFuncs["models/w_models/weapons/w_sniper_scout.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),15,0}} end
-				ScavData.CollectFuncs["models/w_models/weapons/w_sniper_mini14.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),15,0}} end
-			end
 			tab.Cooldown = 1.25
-		ScavData.RegisterFiremode(tab,"models/weapons/w_snip_scout.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_snip_scout.mdl", 10)
 		--L4D/2
-		ScavData.RegisterFiremode(tab,"models/w_models/weapons/w_sniper_scout.mdl")
-		ScavData.RegisterFiremode(tab,"models/w_models/weapons/w_sniper_mini14.mdl")
+		ScavData.RegisterFiremode(tab, "models/w_models/weapons/w_sniper_scout.mdl", 15)
+		ScavData.RegisterFiremode(tab, "models/w_models/weapons/w_sniper_mini14.mdl", 15)
 
 --[[==============================================================================================
 	--sg550
@@ -1347,15 +1266,11 @@ local eject = "brass"
 				self:SetChargeAttack(tab.ChargeAttack,item)
 				return false
 			end
-			if SERVER then
-				ScavData.CollectFuncs["models/weapons/w_snip_sg550.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),30,0}} end
-				--L4D2
-				ScavData.CollectFuncs["models/w_models/weapons/w_sniper_military.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),30,0}} end
-			end
 			tab.Cooldown = 0
-		ScavData.RegisterFiremode(tab,"models/weapons/w_snip_sg550.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_snip_sg550.mdl", 30)
+		ScavData.RegisterFiremode(tab, "models/weapons/w_snip_g3sg1.mdl", 30)
 		--L4D2
-		ScavData.RegisterFiremode(tab,"models/w_models/weapons/w_sniper_military.mdl")
+		ScavData.RegisterFiremode(tab, "models/w_models/weapons/w_sniper_military.mdl", 30)
 
 --[[==============================================================================================
 	--sg552
@@ -1419,15 +1334,10 @@ local eject = "brass"
 				self:SetChargeAttack(tab.ChargeAttack,item)
 				return false
 			end
-			if SERVER then
-				ScavData.CollectFuncs["models/weapons/w_rif_sg552.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),30,0}} end
-				--L4D2
-				ScavData.CollectFuncs["models/w_models/weapons/w_rifle_sg552.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),50,0}} end
-			end
 			tab.Cooldown = 0
-		ScavData.RegisterFiremode(tab,"models/weapons/w_rif_sg552.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_rif_sg552.mdl", 30)
 		--L4D2
-		ScavData.RegisterFiremode(tab,"models/w_models/weapons/w_rifle_sg552.mdl")
+		ScavData.RegisterFiremode(tab, "models/w_models/weapons/w_rifle_sg552.mdl", 50)
 
 --[[==============================================================================================
 	--TMP
@@ -1489,11 +1399,10 @@ local eject = "brass"
 				self:SetChargeAttack(tab.ChargeAttack,item)
 				return false
 			end
-			if SERVER then
-				ScavData.CollectFuncs["models/weapons/w_smg_tmp.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),30,0}} end
-			end
 			tab.Cooldown = 0
-		ScavData.RegisterFiremode(tab,"models/weapons/w_smg_tmp.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_smg_tmp.mdl", 30)
+		--L4D/2
+		ScavData.RegisterFiremode(tab, "models/w_models/weapons/w_smg_a.mdl", 50)
 
 --[[==============================================================================================
 	--UMP45
@@ -1555,11 +1464,8 @@ local eject = "brass"
 				self:SetChargeAttack(tab.ChargeAttack,item)
 				return false
 			end
-			if SERVER then
-				ScavData.CollectFuncs["models/weapons/w_smg_ump45.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),25,0}} end
-			end
 			tab.Cooldown = 0
-		ScavData.RegisterFiremode(tab,"models/weapons/w_smg_ump45.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_smg_ump45.mdl", 25)
 
 --[[==============================================================================================
 	--USP
@@ -1608,11 +1514,8 @@ local eject = "brass"
 					self:AddInaccuracy(0.1,0.2)
 					if SERVER then return self:TakeSubammo(item,1) end
 				end
-			if SERVER then
-				ScavData.CollectFuncs["models/weapons/w_pist_usp.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),12,0}} end
-			end
 			tab.Cooldown = 0.3
-		ScavData.RegisterFiremode(tab,"models/weapons/w_pist_usp.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_pist_usp.mdl", 12)
 
 --[[==============================================================================================
 	--Silenced USP
@@ -1683,15 +1586,11 @@ local eject = "brass"
 					self:AddInaccuracy(0.1,0.2)
 					if SERVER then return self:TakeSubammo(item,1) end
 				end
-			if SERVER then
-				ScavData.CollectFuncs["models/weapons/w_pist_usp_silencer.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),12,0}} end
-				--ScavData.CollectFuncs["models/w_silencer.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),17,0}} end --no phys model
-			end
 			tab.Cooldown = 0.3
 		--CSS
-		ScavData.RegisterFiremode(tab,"models/weapons/w_pist_usp_silencer.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_pist_usp_silencer.mdl", 12)
 		--HL:S
-		ScavData.RegisterFiremode(tab,"models/w_silencer.mdl")
+		ScavData.RegisterFiremode(tab, "models/w_silencer.mdl"--[[, 17]]) --no phys model
 
 --[[==============================================================================================
 	--xm1014
@@ -1739,16 +1638,11 @@ local eject = "brass"
 					self.nextfireearly = CurTime()+0.25
 					if SERVER then return self:TakeSubammo(item,1) end
 				end
-			if SERVER then
-				ScavData.CollectFuncs["models/weapons/w_shot_xm1014.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),7,0}} end
-				ScavData.CollectFuncs["models/w_models/weapons/w_autoshot_m4super.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),10,0}} end
-				ScavData.CollectFuncs["models/w_models/weapons/w_shotgun_spas.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),10,0}} end
-			end
 			tab.Cooldown = 0.88
-		ScavData.RegisterFiremode(tab,"models/weapons/w_shot_xm1014.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_shot_xm1014.mdl", 7)
 		--L4D/2
-		ScavData.RegisterFiremode(tab,"models/w_models/weapons/w_autoshot_m4super.mdl")
-		ScavData.RegisterFiremode(tab,"models/w_models/weapons/w_shotgun_spas.mdl")
+		ScavData.RegisterFiremode(tab, "models/w_models/weapons/w_autoshot_m4super.mdl", 10)
+		ScavData.RegisterFiremode(tab, "models/w_models/weapons/w_shotgun_spas.mdl", 10)
 		
 --[[==============================================================================================
 	--SCAR
@@ -1797,11 +1691,7 @@ local eject = "brass"
 					self:SetChargeAttack(ScavData.models[self.inv.items[1].ammo].ChargeAttack,item)
 					return false
 				end
-			if SERVER then
-				--L4D2
-				ScavData.CollectFuncs["models/w_models/weapons/w_desert_rifle.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),50,0}} end
-				ScavData.CollectFuncs["models/w_models/weapons/w_rifle_b.mdl"] = function(self,ent) return {{ScavData.FormatModelname("models/w_models/weapons/w_desert_rifle.mdl"),50,0}} end
-			end
 			tab.Cooldown = 0
 		--L4D2
-		ScavData.RegisterFiremode(tab,"models/w_models/weapons/w_desert_rifle.mdl")
+		ScavData.RegisterFiremode(tab, "models/w_models/weapons/w_desert_rifle.mdl", 50)
+		ScavData.RegisterFiremode(tab, "models/w_models/weapons/w_rifle_b.mdl", 50)
