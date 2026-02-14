@@ -3714,7 +3714,8 @@ end
 			tab.Level = 1
 			local identify = {
 				--[Default] = 0,
-				--[[Steroid Keg]]["models/props_island/steroid_drum.mdl"] = 1,
+				--[Drink]] = 1,
+				--[[Steroid Keg]]["models/props_island/steroid_drum.mdl"] = 2,
 			}
 			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
 			if SERVER then
@@ -3726,6 +3727,16 @@ end
 							self.Owner:EmitSound(IsMounted(440) --[[TF2]] and "weapons/buffed_on.wav" or "beams/beamstart5.wav")
 						end,
 						[1] = function(self)
+							self.Owner:InflictStatusEffect("DamageX",7,1.5)
+							if IsMounted(440) then --TF2
+								self.Owner:EmitSound("player/pl_scout_dodge_can_open.wav")
+								self.Owner:EmitSound("player/pl_scout_dodge_can_drink_fast.wav")
+							else
+								self.Owner:EmitSound("hl1/fvox/hiss.wav",75,150)
+								self.Owner:EmitSound("ambient/levels/canals/toxic_slime_gurgle4.wav")
+							end
+						end,
+						[2] = function(self)
 							self.Owner:InflictStatusEffect("DamageX",15,1.5)
 							self.Owner:EmitSound("ambient/lair/yeti_statue_growl"..math.random(1,6)..".wav",75,100,1,CHAN_VOICE)
 						end,
