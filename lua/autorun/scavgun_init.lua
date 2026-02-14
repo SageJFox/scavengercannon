@@ -373,8 +373,13 @@ function ScavData.GetFiremode(modelname)
 	return ScavData.models[modelname]
 end
 
-function ScavData.RegisterFiremode(tab,model)
+-- Register firemode with the gun. Optionally, provide a subammo count for this prop to also receive a simple collection function.
+-- Don't provide a count of 1, basic prop collection already handles that!
+function ScavData.RegisterFiremode(tab, model, count)
 	ScavData.models[ScavData.FormatModelname(model)] = tab
+	if count and SERVER then
+		ScavData.CollectFuncs[model] = function(self, ent) return {{model, count, ent:GetSkin()}} end
+	end
 end
 
 local teams = {}
