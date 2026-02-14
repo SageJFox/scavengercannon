@@ -2339,11 +2339,11 @@ local eject = "brass"
 					proj:SetPhysicsAttacker(self.Owner)
 					proj:Spawn()
 					proj:SetOwner(self.Owner)
-					proj:SetVelocity(self:GetAimVector()*2000)
-					self.Owner:EmitSound("bullchicken/bc_attack"..math.random(2,3).."wav")
-					proj:Fire("kill",1,"10")
-					self.Owner:ViewPunch(Angle(math.Rand(-1,0),math.Rand(-0.1,0.1),0))
-					return self:TakeSubammo(item,1)
+					proj:SetVelocity(self:GetAimVector() * 2000)
+					self.Owner:EmitSound("bullchicken/bc_attack" .. math.random(2, 3) .. ".wav")
+					proj:Fire("kill", 1, "10")
+					self.Owner:ViewPunch(Angle(math.Rand(-1, 0), math.Rand(-0.1, 0.1), 0))
+					return self:TakeSubammo(item, 1)
 				end
 			end
 			tab.Cooldown = 0.6
