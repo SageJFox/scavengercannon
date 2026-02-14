@@ -143,13 +143,10 @@ local PRONE_SPEED = 800 --900 would be crouching with walk key held
 				end								
 				return false
 			end
-			if SERVER then
-				ScavData.CollectFuncs["models/weapons/w_30cal.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),150,0}} end
-				ScavData.CollectFuncs["models/weapons/w_30calpr.mdl"] = function(self,ent) return {{ScavData.FormatModelname("models/weapons/w_30cal.mdl"),150,0}} end
-				ScavData.CollectFuncs["models/weapons/w_30calsr.mdl"] = ScavData.CollectFuncs["models/weapons/w_30calpr.mdl"]
-			end
 			tab.Cooldown = 0
-		ScavData.RegisterFiremode(tab,"models/weapons/w_30cal.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_30cal.mdl", 150)
+		ScavData.RegisterFiremode(tab, "models/weapons/w_30calpr.mdl", 150)
+		ScavData.RegisterFiremode(tab, "models/weapons/w_30calsr.mdl", 150)
 		
 --[[==============================================================================================
 	--BAR
@@ -210,11 +207,8 @@ local PRONE_SPEED = 800 --900 would be crouching with walk key held
 				end								
 				return false
 			end
-			if SERVER then
-				ScavData.CollectFuncs["models/weapons/w_bar.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),20,0}} end
-			end
 			tab.Cooldown = 0
-		ScavData.RegisterFiremode(tab,"models/weapons/w_bar.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_bar.mdl", 20)
 
 --[[==============================================================================================
 	--C96
@@ -266,11 +260,8 @@ local PRONE_SPEED = 800 --900 would be crouching with walk key held
 				end								
 				return false
 			end
-			if SERVER then
-				ScavData.CollectFuncs["models/weapons/w_c96.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),20,0}} end
-			end
 			tab.Cooldown = 0
-		ScavData.RegisterFiremode(tab,"models/weapons/w_c96.mdl")
+		ScavData.RegisterFiremode(tab,"models/weapons/w_c96.mdl", 20)
 
 --[[==============================================================================================
 	--Kar 98
@@ -313,13 +304,9 @@ local PRONE_SPEED = 800 --900 would be crouching with walk key held
 					return self:TakeSubammo(item,1)
 				end
 			end
-			if SERVER then
-				ScavData.CollectFuncs["models/weapons/w_k98.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),5,0}} end
-				ScavData.CollectFuncs["models/weapons/w_k98s.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),5,0}} end
-			end
 			tab.Cooldown = 1.6
-		ScavData.RegisterFiremode(tab,"models/weapons/w_k98.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/w_k98s.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_k98.mdl", 5)
+		ScavData.RegisterFiremode(tab, "models/weapons/w_k98s.mdl", 5)
 
 --[[==============================================================================================
 	--M1 Carbine
@@ -354,11 +341,8 @@ local PRONE_SPEED = 800 --900 would be crouching with walk key held
 					return self:TakeSubammo(item,1)
 				end
 			end
-			if SERVER then
-				ScavData.CollectFuncs["models/weapons/w_m1carb.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),15,0}} end
-			end
 			tab.Cooldown = 0.3
-		ScavData.RegisterFiremode(tab,"models/weapons/w_m1carb.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_m1carb.mdl", 15)
 
 --[[==============================================================================================
 	--M1 Garand
@@ -443,11 +427,8 @@ local PRONE_SPEED = 800 --900 would be crouching with walk key held
 					end
 					if SERVER then return self:TakeSubammo(item,1) end
 				end
-			if SERVER then
-				ScavData.CollectFuncs["models/weapons/w_garand.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),8,0}} end
-			end
 			tab.Cooldown = 0.74
-		ScavData.RegisterFiremode(tab,"models/weapons/w_garand.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_garand.mdl", 8)
 
 --[[==============================================================================================
 	--M1903 Springfield
@@ -488,11 +469,8 @@ local PRONE_SPEED = 800 --900 would be crouching with walk key held
 					return self:TakeSubammo(item,1)
 				end
 			end
-			if SERVER then
-				ScavData.CollectFuncs["models/weapons/w_spring.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),5,0}} end
-			end
 			tab.Cooldown = 1.85
-		ScavData.RegisterFiremode(tab,"models/weapons/w_spring.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_spring.mdl", 5)
 
 --[[==============================================================================================
 	--M1911
@@ -532,11 +510,10 @@ local PRONE_SPEED = 800 --900 would be crouching with walk key held
 			tab.OnArmed = function(self,item,olditemname)
 				end
 			if SERVER then
-				ScavData.CollectFuncs["models/weapons/w_colt.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),7,0}} end
 				ScavData.CollectFuncs["models/player/american_assault.mdl"] = function(self,ent) return {{"models/weapons/w_colt.mdl",7,0}} end
 			end
 			tab.Cooldown = 0.3
-		ScavData.RegisterFiremode(tab,"models/weapons/w_colt.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_colt.mdl", 7)
 
 --[[==============================================================================================
 	--MG42
@@ -698,12 +675,7 @@ local PRONE_SPEED = 800 --900 would be crouching with walk key held
 				end
 				return false
 			end
-			if SERVER then
-				ScavData.CollectFuncs["models/weapons/w_mg42bd.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),250,0}} end
-				ScavData.CollectFuncs["models/weapons/w_mg42bu.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),250,0}} end
-				ScavData.CollectFuncs["models/weapons/w_mg42pr.mdl"] = function(self,ent) return {{ScavData.FormatModelname("models/weapons/w_mg42bd.mdl"),250,0}} end
-				ScavData.CollectFuncs["models/weapons/w_mg42sr.mdl"] = ScavData.CollectFuncs["models/weapons/w_mg42pr.mdl"]
-			else
+			if CLIENT then
 				--Add cooldown bar to the existing status screen
 				tab.ScreenAdd = function(self, item)
 					local item2 = self.inv.items[1]:GetFiremodeInfo()
@@ -715,8 +687,10 @@ local PRONE_SPEED = 800 --900 would be crouching with walk key held
 				end
 			end
 			tab.Cooldown = 0
-		ScavData.RegisterFiremode(tab,"models/weapons/w_mg42bd.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/w_mg42bu.mdl")
+		ScavData.RegisterFiremode(tab,"models/weapons/w_mg42bd.mdl", 250)
+		ScavData.RegisterFiremode(tab,"models/weapons/w_mg42bu.mdl", 250)
+		ScavData.RegisterFiremode(tab,"models/weapons/w_mg42pr.mdl", 250)
+		ScavData.RegisterFiremode(tab,"models/weapons/w_mg42sr.mdl", 250)
 		
 --[[==============================================================================================
 	--MP40
@@ -768,11 +742,8 @@ local PRONE_SPEED = 800 --900 would be crouching with walk key held
 				end								
 				return false
 			end
-			if SERVER then
-				ScavData.CollectFuncs["models/weapons/w_mp40.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),32,0}} end
-			end
 			tab.Cooldown = 0
-		ScavData.RegisterFiremode(tab,"models/weapons/w_mp40.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_mp40.mdl", 32)
 
 --[[==============================================================================================
 	--MP44
@@ -824,11 +795,8 @@ local PRONE_SPEED = 800 --900 would be crouching with walk key held
 				end								
 				return false
 			end
-			if SERVER then
-				ScavData.CollectFuncs["models/weapons/w_mp44.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),30,0}} end
-			end
 			tab.Cooldown = 0
-		ScavData.RegisterFiremode(tab,"models/weapons/w_mp44.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_mp44.mdl", 30)
 
 --[[==============================================================================================
 	--P38
@@ -863,11 +831,8 @@ local PRONE_SPEED = 800 --900 would be crouching with walk key held
 					return self:TakeSubammo(item,1)
 				end
 			end
-			if SERVER then
-				ScavData.CollectFuncs["models/weapons/w_p38.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),8,0}} end
-			end
 			tab.Cooldown = 0.3
-		ScavData.RegisterFiremode(tab,"models/weapons/w_p38.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_p38.mdl", 8)
 
 --[[==============================================================================================
 	--Tommy Gun
@@ -919,8 +884,5 @@ local PRONE_SPEED = 800 --900 would be crouching with walk key held
 				end								
 				return false
 			end
-			if SERVER then
-				ScavData.CollectFuncs["models/weapons/w_thompson.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),30,0}} end
-			end
 			tab.Cooldown = 0
-		ScavData.RegisterFiremode(tab,"models/weapons/w_thompson.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_thompson.mdl", 30)
