@@ -755,6 +755,13 @@ if CLIENT then
 		end
 	end
 
+	function SWEP:OwnerChanged()
+		if IsValid(self.Owner) then
+			self:Reskin(self.Owner:AccountID())
+			self.HUD:PlayerColor()
+		end
+	end
+
 	function SWEP:PrimaryAttack()
 
 		if self:IsLocked() or self.ChargeAttack then
