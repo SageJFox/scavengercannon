@@ -3381,12 +3381,12 @@ end
 
 if SERVER then
 	util.AddNetworkString("ScavStopTheRain")
-	hook.Add("PostPlayerDeath","ScavStopTheRain",function(ply)
+	hook.Add("PostPlayerDeath", "ScavStopTheRain", function(ply)
 		net.Start("ScavStopTheRain")
 		net.Send(ply)
 	end)
 else
-	net.Receive("ScavStopTheRain",function()
+	net.Receive("ScavStopTheRain", function()
 		hook.Remove( "RenderScreenspaceEffects", "ScavDrips")
 	end)
 end
@@ -3396,12 +3396,12 @@ end
 			tab.anim = ACT_VM_IDLE
 			tab.Level = 1
 			local identify = {} --all blast showers are the same
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			tab.MaxAmmo = 30
 
 			local toFloat = function(a_bool) return a_bool and 1 or 0 end
 			PrecacheParticleSystem("water_splash_01_droplets")
-				tab.ChargeAttack = function(self,item)
+				tab.ChargeAttack = function(self, item)
 					local totalStatuses =	toFloat(self.Owner:GetStatusEffect("Slow")) +
 											toFloat(self.Owner:GetStatusEffect("Frozen")) +
 											toFloat(self.Owner:GetStatusEffect("Disease")) +
@@ -3414,17 +3414,17 @@ end
 											toFloat(self.Owner:GetStatusEffect("Drunk"))
 					--Currently it'll reduce more status effects than total ammo left if the player has more active statuses than ammo. Do we care?
 					if SERVER then
-						self.Owner:InflictStatusEffect("Slow",-1,1)
-						self.Owner:InflictStatusEffect("Frozen",-3,1) --can the player even use this if they're currently frozen?
-						self.Owner:InflictStatusEffect("Disease",-2,1)
-						self.Owner:InflictStatusEffect("Burning",-2,1)
-						self.Owner:InflictStatusEffect("Acid Burning",-2,1)
-						self.Owner:InflictStatusEffect("Shock",-1,1)
-						self.Owner:InflictStatusEffect("Radiation",-1,1)
-						self.Owner:InflictStatusEffect("Numb",-1,1)
-						self.Owner:InflictStatusEffect("Deaf",-1,1)
-						self.Owner:InflictStatusEffect("Drunk",-1,1)
-						self:TakeSubammo(item,totalStatuses)
+						self.Owner:InflictStatusEffect("Slow", -1, 1)
+						self.Owner:InflictStatusEffect("Frozen", -3, 1) --can the player even use this if they're currently frozen?
+						self.Owner:InflictStatusEffect("Disease", -2, 1)
+						self.Owner:InflictStatusEffect("Burning", -2, 1)
+						self.Owner:InflictStatusEffect("Acid Burning", -2, 1)
+						self.Owner:InflictStatusEffect("Shock", -1, 1)
+						self.Owner:InflictStatusEffect("Radiation", -1, 1)
+						self.Owner:InflictStatusEffect("Numb", -1, 1)
+						self.Owner:InflictStatusEffect("Deaf", -1, 1)
+						self.Owner:InflictStatusEffect("Drunk", -1, -.125)
+						self:TakeSubammo(item, totalStatuses)
 					end
 					local att = self:LookupAttachment("muzzle")
 					local posang = self:GetAttachment(att)
@@ -3436,15 +3436,15 @@ end
 						ef:SetStart(posang.Pos)
 						ef:SetScale(1)
 						ef:SetAttachment(att)
-					util.Effect("ef_scav_muzzlesplash",ef)
+					util.Effect("ef_scav_muzzlesplash", ef)
 					if totalStatuses > 0 then
-						self:EmitSound("ambient/water/rain_drip"..math.random(1,4)..".wav",75,140,0.25)
+						self:EmitSound("ambient/water/rain_drip" .. math.random(1, 4) .. ".wav", 75, 140, 0.25)
 					end
 					local continuefiring = self:ProcessLinking(item) and self:StopChargeOnRelease()
 					if not continuefiring then
 						if SERVER then
 							self.soundloops.showerrun:Stop()
-							self.Owner:EmitSound("ambient/water/rain_drip"..math.random(1,4)..".wav",75,100,0.5)
+							self.Owner:EmitSound("ambient/water/rain_drip" .. math.random(1, 4) .. ".wav", 75, 100, 0.5)
 							self:SetChargeAttack()
 							self:SetBarrelRestSpeed(0)
 							net.Start("ScavStopTheRain")
@@ -3456,114 +3456,70 @@ end
 						return 0.1
 					end
 				end
-				tab.FireFunc = function(self,item)
-					self:SetChargeAttack(ScavData.models[self.inv.items[1].ammo].ChargeAttack,item)
+				tab.FireFunc = function(self, item)
+					self:SetChargeAttack(ScavData.models[self.inv.items[1].ammo].ChargeAttack, item)
 					if SERVER then
 						self.Owner:EmitSound("buttons/lever2.wav")
-						self.soundloops.showerrun = CreateSound(self.Owner,"ambient/water/water_run1.wav")
+						self.soundloops.showerrun = CreateSound(self.Owner, "ambient/water/water_run1.wav")
 						self:SetBarrelRestSpeed(400)
 					else
-						timer.Simple(1,function()
+						timer.Simple(1, function()
 							if self:ProcessLinking(item) and self:StopChargeOnRelease() then --make sure the player didn't cancel the charge before we even got to it
-								hook.Add( "RenderScreenspaceEffects", "ScavDrips", function()
-									DrawMaterialOverlay( "models/shadertest/shader3", -0.01 )
-								end )
+								hook.Add("RenderScreenspaceEffects", "ScavDrips", function()
+									DrawMaterialOverlay("models/shadertest/shader3", -0.01)
+								end)
 							end
 						end)
 					end
 					return false
 				end
-			if SERVER then
-				ScavData.CollectFuncs["models/props_interiors/sinkkitchen01a.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),10,ent:GetSkin()}} end
-				ScavData.CollectFuncs["models/props_c17/furnituresink001a.mdl"] = ScavData.CollectFuncs["models/props_interiors/sinkkitchen01a.mdl"]
-				ScavData.CollectFuncs["models/props_junk/metalbucket01a.mdl"] = ScavData.CollectFuncs["models/props_interiors/sinkkitchen01a.mdl"]
-				ScavData.CollectFuncs["models/props_junk/metalbucket02a.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),10,ent:GetSkin()}} end
-				ScavData.CollectFuncs["models/props_interiors/bathtub01a.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),20,ent:GetSkin()}} end
-				ScavData.CollectFuncs["models/props_c17/furniturebathtub001a.mdl"] = ScavData.CollectFuncs["models/props_interiors/bathtub01a.mdl"]
-				ScavData.CollectFuncs["models/props_c17/furniturewashingmachine001a.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),25,ent:GetSkin()}} end
-				ScavData.CollectFuncs["models/props_wasteland/laundry_dryer001.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),30,ent:GetSkin()}} end
-				ScavData.CollectFuncs["models/props_wasteland/laundry_dryer002.mdl"] = ScavData.CollectFuncs["models/props_wasteland/laundry_dryer001.mdl"]
-				ScavData.CollectFuncs["models/props_wasteland/laundry_washer001a.mdl"] = ScavData.CollectFuncs["models/props_wasteland/laundry_dryer001.mdl"]
-				ScavData.CollectFuncs["models/props_wasteland/laundry_washer003.mdl"] = ScavData.CollectFuncs["models/props_wasteland/laundry_dryer001.mdl"]
-				ScavData.CollectFuncs["models/props_wasteland/shower_system001a.mdl"] = ScavData.CollectFuncs["models/props_wasteland/laundry_dryer001.mdl"]
-				--CSS
-				ScavData.CollectFuncs["models/props/cs_militia/showers.mdl"] = ScavData.CollectFuncs["models/props_wasteland/laundry_dryer001.mdl"]
-				ScavData.CollectFuncs["models/props/cs_militia/toothbrushset01.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),5,ent:GetSkin()}} end
-				ScavData.CollectFuncs["models/props/cs_militia/dryer.mdl"] = ScavData.CollectFuncs["models/props_c17/furniturewashingmachine001a.mdl"]
-				ScavData.CollectFuncs["models/props/cs_assault/firehydrant.mdl"] = ScavData.CollectFuncs["models/props_wasteland/laundry_dryer001.mdl"]
-				--TF2
-				ScavData.CollectFuncs["models/props_2fort/sink001.mdl"] = ScavData.CollectFuncs["models/props_interiors/bathtub01a.mdl"]
-				ScavData.CollectFuncs["models/props_2fort/hose001.mdl"] = ScavData.CollectFuncs["models/props_interiors/bathtub01a.mdl"]
-				--DoD:S
-				ScavData.CollectFuncs["models/props_furniture/sink1.mdl"] = ScavData.CollectFuncs["models/props_interiors/sinkkitchen01a.mdl"]
-				ScavData.CollectFuncs["models/props_furniture/bathtub1.mdl"] = ScavData.CollectFuncs["models/props_interiors/bathtub01a.mdl"]
-				--L4D/2
-				ScavData.CollectFuncs["models/props_interiors/bathroomsink01.mdl"] = ScavData.CollectFuncs["models/props_interiors/sinkkitchen01a.mdl"]
-				ScavData.CollectFuncs["models/props_interiors/bathtub01.mdl"] = ScavData.CollectFuncs["models/props_interiors/bathtub01a.mdl"]
-				ScavData.CollectFuncs["models/props_interiors/sink_industrial01.mdl"] = ScavData.CollectFuncs["models/props_interiors/bathtub01a.mdl"]
-				ScavData.CollectFuncs["models/props_interiors/sink_kitchen.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),20,ent:GetSkin()}} end
-				ScavData.CollectFuncs["models/props_interiors/pedestal_sink.mdl"] = ScavData.CollectFuncs["models/props_interiors/sinkkitchen01a.mdl"]
-				ScavData.CollectFuncs["models/props_docks/marina_firehosebox.mdl"] = ScavData.CollectFuncs["models/props_interiors/bathtub01a.mdl"]
-				ScavData.CollectFuncs["models/props_equipment/firehosebox01.mdl"] = ScavData.CollectFuncs["models/props_interiors/bathtub01a.mdl"]
-				ScavData.CollectFuncs["models/props_interiors/soap_dispenser.mdl"] = ScavData.CollectFuncs["models/props/cs_militia/toothbrushset01.mdl"]
-				ScavData.CollectFuncs["models/props_interiors/soap_dispenser_static.mdl"] = ScavData.CollectFuncs["models/props_interiors/soap_dispenser.mdl"]
-				ScavData.CollectFuncs["models/props_interiors/soapdispenser01.mdl"] = ScavData.CollectFuncs["models/props_interiors/sinkkitchen01a.mdl"]
-				ScavData.CollectFuncs["models/props_interiors/dryer.mdl"] = ScavData.CollectFuncs["models/props/cs_militia/dryer.mdl"]
-				ScavData.CollectFuncs["models/props_junk/metalbucket01a_static.mdl"] = ScavData.CollectFuncs["models/props_junk/metalbucket01a.mdl"]
-				ScavData.CollectFuncs["models/props_junk/metalbucket02a_static.mdl"] = ScavData.CollectFuncs["models/props_junk/metalbucket02a.mdl"]
-				ScavData.CollectFuncs["models/props_street/firehydrant.mdl"] = ScavData.CollectFuncs["models/props/cs_assault/firehydrant.mdl"]
-				ScavData.CollectFuncs["models/props_urban/fire_hydrant001.mdl"] = ScavData.CollectFuncs["models/props/cs_assault/firehydrant.mdl"]
-				ScavData.CollectFuncs["models/props_waterfront/tattoo_autoclave.mdl"] = ScavData.CollectFuncs["models/props/cs_assault/firehydrant.mdl"]
-				ScavData.CollectFuncs["models/props_unique/mop01.mdl"] = ScavData.CollectFuncs["models/props/cs_assault/firehydrant.mdl"]
-				ScavData.CollectFuncs["models/props_unique/mopbucket01.mdl"] = ScavData.CollectFuncs["models/props_unique/mop01.mdl"]
-				--ASW
-				ScavData.CollectFuncs["models/props/furniture/misc/bathroomsink.mdl"] = ScavData.CollectFuncs["models/props_interiors/sink_kitchen.mdl"]
-			end
 			tab.Cooldown = 1
-		ScavData.RegisterFiremode(tab,"models/props_interiors/sinkkitchen01a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_c17/furnituresink001a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/metalbucket01a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/metalbucket02a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_interiors/bathtub01a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_c17/furniturebathtub001a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_c17/furniturewashingmachine001a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_wasteland/laundry_dryer001.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_wasteland/laundry_dryer002.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_wasteland/laundry_washer001a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_wasteland/laundry_washer003.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_wasteland/shower_system001a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_interiors/sinkkitchen01a.mdl", 10)
+		ScavData.RegisterFiremode(tab, "models/props_c17/furnituresink001a.mdl", 10)
+		ScavData.RegisterFiremode(tab, "models/props_junk/metalbucket01a.mdl", 10)
+		ScavData.RegisterFiremode(tab, "models/props_junk/metalbucket02a.mdl", 10)
+		ScavData.RegisterFiremode(tab, "models/props_interiors/bathtub01a.mdl", 20)
+		ScavData.RegisterFiremode(tab, "models/props_c17/furniturebathtub001a.mdl", 20)
+		ScavData.RegisterFiremode(tab, "models/props_c17/furniturewashingmachine001a.mdl", 25)
+		ScavData.RegisterFiremode(tab, "models/props_wasteland/laundry_dryer001.mdl", 30)
+		ScavData.RegisterFiremode(tab, "models/props_wasteland/laundry_dryer002.mdl", 30)
+		ScavData.RegisterFiremode(tab, "models/props_wasteland/laundry_washer001a.mdl", 30)
+		ScavData.RegisterFiremode(tab, "models/props_wasteland/laundry_washer003.mdl", 30)
+		ScavData.RegisterFiremode(tab, "models/props_wasteland/shower_system001a.mdl", 30)
 		--CSS
-		ScavData.RegisterFiremode(tab,"models/props/cs_militia/showers.mdl")
-		ScavData.RegisterFiremode(tab,"models/props/cs_militia/toothbrushset01.mdl")
-		ScavData.RegisterFiremode(tab,"models/props/cs_militia/dryer.mdl")
-		ScavData.RegisterFiremode(tab,"models/props/cs_assault/firehydrant.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/cs_militia/showers.mdl", 30)
+		ScavData.RegisterFiremode(tab, "models/props/cs_militia/toothbrushset01.mdl", 5)
+		ScavData.RegisterFiremode(tab, "models/props/cs_militia/dryer.mdl", 25)
+		ScavData.RegisterFiremode(tab, "models/props/cs_assault/firehydrant.mdl", 30)
 		--TF2
-		ScavData.RegisterFiremode(tab,"models/props_2fort/sink001.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_2fort/hose001.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_2fort/sink001.mdl", 20)
+		ScavData.RegisterFiremode(tab, "models/props_2fort/hose001.mdl", 20)
 		--DoD:S
-		ScavData.RegisterFiremode(tab,"models/props_furniture/sink1.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_furniture/bathtub1.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_furniture/sink1.mdl", 10)
+		ScavData.RegisterFiremode(tab, "models/props_furniture/bathtub1.mdl", 20)
 		--L4D/2
-		ScavData.RegisterFiremode(tab,"models/props_interiors/bathroomsink01.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_interiors/bathtub01.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_interiors/sink_industrial01.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_interiors/sink_kitchen.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_interiors/pedestal_sink.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_docks/marina_firehosebox.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_equipment/firehosebox01.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_interiors/soap_dispenser.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_interiors/soap_dispenser_static.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_interiors/soapdispenser01.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_interiors/dryer.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/metalbucket01a_static.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/metalbucket02a_static.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_street/firehydrant.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_urban/fire_hydrant001.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_waterfront/tattoo_autoclave.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_unique/mop01.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_unique/mopbucket01.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_interiors/bathroomsink01.mdl", 10)
+		ScavData.RegisterFiremode(tab, "models/props_interiors/bathtub01.mdl", 20)
+		ScavData.RegisterFiremode(tab, "models/props_interiors/sink_industrial01.mdl", 20)
+		ScavData.RegisterFiremode(tab, "models/props_interiors/sink_kitchen.mdl", 20)
+		ScavData.RegisterFiremode(tab, "models/props_interiors/pedestal_sink.mdl", 10)
+		ScavData.RegisterFiremode(tab, "models/props_docks/marina_firehosebox.mdl", 20)
+		ScavData.RegisterFiremode(tab, "models/props_equipment/firehosebox01.mdl", 20)
+		ScavData.RegisterFiremode(tab, "models/props_interiors/soap_dispenser.mdl", 5)
+		ScavData.RegisterFiremode(tab, "models/props_interiors/soap_dispenser_static.mdl", 5)
+		ScavData.RegisterFiremode(tab, "models/props_interiors/dish_soap.mdl", 5)
+		ScavData.RegisterFiremode(tab, "models/props_interiors/dish_soap_static.mdl", 5)
+		ScavData.RegisterFiremode(tab, "models/props_interiors/soapdispenser01.mdl", 10)
+		ScavData.RegisterFiremode(tab, "models/props_interiors/dryer.mdl", 25)
+		ScavData.RegisterFiremode(tab, "models/props_junk/metalbucket01a_static.mdl", 10)
+		ScavData.RegisterFiremode(tab, "models/props_junk/metalbucket02a_static.mdl", 10)
+		ScavData.RegisterFiremode(tab, "models/props_street/firehydrant.mdl", 30)
+		ScavData.RegisterFiremode(tab, "models/props_urban/fire_hydrant001.mdl", 30)
+		ScavData.RegisterFiremode(tab, "models/props_waterfront/tattoo_autoclave.mdl", 30)
+		ScavData.RegisterFiremode(tab, "models/props_unique/mop01.mdl", 30)
+		ScavData.RegisterFiremode(tab, "models/props_unique/mopbucket01.mdl", 30)
 		--ASW
-		ScavData.RegisterFiremode(tab,"models/props/furniture/misc/bathroomsink.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/furniture/misc/bathroomsink.mdl", 20)
 
 --[[==============================================================================================
 	-- Sandwich

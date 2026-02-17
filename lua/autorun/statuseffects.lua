@@ -101,8 +101,6 @@ function Status2.Inflict(ent,statustype,duration,value,inflictor,infinite) --ent
 		ent = ent:GetOwner()
 	end
 	
-	local tab = ent.StatusTable or {}
-	
 	ent.StatusTable = tab
 	tab.ent = ent
 	tab.statustype = statustype
@@ -1405,60 +1403,31 @@ local STATUS = {}
 	STATUS.Name = "Drunk"
 	STATUS.LastValue = 0
 	STATUS.StartTime = 0
-	if CLIENT then
-		local function DrawToyTown( NumPasses, H )
-			cam.Start2D()
-		
-			surface.SetMaterial( matToytown )
-			surface.SetDrawColor( 255, 255, 255, 255 )
-		
-			for i = 1, NumPasses do
-		
-				render.CopyRenderTargetToTexture( render.GetScreenEffectTexture() )
-		
-				surface.DrawTexturedRect( 0, 0, ScrW(), H )
-				surface.DrawTexturedRectUV( 0, ScrH() - H, ScrW(), H, 0, 1, 1, 0 )
-		
-			end
-		
-			cam.End2D()
-		end
-	end
 
 	function STATUS:Initialize()
 		self.StartTime = CurTime()
 		self.Value = 1
-		if CLIENT then
-			hook.Add( "RenderScreenspaceEffects", "ScavDrunk", function()
-				DrawMaterialOverlay( "effects/water_warp01", 0.02 )
-				surface.SetDrawColor(0,255,0,6)
-				surface.DrawRect(0,0,ScrW(),ScrH())
-				local H = math.floor( ScrH() * 0.69 )
-
-				DrawToyTown( 3, H )
-			end )
-		end
 	end
 	
---if SERVER then
 	function STATUS:Think()
 		if SERVER then
-			self.Owner:ViewPunch(Angle(math.Rand(-self.Value,self.Value),math.Rand(-self.Value,self.Value),0))
+			self.Owner:ViewPunch(Angle(math.Rand(-self.Value, self.Value), math.Rand(-self.Value, self.Value), 0))
 		else
 			hook.Add( "RenderScreenspaceEffects", "ScavDrunk", function()
-				DrawMaterialOverlay( "effects/water_warp01", 0.02 * self.Value )
-				surface.SetDrawColor(0,255,0,3*(1+self.Value))
-				surface.DrawRect(0,0,ScrW(),ScrH())
-				local H = math.floor( ScrH() * 0.29*(1+self.Value) )
+				DrawMaterialOverlay("effects/water_warp01", 0.02 * self.Value)
+				surface.SetDrawColor(0, 255, 0, 3 * (1 + self.Value))
+				surface.DrawRect(0, 0, ScrW(), ScrH())
+				local H = math.floor(ScrH() * 0.29 * (1 + self.Value))
 
-				DrawToyTown( 3, H )
+				DrawToyTown(3, H)
 			end )
 		end
-		self.Value = math.max(.5,self.Value - .125/(self.EndTime - self.StartTime)) --lessen effects over time
-		self:NextThink(CurTime()+.125)
+		--lessen effects over time
+		self.Value = math.max(.5, self.Value - .125 / (self.EndTime - self.StartTime))
+
+		self:NextThink(CurTime() + .125)
 		return true
 	end
---end
 	
 	function STATUS:Finish()
 		if CLIENT then
@@ -1466,19 +1435,9 @@ local STATUS = {}
 		end
 	end
 
-	function STATUS:Add(duration,value)
-		self.EndTime = self.EndTime+duration
-		self.Value = self.Value+value
-		if CLIENT then
-			hook.Add( "RenderScreenspaceEffects", "ScavDrunk", function()
-				DrawMaterialOverlay( "effects/water_warp01", 0.02 * self.Value )
-				surface.SetDrawColor(0,255,0,3*(1+self.Value))
-				surface.DrawRect(0,0,ScrW(),ScrH())
-				local H = math.floor( ScrH() * 0.29*(1+self.Value) )
-
-				DrawToyTown( 3, H )
-			end )
-		end
+	function STATUS:Add(duration, value)
+		self.EndTime = self.EndTime + duration
+		self.Value = self.Value + value
 	end
 	
-	Status2.Register("Drunk",STATUS)
+	Status2.Register("Drunk", STATUS)
