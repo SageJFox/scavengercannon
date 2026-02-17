@@ -19,76 +19,49 @@ util.PrecacheModel("models/scav/shells/shell_shotgun_tf2.mdl")
 util.PrecacheModel("models/scav/shells/shell_sniperrifle_tf2.mdl")
 util.PrecacheModel("models/scav/shells/shell_minigun_tf2.mdl")
 
-tf2shelleject = function(self,shelltype)
-	if not IsValid(self) then return end
-	if not IsValid(self.Owner) then return end
-	if not self.Owner:GetViewModel() then return end
-	if not game.SinglePlayer() and CLIENT then
+tf2shelleject = function(self, shelltype)
+	if not IsValid(self) or not IsValid(self.Owner) then return end
+
+	if game.SinglePlayer() == SERVER then
 		local shell = shelltype or "pistol"
-		local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
-		if attach then
-			local brass = ents.CreateClientProp("models/scav/shells/shell_"..shell.."_tf2.mdl")
-			if IsValid(brass) then
-				brass:SetPos(attach.Pos)
-				brass:SetAngles(attach.Ang)
-				brass:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
-				brass:AddCallback("PhysicsCollide",function(ent,data)
-					if ( data.Speed > 50 ) then
-						ent:EmitSound(Sound(shell == "shotgun" and "Bounce.ShotgunShell" or "Bounce.Shell"))
+		-- Get our ejection attachment
+		local attach = self.Owner:GetViewModel() and self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject)) or 
+			self:GetModel():GetAttachment(self:GetModel():LookupAttachment(eject))
+		if not attach then return end
+		-- Create/init casing prop
+		local brass = CLIENT and ents.CreateClientProp("models/scav/shells/shell_" .. shell .. "_tf2.mdl") or ents.Create("prop_physics")
+		if not IsValid(brass) then return end
+		brass:SetPos(attach.Pos)
+		brass:SetAngles(attach.Ang)
+		brass:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
+		if SERVER then
+			brass:SetModel("models/scav/shells/shell_" .. shell .. "_tf2.mdl")
+			brass.NoScav = true
+		else
+			brass:SetupBones()
+		end
+		-- Physics sounds
+		brass:AddCallback("PhysicsCollide",function(ent,data)
+			if (data.Speed > 50) then
+				ent:EmitSound(Sound(shell == "shotgun" and "Bounce.ShotgunShell" or "Bounce.Shell"))
 					end
-				end)
-				brass:Spawn()
-				brass:DrawShadow(false)
-				local angShellAngles = self.Owner:EyeAngles()
-				--angShellAngles:RotateAroundAxis(Vector(0,0,1),90)
-				local vecShellVelocity = self.Owner:GetAbsVelocity()
-				vecShellVelocity = vecShellVelocity + angShellAngles:Right() * math.Rand( 50, 70 );
-				vecShellVelocity = vecShellVelocity + angShellAngles:Up() * math.Rand( 100, 150 );
+		end)
+		brass:Spawn()
+		brass:DrawShadow(false)
+		-- Throw casing
+		local angShellAngles = self.Owner:EyeAngles()
+		--angShellAngles:RotateAroundAxis(Vector(0, 0, 1), 90)
+		local vecShellVelocity = self.Owner:GetAbsVelocity()
+				vecShellVelocity = vecShellVelocity + angShellAngles:Right() * math.Rand(50, 70);
+				vecShellVelocity = vecShellVelocity + angShellAngles:Up() * math.Rand(100, 150);
 				vecShellVelocity = vecShellVelocity + angShellAngles:Forward() * 25;
 				local phys = brass:GetPhysicsObject()
 				if IsValid(phys) then
-					phys:SetVelocity(vecShellVelocity)
-					phys:SetAngleVelocity(angShellAngles:Forward()*1000)
-				end
-				timer.Simple(10,function() if IsValid(brass) then brass:Remove() end end)
-			end
+			phys:SetVelocity(vecShellVelocity)
+			phys:SetAngleVelocity(angShellAngles:Forward() * 1000)
 		end
-	elseif game.SinglePlayer() and SERVER then
-		local shell = shelltype or "pistol"
-		local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
-		if attach then
-			local brass = ents.Create("prop_physics")
-			if IsValid(brass) then
-				brass:SetModel("models/scav/shells/shell_"..shell.."_tf2.mdl")
-				brass:PhysicsInit(SOLID_VPHYSICS)
-				brass:SetPos(attach.Pos)
-				brass:SetAngles(attach.Ang)
-				brass:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
-				brass:AddCallback("PhysicsCollide",function(ent,data)
-					if ( data.Speed > 50 ) then
-						ent:EmitSound(Sound(shell == "shotgun" and "Bounce.ShotgunShell" or "Bounce.Shell"))
-					end
-				end)
-				brass:Spawn()
-				brass:DrawShadow(false)
-				brass.NoScav = true
-				if CLIENT then
-					brass:SetupBones()
-				end
-				local angShellAngles = self.Owner:EyeAngles()
-				--angShellAngles:RotateAroundAxis(Vector(0,0,1),90)
-				local vecShellVelocity = self.Owner:GetAbsVelocity()
-				vecShellVelocity = vecShellVelocity + angShellAngles:Right() * math.Rand( 50, 70 );
-				vecShellVelocity = vecShellVelocity + angShellAngles:Up() * math.Rand( 100, 150 );
-				vecShellVelocity = vecShellVelocity + angShellAngles:Forward() * 25;
-				local phys = brass:GetPhysicsObject()
-				if IsValid(phys) then
-					phys:SetVelocity(vecShellVelocity)
-					phys:SetAngleVelocity(angShellAngles:Forward()*1000)
-				end
-				timer.Simple(10,function() if IsValid(brass) then brass:Remove() end end)
-			end
-		end
+		--Cleanup casing
+		timer.Simple(10, function() if IsValid(brass) then brass:Remove() end end)
 	end
 end
 
