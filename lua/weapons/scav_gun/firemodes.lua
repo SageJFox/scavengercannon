@@ -5335,17 +5335,19 @@ PrecacheParticleSystem("scav_exp_plasma")
 				tab.anim = ACT_VM_IDLE
 				tab.Level = 4
 				local identify = {
-					--[Default] = 0,
-					--[[Meat Grinder]]["models/props_c17/grinderclamp01a.mdl"] = 1,
-					["models/props_normandy/mill_grinder.mdl"] = 1,
-					["models/props_mill/grinder_rollers01.mdl"] = 1,
-					["models/props_mill/grinder_rollers02.mdl"] = 1,
-					--[[TF2]]["models/props_forest/saw_blade.mdl"] = 2,
-					["models/props_forest/saw_blade_large.mdl"] = 2,
-					["models/props_forest/sawblade_moving.mdl"] = 2,
-					["models/props_swamp/chainsaw.mdl"] = 2,
+					--[Default] = SCAV_BUZZSAW_DEFAULT,
+					--[[Meat Grinder]]["models/props_c17/grinderclamp01a.mdl"] = SCAV_BUZZSAW_GRINDER,
+					["models/props_normandy/mill_grinder.mdl"] = SCAV_BUZZSAW_GRINDER,
+					["models/props_mill/grinder_rollers01.mdl"] = SCAV_BUZZSAW_GRINDER,
+					["models/props_mill/grinder_rollers02.mdl"] = SCAV_BUZZSAW_GRINDER,
+					--[[TF2]]["models/props_forest/saw_blade.mdl"] = SCAV_BUZZSAW_TF2,
+					["models/props_forest/saw_blade_large.mdl"] = SCAV_BUZZSAW_TF2,
+					["models/props_forest/sawblade_moving.mdl"] = SCAV_BUZZSAW_TF2,
+					["models/props_swamp/chainsaw.mdl"] = SCAV_BUZZSAW_TF2,
+					--[[L4D2 Chainsaw]]["models/weapons/melee/w_chainsaw.mdl"] = SCAV_BUZZSAW_L4D,
+					--[[ASW Chainsaw]]["models/weapons/chainsaw/chainsaw.mdl"] = SCAV_BUZZSAW_ASW,
 				}
-				tab.Identify = setmetatable(identify, {__index = function() return 0 end})
+				tab.Identify = setmetatable(identify, {__index = function() return SCAV_BUZZSAW_DEFAULT end})
 				tab.MaxAmmo = 1000
 				tab.Cooldown = 0.025
 				local tracep = {}
@@ -5365,7 +5367,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 					if IsValid(tr.Entity) then
 						--Okay, if I... if I chop you up in a meat grinder, and the only thing that comes out that's left of you is your eyeball, YOU'RE PROBABLY DEAD
 						if tr.Entity:Health() <= 4 then
-							if tab.Identify[item.ammo] == 1 and math.random(10) == 1 then
+							if tab.Identify[item.ammo] == SCAV_BUZZSAW_GRINDER and math.random(10) == 1 then
 								if tr.Entity:IsNPC() or tr.Entity:IsPlayer() then
 									if (tr.Entity:GetBloodColor() == BLOOD_COLOR_RED or tr.Entity:GetBloodColor() == BLOOD_COLOR_ZOMBIE or tr.Entity:GetBloodColor() == BLOOD_COLOR_GREEN) then
 										tr.Entity:SetShouldServerRagdoll(false)
@@ -5447,7 +5449,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 						if SERVER then
 							tr.Entity:TakeDamageInfo(dmg)
 							
-							if tab.Identify[item.ammo] == 2 then
+							if tab.Identify[item.ammo] == SCAV_BUZZSAW_TF2 then
 								if IsValid(self.ef_pblade) then
 									if (tr.Entity:GetMaterialType() == MAT_FLESH or tr.Entity:GetMaterialType() == MAT_BLOODYFLESH) or --ragdolls, props
 										(tr.Entity:GetBloodColor() and (tr.Entity:GetBloodColor() == BLOOD_COLOR_RED or tr.Entity:GetBloodColor() == BLOOD_COLOR_ZOMBIE or tr.Entity:GetBloodColor() == BLOOD_COLOR_GREEN)) then --NPCs
@@ -5470,7 +5472,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 							edata:SetColor(materialblood[tr.MatType])
 						end
 						if tr.MatType == MAT_FLESH or tr.MatType == MAT_BLOODYFLESH or tr.MatType == MAT_ALIENFLESH or tr.MatType == MAT_ANTLION then
-							if tab.Identify[item.ammo] == 2 then
+							if tab.Identify[item.ammo] == SCAV_BUZZSAW_TF2 then
 								sound.Play("ambient/sawblade_impact" .. math.random(2) .. ".wav", tr.HitPos, 75, 100, 0.25)
 							else
 								sound.Play("npc/manhack/grind_flesh" .. math.random(3) .. ".wav", tr.HitPos)
@@ -5500,7 +5502,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 				function tab.FireFunc(self, item)
 					if SERVER then
 						local tab = ScavData.models[self.inv.items[1].ammo]
-						self.ef_pblade = self:CreateToggleEffect(tab.Identify[item.ammo] == 2 and "scav_stream_saw_tf2" or "scav_stream_saw")
+						self.ef_pblade = self:CreateToggleEffect("scav_stream_saw", tab.Identify[item.ammo])
 					end
 					self:SetChargeAttack(tab.ChargeAttack, item)
 					return false

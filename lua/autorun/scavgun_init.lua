@@ -6,6 +6,14 @@ local PLAYER = FindMetaTable("Player")
 
 SCAV_SHORT_MAX = 32767
 
+--Identify enums
+	--Buzzsaw
+	SCAV_BUZZSAW_DEFAULT = 0
+	SCAV_BUZZSAW_GRINDER = 1
+	SCAV_BUZZSAW_TF2 = 2
+	SCAV_BUZZSAW_L4D = 3
+	SCAV_BUZZSAW_ASW = 4
+
 CreateClientConVar("cl_scav_high",0,true,false,"Enable/disable Backup Pistol shot dynamic lighting",0,1)
 CreateClientConVar("cl_scav_colorblindmode",0,true,true,"Enable/disable colorblindness assistance",0,1)
 
