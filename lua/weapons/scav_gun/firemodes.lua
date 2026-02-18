@@ -5309,6 +5309,26 @@ PrecacheParticleSystem("scav_exp_plasma")
 		util.PrecacheModel("models/gibs/humans/eye_gib.mdl") --thanks Black Mesa mod version!
 		PrecacheParticleSystem("scav_exp_disease_1")
 
+		--Transfer NPC blood color to ragdoll
+		hook.Add("CreateEntityRagdoll", "ScavBuzzsawRagdollBloodColor", function(owner, ragdoll)
+			if owner:GetBloodColor() and owner:GetBloodColor() >= 0 then
+				ragdoll.ScavBloodColor = owner:GetBloodColor()
+			end
+		end)
+
+		local materialblood = {
+			[MAT_ALIENFLESH] = BLOOD_COLOR_YELLOW,
+			[MAT_ANTLION] = BLOOD_COLOR_ANTLION,
+			[MAT_BLOODYFLESH] = BLOOD_COLOR_RED,
+			[MAT_COMPUTER] = BLOOD_COLOR_MECH,
+			[MAT_FLESH] = BLOOD_COLOR_RED,
+			[MAT_DIRT] = BLOOD_COLOR_ZOMBIE,
+			[MAT_GRASS] = BLOOD_COLOR_GREEN,
+			[MAT_GRATE] = BLOOD_COLOR_MECH,
+			[MAT_METAL] = BLOOD_COLOR_MECH,
+			[MAT_VENT] = BLOOD_COLOR_MECH
+		}
+
 		do
 			local tab = {}
 				tab.Name = "#scav.scavcan.buzzsaw"
@@ -5317,18 +5337,21 @@ PrecacheParticleSystem("scav_exp_plasma")
 				local identify = {
 					--[Default] = 0,
 					--[[Meat Grinder]]["models/props_c17/grinderclamp01a.mdl"] = 1,
+					["models/props_normandy/mill_grinder.mdl"] = 1,
+					["models/props_mill/grinder_rollers01.mdl"] = 1,
+					["models/props_mill/grinder_rollers02.mdl"] = 1,
 					--[[TF2]]["models/props_forest/saw_blade.mdl"] = 2,
 					["models/props_forest/saw_blade_large.mdl"] = 2,
 					["models/props_forest/sawblade_moving.mdl"] = 2,
 					["models/props_swamp/chainsaw.mdl"] = 2,
 				}
-				tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+				tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 				tab.MaxAmmo = 1000
 				tab.Cooldown = 0.025
 				local tracep = {}
-				tracep.mins = Vector(-12,-12,-12)
-				tracep.maxs = Vector(12,12,12)
-				function tab.ChargeAttack(self,item)
+				tracep.mins = Vector(-12, -12, -12)
+				tracep.maxs = Vector(12, 12, 12)
+				function tab.ChargeAttack(self, item)
 					local tab = ScavData.models[self.inv.items[1].ammo]
 					if IsValid(self.ef_pblade) then
 						if self.Owner:WaterLevel() > 1 then
@@ -5336,7 +5359,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 						end
 					end
 					tracep.start = self.Owner:GetShootPos()
-					tracep.endpos = tracep.start+self.Owner:GetAimVector()*60
+					tracep.endpos = tracep.start + self.Owner:GetAimVector() * 60
 					tracep.filter = self.Owner
 					local tr = util.TraceHull(tracep)
 					if IsValid(tr.Entity) then
@@ -5347,37 +5370,42 @@ PrecacheParticleSystem("scav_exp_plasma")
 									if (tr.Entity:GetBloodColor() == BLOOD_COLOR_RED or tr.Entity:GetBloodColor() == BLOOD_COLOR_ZOMBIE or tr.Entity:GetBloodColor() == BLOOD_COLOR_GREEN) then
 										tr.Entity:SetShouldServerRagdoll(false)
 										if tr.Entity:IsNPC() then
-											hook.Add("CreateClientsideRagdoll",tr.Entity,function(self,npc,ragdoll) 
+											hook.Add("CreateClientsideRagdoll", tr.Entity, function(self, npc,ragdoll)
+												if not IsValid(ragdoll) then return end
+												ragdoll:Remove()
+											end)
+											hook.Add("CreateEntityRagdoll", tr.Entity, function(owner, ragdoll)
+												if not IsValid(ragdoll) then return end
 												ragdoll:Remove()
 											end)
 											--TODO: I dunno what to even do here
 										-- else
 										-- 	if SERVER then
-										-- 		hook.Add("PlayerDeath","ScavMeatGrinder",function(us,victim,inflictor,attacker)
+										-- 		hook.Add("PlayerDeath", "ScavMeatGrinder", function(us, victim, inflictor, attacker)
 										-- 			if SERVER then
 										-- 				--if us ~= victim then return end
 										-- 				if inflictor:GetClass() == "scav_gun" and ScavData.models[inflictor.inv.items[1]].ammo == "models/props_c17/grinderclamp01a.mdl" then
 										-- 					print(ScavData.models[inflictor.inv.items[1]].ammo)
 										-- 					print("AAA")
-										-- 					victim:GetRagdollEntity():SetPos(Vector(-16384,-16384,-16384))
+										-- 					victim:GetRagdollEntity():SetPos(Vector(-16384, -16384, -16384))
 										-- 				end
 										-- 			end
 										-- 		end)
 										-- 	end
 										end
 										if CLIENT then
-											local attach = tr.Entity:GetPos()+tr.Entity:OBBCenter()
+											local attach = tr.Entity:GetPos() + tr.Entity:OBBCenter()
 											if attach then
-												ParticleEffect("scav_exp_disease_1",attach,Angle(0,0,0),game.GetWorld())
+												ParticleEffect("scav_exp_disease_1", attach, Angle(0, 0, 0), game.GetWorld())
 												local brass = ents.CreateClientProp("models/gibs/humans/eye_gib.mdl")
 												if IsValid(brass) then
 													brass:SetPos(attach)
-													brass:SetAngles(Angle(0,0,0))
+													brass:SetAngles(Angle(0, 0, 0))
 													brass:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
 													brass:Spawn()
 													brass:DrawShadow(false)
 													local angShellAngles = self.Owner:EyeAngles()
-													--angShellAngles:RotateAroundAxis(Vector(0,0,1),90)
+													--angShellAngles:RotateAroundAxis(Vector(0, 0, 1), 90)
 													local vecShellVelocity = self.Owner:GetAbsVelocity()
 													vecShellVelocity = vecShellVelocity + angShellAngles:Right() * math.Rand( 50, 70 );
 													vecShellVelocity = vecShellVelocity + angShellAngles:Up() * math.Rand( 300, 350 );
@@ -5385,9 +5413,9 @@ PrecacheParticleSystem("scav_exp_plasma")
 													local phys = brass:GetPhysicsObject()
 													if IsValid(phys) then
 														phys:SetVelocity(vecShellVelocity)
-														phys:SetAngleVelocity(angShellAngles:Forward()*1000)
+														phys:SetAngleVelocity(angShellAngles:Forward() * 1000)
 													end
-													timer.Simple(10,function() if IsValid(brass) then brass:Remove() end end)
+													timer.Simple(10, function() if IsValid(brass) then brass:Remove() end end)
 												end
 											end
 										end
@@ -5404,13 +5432,25 @@ PrecacheParticleSystem("scav_exp_plasma")
 						dmg:SetDamagePosition(tr.HitPos)
 						dmg:SetAttacker(self.Owner)
 						dmg:SetInflictor(self)
+						-- Break down doors
+						if string.find(tr.Entity:GetClass(), "door") then
+							dmg:SetDamage(10)
+							-- Non L4D doors are rarely breakable, so track their "health" separately
+							if SERVER and (not tr.Entity:GetInternalVariable("max_health") or tr.Entity:GetInternalVariable("max_health") == 1) then
+								tr.Entity.ScavGrindHealth = (tr.Entity.ScavGrindHealth or 0) + 1
+								if tr.Entity.ScavGrindHealth >= 100 then
+									-- TODO: door breaking FX. Maybe look at how Valve did the breach effect from Ep1?
+									tr.Entity:Fire("Break", "", 0)
+								end
+							end
+						end
 						if SERVER then
 							tr.Entity:TakeDamageInfo(dmg)
 							
 							if tab.Identify[item.ammo] == 2 then
 								if IsValid(self.ef_pblade) then
 									if (tr.Entity:GetMaterialType() == MAT_FLESH or tr.Entity:GetMaterialType() == MAT_BLOODYFLESH) or --ragdolls, props
-										(tr.Entity:GetBloodColor() == BLOOD_COLOR_RED or tr.Entity:GetBloodColor() == BLOOD_COLOR_ZOMBIE or tr.Entity:GetBloodColor() == BLOOD_COLOR_GREEN) then --NPCs
+										(tr.Entity:GetBloodColor() and (tr.Entity:GetBloodColor() == BLOOD_COLOR_RED or tr.Entity:GetBloodColor() == BLOOD_COLOR_ZOMBIE or tr.Entity:GetBloodColor() == BLOOD_COLOR_GREEN)) then --NPCs
 										self.ef_pblade:SetSkin(1) --Set the bloodied skin on the model
 									end
 								end
@@ -5422,27 +5462,30 @@ PrecacheParticleSystem("scav_exp_plasma")
 						edata:SetOrigin(tr.HitPos)
 						edata:SetNormal(tr.HitNormal)
 						edata:SetEntity(tr.Entity)
+						if tr.Entity:GetBloodColor() and tr.Entity:GetBloodColor() >= 0 then
+							edata:SetColor(tr.Entity:GetBloodColor())
+						elseif tr.Entity.ScavBloodColor then
+							edata:SetColor(tr.Entity.ScavBloodColor)
+						elseif materialblood[tr.MatType] then
+							edata:SetColor(materialblood[tr.MatType])
+						end
 						if tr.MatType == MAT_FLESH or tr.MatType == MAT_BLOODYFLESH or tr.MatType == MAT_ALIENFLESH or tr.MatType == MAT_ANTLION then
 							if tab.Identify[item.ammo] == 2 then
-								sound.Play("ambient/sawblade_impact"..math.random(2)..".wav",tr.HitPos,75,100,0.25)
+								sound.Play("ambient/sawblade_impact" .. math.random(2) .. ".wav", tr.HitPos, 75, 100, 0.25)
 							else
-								sound.Play("npc/manhack/grind_flesh"..math.random(3)..".wav",tr.HitPos)
+								sound.Play("npc/manhack/grind_flesh" .. math.random(3) .. ".wav", tr.HitPos)
 							end
-							--self.Owner:ViewPunch(Angle(math.Rand(-1,-3),0,0))
-							--if tr.MatType == MAT_FLESH or tr.MatType == MAT_BLOODYFLESH then
-								util.Effect("BloodImpact",edata,true,true)
-							--else
-							--	util.Effect("BloodImpactButYellow",edata,true,true) --TODO: yellow blood
-							--end
+							--self.Owner:ViewPunch(Angle(math.Rand(-1, -3), 0, 0))
+							util.Effect("BloodImpact", edata, true, true)
 						else
-							sound.Play("npc/manhack/grind"..math.random(1,5)..".wav",tr.HitPos)
-							--self.Owner:ViewPunch(Angle(math.Rand(-0.5,-2),0,0))
-							util.Effect("ManhackSparks",edata,true,true)
+							sound.Play("npc/manhack/grind" .. math.random(1, 5) .. ".wav", tr.HitPos)
+							--self.Owner:ViewPunch(Angle(math.Rand(-0.5, -2), 0, 0))
+							util.Effect("ManhackSparks", edata, true, true)
 						end
 					end
 					if SERVER then
 						self:AddBarrelSpin(100)
-						self:TakeSubammo(item,1)
+						self:TakeSubammo(item, 1)
 					end
 					local continuefiring = self:ProcessLinking(item) and self:StopChargeOnRelease()
 					if not continuefiring then
@@ -5454,58 +5497,49 @@ PrecacheParticleSystem("scav_exp_plasma")
 					end
 					return 0.025
 				end
-				function tab.FireFunc(self,item)
+				function tab.FireFunc(self, item)
 					if SERVER then
 						local tab = ScavData.models[self.inv.items[1].ammo]
 						self.ef_pblade = self:CreateToggleEffect(tab.Identify[item.ammo] == 2 and "scav_stream_saw_tf2" or "scav_stream_saw")
 					end
-					self:SetChargeAttack(tab.ChargeAttack,item)
+					self:SetChargeAttack(tab.ChargeAttack, item)
 					return false
 				end
 				if SERVER then
-					ScavData.CollectFuncs["models/props_junk/sawblade001a.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),200,ent:GetSkin()}} end
-					ScavData.CollectFuncs["models/props_c17/grinderclamp01a.mdl"] = ScavData.GiveOneOfItemInf -- I'M GONNA PUT SOMEBODY IN A MEAT GRINDER -Jerma 2022
-					ScavData.CollectFuncs["models/manhack.mdl"] = ScavData.CollectFuncs["models/props_junk/sawblade001a.mdl"]
-					ScavData.CollectFuncs["models/police.mdl"] = function(self,ent)
+					ScavData.CollectFuncs["models/police.mdl"] = function(self, ent)
 						if tobool(ent:GetBodygroup(ent:FindBodygroupByName("manhack"))) then
-							return {{"models/manhack.mdl",250,0},
-									{"models/police.mdl",1,0}}
+							return {{"models/manhack.mdl", 200, 0},
+									{"models/police.mdl", 1, 0}}
 						else
-							return {{"models/police.mdl",1,0}}
+							return {{"models/police.mdl", 1, 0}}
 						end
 					end
-					ScavData.CollectFuncs["models/gibs/manhack_gib01.mdl"] = function(self,ent) return {{"models/manhack.mdl",25,0}} end
-					ScavData.CollectFuncs["models/gibs/manhack_gib02.mdl"] = ScavData.CollectFuncs["models/gibs/manhack_gib01.mdl"]
-					ScavData.CollectFuncs["models/gibs/manhack_gib03.mdl"] = ScavData.CollectFuncs["models/gibs/manhack_gib01.mdl"]
-					ScavData.CollectFuncs["models/gibs/manhack_gib04.mdl"] = ScavData.CollectFuncs["models/gibs/manhack_gib01.mdl"]
-					ScavData.CollectFuncs["models/gibs/manhack_gib05.mdl"] = ScavData.CollectFuncs["models/gibs/manhack_gib01.mdl"]
-					ScavData.CollectFuncs["models/gibs/manhack_gib06.mdl"] = ScavData.CollectFuncs["models/gibs/manhack_gib01.mdl"]
-					--Ep2
-					ScavData.CollectFuncs["models/props_forest/circularsaw01.mdl"] = ScavData.CollectFuncs["models/props_junk/sawblade001a.mdl"]
-					--CSS
-					ScavData.CollectFuncs["models/props/cs_militia/circularsaw01.mdl"] = ScavData.CollectFuncs["models/props_junk/sawblade001a.mdl"]
-					--TF2
-					ScavData.CollectFuncs["models/props_forest/saw_blade.mdl"] = ScavData.CollectFuncs["models/props_junk/sawblade001a.mdl"]
-					ScavData.CollectFuncs["models/props_forest/saw_blade_large.mdl"] = ScavData.CollectFuncs["models/props_junk/sawblade001a.mdl"]
-					ScavData.CollectFuncs["models/props_forest/sawblade_moving.mdl"] = ScavData.CollectFuncs["models/props_junk/sawblade001a.mdl"]
-					ScavData.CollectFuncs["models/props_swamp/chainsaw.mdl"] = ScavData.CollectFuncs["models/props_junk/sawblade001a.mdl"]
-					--L4D2
-					ScavData.CollectFuncs["models/weapons/melee/w_chainsaw.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),1000,ent:GetSkin()}} end
 				end
-				ScavData.RegisterFiremode(tab,"models/props_junk/sawblade001a.mdl")
-				ScavData.RegisterFiremode(tab,"models/props_c17/grinderclamp01a.mdl")
-				ScavData.RegisterFiremode(tab,"models/manhack.mdl")
-				--Ep2
-				ScavData.RegisterFiremode(tab,"models/props_forest/circularsaw01.mdl")
+				ScavData.RegisterFiremode(tab, "models/props_junk/sawblade001a.mdl", 200)
+				ScavData.RegisterFiremode(tab, "models/props_c17/grinderclamp01a.mdl", SCAV_SHORT_MAX)
+				ScavData.RegisterFiremode(tab, "models/manhack.mdl", 200)
+				ScavData.RegisterFiremode(tab, "models/gibs/manhack_gib01.mdl", 25)
+				ScavData.RegisterFiremode(tab, "models/gibs/manhack_gib02.mdl", 25)
+				ScavData.RegisterFiremode(tab, "models/gibs/manhack_gib03.mdl", 25)
+				ScavData.RegisterFiremode(tab, "models/gibs/manhack_gib04.mdl", 25)
+				ScavData.RegisterFiremode(tab, "models/gibs/manhack_gib05.mdl", 25)
+				ScavData.RegisterFiremode(tab, "models/gibs/manhack_gib06.mdl", 25)
+				ScavData.RegisterFiremode(tab, "models/props_forest/circularsaw01.mdl", 200)
 				--CSS
-				ScavData.RegisterFiremode(tab,"models/props/cs_militia/circularsaw01.mdl")
+				ScavData.RegisterFiremode(tab, "models/props/cs_militia/circularsaw01.mdl", 200)
 				--TF2
-				ScavData.RegisterFiremode(tab,"models/props_forest/saw_blade.mdl")
-				ScavData.RegisterFiremode(tab,"models/props_forest/saw_blade_large.mdl")
-				ScavData.RegisterFiremode(tab,"models/props_forest/sawblade_moving.mdl")
-				ScavData.RegisterFiremode(tab,"models/props_swamp/chainsaw.mdl")
+				ScavData.RegisterFiremode(tab, "models/props_forest/saw_blade.mdl", 200)
+				ScavData.RegisterFiremode(tab, "models/props_forest/saw_blade_large.mdl", 200)
+				ScavData.RegisterFiremode(tab, "models/props_forest/sawblade_moving.mdl", 200)
+				ScavData.RegisterFiremode(tab, "models/props_swamp/chainsaw.mdl", 1000)
 				--L4D2
-				ScavData.RegisterFiremode(tab,"models/weapons/melee/w_chainsaw.mdl")
+				ScavData.RegisterFiremode(tab, "models/weapons/melee/w_chainsaw.mdl", 1000)
+				ScavData.RegisterFiremode(tab, "models/props_mill/grinder_rollers01.mdl", SCAV_SHORT_MAX)
+				ScavData.RegisterFiremode(tab, "models/props_mill/grinder_rollers02.mdl", SCAV_SHORT_MAX)
+				--DoD:S
+				ScavData.RegisterFiremode(tab, "models/props_normandy/mill_grinder.mdl", SCAV_SHORT_MAX)
+				--ASW
+				ScavData.RegisterFiremode(tab, "models/weapons/chainsaw/chainsaw.mdl", 1000)
 		end
 
 --[[==============================================================================================
