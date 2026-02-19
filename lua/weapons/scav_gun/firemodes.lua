@@ -5307,7 +5307,62 @@ PrecacheParticleSystem("scav_exp_plasma")
 ==============================================================================================]]--
 
 		util.PrecacheModel("models/gibs/humans/eye_gib.mdl") --thanks Black Mesa mod version!
-		PrecacheParticleSystem("scav_exp_disease_1")
+		PrecacheParticleSystem("scav_gib_burst_blood")
+
+		if SERVER then util.AddNetworkString("ScavSendMeYourGoo") end
+
+		--Okay, if I... if I chop you up in a meat grinder, and the only thing that comes out that's left of you is your eyeball, YOU'RE PROBABLY DEAD
+		local function ScavJerma(self, tr, tab, item)
+			if SERVER then
+				if tr.Entity:Health() > 4 then return false end
+				if tab.Identify[item.ammo] ~= SCAV_BUZZSAW_GRINDER or math.random(10) ~= 1 then return false end
+				if not tr.Entity:IsNPC() then return false end
+				if not (tr.Entity:GetBloodColor() == BLOOD_COLOR_RED or
+						tr.Entity:GetBloodColor() == BLOOD_COLOR_ZOMBIE or 
+						tr.Entity:GetBloodColor() == BLOOD_COLOR_GREEN) then return false end
+				tr.Entity:SetShouldServerRagdoll(false)
+				return true
+			else
+				local attach = tr.attach
+				if attach then
+					ParticleEffect("scav_gib_burst_blood", attach, Angle(0, 0, 0), game.GetWorld())
+					sound.Play("physics/flesh/flesh_bloody_break.wav", attach)
+					local brass = ents.CreateClientProp("models/gibs/humans/eye_gib.mdl")
+					if IsValid(brass) then
+						brass:SetPos(attach)
+						brass:SetAngles(angle_zero)
+						brass:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
+						brass:Spawn()
+						brass:DrawShadow(false)
+						local angShellAngles = self.Owner:EyeAngles()
+						--angShellAngles:RotateAroundAxis(Vector(0, 0, 1), 90)
+						local vecShellVelocity = self.Owner:GetAbsVelocity()
+						vecShellVelocity = vecShellVelocity + angShellAngles:Right() * math.Rand(50, 70);
+						vecShellVelocity = vecShellVelocity + angShellAngles:Up() * math.Rand(300, 350);
+						vecShellVelocity = vecShellVelocity + angShellAngles:Forward() * 25;
+						local phys = brass:GetPhysicsObject()
+						if IsValid(phys) then
+							phys:SetVelocity(vecShellVelocity)
+							phys:SetAngleVelocity(angShellAngles:Forward() * 1000)
+						end
+						timer.Simple(10, function() if IsValid(brass) then brass:Remove() end end)
+					end
+				end
+			end
+		end
+		if CLIENT then
+			net.Receive("ScavSendMeYourGoo", function()
+				local self = net.ReadEntity()
+				if not IsValid(self) then return end
+				local tr = {}
+				tr.attach = net.ReadVector()
+				tr.Hit = true 
+				tr.MatType = net.ReadUInt(7)
+				tr.HitPos = net.ReadVector()
+				tr.HitNormal = net.ReadVector()
+				ScavJerma(self, tr)
+			end)
+		end
 
 		--Transfer NPC blood color to ragdoll
 		hook.Add("CreateEntityRagdoll", "ScavBuzzsawRagdollBloodColor", function(owner, ragdoll)
@@ -5364,66 +5419,17 @@ PrecacheParticleSystem("scav_exp_plasma")
 					tracep.endpos = tracep.start + self.Owner:GetAimVector() * 60
 					tracep.filter = self.Owner
 					local tr = util.TraceHull(tracep)
+					--make sure the client gets us
 					if IsValid(tr.Entity) then
-						--Okay, if I... if I chop you up in a meat grinder, and the only thing that comes out that's left of you is your eyeball, YOU'RE PROBABLY DEAD
-						if tr.Entity:Health() <= 4 then
-							if tab.Identify[item.ammo] == SCAV_BUZZSAW_GRINDER and math.random(10) == 1 then
-								if tr.Entity:IsNPC() or tr.Entity:IsPlayer() then
-									if (tr.Entity:GetBloodColor() == BLOOD_COLOR_RED or tr.Entity:GetBloodColor() == BLOOD_COLOR_ZOMBIE or tr.Entity:GetBloodColor() == BLOOD_COLOR_GREEN) then
-										tr.Entity:SetShouldServerRagdoll(false)
-										if tr.Entity:IsNPC() then
-											hook.Add("CreateClientsideRagdoll", tr.Entity, function(self, npc,ragdoll)
-												if not IsValid(ragdoll) then return end
-												ragdoll:Remove()
-											end)
-											hook.Add("CreateEntityRagdoll", tr.Entity, function(owner, ragdoll)
-												if not IsValid(ragdoll) then return end
-												ragdoll:Remove()
-											end)
-											--TODO: I dunno what to even do here
-										-- else
-										-- 	if SERVER then
-										-- 		hook.Add("PlayerDeath", "ScavMeatGrinder", function(us, victim, inflictor, attacker)
-										-- 			if SERVER then
-										-- 				--if us ~= victim then return end
-										-- 				if inflictor:GetClass() == "scav_gun" and ScavData.models[inflictor.inv.items[1]].ammo == "models/props_c17/grinderclamp01a.mdl" then
-										-- 					print(ScavData.models[inflictor.inv.items[1]].ammo)
-										-- 					print("AAA")
-										-- 					victim:GetRagdollEntity():SetPos(Vector(-16384, -16384, -16384))
-										-- 				end
-										-- 			end
-										-- 		end)
-										-- 	end
-										end
-										if CLIENT then
-											local attach = tr.Entity:GetPos() + tr.Entity:OBBCenter()
-											if attach then
-												ParticleEffect("scav_exp_disease_1", attach, Angle(0, 0, 0), game.GetWorld())
-												local brass = ents.CreateClientProp("models/gibs/humans/eye_gib.mdl")
-												if IsValid(brass) then
-													brass:SetPos(attach)
-													brass:SetAngles(Angle(0, 0, 0))
-													brass:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
-													brass:Spawn()
-													brass:DrawShadow(false)
-													local angShellAngles = self.Owner:EyeAngles()
-													--angShellAngles:RotateAroundAxis(Vector(0, 0, 1), 90)
-													local vecShellVelocity = self.Owner:GetAbsVelocity()
-													vecShellVelocity = vecShellVelocity + angShellAngles:Right() * math.Rand( 50, 70 );
-													vecShellVelocity = vecShellVelocity + angShellAngles:Up() * math.Rand( 300, 350 );
-													vecShellVelocity = vecShellVelocity + angShellAngles:Forward() * 25;
-													local phys = brass:GetPhysicsObject()
-													if IsValid(phys) then
-														phys:SetVelocity(vecShellVelocity)
-														phys:SetAngleVelocity(angShellAngles:Forward() * 1000)
-													end
-													timer.Simple(10, function() if IsValid(brass) then brass:Remove() end end)
-												end
-											end
-										end
-									end
-								end
-							end
+						if SERVER and ScavJerma(self, tr, tab, item) then
+							net.Start("ScavSendMeYourGoo")
+								net.WriteEntity(self)
+								net.WriteVector(tr.Entity:GetPos() + tr.Entity:OBBCenter())
+								net.WriteUInt(tr.MatType, 7)
+								net.WriteVector(tr.HitPos)
+								net.WriteVector(tr.HitNormal)
+							net.Send(player.GetHumans())
+							if tr.Entity:IsNPC() then tr.Entity:Remove() end
 						end
 						--if tr.Entity:IsNPC() then
 						--	tr.Entity:SetSchedule(SCHED_BIG_FLINCH)
