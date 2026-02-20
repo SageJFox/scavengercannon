@@ -86,6 +86,13 @@ hook.Add("Initialize","SetupStatusHook",function()
 		return false
 	end
 end)
+
+saverestore.AddSaveHook("scavstatusreset",function(save) --purge status effects on players before map save
+	for i,v in pairs(player.GetAll()) do
+		Status2.PurgeEnt(v)
+		v.StatusTable = nil
+	end
+end)
 	
 if SERVER then
 	util.AddNetworkString("StatusInflict")
@@ -97,12 +104,12 @@ function Status2.Inflict(ent,statustype,duration,value,inflictor,infinite) --ent
 	
 	local tab = ent.StatusTable or {}
 	
-	if ent:GetClass() == "phys_bone_follower" then
-		ent = ent:GetOwner()
-	end
-	
-	ent.StatusTable = tab
-	tab.ent = ent
+	if ent:GetClass() == "phys_bone_follower" then
+		ent = ent:GetOwner()
+	end
+	
+	ent.StatusTable = tab
+	tab.ent = ent
 	tab.statustype = statustype
 	tab.duration = duration
 	tab.value = value
@@ -559,10 +566,12 @@ local STATUS = {}
 				self.Owner:SetNPCState(NPC_STATE_NONE)
 			elseif self.Owner:IsNPC() then
 				self.Owner:SetSchedule(SCHED_NONE)
-			elseif _ZetasInstalled and self.Owner:GetClass() == "npc_zetaplayer" then --Zeta Player specific
+			elseif self.Owner:GetClass() == "npc_zetaplayer" then --Zeta Player specific
 				self.Owner:CancelMove()
 				self.Owner:StopLooking()
 				self.Owner:SetState('jailed/held')
+			elseif self.Owner:GetClass() == "npc_lambdaplayer" then --Lambda Player specific
+				self.Owner:Freeze(true)
 			elseif IsValid(self.Owner:GetPhysicsObject()) and self.Owner:GetMoveType() == MOVETYPE_VPHYSICS then
 				local phys = self.Owner:GetPhysicsObject()
 				if IsValid(phys) then
@@ -706,6 +715,9 @@ local STATUS = {}
 			end
 			if _ZetasInstalled and self.Owner:GetClass() == "npc_zetaplayer" then --Zeta Player specific
 				self.Owner:SetState('idle')
+			end
+			if self.Owner:GetClass() == "npc_lambdaplayer" then --Lambda Player specific
+				self.Owner:UnLock()
 			end
 			if not self.Owner:IsPlayer() then
 				self.Owner:SetMaterial(self.mat)
@@ -1400,44 +1412,44 @@ local STATUS = {}
 
 local STATUS = {}
 	
-	STATUS.Name = "Drunk"
-	STATUS.LastValue = 0
-	STATUS.StartTime = 0
-
-	function STATUS:Initialize()
-		self.StartTime = CurTime()
-		self.Value = 1
-	end
-	
-	function STATUS:Think()
-		if SERVER then
-			self.Owner:ViewPunch(Angle(math.Rand(-self.Value, self.Value), math.Rand(-self.Value, self.Value), 0))
-		else
-			hook.Add( "RenderScreenspaceEffects", "ScavDrunk", function()
-				DrawMaterialOverlay("effects/water_warp01", 0.02 * self.Value)
-				surface.SetDrawColor(0, 255, 0, 3 * (1 + self.Value))
-				surface.DrawRect(0, 0, ScrW(), ScrH())
-				local H = math.floor(ScrH() * 0.29 * (1 + self.Value))
-
-				DrawToyTown(3, H)
-			end )
-		end
-		--lessen effects over time
-		self.Value = math.max(.5, self.Value - .125 / (self.EndTime - self.StartTime))
-
-		self:NextThink(CurTime() + .125)
-		return true
-	end
-	
-	function STATUS:Finish()
-		if CLIENT then
+	STATUS.Name = "Drunk"
+	STATUS.LastValue = 0
+	STATUS.StartTime = 0
+
+	function STATUS:Initialize()
+		self.StartTime = CurTime()
+		self.Value = 1
+	end
+	
+	function STATUS:Think()
+		if SERVER then
+			self.Owner:ViewPunch(Angle(math.Rand(-self.Value, self.Value), math.Rand(-self.Value, self.Value), 0))
+		else
+			hook.Add( "RenderScreenspaceEffects", "ScavDrunk", function()
+				DrawMaterialOverlay("effects/water_warp01", 0.02 * self.Value)
+				surface.SetDrawColor(0, 255, 0, 3 * (1 + self.Value))
+				surface.DrawRect(0, 0, ScrW(), ScrH())
+				local H = math.floor(ScrH() * 0.29 * (1 + self.Value))
+
+				DrawToyTown(3, H)
+			end )
+		end
+		--lessen effects over time
+		self.Value = math.max(.5, self.Value - .125 / (self.EndTime - self.StartTime))
+
+		self:NextThink(CurTime() + .125)
+		return true
+	end
+	
+	function STATUS:Finish()
+		if CLIENT then
 			hook.Remove( "RenderScreenspaceEffects", "ScavDrunk")
-		end
-	end
-
-	function STATUS:Add(duration, value)
-		self.EndTime = self.EndTime + duration
-		self.Value = self.Value + value
-	end
-	
-	Status2.Register("Drunk", STATUS)
+		end
+	end
+
+	function STATUS:Add(duration, value)
+		self.EndTime = self.EndTime + duration
+		self.Value = self.Value + value
+	end
+	
+	Status2.Register("Drunk", STATUS)

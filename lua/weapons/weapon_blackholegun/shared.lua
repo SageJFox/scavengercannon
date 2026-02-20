@@ -277,11 +277,13 @@ function SWEP:Deploy()
 end
 
 function SWEP:OnRemove()
+
 	if SERVER then
 		self:DestroyWaypoints()
 		if self.SoundRattle then self.SoundRattle:Stop() end
 		if self.SoundCharge then self.SoundCharge:Stop() end
 	end
+
 end
 
 function SWEP:Holster()

@@ -301,6 +301,8 @@ function SWEP:ProcessLinking(item)
 
 				local newinfo = ScavData.models[predicteditem.ammo]
 				local oldinfo = ScavData.models[item.ammo]
+				local newname = "#scav.scavcan.unknown"
+				local oldname = "#scav.scavcan.unknown"
 
 				if not newinfo or not oldinfo then
 					self.ChargeAttack = nil
@@ -2996,3 +2998,4 @@ if SERVER then
 end
 
 include("firemodes.lua") --load last
+
