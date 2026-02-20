@@ -85,19 +85,19 @@ local ScavData 	= ScavData
 
 function SWEP:SetupDataTables()
 
-	self:NetworkVar("Int", 0, 	"Capacity")
-	self:NetworkVar("Int", 1, 	"MaxExplosives")
-	self:NetworkVar("Int", 2, 	"NWLevel")
-	self:NetworkVar("Float", 0, 	"CooldownScale")
-	self:NetworkVar("Float", 1, 	"ForceScale")
-	self:NetworkVar("Float", 2, 	"BarrelSpinSpeed")
-	self:NetworkVar("Entity", 0, "NWFiremodeEnt") --you can use this if the client needs to know about an entity in a firemode (like in the grappling beam), you should reset it to NULL when you're done though
-	self:NetworkVar("Bool", 0, 	"CanScav")
-	self:NetworkVar("Bool", 1, 	"UpgradeLaser")
-	self:NetworkVar("Bool", 3, 	"Zoomed")
+	self:NetworkVar("Int", "Capacity")
+	self:NetworkVar("Int", "MaxExplosives")
+	self:NetworkVar("Int", "NWLevel")
+	self:NetworkVar("Float", "CooldownScale")
+	self:NetworkVar("Float", "ForceScale")
+	self:NetworkVar("Float", "BarrelSpinSpeed")
+	self:NetworkVar("Entity", "NWFiremodeEnt") --you can use this if the client needs to know about an entity in a firemode (like in the grappling beam), you should reset it to NULL when you're done though
+	self:NetworkVar("Bool", "CanScav")
+	--self:NetworkVar("Bool", "UpgradeLaser")
+	self:NetworkVar("Bool", "Zoomed")
 
 	self:SetCanScav(false)
-	self:SetUpgradeLaser(false)
+	--self:SetUpgradeLaser(false)
 	self:SetCapacity(20)
 	self:SetMaxExplosives(6)
 	self:SetCooldownScale(1)
@@ -338,7 +338,7 @@ end
 
 function SWEP:PotentialHealing()
 	local potential = 0
-	for k, v in ipairs(self.inv.items) do
+	for _, v in ipairs(self.inv.items) do
 		if ScavData.models[v.ammo] and ScavData.models[v.ammo].ReturnHealth then
 			potential = potential + ScavData.models[v.ammo].ReturnHealth(self, v) * v:GetSubammo()
 		end
@@ -349,7 +349,7 @@ end
 
 function SWEP:PotentialArmor()
 	local potential = 0
-	for k, v in ipairs(self.inv.items) do
+	for _, v in ipairs(self.inv.items) do
 		if ScavData.models[v.ammo] and ScavData.models[v.ammo].ReturnArmor then
 			potential = potential + ScavData.models[v.ammo].ReturnArmor(self, v) * v:GetSubammo()
 		end
@@ -2568,10 +2568,13 @@ if SERVER then
 	function SWEP:TimerKillEffect(ef)
 	end
 
-	function SWEP:CreateToggleEffect(name)
+	function SWEP:CreateToggleEffect(name, identify)
 		local ef = ents.Create(name)
 		if IsValid(ef) then
 			ef:SetOwner(self)
+			if identify ~= nil then
+				ef:SetIdentify(identify)
+			end
 			ef:Spawn()
 			return ef
 		end
