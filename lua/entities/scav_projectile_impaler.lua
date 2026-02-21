@@ -8,12 +8,12 @@ ENT.Author = "Anya O'Quinn"
 local ClassName = "scav_projectile_impaler"
 
 function ENT:SetupDataTables()
-	self:NetworkVar("Float", 	0, "Length")
-	self:NetworkVar("Bool", 	0, "Hit")
-	self:NetworkVar("Entity",	0, "AHitEnt")
-	self:NetworkVar("Int", 		0, "AHitBone")
-	self:NetworkVar("Vector", 	0, "AHitPos")
-	self:NetworkVar("Angle", 	0, "AHitAng")
+	self:NetworkVar("Float", 	"Length")
+	self:NetworkVar("Bool", 	"Hit")
+	self:NetworkVar("Entity",	"AHitEnt")
+	self:NetworkVar("Int", 		"AHitBone")
+	self:NetworkVar("Vector", 	"AHitPos")
+	self:NetworkVar("Angle", 	"AHitAng")
 end
 
 if CLIENT then
@@ -35,10 +35,10 @@ if CLIENT then
 
 		if IsValid(hitent) and hitpos and hitang and hitbone and self.CurAPos ~= hitpos and self.CurAAng ~= hitang then
 
-			local bonepos,boneang = hitent:GetBonePosition(hitbone)
+			local bonepos, boneang = hitent:GetBonePosition(hitbone)
 
 			if bonepos and boneang then
-				local pos,ang = LocalToWorld(hitpos,hitang,bonepos,boneang)
+				local pos,ang = LocalToWorld(hitpos, hitang, bonepos, boneang)
 				self.CurAPos = pos
 				self.CurAAng = ang
 				self:SetPos(pos)
@@ -73,7 +73,7 @@ if SERVER then
 		self.LastTrace = CurTime()
 
 		if not self.Trail then
-            self.Trail = util.SpriteTrail(self,0,color_blue,false,7,0,1,0.0625,"trails/laser.vmt")
+            self.Trail = util.SpriteTrail(self, 0, color_blue, false, 7, 0, 1, 0.0625, "trails/laser.vmt")
         end
 
         if not self.DmgAmt then
@@ -81,69 +81,69 @@ if SERVER then
         end
 
         if not self.Drop then
-            self.Drop = Vector(0,0,-200)
+            self.Drop = Vector(0, 0, -200)
         end
 
         if not self.Vel then
             self.Vel = self.Owner:GetAimVector() * 3000
 		end
 
-		self:SetLength(math.floor(math.max(self:OBBMaxs().x - self:OBBMins().x,self:OBBMaxs().y - self:OBBMins().y,self:OBBMaxs().z - self:OBBMins().z)))
+		self:SetLength(math.floor(math.max(self:OBBMaxs().x - self:OBBMins().x, self:OBBMaxs().y - self:OBBMins().y, self:OBBMaxs().z - self:OBBMins().z)))
 
 	end
 
 	local offsetmodels = {}
 	
 	--HL2
-	offsetmodels["models/crossbow_bolt.mdl"] = {Vector(0,-10,0)}
-	offsetmodels["models/props_junk/harpoon002a.mdl"] = {Vector(0,-30,0), bit.bor(DMG_BULLET, DMG_AIRBOAT, DMG_BLAST)} --Let harpoons hunt Gunships
+	offsetmodels["models/crossbow_bolt.mdl"] = {Vector(0, -10, 0)}
+	offsetmodels["models/props_junk/harpoon002a.mdl"] = {Vector(0, -30, 0), bit.bor(DMG_BULLET, DMG_AIRBOAT, DMG_BLAST)} --Let harpoons hunt Gunships
 	
 	--CSS
-	offsetmodels["models/weapons/w_knife_ct.mdl"] = {Vector(0,-8,-5), bit.bor(DMG_SLASH, DMG_BULLET)}
-	offsetmodels["models/weapons/w_knife_t.mdl"] = {Vector(0,0,-8), bit.bor(DMG_SLASH, DMG_BULLET)}
+	offsetmodels["models/weapons/w_knife_ct.mdl"] = {Vector(0, -8, -5), bit.bor(DMG_SLASH, DMG_BULLET)}
+	offsetmodels["models/weapons/w_knife_t.mdl"] = {Vector(0, 0, -8), bit.bor(DMG_SLASH, DMG_BULLET)}
 	
 	--TF2
-	offsetmodels["models/weapons/c_models/c_scimitar/c_scimitar.mdl"] = {Vector(0,-15,0), DMG_SLASH}
-	offsetmodels["models/workshop/weapons/c_models/c_scimitar/c_scimitar.mdl"] = {Vector(0,-15,0), DMG_SLASH}
-	offsetmodels["models/weapons/c_models/c_machete/c_machete.mdl"] = {Vector(0,-15,0), DMG_SLASH}
-	offsetmodels["models/weapons/c_models/c_croc_knife/c_croc_knife.mdl"] = {Vector(0,-15,0), DMG_SLASH}
-	offsetmodels["models/workshop/weapons/c_models/c_croc_knife/c_croc_knife.mdl"] = {Vector(0,-15,0), DMG_SLASH}
-	offsetmodels["models/weapons/c_models/c_wood_machete/c_wood_machete.mdl"] = {Vector(0,-15,0), DMG_SLASH}
-	offsetmodels["models/workshop/weapons/c_models/c_wood_machete/c_wood_machete.mdl"] = {Vector(0,-15,0), DMG_SLASH}
-	offsetmodels["models/weapons/w_models/w_knife.mdl"] = {Vector(0,0,-8), bit.bor(DMG_SLASH, DMG_BULLET)}
-	offsetmodels["models/workshop_partner/weapons/c_models/c_prinny_knife/c_prinny_knife.mdl"] = {Vector(0,0,-8), DMG_SLASH}
-	offsetmodels["models/weapons/c_models/c_acr_hookblade/c_acr_hookblade.mdl"] = {Vector(0,0,-8), DMG_SLASH}
-	offsetmodels["models/workshop/weapons/c_models/c_acr_hookblade/c_acr_hookblade.mdl"] = {Vector(0,0,-8), bit.bor(DMG_SLASH, DMG_BULLET)}
-	offsetmodels["models/weapons/c_models/c_ava_roseknife/c_ava_roseknife.mdl"] = {Vector(0,0,-8), bit.bor(DMG_SLASH, DMG_BULLET)}
-	offsetmodels["models/weapons/c_models/c_ava_roseknife/c_ava_roseknife_v.mdl"] = {Vector(0,0,-8), bit.bor(DMG_SLASH, DMG_BULLET)}
-	offsetmodels["models/workshop/weapons/c_models/c_ava_roseknife/c_ava_roseknife.mdl"] = {Vector(0,0,-8), bit.bor(DMG_SLASH, DMG_BULLET)}
-	offsetmodels["models/weapons/c_models/c_switchblade/c_switchblade.mdl"] = {Vector(0,0,-8), bit.bor(DMG_SLASH, DMG_BULLET)}
-	offsetmodels["models/workshop/weapons/c_models/c_switchblade/c_switchblade.mdl"] = {Vector(0,0,-8), bit.bor(DMG_SLASH, DMG_BULLET)}
-	offsetmodels["models/weapons/c_models/c_sd_cleaver/c_sd_cleaver.mdl"] = {Vector(0,0,-8), DMG_SLASH}
-	offsetmodels["models/weapons/c_models/c_sd_cleaver/v_sd_cleaver.mdl"] = {Vector(0,0,-8), DMG_SLASH}
-	offsetmodels["models/workshop_partner/weapons/c_models/c_sd_cleaver/c_sd_cleaver.mdl"] = {Vector(0,0,-8), DMG_SLASH}
-	offsetmodels["models/workshop_partner/weapons/c_models/c_sd_cleaver/v_sd_cleaver.mdl"] = {Vector(0,0,-8), DMG_SLASH}
-	offsetmodels["models/weapons/c_models/c_shogun_kunai/c_shogun_kunai.mdl"] = {Vector(0,0,-8), bit.bor(DMG_SLASH, DMG_BULLET)}
-	offsetmodels["models/weapons/c_models/c_voodoo_pin/c_voodoo_pin.mdl"] = {Vector(0,0,-8), bit.bor(DMG_SLASH, DMG_BULLET)}
-	offsetmodels["models/workshop/weapons/c_models/c_voodoo_pin/c_voodoo_pin.mdl"] = {Vector(0,0,-8), bit.bor(DMG_SLASH, DMG_BULLET)}
-	offsetmodels["models/weapons/c_models/c_eternal_reward/c_eternal_reward.mdl"] = {Vector(0,0,-8), bit.bor(DMG_SLASH, DMG_BULLET)}
-	offsetmodels["models/weapons/c_models/c_claymore/c_claymore.mdl"] = {Vector(0,0,-20), DMG_SLASH}
-	offsetmodels["models/weapons/c_models/c_claymore/c_claymore_xmas.mdl"] = {Vector(0,0,-20), DMG_SLASH}
-	offsetmodels["models/weapons/c_models/c_scout_sword/c_scout_sword.mdl"] = {Vector(0,0,-20), DMG_SLASH}
-	offsetmodels["models/workshop/weapons/c_models/c_scout_sword/c_scout_sword.mdl"] = {Vector(0,0,-20), DMG_SLASH}
-	offsetmodels["models/weapons/c_models/c_shogun_katana/c_shogun_katana.mdl"] = {Vector(0,0,-20), DMG_SLASH}
-	offsetmodels["models/weapons/c_models/c_shogun_katana/c_shogun_katana_soldier.mdl"] = {Vector(0,0,-20), DMG_SLASH}
-	offsetmodels["models/workshop_partner/weapons/c_models/c_shogun_katana/c_shogun_katana.mdl"] = {Vector(0,0,-20), DMG_SLASH}
-	offsetmodels["models/workshop_partner/weapons/c_models/c_shogun_katana/c_shogun_katana_soldier.mdl"] = {Vector(0,0,-20), DMG_SLASH}
-	offsetmodels["models/workshop/weapons/c_models/c_demo_sultan_sword/c_demo_sultan_sword.mdl"] = {Vector(0,0,-20), DMG_SLASH}
+	offsetmodels["models/weapons/c_models/c_scimitar/c_scimitar.mdl"] = {Vector(0, -15, 0), DMG_SLASH}
+	offsetmodels["models/workshop/weapons/c_models/c_scimitar/c_scimitar.mdl"] = {Vector(0, -15, 0), DMG_SLASH}
+	offsetmodels["models/weapons/c_models/c_machete/c_machete.mdl"] = {Vector(0, -15, 0), DMG_SLASH}
+	offsetmodels["models/weapons/c_models/c_croc_knife/c_croc_knife.mdl"] = {Vector(0, -15, 0), DMG_SLASH}
+	offsetmodels["models/workshop/weapons/c_models/c_croc_knife/c_croc_knife.mdl"] = {Vector(0, -15, 0), DMG_SLASH}
+	offsetmodels["models/weapons/c_models/c_wood_machete/c_wood_machete.mdl"] = {Vector(0, -15, 0), DMG_SLASH}
+	offsetmodels["models/workshop/weapons/c_models/c_wood_machete/c_wood_machete.mdl"] = {Vector(0, -15, 0), DMG_SLASH}
+	offsetmodels["models/weapons/w_models/w_knife.mdl"] = {Vector(0, 0, -8), bit.bor(DMG_SLASH, DMG_BULLET)}
+	offsetmodels["models/workshop_partner/weapons/c_models/c_prinny_knife/c_prinny_knife.mdl"] = {Vector(0, 0, -8), DMG_SLASH}
+	offsetmodels["models/weapons/c_models/c_acr_hookblade/c_acr_hookblade.mdl"] = {Vector(0, 0, -8), DMG_SLASH}
+	offsetmodels["models/workshop/weapons/c_models/c_acr_hookblade/c_acr_hookblade.mdl"] = {Vector(0, 0, -8), bit.bor(DMG_SLASH, DMG_BULLET)}
+	offsetmodels["models/weapons/c_models/c_ava_roseknife/c_ava_roseknife.mdl"] = {Vector(0, 0, -8), bit.bor(DMG_SLASH, DMG_BULLET)}
+	offsetmodels["models/weapons/c_models/c_ava_roseknife/c_ava_roseknife_v.mdl"] = {Vector(0, 0, -8), bit.bor(DMG_SLASH, DMG_BULLET)}
+	offsetmodels["models/workshop/weapons/c_models/c_ava_roseknife/c_ava_roseknife.mdl"] = {Vector(0, 0, -8), bit.bor(DMG_SLASH, DMG_BULLET)}
+	offsetmodels["models/weapons/c_models/c_switchblade/c_switchblade.mdl"] = {Vector(0, 0, -8), bit.bor(DMG_SLASH, DMG_BULLET)}
+	offsetmodels["models/workshop/weapons/c_models/c_switchblade/c_switchblade.mdl"] = {Vector(0, 0, -8), bit.bor(DMG_SLASH, DMG_BULLET)}
+	offsetmodels["models/weapons/c_models/c_sd_cleaver/c_sd_cleaver.mdl"] = {Vector(0, 0, -8), DMG_SLASH}
+	offsetmodels["models/weapons/c_models/c_sd_cleaver/v_sd_cleaver.mdl"] = {Vector(0, 0, -8), DMG_SLASH}
+	offsetmodels["models/workshop_partner/weapons/c_models/c_sd_cleaver/c_sd_cleaver.mdl"] = {Vector(0, 0, -8), DMG_SLASH}
+	offsetmodels["models/workshop_partner/weapons/c_models/c_sd_cleaver/v_sd_cleaver.mdl"] = {Vector(0, 0, -8), DMG_SLASH}
+	offsetmodels["models/weapons/c_models/c_shogun_kunai/c_shogun_kunai.mdl"] = {Vector(0, 0, -8), bit.bor(DMG_SLASH, DMG_BULLET)}
+	offsetmodels["models/weapons/c_models/c_voodoo_pin/c_voodoo_pin.mdl"] = {Vector(0, 0, -8), bit.bor(DMG_SLASH, DMG_BULLET)}
+	offsetmodels["models/workshop/weapons/c_models/c_voodoo_pin/c_voodoo_pin.mdl"] = {Vector(0, 0, -8), bit.bor(DMG_SLASH, DMG_BULLET)}
+	offsetmodels["models/weapons/c_models/c_eternal_reward/c_eternal_reward.mdl"] = {Vector(0, 0, -8), bit.bor(DMG_SLASH, DMG_BULLET)}
+	offsetmodels["models/weapons/c_models/c_claymore/c_claymore.mdl"] = {Vector(0, 0, -20), DMG_SLASH}
+	offsetmodels["models/weapons/c_models/c_claymore/c_claymore_xmas.mdl"] = {Vector(0, 0, -20), DMG_SLASH}
+	offsetmodels["models/weapons/c_models/c_scout_sword/c_scout_sword.mdl"] = {Vector(0, 0, -20), DMG_SLASH}
+	offsetmodels["models/workshop/weapons/c_models/c_scout_sword/c_scout_sword.mdl"] = {Vector(0, 0, -20), DMG_SLASH}
+	offsetmodels["models/weapons/c_models/c_shogun_katana/c_shogun_katana.mdl"] = {Vector(0, 0, -20), DMG_SLASH}
+	offsetmodels["models/weapons/c_models/c_shogun_katana/c_shogun_katana_soldier.mdl"] = {Vector(0, 0, -20), DMG_SLASH}
+	offsetmodels["models/workshop_partner/weapons/c_models/c_shogun_katana/c_shogun_katana.mdl"] = {Vector(0, 0, -20), DMG_SLASH}
+	offsetmodels["models/workshop_partner/weapons/c_models/c_shogun_katana/c_shogun_katana_soldier.mdl"] = {Vector(0, 0, -20), DMG_SLASH}
+	offsetmodels["models/workshop/weapons/c_models/c_demo_sultan_sword/c_demo_sultan_sword.mdl"] = {Vector(0, 0, -20), DMG_SLASH}
 	
 	--L4D2
-	offsetmodels["models/weapons/melee/w_machete.mdl"] = {Vector(0,0,-20), DMG_SLASH}
-	offsetmodels["models/weapons/melee/w_katana.mdl"] = {Vector(0,0,-20), DMG_SLASH}
-	offsetmodels["models/weapons/melee/w_pitchfork.mdl"] = {Vector(0,0,-30), DMG_SLASH}
+	offsetmodels["models/weapons/melee/w_machete.mdl"] = {Vector(0, 0, -20), DMG_SLASH}
+	offsetmodels["models/weapons/melee/w_katana.mdl"] = {Vector(0, 0, -20), DMG_SLASH}
+	offsetmodels["models/weapons/melee/w_pitchfork.mdl"] = {Vector(0, 0, -30), DMG_SLASH}
 	
 	--Lost Coast
-	offsetmodels["models/lostcoast/fisherman/harpoon.mdl"] = {Vector(0,0,-20), bit.bor(DMG_BULLET, DMG_AIRBOAT, DMG_BLAST)}
+	offsetmodels["models/lostcoast/fisherman/harpoon.mdl"] = {Vector(0, 0, -20), bit.bor(DMG_BULLET, DMG_AIRBOAT, DMG_BLAST)}
 	
 	local b_trace 	= {}
 	local b_tr 		= {}
@@ -190,7 +190,7 @@ if SERVER then
 			end
 
             if IsValid(self.Trail) then
-                self.Trail:Fire("Kill",1,1)
+                self.Trail:Fire("Kill", 1, 1)
             end
 
 			if hitsky or (not self:IsInWorld() and not ent) then
@@ -216,19 +216,19 @@ if SERVER then
 
 			else
 
-				local bone = ent:GetHitBoxBone(hitbox,0)
+				local bone = ent:GetHitBoxBone(hitbox, 0)
 				local bonepos = nil
 				local boneang = nil
 
 				if bone then
-					bonepos,boneang = ent:GetBonePosition(bone)
+					bonepos, boneang = ent:GetBonePosition(bone)
 				end
 
 				if bonepos and boneang and self:GetMoveType() == MOVETYPE_NONE and not self.Stuck and self.DmgAmt < ent:Health() then
 
 					self.Stuck = true
 
-					local localhpos,localhang = WorldToLocal(hitpos,self:GetAngles(),bonepos,boneang)
+					local localhpos,localhang = WorldToLocal(hitpos, self:GetAngles(), bonepos, boneang)
 
 					self:SetAHitEnt(ent)
 					self:SetAHitBone(bone)
@@ -268,11 +268,11 @@ if SERVER then
 
             if (ent:IsNPC() or ent:IsPlayer() or ent:IsNextBot()) and ent.Health and (ent:Health() > 0 or ent:GetMaxHealth() == 0) then --ew
 
-				sound.Play("ambient/machines/slicer"..math.random(2,3)..".wav", hitpos, 90, 100)
+				sound.Play("ambient/machines/slicer" .. math.random(2,3) .. ".wav", hitpos, 90, 100)
 
                 local tracew = {}
                 tracew.start = hitpos
-                tracew.endpos = hitpos + (self.Vel * (self:GetLength()/500 or 0.1))
+                tracew.endpos = hitpos + (self.Vel * (self:GetLength() / 500 or 0.1))
                 tracew.mask = (not self.ImpactDamageType or bit.band(self.ImpactDamageType, DMG_BULLET)) and MASK_SHOT_PORTAL or MASK_SHOT_HULL
 
                 tracew.filter = function(tr_ent)
@@ -286,7 +286,7 @@ if SERVER then
                 if self.DmgAmt >= ent:Health() and trw.Hit and not self.NoPin then
 
 					if ent:IsNPC() then
-						gamemode.Call("OnNPCKilled",ent, dmg:GetAttacker(), dmg:GetInflictor())
+						gamemode.Call("OnNPCKilled", ent, dmg:GetAttacker(), dmg:GetInflictor())
 					end
 
                     local pos = hitpos
@@ -310,6 +310,10 @@ if SERVER then
                         end
 
                         rag:SetModel(ent:GetModel())
+                        rag:SetSkin(ent:GetSkin())
+						for i = 0, ent:GetNumBodyGroups() do
+							rag:SetBodygroup(i, ent:GetBodygroup(i))
+						end
                         rag:SetPos(offpos)
                         rag:SetAngles(ent:GetAngles())
                         rag:SetColor(ent:GetColor())
@@ -318,14 +322,14 @@ if SERVER then
                         rag:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
                         rag:Fire("Kill", 1, 300)
 
-                        for i=0,rag:GetPhysicsObjectCount() - 1 do
+                        for i = 0, rag:GetPhysicsObjectCount() - 1 do
 
                             local bone = rag:TranslatePhysBoneToBone(i)
                             local phys = rag:GetPhysicsObjectNum(i)
 
                             if phys then
 
-                                local bpos,bang = ent:GetBonePosition(bone)
+                                local bpos, bang = ent:GetBonePosition(bone)
 
                                 if bpos and bang then
                                     phys:SetPos(bpos)
@@ -363,7 +367,7 @@ if SERVER then
                                     constraint.Weld(rag, hitent, bonetr.PhysicsBone, 0, 0, false, true)
                                 elseif trw.HitWorld then
                                     bone:EnableMotion(false)
-                                    timer.Simple(1,function()
+                                    timer.Simple(1, function()
                                         constraint.Weld(rag, game.GetWorld(), bonetr.PhysicsBone, 0, 0, false, true)
                                     end)
                                 end
@@ -415,7 +419,7 @@ if SERVER then
 
 	function ENT:OnRemove()
 		if IsValid(self.Trail) then
-			self.Trail:Fire("Kill",0)
+			self.Trail:Fire("Kill", 0)
 		end
 	end
 
@@ -476,6 +480,6 @@ if CLIENT then
 	function EFFECT:Render()
 	end
 
-	effects.Register(EFFECT,"ef_scav_impalerimpact",true)
+	effects.Register(EFFECT, "ef_scav_impalerimpact", true)
 
 end
