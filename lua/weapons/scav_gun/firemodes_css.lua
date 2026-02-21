@@ -12,14 +12,14 @@ local eject = "brass"
 			tab.Level = 9
 			PrecacheParticleSystem("scav_exp_fireball3")
 			if SERVER then
-				tab.FireFunc = function(self,item)
-						self.Owner:ViewPunch(Angle(-20,math.Rand(-0.1,0.1),0))
+				tab.FireFunc = function(self, item)
+						self.Owner:ViewPunch(Angle(-20, math.Rand(-0.1, 0.1), 0))
 						local proj = ents.Create("scav_c4")
 						proj:SetModel(item.ammo)
 						proj.Owner = self.Owner
 						proj:SetOwner(self.Owner)
 						proj:SetPos(self.Owner:GetShootPos())
-						--proj:SetAngles((self:GetAimVector():Angle():Up()*-1):Angle())
+						--proj:SetAngles((self:GetAimVector():Angle():Up() * -1):Angle())
 						proj:Spawn()
 						proj:Arm(30)
 						proj:SetSkin(item.data)
@@ -27,23 +27,23 @@ local eject = "brass"
 						proj:GetPhysicsObject():EnableDrag(true)
 						proj:GetPhysicsObject():SetDragCoefficient(-100)
 						proj:GetPhysicsObject():EnableGravity(true)
-						proj:GetPhysicsObject():SetVelocity(self:GetAimVector()*500)
+						proj:GetPhysicsObject():SetVelocity(self:GetAimVector() * 500)
 						self.Owner:SetAnimation(PLAYER_ATTACK1)
 						self.Owner:EmitSound(self.shootsound)
-						--gamemode.Call("ScavFired",self.Owner,proj)
+						--gamemode.Call("ScavFired", self.Owner, proj)
 						return true
 					end
-				ScavData.CollectFuncs["models/weapons/w_c4.mdl"] = function(self,ent) return {{"models/weapons/w_c4_planted.mdl",1,0}} end
+				ScavData.CollectFuncs["models/weapons/w_c4.mdl"] = function(self, ent) return {{"models/weapons/w_c4_planted.mdl", 1, 0}} end
 				--DoD:S
-				ScavData.CollectFuncs["models/props_crates/tnt_crate1.mdl"] = function(self,ent) return {{"models/weapons/w_tnt.mdl",1,0,3}} end
-				ScavData.CollectFuncs["models/props_crates/tnt_crate2.mdl"] = function(self,ent) return {{"models/weapons/w_tnt.mdl",1,0,3}} end
-				ScavData.CollectFuncs["models/props_crates/tnt_dump.mdl"] = function(self,ent) return {{"models/weapons/w_tnt.mdl",1,0,6}} end
+				ScavData.CollectFuncs["models/props_crates/tnt_crate1.mdl"] = function(self, ent) return {{"models/weapons/w_tnt.mdl", 1, 0, 3}} end
+				ScavData.CollectFuncs["models/props_crates/tnt_crate2.mdl"] = function(self, ent) return {{"models/weapons/w_tnt.mdl", 1, 0, 3}} end
+				ScavData.CollectFuncs["models/props_crates/tnt_dump.mdl"] = function(self, ent) return {{"models/weapons/w_tnt.mdl", 1, 0, 6}} end
 				--L4D/2
-				ScavData.CollectFuncs["models/props_waterfront/suitcase_open.mdl"] = function(self,ent) return {{"models/props_unique/airport/luggage2.mdl",1,1}} end
-				ScavData.CollectFuncs["models/props_unique/airport/luggage_pile1.mdl"] = function(self,ent)
+				ScavData.CollectFuncs["models/props_waterfront/suitcase_open.mdl"] = function(self, ent) return {{"models/props_unique/airport/luggage2.mdl", 1, 1}} end
+				ScavData.CollectFuncs["models/props_unique/airport/luggage_pile1.mdl"] = function(self, ent)
 					local items = {}
-					for i=1,5 do
-						table.insert(items,{"models/props_unique/airport/luggage"..tostring(math.Round(math.random(4)))..".mdl",1,math.Round(math.random())})
+					for i=1, 5 do
+						table.insert(items,{"models/props_unique/airport/luggage" .. tostring(math.random(4)) .. ".mdl", 1, math.random(0,1)})
 					end
 					return items
 				end
@@ -86,30 +86,30 @@ local eject = "brass"
 			tab.anim = ACT_VM_SECONDARYATTACK
 			tab.Level = 7
 			local identify = {}
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			tab.MaxAmmo = 3
 			if SERVER then
-				tab.FireFunc = function(self,item)
+				tab.FireFunc = function(self, item)
 					if not IsValid(self.smokegrenade) then
-						self.Owner:ViewPunch(Angle(-5,math.Rand(-0.1,0.1),0))
+						self.Owner:ViewPunch(Angle(-5, math.Rand(-0.1, 0.1), 0))
 						local proj = ents.Create("scav_projectile_smoke")
 						self.smokegrenade = proj
 						proj:SetModel(item.ammo)
 						proj.Owner = self.Owner
 						proj:SetOwner(self.Owner)
 						proj:SetPos(self.Owner:GetShootPos())
-						proj:SetAngles((self:GetAimVector():Angle():Up()*-1):Angle())
+						proj:SetAngles((self:GetAimVector():Angle():Up() * -1):Angle())
 						proj:Spawn()
 						proj:SetSkin(item.data)
 						proj:GetPhysicsObject():Wake()
 						proj:GetPhysicsObject():SetMass(1)
 						proj:GetPhysicsObject():EnableDrag(true)
 						proj:GetPhysicsObject():EnableGravity(true)
-						proj:GetPhysicsObject():ApplyForceOffset((self:GetAimVector()+Vector(0,0,0.1))*5000,Vector(0,0,3)) --self:GetAimVector():Angle():Up()*0.1
-						timer.Simple(0, function() proj:GetPhysicsObject():AddAngleVelocity(Vector(0,10000,0)) end)
+						proj:GetPhysicsObject():ApplyForceOffset((self:GetAimVector() + Vector(0, 0, 0.1)) * 5000, Vector(0, 0, 3)) --self:GetAimVector():Angle():Up() * 0.1
+						timer.Simple(0, function() proj:GetPhysicsObject():AddAngleVelocity(Vector(0, 10000, 0)) end)
 						self.Owner:SetAnimation(PLAYER_ATTACK1)
 						self.Owner:EmitSound(self.shootsound)				
-						return self:TakeSubammo(item,1)
+						return self:TakeSubammo(item, 1)
 					else
 						self.Owner:EmitSound("buttons/button18.wav")
 						return false
@@ -134,11 +134,11 @@ local eject = "brass"
 			tab.anim = ACT_VM_RECOIL1
 			tab.Level = 2
 			tab.MaxAmmo = 150
-			tab.ChargeAttack = function(self,item)
+			tab.ChargeAttack = function(self, item)
 				if self.Owner:KeyDown(IN_ATTACK) then
 					local bullet = {}
 						bullet.Num = 1
-						bullet.AccuracyOffset = Vector(0.045,0.045,0)
+						bullet.AccuracyOffset = Vector(0.045, 0.045, 0)
 						bullet.Tracer = 1
 						bullet.Force = 5
 						bullet.Damage = 26
@@ -146,20 +146,20 @@ local eject = "brass"
 						bullet.Src = self.Owner:GetShootPos()
 						bullet.Dir = self:GetAimVector()
 						bullet.Spread = self:GetAccuracyModifiedCone(bullet.AccuracyOffset)
-					self.Owner:ScavViewPunch(Angle(math.Rand(-0.2,0.2),math.Rand(-0.2,0.2),0),0.1)
+					self.Owner:ScavViewPunch(Angle(math.Rand(-0.2, 0.2), math.Rand(-0.2, 0.2), 0), 0.1)
 					if SERVER or not game.SinglePlayer() then
 						self.Owner:FireBullets(bullet)
 					end
 					self:MuzzleFlash2()
 					self.Owner:SetAnimation(PLAYER_ATTACK1)
-					self:AddInaccuracy(1/175,0.1)
+					self:AddInaccuracy(1 / 175, 0.1)
 					if SERVER then
 						self.Owner:EmitSound("Weapon_P90.Single")
 						self:AddBarrelSpin(300)
-						self:TakeSubammo(item,1)
+						self:TakeSubammo(item, 1)
 					end
 					if CLIENT ~= game.SinglePlayer() then
-						timer.Simple(.025,function()
+						timer.Simple(.025, function()
 							if not self.Owner:GetViewModel() then return end
 							local ef = EffectData()
 							local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
@@ -167,7 +167,7 @@ local eject = "brass"
 								ef:SetOrigin(attach.Pos)
 								ef:SetAngles(attach.Ang)
 								ef:SetFlags(75) --velocity
-								util.Effect("EjectBrass_57",ef)
+								util.Effect("EjectBrass_57", ef)
 							end
 						end)
 					end
@@ -181,8 +181,8 @@ local eject = "brass"
 				end
 				return 0.07
 			end
-			tab.FireFunc = function(self,item)
-				self:SetChargeAttack(tab.ChargeAttack,item)
+			tab.FireFunc = function(self, item)
+				self:SetChargeAttack(tab.ChargeAttack, item)
 				return false
 			end
 			tab.Cooldown = 0
@@ -197,13 +197,13 @@ local eject = "brass"
 			tab.anim = ACT_VM_RECOIL1
 			tab.Level = 2
 			local identify = {}
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			tab.MaxAmmo = 120
-			tab.ChargeAttack = function(self,item)
+			tab.ChargeAttack = function(self, item)
 				if self.Owner:KeyDown(IN_ATTACK) then
 					local bullet = {}
 						bullet.Num = 1
-						bullet.AccuracyOffset = Vector(0.035,0.035,0)
+						bullet.AccuracyOffset = Vector(0.035, 0.035, 0)
 						bullet.Tracer = 1
 						bullet.Force = 5
 						bullet.Damage = 36
@@ -211,20 +211,20 @@ local eject = "brass"
 						bullet.Src = self.Owner:GetShootPos()
 						bullet.Dir = self:GetAimVector()
 						bullet.Spread = self:GetAccuracyModifiedCone(bullet.AccuracyOffset)
-					self.Owner:ScavViewPunch(Angle(-0.5,math.Rand(-0.2,0.2),0),0.3,true)
+					self.Owner:ScavViewPunch(Angle(-0.5, math.Rand(-0.2, 0.2), 0), 0.3, true)
 					if SERVER or not game.SinglePlayer() then
 						self.Owner:FireBullets(bullet)
 					end
 					self:MuzzleFlash2()
 					self.Owner:SetAnimation(PLAYER_ATTACK1)
-					self:AddInaccuracy(1/200,0.125)
+					self:AddInaccuracy(1 / 200, 0.125)
 					if SERVER then
 						self.Owner:EmitSound("Weapon_AK47.Single")
 						self:AddBarrelSpin(300)
-						self:TakeSubammo(item,1)
+						self:TakeSubammo(item, 1)
 					end
 					if CLIENT ~= game.SinglePlayer() then
-						timer.Simple(.025,function()
+						timer.Simple(.025, function()
 							if not self.Owner:GetViewModel() then return end
 							local ef = EffectData()
 							local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
@@ -232,7 +232,7 @@ local eject = "brass"
 								ef:SetOrigin(attach.Pos)
 								ef:SetAngles(attach.Ang)
 								ef:SetFlags(75) --velocity
-								util.Effect("EjectBrass_762Nato",ef)
+								util.Effect("EjectBrass_762Nato", ef)
 							end
 						end)
 					end
@@ -246,8 +246,8 @@ local eject = "brass"
 				end
 				return 0.1
 			end
-			tab.FireFunc = function(self,item)
-				self:SetChargeAttack(tab.ChargeAttack,item)
+			tab.FireFunc = function(self, item)
+				self:SetChargeAttack(tab.ChargeAttack, item)
 				return false
 			end
 			tab.Cooldown = 0
@@ -264,11 +264,11 @@ local eject = "brass"
 			tab.anim = ACT_VM_RECOIL1
 			tab.Level = 2
 			tab.MaxAmmo = 120
-			tab.ChargeAttack = function(self,item)
+			tab.ChargeAttack = function(self, item)
 				if self.Owner:KeyDown(IN_ATTACK) then
 					local bullet = {}
 						bullet.Num = 1
-						bullet.AccuracyOffset = Vector(0.03,0.03,0)
+						bullet.AccuracyOffset = Vector(0.03, 0.03, 0)
 						bullet.Tracer = 1
 						bullet.Force = 5
 						bullet.Damage = 32
@@ -276,20 +276,20 @@ local eject = "brass"
 						bullet.Src = self.Owner:GetShootPos()
 						bullet.Dir = self:GetAimVector()
 						bullet.Spread = self:GetAccuracyModifiedCone(bullet.AccuracyOffset)
-					self.Owner:ScavViewPunch(Angle(-0.5,math.Rand(-0.2,0.2),0),0.3,true)
+					self.Owner:ScavViewPunch(Angle(-0.5, math.Rand(-0.2, 0.2), 0), 0.3, true)
 					if SERVER or not game.SinglePlayer() then
 						self.Owner:FireBullets(bullet)
 					end
 					self:MuzzleFlash2()
 					self.Owner:SetAnimation(PLAYER_ATTACK1)
-					self:AddInaccuracy(1/215,0.125)
+					self:AddInaccuracy(1 / 215, 0.125)
 					if SERVER then
 						self.Owner:EmitSound("Weapon_AUG.Single")
 						self:AddBarrelSpin(300)
-						self:TakeSubammo(item,1)
+						self:TakeSubammo(item, 1)
 					end
 					if CLIENT ~= game.SinglePlayer() then
-						timer.Simple(.025,function()
+						timer.Simple(.025, function()
 							if not self.Owner:GetViewModel() then return end
 							local ef = EffectData()
 							local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
@@ -297,7 +297,7 @@ local eject = "brass"
 								ef:SetOrigin(attach.Pos)
 								ef:SetAngles(attach.Ang)
 								ef:SetFlags(75) --velocity
-								util.Effect("EjectBrass_556",ef)
+								util.Effect("EjectBrass_556", ef)
 							end
 						end)
 					end
@@ -311,8 +311,8 @@ local eject = "brass"
 				end
 				return 0.09
 			end
-			tab.FireFunc = function(self,item)
-				self:SetChargeAttack(tab.ChargeAttack,item)
+			tab.FireFunc = function(self, item)
+				self:SetChargeAttack(tab.ChargeAttack, item)
 				return false
 			end
 			tab.Cooldown = 0
@@ -327,18 +327,18 @@ local eject = "brass"
 			tab.anim = ACT_VM_SECONDARYATTACK
 			tab.Level = 2
 			local identify = {}
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			tab.MaxAmmo = 40
 			
 				local bullet = {}
 						bullet.Num = 1
-						bullet.Spread = Vector(0.00,0.00,0)
+						bullet.Spread = Vector(0.00, 0.00, 0)
 						bullet.Tracer = 1
 						bullet.Force = 5
 						bullet.Damage = 115
 						bullet.TracerName = "ef_scav_tr_b"
-				tab.FireFunc = function(self,item)
-						self.Owner:ScavViewPunch(Angle(-5,math.Rand(-0.2,0.2),0),0.5,true)
+				tab.FireFunc = function(self, item)
+						self.Owner:ScavViewPunch(Angle(-5, math.Rand(-0.2, 0.2), 0), 0.5, true)
 						bullet.Src = self.Owner:GetShootPos()
 						bullet.Dir = self:GetAimVector()
 						if SERVER or not game.SinglePlayer() then
@@ -351,19 +351,19 @@ local eject = "brass"
 							self:AddBarrelSpin(300)
 						end
 						if CLIENT ~= game.SinglePlayer() then
-							timer.Simple(.4,function() 
-								self.Owner:EmitSound("weapons/awp/awp_bolt.wav",75,100,1)
+							timer.Simple(.4, function() 
+								self.Owner:EmitSound("weapons/awp/awp_bolt.wav", 75, 100, 1)
 								local ef = EffectData()
 								local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
 								if attach then
 									ef:SetOrigin(attach.Pos)
 									ef:SetAngles(attach.Ang)
 									ef:SetFlags(75) --velocity
-									util.Effect("EjectBrass_338Mag",ef)
+									util.Effect("EjectBrass_338Mag", ef)
 								end
 							end)
 						end
-						if SERVER then return self:TakeSubammo(item,1) end
+						if SERVER then return self:TakeSubammo(item, 1) end
 					end
 			tab.Cooldown = 1.455
 		ScavData.RegisterFiremode(tab, "models/weapons/w_snip_awp.mdl", 10)
@@ -381,17 +381,17 @@ local eject = "brass"
 			tab.anim = ACT_VM_SECONDARYATTACK
 			tab.Level = 2
 			local identify = {}
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			tab.MaxAmmo = 42
 			local bullet = {}
 					bullet.Num = 1
-					bullet.AccuracyOffset = Vector(0.015,0.015,0)
+					bullet.AccuracyOffset = Vector(0.015, 0.015, 0)
 					bullet.Tracer = 1
 					bullet.Force = 5
 					bullet.Damage = 54
 					bullet.TracerName = "ef_scav_tr_b"
-			tab.FireFunc = function(self,item)
-					self.Owner:ScavViewPunch(Angle(math.Rand(-8,-9),math.Rand(-0.2,0.2),0),0.5)
+			tab.FireFunc = function(self, item)
+					self.Owner:ScavViewPunch(Angle(math.Rand(-8,-9), math.Rand(-0.2, 0.2), 0), 0.5)
 					bullet.Src = self.Owner:GetShootPos()
 					bullet.Dir = self:GetAimVector()
 					bullet.Spread = self:GetAccuracyModifiedCone(bullet.AccuracyOffset)
@@ -405,20 +405,20 @@ local eject = "brass"
 						self:AddBarrelSpin(300)
 					end
 					if CLIENT ~= game.SinglePlayer() then
-						timer.Simple(.025,function()
+						timer.Simple(.025, function()
 							if not self.Owner:GetViewModel() then return end
 							local ef = EffectData()
 							local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
 							if attach then
 								ef:SetOrigin(attach.Pos)
 								ef:SetAngles(attach.Ang)
-								util.Effect("ShellEject",ef)
+								util.Effect("ShellEject", ef)
 							end
 						end)
 					end
-					self.nextfireearly = CurTime()+0.225
-					self:AddInaccuracy(0.1,0.2)
-					if SERVER then return self:TakeSubammo(item,1) end
+					self.nextfireearly = CurTime() + 0.225
+					self:AddInaccuracy(0.1, 0.2)
+					if SERVER then return self:TakeSubammo(item, 1) end
 				end
 			tab.Cooldown = 0.7
 		ScavData.RegisterFiremode(tab, "models/weapons/w_pist_deagle.mdl", 7)
@@ -434,17 +434,17 @@ local eject = "brass"
 			tab.anim = ACT_VM_PRIMARYATTACK
 			tab.Level = 2
 			local identify = {}
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			tab.MaxAmmo = 150
 			local bullet = {}
 					bullet.Num = 1
-					bullet.AccuracyOffset = Vector(0.0,0.0,0)
+					bullet.AccuracyOffset = Vector(0.0, 0.0, 0)
 					bullet.Tracer = 1
 					bullet.Force = 5
 					bullet.Damage = 45
 					bullet.TracerName = "ef_scav_tr_b"
-			tab.FireFunc = function(self,item)
-					self.Owner:ScavViewPunch(Angle(-0.5,math.Rand(-0.2,0.2),0),0.2)
+			tab.FireFunc = function(self, item)
+					self.Owner:ScavViewPunch(Angle(-0.5, math.Rand(-0.2, 0.2), 0), 0.2)
 					bullet.Src = self.Owner:GetShootPos()
 					bullet.Dir = self:GetAimVector()
 					bullet.Spread = self:GetAccuracyModifiedCone(bullet.AccuracyOffset)
@@ -458,7 +458,7 @@ local eject = "brass"
 						self:AddBarrelSpin(300)
 					end
 					if CLIENT ~= game.SinglePlayer() then
-						timer.Simple(.025,function()
+						timer.Simple(.025, function()
 							if not self.Owner:GetViewModel() then return end
 							local ef = EffectData()
 							local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
@@ -466,21 +466,23 @@ local eject = "brass"
 								ef:SetOrigin(attach.Pos)
 								ef:SetAngles(attach.Ang)
 								ef:SetFlags(75) --velocity
-								util.Effect("EjectBrass_9mm",ef)
+								util.Effect("EjectBrass_9mm", ef)
 							end
 						end)
 					end
-					self.nextfireearly = CurTime()+0.075
-					self:AddInaccuracy(0.1,0.2)
-					if SERVER then return self:TakeSubammo(item,1) end
+					self.nextfireearly = CurTime() + 0.075
+					self:AddInaccuracy(0.1, 0.2)
+					if SERVER then return self:TakeSubammo(item, 1) end
 				end
-			tab.OnArmed = function(self,item,olditemname)
-					if IsMounted(240) and SERVER then
+			if SERVER then
+				tab.OnArmed = function(self, item, olditemname)
+					if CSS then
 						if olditemname == "" or not ScavData.models[olditemname] or ScavData.models[item.ammo].Name ~= ScavData.models[olditemname].Name then
 							self.Owner:EmitSound("weapons/elite/elite_deploy.wav")
 						end
 					end
 				end
+			end
 			tab.Cooldown = 0.3
 		ScavData.RegisterFiremode(tab, "models/weapons/w_pist_elite_single.mdl", 15)
 		ScavData.RegisterFiremode(tab, "models/weapons/w_pist_elite.mdl", 30)
@@ -499,11 +501,11 @@ local eject = "brass"
 			tab.anim = ACT_VM_RECOIL1
 			tab.Level = 2
 			tab.MaxAmmo = 115
-			tab.ChargeAttack = function(self,item)
+			tab.ChargeAttack = function(self, item)
 				if self.Owner:KeyDown(IN_ATTACK) then
 					local bullet = {}
 						bullet.Num = 1
-						bullet.AccuracyOffset = Vector(0.03,0.03,0)
+						bullet.AccuracyOffset = Vector(0.03, 0.03, 0)
 						bullet.Tracer = 1
 						bullet.Force = 5
 						bullet.Damage = 30
@@ -511,20 +513,20 @@ local eject = "brass"
 						bullet.Src = self.Owner:GetShootPos()
 						bullet.Dir = self:GetAimVector()
 						bullet.Spread = self:GetAccuracyModifiedCone(bullet.AccuracyOffset)
-					self.Owner:ScavViewPunch(Angle(-0.5,math.Rand(-0.2,0.2),0),0.1,true)
+					self.Owner:ScavViewPunch(Angle(-0.5, math.Rand(-0.2, 0.2), 0), 0.1, true)
 					if SERVER or not game.SinglePlayer() then
 						self.Owner:FireBullets(bullet)
 					end
 					self:MuzzleFlash2()
 					self.Owner:SetAnimation(PLAYER_ATTACK1)
-					self:AddInaccuracy(1/215,0.125)
+					self:AddInaccuracy(1 / 215, 0.125)
 					if SERVER then
 						self.Owner:EmitSound("Weapon_FAMAS.Single")
 						self:AddBarrelSpin(300)
-						self:TakeSubammo(item,1)
+						self:TakeSubammo(item, 1)
 					end
 					if CLIENT ~= game.SinglePlayer() then
-						timer.Simple(.025,function()
+						timer.Simple(.025, function()
 							if not self.Owner:GetViewModel() then return end
 							local ef = EffectData()
 							local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
@@ -532,7 +534,7 @@ local eject = "brass"
 								ef:SetOrigin(attach.Pos)
 								ef:SetAngles(attach.Ang)
 								ef:SetFlags(75) --velocity
-								util.Effect("EjectBrass_556",ef)
+								util.Effect("EjectBrass_556", ef)
 							end
 						end)
 					end
@@ -546,8 +548,8 @@ local eject = "brass"
 				end
 				return 0.09
 			end
-			tab.FireFunc = function(self,item)
-				self:SetChargeAttack(tab.ChargeAttack,item)
+			tab.FireFunc = function(self, item)
+				self:SetChargeAttack(tab.ChargeAttack, item)
 				return false
 			end
 			tab.Cooldown = 0
@@ -564,13 +566,13 @@ local eject = "brass"
 			tab.MaxAmmo = 120
 			local bullet = {}
 					bullet.Num = 1
-					bullet.AccuracyOffset = Vector(0.0,0.0,0)
+					bullet.AccuracyOffset = Vector(0.0, 0.0, 0)
 					bullet.Tracer = 1
 					bullet.Force = 5
 					bullet.Damage = 25
 					bullet.TracerName = "ef_scav_tr_b"
-			tab.FireFunc = function(self,item)
-					self.Owner:ScavViewPunch(Angle(-0.5,math.Rand(-0.2,0.2),0),0.1)
+			tab.FireFunc = function(self, item)
+					self.Owner:ScavViewPunch(Angle(-0.5, math.Rand(-0.2, 0.2), 0), 0.1)
 					bullet.Src = self.Owner:GetShootPos()
 					bullet.Dir = self:GetAimVector()
 					bullet.Spread = self:GetAccuracyModifiedCone(bullet.AccuracyOffset)
@@ -584,7 +586,7 @@ local eject = "brass"
 						self:AddBarrelSpin(300)
 					end
 					if CLIENT ~= game.SinglePlayer() then
-						timer.Simple(.025,function()
+						timer.Simple(.025, function()
 							if not self.Owner:GetViewModel() then return end
 							local ef = EffectData()
 							local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
@@ -592,13 +594,13 @@ local eject = "brass"
 								ef:SetOrigin(attach.Pos)
 								ef:SetAngles(attach.Ang)
 								ef:SetFlags(75) --velocity
-								util.Effect("EjectBrass_57",ef)
+								util.Effect("EjectBrass_57", ef)
 							end
 						end)
 					end
-					self.nextfireearly = CurTime()+0.15
-					self:AddInaccuracy(0.1,0.2)
-					if SERVER then return self:TakeSubammo(item,1) end
+					self.nextfireearly = CurTime() + 0.15
+					self:AddInaccuracy(0.1, 0.2)
+					if SERVER then return self:TakeSubammo(item, 1) end
 				end
 			tab.Cooldown = 0.3
 		ScavData.RegisterFiremode(tab, "models/weapons/w_pist_fiveseven.mdl", 20)
@@ -612,11 +614,11 @@ local eject = "brass"
 			tab.anim = ACT_VM_RECOIL1
 			tab.Level = 2
 			tab.MaxAmmo = 125
-			tab.ChargeAttack = function(self,item)
+			tab.ChargeAttack = function(self, item)
 				if self.Owner:KeyDown(IN_ATTACK) then
 					local bullet = {}
 						bullet.Num = 1
-						bullet.AccuracyOffset = Vector(0.035,0.035,0)
+						bullet.AccuracyOffset = Vector(0.035, 0.035, 0)
 						bullet.Tracer = 1
 						bullet.Force = 5
 						bullet.Damage = 30
@@ -624,20 +626,20 @@ local eject = "brass"
 						bullet.Src = self.Owner:GetShootPos()
 						bullet.Dir = self:GetAimVector()
 						bullet.Spread = self:GetAccuracyModifiedCone(bullet.AccuracyOffset)
-					self.Owner:ScavViewPunch(Angle(-0.5,math.Rand(-0.2,0.2),0),0.1,true)
+					self.Owner:ScavViewPunch(Angle(-0.5, math.Rand(-0.2, 0.2), 0), 0.1, true)
 					if SERVER or not game.SinglePlayer() then
 						self.Owner:FireBullets(bullet)
 					end
 					self:MuzzleFlash2()
 					self.Owner:SetAnimation(PLAYER_ATTACK1)
-					self:AddInaccuracy(1/200,0.125)
+					self:AddInaccuracy(1 / 200, 0.125)
 					if SERVER then
 						self.Owner:EmitSound("Weapon_Galil.Single")
 						self:AddBarrelSpin(300)
-						self:TakeSubammo(item,1)
+						self:TakeSubammo(item, 1)
 					end
 					if CLIENT ~= game.SinglePlayer() then
-						timer.Simple(.025,function()
+						timer.Simple(.025, function()
 							if not self.Owner:GetViewModel() then return end
 							local ef = EffectData()
 							local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
@@ -645,7 +647,7 @@ local eject = "brass"
 								ef:SetOrigin(attach.Pos)
 								ef:SetAngles(attach.Ang)
 								ef:SetFlags(75) --velocity
-								util.Effect("EjectBrass_556",ef)
+								util.Effect("EjectBrass_556", ef)
 							end
 						end)
 					end
@@ -659,8 +661,8 @@ local eject = "brass"
 				end
 				return 0.09
 			end
-			tab.FireFunc = function(self,item)
-				self:SetChargeAttack(tab.ChargeAttack,item)
+			tab.FireFunc = function(self, item)
+				self:SetChargeAttack(tab.ChargeAttack, item)
 				return false
 			end
 			tab.Cooldown = 0
@@ -675,17 +677,17 @@ local eject = "brass"
 			tab.anim = ACT_VM_PRIMARYATTACK
 			tab.Level = 2
 			local identify = {}
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			tab.MaxAmmo = 140
 			local bullet = {}
 					bullet.Num = 1
-					bullet.AccuracyOffset = Vector(0.0,0.0,0)
+					bullet.AccuracyOffset = Vector(0.0, 0.0, 0)
 					bullet.Tracer = 1
 					bullet.Force = 5
 					bullet.Damage = 25
 					bullet.TracerName = "ef_scav_tr_b"
-			tab.FireFunc = function(self,item)
-					self.Owner:ScavViewPunch(Angle(-0.5,math.Rand(-0.2,0.2),0),0.1)
+			tab.FireFunc = function(self, item)
+					self.Owner:ScavViewPunch(Angle(-0.5, math.Rand(-0.2, 0.2), 0), 0.1)
 					bullet.Src = self.Owner:GetShootPos()
 					bullet.Dir = self:GetAimVector()
 					bullet.Spread = self:GetAccuracyModifiedCone(bullet.AccuracyOffset)
@@ -697,7 +699,7 @@ local eject = "brass"
 						self:AddBarrelSpin(300)
 					end
 					if CLIENT ~= game.SinglePlayer() then
-						timer.Simple(.025,function()
+						timer.Simple(.025, function()
 							if not self.Owner:GetViewModel() then return end
 							local ef = EffectData()
 							local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
@@ -705,13 +707,13 @@ local eject = "brass"
 								ef:SetOrigin(attach.Pos)
 								ef:SetAngles(attach.Ang)
 								ef:SetFlags(75) --velocity
-								util.Effect("EjectBrass_9mm",ef)
+								util.Effect("EjectBrass_9mm", ef)
 							end
 						end)
 					end
-					self.nextfireearly = CurTime()+0.15
-					self:AddInaccuracy(0.1,0.2)
-					if SERVER then return self:TakeSubammo(item,1) end
+					self.nextfireearly = CurTime() + 0.15
+					self:AddInaccuracy(0.1, 0.2)
+					if SERVER then return self:TakeSubammo(item, 1) end
 				end
 			tab.Cooldown = 0.3
 		ScavData.RegisterFiremode(tab, "models/weapons/w_pist_glock18.mdl", 20)
@@ -729,13 +731,13 @@ local eject = "brass"
 			tab.MaxAmmo = 40
 			local bullet = {}
 					bullet.Num = 9
-					bullet.Spread = Vector(0.1,0.1,0)
+					bullet.Spread = Vector(0.1, 0.1, 0)
 					bullet.Tracer = 1
 					bullet.Force = 4
 					bullet.Damage = 22
 					bullet.TracerName = "ef_scav_tr_b"
-			tab.FireFunc = function(self,item)
-					self.Owner:ScavViewPunch(Angle(-5,math.Rand(-0.2,0.2),0),0.5)
+			tab.FireFunc = function(self, item)
+					self.Owner:ScavViewPunch(Angle(-5, math.Rand(-0.2, 0.2), 0), 0.5)
 					bullet.Src = self.Owner:GetShootPos()
 					bullet.Dir = self:GetAimVector()
 					if SERVER or not game.SinglePlayer() then
@@ -744,7 +746,7 @@ local eject = "brass"
 					self:MuzzleFlash2()
 					self.Owner:SetAnimation(PLAYER_ATTACK1)
 					if CLIENT ~= game.SinglePlayer() then
-						timer.Simple(.5,function() 
+						timer.Simple(.5, function() 
 							if IsValid(self) then
 								local ef = EffectData()
 								local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
@@ -752,14 +754,14 @@ local eject = "brass"
 									ef:SetOrigin(attach.Pos)
 									ef:SetAngles(attach.Ang)
 									ef:SetFlags(75) --velocity
-									util.Effect("EjectBrass_12Gauge",ef)
+									util.Effect("EjectBrass_12Gauge", ef)
 								end
 							end
 						end)
 					end
 					if SERVER then
 						self.Owner:EmitSound("Weapon_M3.Single")
-						return self:TakeSubammo(item,1)
+						return self:TakeSubammo(item, 1)
 					end
 				end
 			tab.Cooldown = 0.88
@@ -774,13 +776,13 @@ local eject = "brass"
 			tab.anim = ACT_VM_RECOIL1
 			tab.Level = 2
 			local identify = {}
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			tab.MaxAmmo = 120
-			tab.ChargeAttack = function(self,item)
+			tab.ChargeAttack = function(self, item)
 				if self.Owner:KeyDown(IN_ATTACK) then
 					local bullet = {}
 						bullet.Num = 1
-						bullet.AccuracyOffset = Vector(0.03,0.03,0)
+						bullet.AccuracyOffset = Vector(0.03, 0.03, 0)
 						bullet.Tracer = 1
 						bullet.Force = 5
 						bullet.Damage = 33
@@ -788,20 +790,20 @@ local eject = "brass"
 						bullet.Src = self.Owner:GetShootPos()
 						bullet.Dir = self:GetAimVector()
 						bullet.Spread = self:GetAccuracyModifiedCone(bullet.AccuracyOffset)
-					self.Owner:ScavViewPunch(Angle(-0.5,math.Rand(-0.2,0.2),0),0.1,true)
+					self.Owner:ScavViewPunch(Angle(-0.5, math.Rand(-0.2, 0.2), 0), 0.1, true)
 					if SERVER or not game.SinglePlayer() then
 						self.Owner:FireBullets(bullet)
 					end
 					self:MuzzleFlash2()
 					self.Owner:SetAnimation(PLAYER_ATTACK1)
-					self:AddInaccuracy(1/220,0.1)
+					self:AddInaccuracy(1 / 220, 0.1)
 					if SERVER then
 						self.Owner:EmitSound("Weapon_M4A1.Single")
 						self:AddBarrelSpin(300)
-						self:TakeSubammo(item,1)
+						self:TakeSubammo(item, 1)
 					end
 					if CLIENT ~= game.SinglePlayer() then
-						timer.Simple(.025,function()
+						timer.Simple(.025, function()
 							if not self.Owner:GetViewModel() then return end
 							local ef = EffectData()
 							local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
@@ -809,7 +811,7 @@ local eject = "brass"
 								ef:SetOrigin(attach.Pos)
 								ef:SetAngles(attach.Ang)
 								ef:SetFlags(75) --velocity
-								util.Effect("EjectBrass_556",ef)
+								util.Effect("EjectBrass_556", ef)
 							end
 						end)
 					end
@@ -823,8 +825,8 @@ local eject = "brass"
 				end
 				return 0.09
 			end
-			tab.FireFunc = function(self,item)
-				self:SetChargeAttack(tab.ChargeAttack,item)
+			tab.FireFunc = function(self, item)
+				self:SetChargeAttack(tab.ChargeAttack, item)
 				return false
 			end
 			tab.Cooldown = 0
@@ -841,11 +843,11 @@ local eject = "brass"
 			tab.anim = ACT_VM_RECOIL1
 			tab.Level = 2
 			tab.MaxAmmo = 120
-			tab.ChargeAttack = function(self,item)
+			tab.ChargeAttack = function(self, item)
 				if self.Owner:KeyDown(IN_ATTACK) then
 					local bullet = {}
 						bullet.Num = 1
-						bullet.AccuracyOffset = Vector(0.03,0.03,0)
+						bullet.AccuracyOffset = Vector(0.03, 0.03, 0)
 						bullet.Tracer = 1
 						bullet.Force = 5
 						bullet.Damage = 33
@@ -853,20 +855,20 @@ local eject = "brass"
 						bullet.Src = self.Owner:GetShootPos()
 						bullet.Dir = self:GetAimVector()
 						bullet.Spread = self:GetAccuracyModifiedCone(bullet.AccuracyOffset)
-					self.Owner:ScavViewPunch(Angle(-0.5,math.Rand(-0.2,0.2),0),0.1,true)
+					self.Owner:ScavViewPunch(Angle(-0.5, math.Rand(-0.2, 0.2), 0), 0.1, true)
 					if SERVER or not game.SinglePlayer() then
 						self.Owner:FireBullets(bullet)
 					end
 					--self:MuzzleFlash2() --no flash on silenced weapon!
 					self.Owner:SetAnimation(PLAYER_ATTACK1)
-					self:AddInaccuracy(1/220,0.1)
+					self:AddInaccuracy(1 / 220, 0.1)
 					if SERVER then
 						self.Owner:EmitSound("Weapon_M4A1.Silenced")
 						self:AddBarrelSpin(300)
-						self:TakeSubammo(item,1)
+						self:TakeSubammo(item, 1)
 					end
 					if CLIENT ~= game.SinglePlayer() then
-						timer.Simple(.025,function()
+						timer.Simple(.025, function()
 							if not self.Owner:GetViewModel() then return end
 							local ef = EffectData()
 							local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
@@ -874,7 +876,7 @@ local eject = "brass"
 								ef:SetOrigin(attach.Pos)
 								ef:SetAngles(attach.Ang)
 								ef:SetFlags(75) --velocity
-								util.Effect("EjectBrass_556",ef)
+								util.Effect("EjectBrass_556", ef)
 							end
 						end)
 					end
@@ -888,8 +890,8 @@ local eject = "brass"
 				end
 				return 0.09
 			end
-			tab.FireFunc = function(self,item)
-				self:SetChargeAttack(tab.ChargeAttack,item)
+			tab.FireFunc = function(self, item)
+				self:SetChargeAttack(tab.ChargeAttack, item)
 				return false
 			end
 			tab.Cooldown = 0
@@ -904,13 +906,13 @@ local eject = "brass"
 			tab.anim = ACT_VM_RECOIL1
 			tab.Level = 2
 			local identify = {}
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			tab.MaxAmmo = 300
-			tab.ChargeAttack = function(self,item)
+			tab.ChargeAttack = function(self, item)
 				if self.Owner:KeyDown(IN_ATTACK) then
 					local bullet = {}
 						bullet.Num = 1
-						bullet.AccuracyOffset = Vector(0.04,0.04,0)
+						bullet.AccuracyOffset = Vector(0.04, 0.04, 0)
 						bullet.Tracer = 1
 						bullet.Force = 5
 						bullet.Damage = 32
@@ -918,22 +920,22 @@ local eject = "brass"
 						bullet.Src = self.Owner:GetShootPos()
 						bullet.Dir = self:GetAimVector()
 						bullet.Spread = self:GetAccuracyModifiedCone(bullet.AccuracyOffset)
-					self.Owner:ScavViewPunch(Angle(-0.5,math.Rand(-0.2,0.2),0),0.1,true)
+					self.Owner:ScavViewPunch(Angle(-0.5, math.Rand(-0.2, 0.2), 0), 0.1, true)
 					if SERVER or not game.SinglePlayer() then
 						self.Owner:FireBullets(bullet)
 					end
 					self:MuzzleFlash2()
 					self.Owner:SetAnimation(PLAYER_ATTACK1)
-					self:AddInaccuracy(1/175,0.09)
+					self:AddInaccuracy(1 / 175, 0.09)
 					if SERVER then
 						self.Owner:EmitSound("Weapon_M249.Single")
 						self:AddBarrelSpin(300)
-						self:SetBlockPoseInstant(1,4)
-						self:SetPanelPoseInstant(0.25,2)
-						self:TakeSubammo(item,1)
+						self:SetBlockPoseInstant(1, 4)
+						self:SetPanelPoseInstant(0.25, 2)
+						self:TakeSubammo(item, 1)
 					end
 					if CLIENT ~= game.SinglePlayer() then
-						timer.Simple(.025,function()
+						timer.Simple(.025, function()
 							if not self.Owner:GetViewModel() then return end
 							local ef = EffectData()
 							local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
@@ -941,7 +943,7 @@ local eject = "brass"
 								ef:SetOrigin(attach.Pos)
 								ef:SetAngles(attach.Ang)
 								ef:SetFlags(85) --velocity
-								util.Effect("EjectBrass_556",ef)
+								util.Effect("EjectBrass_556", ef)
 							end
 						end)
 					end
@@ -955,8 +957,8 @@ local eject = "brass"
 				end
 				return 0.08
 			end
-			tab.FireFunc = function(self,item)
-				self:SetChargeAttack(tab.ChargeAttack,item)
+			tab.FireFunc = function(self, item)
+				self:SetChargeAttack(tab.ChargeAttack, item)
 				return false
 			end
 			tab.Cooldown = 0
@@ -973,13 +975,13 @@ local eject = "brass"
 			tab.anim = ACT_VM_RECOIL1
 			tab.Level = 2
 			local identify = {}
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			tab.MaxAmmo = 130
-			tab.ChargeAttack = function(self,item)
+			tab.ChargeAttack = function(self, item)
 				if self.Owner:KeyDown(IN_ATTACK) then
 					local bullet = {}
 						bullet.Num = 1
-						bullet.AccuracyOffset = Vector(0.06,0.06,0)
+						bullet.AccuracyOffset = Vector(0.06, 0.06, 0)
 						bullet.Tracer = 1
 						bullet.Force = 5
 						bullet.Damage = 29
@@ -987,20 +989,20 @@ local eject = "brass"
 						bullet.Src = self.Owner:GetShootPos()
 						bullet.Dir = self:GetAimVector()
 						bullet.Spread = self:GetAccuracyModifiedCone(bullet.AccuracyOffset)
-					self.Owner:ScavViewPunch(Angle(-0.7,math.Rand(-0.4,0.4),0),0.2,true)
+					self.Owner:ScavViewPunch(Angle(-0.7, math.Rand(-0.4, 0.4), 0), 0.2, true)
 					if SERVER or not game.SinglePlayer() then
 						self.Owner:FireBullets(bullet)
 					end
 					self:MuzzleFlash2()
 					self.Owner:SetAnimation(PLAYER_ATTACK1)
-					self:AddInaccuracy(1/200,0.165)
+					self:AddInaccuracy(1 / 200, 0.165)
 					if SERVER then
 						self.Owner:EmitSound("Weapon_MAC10.Single")
 						self:AddBarrelSpin(300)
-						self:TakeSubammo(item,1)
+						self:TakeSubammo(item, 1)
 					end
 					if CLIENT ~= game.SinglePlayer() then
-						timer.Simple(.025,function()
+						timer.Simple(.025, function()
 							if not self.Owner:GetViewModel() then return end
 							local ef = EffectData()
 							local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
@@ -1008,7 +1010,7 @@ local eject = "brass"
 								ef:SetOrigin(attach.Pos)
 								ef:SetAngles(attach.Ang)
 								ef:SetFlags(75) --velocity
-								util.Effect("EjectBrass_9mm",ef)
+								util.Effect("EjectBrass_9mm", ef)
 							end
 						end)
 					end
@@ -1022,8 +1024,8 @@ local eject = "brass"
 				end
 				return 0.075
 			end
-			tab.FireFunc = function(self,item)
-				self:SetChargeAttack(tab.ChargeAttack,item)
+			tab.FireFunc = function(self, item)
+				self:SetChargeAttack(tab.ChargeAttack, item)
 				return false
 			end
 			tab.Cooldown = 0
@@ -1040,13 +1042,13 @@ local eject = "brass"
 			tab.anim = ACT_VM_RECOIL1
 			tab.Level = 2
 			local identify = {}
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			tab.MaxAmmo = 150
-			tab.ChargeAttack = function(self,item)
+			tab.ChargeAttack = function(self, item)
 				if self.Owner:KeyDown(IN_ATTACK) then
 					local bullet = {}
 						bullet.Num = 1
-						bullet.AccuracyOffset = Vector(0.045,0.045,0)
+						bullet.AccuracyOffset = Vector(0.045, 0.045, 0)
 						bullet.Tracer = 1
 						bullet.Force = 5
 						bullet.Damage = 26
@@ -1054,20 +1056,20 @@ local eject = "brass"
 						bullet.Src = self.Owner:GetShootPos()
 						bullet.Dir = self:GetAimVector()
 						bullet.Spread = self:GetAccuracyModifiedCone(bullet.AccuracyOffset)
-					self.Owner:ScavViewPunch(Angle(-1,math.Rand(-0.2,0.2),0),0.1,true)
+					self.Owner:ScavViewPunch(Angle(-1, math.Rand(-0.2, 0.2), 0), 0.1, true)
 					if SERVER or not game.SinglePlayer() then
 						self.Owner:FireBullets(bullet)
 					end
 					self:MuzzleFlash2()
 					self.Owner:SetAnimation(PLAYER_ATTACK1)
-					self:AddInaccuracy(1/220,0.075)
+					self:AddInaccuracy(1 / 220, 0.075)
 					if SERVER then
 						self.Owner:EmitSound("Weapon_MP5Navy.Single")
 						self:AddBarrelSpin(300)
-						self:TakeSubammo(item,1)
+						self:TakeSubammo(item, 1)
 					end
 					if CLIENT ~= game.SinglePlayer() then
-						timer.Simple(.025,function()
+						timer.Simple(.025, function()
 							if not self.Owner:GetViewModel() then return end
 							local ef = EffectData()
 							local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
@@ -1075,7 +1077,7 @@ local eject = "brass"
 								ef:SetOrigin(attach.Pos)
 								ef:SetAngles(attach.Ang)
 								ef:SetFlags(75) --velocity
-								util.Effect("EjectBrass_9mm",ef)
+								util.Effect("EjectBrass_9mm", ef)
 							end
 						end)
 					end
@@ -1089,8 +1091,8 @@ local eject = "brass"
 				end
 				return 0.08
 			end
-			tab.FireFunc = function(self,item)
-				self:SetChargeAttack(tab.ChargeAttack,item)
+			tab.FireFunc = function(self, item)
+				self:SetChargeAttack(tab.ChargeAttack, item)
 				return false
 			end
 			tab.Cooldown = 0
@@ -1107,17 +1109,17 @@ local eject = "brass"
 			tab.anim = ACT_VM_PRIMARYATTACK
 			tab.Level = 2
 			local identify = {}
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			tab.MaxAmmo = 65
 			local bullet = {}
 					bullet.Num = 1
-					bullet.AccuracyOffset = Vector(0.0,0.0,0)
+					bullet.AccuracyOffset = Vector(0.0, 0.0, 0)
 					bullet.Tracer = 1
 					bullet.Force = 5
 					bullet.Damage = 40
 					bullet.TracerName = "ef_scav_tr_b"
-			tab.FireFunc = function(self,item)
-					self.Owner:ScavViewPunch(Angle(-1,math.Rand(-0.2,0.2),0),0.1)
+			tab.FireFunc = function(self, item)
+					self.Owner:ScavViewPunch(Angle(-1, math.Rand(-0.2, 0.2), 0), 0.1)
 					bullet.Src = self.Owner:GetShootPos()
 					bullet.Dir = self:GetAimVector()
 					bullet.Spread = self:GetAccuracyModifiedCone(bullet.AccuracyOffset)
@@ -1131,7 +1133,7 @@ local eject = "brass"
 						self:AddBarrelSpin(300)
 					end
 					if CLIENT ~= game.SinglePlayer() then
-						timer.Simple(.025,function()
+						timer.Simple(.025, function()
 							if not self.Owner:GetViewModel() then return end
 							local ef = EffectData()
 							local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
@@ -1139,13 +1141,13 @@ local eject = "brass"
 								ef:SetOrigin(attach.Pos)
 								ef:SetAngles(attach.Ang)
 								ef:SetFlags(75) --velocity
-								util.Effect("EjectBrass_9mm",ef)
+								util.Effect("EjectBrass_9mm", ef)
 							end
 						end)
 					end
-					self.nextfireearly = CurTime()+0.15
-					self:AddInaccuracy(0.1,0.2)
-					if SERVER then return self:TakeSubammo(item,1) end
+					self.nextfireearly = CurTime() + 0.15
+					self:AddInaccuracy(0.1, 0.2)
+					if SERVER then return self:TakeSubammo(item, 1) end
 				end
 			tab.Cooldown = 0.3
 		ScavData.RegisterFiremode(tab, "models/weapons/w_pist_p228.mdl", 13)
@@ -1161,18 +1163,18 @@ local eject = "brass"
 			tab.anim = ACT_VM_SECONDARYATTACK
 			tab.Level = 2
 			local identify = {}
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			tab.MaxAmmo = 100
 			
 				local bullet = {}
 						bullet.Num = 1
-						bullet.Spread = Vector(0.0,0.0,0)
+						bullet.Spread = Vector(0.0, 0.0, 0)
 						bullet.Tracer = 1
 						bullet.Force = 5
 						bullet.Damage = 75
 						bullet.TracerName = "ef_scav_tr_b"
-				tab.FireFunc = function(self,item)
-						self.Owner:ScavViewPunch(Angle(-3,math.Rand(-0.2,0.2),0),0.4,true)
+				tab.FireFunc = function(self, item)
+						self.Owner:ScavViewPunch(Angle(-3, math.Rand(-0.2, 0.2), 0), 0.4, true)
 						bullet.Src = self.Owner:GetShootPos()
 						bullet.Dir = self:GetAimVector()
 						if SERVER or not game.SinglePlayer() then
@@ -1185,19 +1187,19 @@ local eject = "brass"
 							self:AddBarrelSpin(300)
 						end
 						if CLIENT ~= game.SinglePlayer() then
-							timer.Simple(.5,function()
-								self.Owner:EmitSound("weapons/scout/scout_bolt.wav",75,100,1)
+							timer.Simple(.5, function()
+								self.Owner:EmitSound("weapons/scout/scout_bolt.wav", 75, 100, 1)
 								local ef = EffectData()
 								local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
 								if attach then
 									ef:SetOrigin(attach.Pos)
 									ef:SetAngles(attach.Ang)
 									ef:SetFlags(75) --velocity
-									util.Effect("EjectBrass_762Nato",ef)
+									util.Effect("EjectBrass_762Nato", ef)
 								end
 							end)
 						end
-						if SERVER then return self:TakeSubammo(item,1) end
+						if SERVER then return self:TakeSubammo(item, 1) end
 					end
 			tab.Cooldown = 1.25
 		ScavData.RegisterFiremode(tab, "models/weapons/w_snip_scout.mdl", 10)
@@ -1214,13 +1216,13 @@ local eject = "brass"
 			tab.anim = ACT_VM_SECONDARYATTACK
 			tab.Level = 2
 			local identify = {}
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			tab.MaxAmmo = 120
-			tab.ChargeAttack = function(self,item)
+			tab.ChargeAttack = function(self, item)
 				if self.Owner:KeyDown(IN_ATTACK) then
 					local bullet = {}
 						bullet.Num = 1
-						bullet.AccuracyOffset = Vector(0.0,0.0,0)
+						bullet.AccuracyOffset = Vector(0.0, 0.0, 0)
 						bullet.Tracer = 1
 						bullet.Force = 5
 						bullet.Damage = 70
@@ -1228,7 +1230,7 @@ local eject = "brass"
 						bullet.Src = self.Owner:GetShootPos()
 						bullet.Dir = self:GetAimVector()
 						bullet.Spread = self:GetAccuracyModifiedCone(bullet.AccuracyOffset)
-					self.Owner:ScavViewPunch(Angle(-5,math.Rand(-0.2,0.2),0),0.5,true)
+					self.Owner:ScavViewPunch(Angle(-5, math.Rand(-0.2, 0.2), 0), 0.5, true)
 					if SERVER or not game.SinglePlayer() then
 						self.Owner:FireBullets(bullet)
 					end
@@ -1237,10 +1239,10 @@ local eject = "brass"
 					if SERVER then
 						self.Owner:EmitSound("Weapon_SG550.Single")
 						self:AddBarrelSpin(300)
-						self:TakeSubammo(item,1)
+						self:TakeSubammo(item, 1)
 					end
 					if CLIENT ~= game.SinglePlayer() then
-						timer.Simple(.025,function()
+						timer.Simple(.025, function()
 							if not self.Owner:GetViewModel() then return end
 							local ef = EffectData()
 							local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
@@ -1248,7 +1250,7 @@ local eject = "brass"
 								ef:SetOrigin(attach.Pos)
 								ef:SetAngles(attach.Ang)
 								ef:SetFlags(75) --velocity
-								util.Effect("EjectBrass_556",ef)
+								util.Effect("EjectBrass_556", ef)
 							end
 						end)
 					end
@@ -1262,8 +1264,8 @@ local eject = "brass"
 				end
 				return 0.25
 			end
-			tab.FireFunc = function(self,item)
-				self:SetChargeAttack(tab.ChargeAttack,item)
+			tab.FireFunc = function(self, item)
+				self:SetChargeAttack(tab.ChargeAttack, item)
 				return false
 			end
 			tab.Cooldown = 0
@@ -1281,13 +1283,13 @@ local eject = "brass"
 			tab.anim = ACT_VM_RECOIL1
 			tab.Level = 2
 			local identify = {}
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			tab.MaxAmmo = 120
-			tab.ChargeAttack = function(self,item)
+			tab.ChargeAttack = function(self, item)
 				if self.Owner:KeyDown(IN_ATTACK) then
 					local bullet = {}
 						bullet.Num = 1
-						bullet.AccuracyOffset = Vector(0.03,0.03,0)
+						bullet.AccuracyOffset = Vector(0.03, 0.03, 0)
 						bullet.Tracer = 1
 						bullet.Force = 5
 						bullet.Damage = 33
@@ -1295,20 +1297,20 @@ local eject = "brass"
 						bullet.Src = self.Owner:GetShootPos()
 						bullet.Dir = self:GetAimVector()
 						bullet.Spread = self:GetAccuracyModifiedCone(bullet.AccuracyOffset)
-					self.Owner:ScavViewPunch(Angle(-0.5,math.Rand(-0.2,0.2),0),0.1,true)
+					self.Owner:ScavViewPunch(Angle(-0.5, math.Rand(-0.2, 0.2), 0), 0.1, true)
 					if SERVER or not game.SinglePlayer() then
 						self.Owner:FireBullets(bullet)
 					end
 					self:MuzzleFlash2()
 					self.Owner:SetAnimation(PLAYER_ATTACK1)
-					self:AddInaccuracy(1/220,0.1)
+					self:AddInaccuracy(1 / 220, 0.1)
 					if SERVER then
 						self.Owner:EmitSound("Weapon_SG552.Single")
 						self:AddBarrelSpin(300)
-						self:TakeSubammo(item,1)
+						self:TakeSubammo(item, 1)
 					end
 					if CLIENT ~= game.SinglePlayer() then
-						timer.Simple(.025,function()
+						timer.Simple(.025, function()
 							if not self.Owner:GetViewModel() then return end
 							local ef = EffectData()
 							local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
@@ -1316,7 +1318,7 @@ local eject = "brass"
 								ef:SetOrigin(attach.Pos)
 								ef:SetAngles(attach.Ang)
 								ef:SetFlags(75) --velocity
-								util.Effect("EjectBrass_556",ef)
+								util.Effect("EjectBrass_556", ef)
 							end
 						end)
 					end
@@ -1330,8 +1332,8 @@ local eject = "brass"
 				end
 				return 0.09
 			end
-			tab.FireFunc = function(self,item)
-				self:SetChargeAttack(tab.ChargeAttack,item)
+			tab.FireFunc = function(self, item)
+				self:SetChargeAttack(tab.ChargeAttack, item)
 				return false
 			end
 			tab.Cooldown = 0
@@ -1348,11 +1350,11 @@ local eject = "brass"
 			tab.anim = ACT_VM_RECOIL1
 			tab.Level = 2
 			tab.MaxAmmo = 150
-			tab.ChargeAttack = function(self,item)
+			tab.ChargeAttack = function(self, item)
 				if self.Owner:KeyDown(IN_ATTACK) then
 					local bullet = {}
 						bullet.Num = 1
-						bullet.AccuracyOffset = Vector(0.055,0.055,0)
+						bullet.AccuracyOffset = Vector(0.055, 0.055, 0)
 						bullet.Tracer = 1
 						bullet.Force = 5
 						bullet.Damage = 26
@@ -1360,20 +1362,20 @@ local eject = "brass"
 						bullet.Src = self.Owner:GetShootPos()
 						bullet.Dir = self:GetAimVector()
 						bullet.Spread = self:GetAccuracyModifiedCone(bullet.AccuracyOffset)
-					self.Owner:ScavViewPunch(Angle(-0.5,math.Rand(-0.2,0.2),0),0.1,true)
+					self.Owner:ScavViewPunch(Angle(-0.5, math.Rand(-0.2, 0.2), 0), 0.1, true)
 					if SERVER or not game.SinglePlayer() then
 						self.Owner:FireBullets(bullet)
 					end
 					--self:MuzzleFlash2() --no flash on silenced weapon!
 					self.Owner:SetAnimation(PLAYER_ATTACK1)
-					self:AddInaccuracy(1/200,0.14)
+					self:AddInaccuracy(1 / 200, 0.14)
 					if SERVER then
 						self.Owner:EmitSound("Weapon_TMP.Single")
 						self:AddBarrelSpin(300)
-						self:TakeSubammo(item,1)
+						self:TakeSubammo(item, 1)
 					end
 					if CLIENT ~= game.SinglePlayer() then
-						timer.Simple(.025,function()
+						timer.Simple(.025, function()
 							if not self.Owner:GetViewModel() then return end
 							local ef = EffectData()
 							local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
@@ -1381,7 +1383,7 @@ local eject = "brass"
 								ef:SetOrigin(attach.Pos)
 								ef:SetAngles(attach.Ang)
 								ef:SetFlags(75) --velocity
-								util.Effect("EjectBrass_9mm",ef)
+								util.Effect("EjectBrass_9mm", ef)
 							end
 						end)
 					end
@@ -1395,8 +1397,8 @@ local eject = "brass"
 				end
 				return 0.07
 			end
-			tab.FireFunc = function(self,item)
-				self:SetChargeAttack(tab.ChargeAttack,item)
+			tab.FireFunc = function(self, item)
+				self:SetChargeAttack(tab.ChargeAttack, item)
 				return false
 			end
 			tab.Cooldown = 0
@@ -1413,11 +1415,11 @@ local eject = "brass"
 			tab.anim = ACT_VM_RECOIL1
 			tab.Level = 2
 			tab.MaxAmmo = 125
-			tab.ChargeAttack = function(self,item)
+			tab.ChargeAttack = function(self, item)
 				if self.Owner:KeyDown(IN_ATTACK) then
 					local bullet = {}
 						bullet.Num = 1
-						bullet.AccuracyOffset = Vector(0.055,0.055,0)
+						bullet.AccuracyOffset = Vector(0.055, 0.055, 0)
 						bullet.Tracer = 1
 						bullet.Force = 5
 						bullet.Damage = 26
@@ -1425,20 +1427,20 @@ local eject = "brass"
 						bullet.Src = self.Owner:GetShootPos()
 						bullet.Dir = self:GetAimVector()
 						bullet.Spread = self:GetAccuracyModifiedCone(bullet.AccuracyOffset)
-					self.Owner:ScavViewPunch(Angle(-0.5,math.Rand(-0.2,0.2),0),0.1,true)
+					self.Owner:ScavViewPunch(Angle(-0.5, math.Rand(-0.2, 0.2), 0), 0.1, true)
 					if SERVER or not game.SinglePlayer() then
 						self.Owner:FireBullets(bullet)
 					end
 					self:MuzzleFlash2()
 					self.Owner:SetAnimation(PLAYER_ATTACK1)
-					self:AddInaccuracy(1/210,0.1)
+					self:AddInaccuracy(1 / 210, 0.1)
 					if SERVER then
 						self.Owner:EmitSound("Weapon_UMP45.Single")
 						self:AddBarrelSpin(300)
-						self:TakeSubammo(item,1)
+						self:TakeSubammo(item, 1)
 					end
 					if CLIENT ~= game.SinglePlayer() then
-						timer.Simple(.025,function()
+						timer.Simple(.025, function()
 							if not self.Owner:GetViewModel() then return end
 							local ef = EffectData()
 							local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
@@ -1446,7 +1448,7 @@ local eject = "brass"
 								ef:SetOrigin(attach.Pos)
 								ef:SetAngles(attach.Ang)
 								ef:SetFlags(75) --velocity
-								util.Effect("EjectBrass_9mm",ef)
+								util.Effect("EjectBrass_9mm", ef)
 							end
 						end)
 					end
@@ -1460,8 +1462,8 @@ local eject = "brass"
 				end
 				return 0.105
 			end
-			tab.FireFunc = function(self,item)
-				self:SetChargeAttack(tab.ChargeAttack,item)
+			tab.FireFunc = function(self, item)
+				self:SetChargeAttack(tab.ChargeAttack, item)
 				return false
 			end
 			tab.Cooldown = 0
@@ -1478,13 +1480,13 @@ local eject = "brass"
 			tab.MaxAmmo = 112
 			local bullet = {}
 					bullet.Num = 1
-					bullet.AccuracyOffset = Vector(0.0,0.0,0)
+					bullet.AccuracyOffset = Vector(0.0, 0.0, 0)
 					bullet.Tracer = 1
 					bullet.Force = 5
 					bullet.Damage = 34
 					bullet.TracerName = "ef_scav_tr_b"
-			tab.FireFunc = function(self,item)
-					self.Owner:ScavViewPunch(Angle(-0.5,math.Rand(-0.2,0.2),0),0.1)
+			tab.FireFunc = function(self, item)
+					self.Owner:ScavViewPunch(Angle(-0.5, math.Rand(-0.2, 0.2), 0), 0.1)
 					bullet.Src = self.Owner:GetShootPos()
 					bullet.Dir = self:GetAimVector()
 					bullet.Spread = self:GetAccuracyModifiedCone(bullet.AccuracyOffset)
@@ -1498,7 +1500,7 @@ local eject = "brass"
 						self:AddBarrelSpin(300)
 					end
 					if CLIENT ~= game.SinglePlayer() then
-						timer.Simple(.025,function()
+						timer.Simple(.025, function()
 							if not self.Owner:GetViewModel() then return end
 							local ef = EffectData()
 							local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
@@ -1506,13 +1508,13 @@ local eject = "brass"
 								ef:SetOrigin(attach.Pos)
 								ef:SetAngles(attach.Ang)
 								ef:SetFlags(75) --velocity
-								util.Effect("EjectBrass_9mm",ef)
+								util.Effect("EjectBrass_9mm", ef)
 							end
 						end)
 					end
-					self.nextfireearly = CurTime()+0.15
-					self:AddInaccuracy(0.1,0.2)
-					if SERVER then return self:TakeSubammo(item,1) end
+					self.nextfireearly = CurTime() + 0.15
+					self:AddInaccuracy(0.1, 0.2)
+					if SERVER then return self:TakeSubammo(item, 1) end
 				end
 			tab.Cooldown = 0.3
 		ScavData.RegisterFiremode(tab, "models/weapons/w_pist_usp.mdl", 12)
@@ -1528,13 +1530,13 @@ local eject = "brass"
 			tab.MaxAmmo = 112
 			local bullet = {}
 					bullet.Num = 1
-					bullet.AccuracyOffset = Vector(0.0,0.0,0)
+					bullet.AccuracyOffset = Vector(0.0, 0.0, 0)
 					bullet.Tracer = 1
 					bullet.Force = 5
 					bullet.Damage = 34
 					bullet.TracerName = "ef_scav_tr_b"
-			tab.FireFunc = function(self,item)
-					self.Owner:ScavViewPunch(Angle(-1,math.Rand(-0.2,0.2),0),0.3)
+			tab.FireFunc = function(self, item)
+					self.Owner:ScavViewPunch(Angle(-1, math.Rand(-0.2, 0.2), 0), 0.3)
 					bullet.Src = self.Owner:GetShootPos()
 					bullet.Dir = self:GetAimVector()
 					bullet.Spread = self:GetAccuracyModifiedCone(bullet.AccuracyOffset)
@@ -1549,27 +1551,27 @@ local eject = "brass"
 					end
 					if CLIENT ~= game.SinglePlayer() then
 						if item.ammo == "models/w_silencer.mdl" then --HL:S
-							timer.Simple(.025,function()
+							timer.Simple(.025, function()
 								if not self.Owner:GetViewModel() then return end
 								local ef = EffectData()
 								local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
 								if attach then
 									ef:SetOrigin(attach.Pos)
 									ef:SetAngles(attach.Ang)
-									--lovingly borrowed from https:--steamcommunity.com/sharedfiles/filedetails/?id=1360233031
+									--lovingly borrowed from https://steamcommunity.com/sharedfiles/filedetails/?id=1360233031
 									local angShellAngles = self.Owner:EyeAngles()
 									local vecShellVelocity = self.Owner:GetAbsVelocity()
-									vecShellVelocity = vecShellVelocity + angShellAngles:Right() * math.Rand( 50, 70 );
-									vecShellVelocity = vecShellVelocity + angShellAngles:Up() * math.Rand( 100, 150 );
+									vecShellVelocity = vecShellVelocity + angShellAngles:Right() * math.Rand(50, 70);
+									vecShellVelocity = vecShellVelocity + angShellAngles:Up() * math.Rand(100, 150);
 									vecShellVelocity = vecShellVelocity + angShellAngles:Forward() * 25;
 									ef:SetStart(vecShellVelocity)
 									ef:SetEntity(self.Owner)
 									ef:SetFlags(0) --pistol shell
-									util.Effect("HL1ShellEject",ef)
+									util.Effect("HL1ShellEject", ef)
 								end
 							end)
 						else
-							timer.Simple(.025,function()
+							timer.Simple(.025, function()
 								if not self.Owner:GetViewModel() then return end
 								local ef = EffectData()
 								local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
@@ -1577,14 +1579,14 @@ local eject = "brass"
 									ef:SetOrigin(attach.Pos)
 									ef:SetAngles(attach.Ang)
 									ef:SetFlags(75) --velocity
-									util.Effect("EjectBrass_9mm",ef)
+									util.Effect("EjectBrass_9mm", ef)
 								end
 							end)
 						end
 					end
-					self.nextfireearly = CurTime()+0.15
-					self:AddInaccuracy(0.1,0.2)
-					if SERVER then return self:TakeSubammo(item,1) end
+					self.nextfireearly = CurTime() + 0.15
+					self:AddInaccuracy(0.1, 0.2)
+					if SERVER then return self:TakeSubammo(item, 1) end
 				end
 			tab.Cooldown = 0.3
 		--CSS
@@ -1601,17 +1603,17 @@ local eject = "brass"
 			tab.anim = ACT_VM_SECONDARYATTACK
 			tab.Level = 2
 			local identify = {}
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			tab.MaxAmmo = 39
 			local bullet = {}
 					bullet.Num = 6
-					bullet.Spread = Vector(0.1,0.1,0)
+					bullet.Spread = Vector(0.1, 0.1, 0)
 					bullet.Tracer = 1
 					bullet.Force = 4
 					bullet.Damage = 20
 					bullet.TracerName = "ef_scav_tr_b"
-			tab.FireFunc = function(self,item)
-					self.Owner:ScavViewPunch(Angle(-5,math.Rand(-0.2,0.2),0),0.5)
+			tab.FireFunc = function(self, item)
+					self.Owner:ScavViewPunch(Angle(-5, math.Rand(-0.2, 0.2), 0), 0.5)
 					bullet.Src = self.Owner:GetShootPos()
 					bullet.Dir = self:GetAimVector()
 					if SERVER or not game.SinglePlayer() then
@@ -1623,7 +1625,7 @@ local eject = "brass"
 						self.Owner:EmitSound("Weapon_XM1014.Single")
 					end
 					if CLIENT ~= game.SinglePlayer() then
-						timer.Simple(.025,function()
+						timer.Simple(.025, function()
 							if not self.Owner:GetViewModel() then return end
 							local ef = EffectData()
 							local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
@@ -1631,12 +1633,12 @@ local eject = "brass"
 								ef:SetOrigin(attach.Pos)
 								ef:SetAngles(attach.Ang)
 								ef:SetFlags(75) --velocity
-								util.Effect("EjectBrass_12Gauge",ef)
+								util.Effect("EjectBrass_12Gauge", ef)
 							end
 						end)
 					end
-					self.nextfireearly = CurTime()+0.25
-					if SERVER then return self:TakeSubammo(item,1) end
+					self.nextfireearly = CurTime() + 0.25
+					if SERVER then return self:TakeSubammo(item, 1) end
 				end
 			tab.Cooldown = 0.88
 		ScavData.RegisterFiremode(tab, "models/weapons/w_shot_xm1014.mdl", 7)
@@ -1656,16 +1658,16 @@ local eject = "brass"
 			tab.chargeanim = ACT_VM_PRIMARYATTACK
 			tab.Level = 2
 			local identify = {}
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			tab.MaxAmmo = 420
 				local bullet = {}
 					bullet.Num = 1
-					bullet.Spread = Vector(0.015,0.015,0)
+					bullet.Spread = Vector(0.015, 0.015, 0)
 					bullet.Tracer = 1
 					bullet.Force = 5
 					bullet.Damage = 7
 					bullet.TracerName = "Tracer"
-				tab.ChargeAttack = function(self,item)
+				tab.ChargeAttack = function(self, item)
 					bullet.Src = self.Owner:GetShootPos()
 					bullet.Dir = self.Owner:GetAimVector()
 					if SERVER or not game.SinglePlayer() then
@@ -1673,7 +1675,7 @@ local eject = "brass"
 					end
 					self.Owner:SetAnimation(PLAYER_ATTACK1)
 					self.Owner:EmitSound("weapons/rifle_desert/gunfire/rifle_fire_1.wav")
-					if SERVER then self:TakeSubammo(item,1) end
+					if SERVER then self:TakeSubammo(item, 1) end
 					item.shotsleft = item.shotsleft-1
 					
 
@@ -1686,9 +1688,9 @@ local eject = "brass"
 					end
 					return 0.1
 				end
-				tab.FireFunc = function(self,item)
+				tab.FireFunc = function(self, item)
 					item.shotsleft = 3
-					self:SetChargeAttack(ScavData.models[self.inv.items[1].ammo].ChargeAttack,item)
+					self:SetChargeAttack(ScavData.models[self.inv.items[1].ammo].ChargeAttack, item)
 					return false
 				end
 			tab.Cooldown = 0

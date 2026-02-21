@@ -1653,6 +1653,8 @@ end
 --[[==============================================================================================
 	--Teleporter
 ==============================================================================================]]--
+
+		PrecacheParticleSystem(PORTAL and "portal_1_projectile_stream" or "Rocket_Smoke")
 		
 		local tab = {}
 			tab.Name = "#scav.scavcan.teleporter"
@@ -1660,8 +1662,6 @@ end
 			tab.Level = 6
 			tab.vmin = Vector(-24,-24,0)
 			tab.vmax = Vector(24,24,0)
-			PrecacheParticleSystem("portal_1_projectile_stream")
-			PrecacheParticleSystem("Rocket_Smoke")
 			if SERVER then
 			
 				util.AddNetworkString("scv_sfl")

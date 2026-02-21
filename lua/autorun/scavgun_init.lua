@@ -5,6 +5,15 @@ local PLAYER = FindMetaTable("Player")
 
 SCAV_SHORT_MAX = 32767
 
+--Checking for mounted games' content
+CSS		= IsMounted(240)
+DODS	= IsMounted(300)
+PORTAL	= IsMounted(400)
+TF2		= IsMounted(440)
+L4D		= IsMounted(500) or IsMounted(550) --L4D2 includes all of L4D's assets
+L4D2	= IsMounted(550)
+FOF		= IsMounted(265630)
+
 --Identify enums
 	--Buzzsaw
 	SCAV_BUZZSAW_DEFAULT = 0
@@ -200,19 +209,19 @@ game.AddParticles("particles/scav_muzzleflashes.pcf")
 game.AddParticles("particles/scav_particles94.pcf")
 game.AddParticles("particles/scav_weather.pcf")
 game.AddParticles("particles/water_impacts.pcf") --blast shower
-if IsMounted(440) then --TF2
+if TF2 then
 	game.AddParticles("particles/medicgun_beam.pcf") --medigun
 	game.AddParticles("particles/cinefx.pcf") --payload
 	game.AddParticles("particles/flamethrower.pcf") --fireball
 --	game.AddParticles("particles/teleport_status.pcf")
 end
-if IsMounted(400) then --portal 
+if PORTAL then
 --	game.AddParticles("particles/portalgun.pcf")
 	game.AddParticles("particles/portal_projectile.pcf")
 else
 	game.AddParticles("particles/Rocket_Trail.pcf") --teleporter backup
 end
---if IsMounted(300) then --DoD:S
+--if DODS then
 --	game.AddParticles("particles/rockettrail.pcf") --MG42
 --end
 
