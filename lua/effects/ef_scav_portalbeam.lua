@@ -22,7 +22,7 @@ local tracep = {}
 	tracep.mask = MASK_SHOT
 	
 function EFFECT:Think()
-	local vel = self.vel*math.max(UnPredictedCurTime() - self.lasttrace, 0)
+	local vel = self.vel * math.max(UnPredictedCurTime() - self.lasttrace, 0)
 	tracep.start = self:GetPos()
 	tracep.filter = self.Owner
 	tracep.endpos = self:GetPos() + vel

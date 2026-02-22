@@ -1660,117 +1660,121 @@ end
 			tab.Name = "#scav.scavcan.teleporter"
 			tab.anim = ACT_VM_SECONDARYATTACK
 			tab.Level = 6
-			tab.vmin = Vector(-24,-24,0)
-			tab.vmax = Vector(24,24,0)
+			tab.vmin = Vector(-24, -24, 0)
+			tab.vmax = Vector(24, 24, 0)
+			local identify = {
+				--[HL2-style] = SCAV_TELE_DEFAULT,
+				--[[Combine]]["models/props_combine/combine_teleport_2.mdl"] = SCAV_TELE_COMBINE,
+				--[[Portal]]["models/weapons/w_portalgun.mdl"] = SCAV_TELE_PORTAL,
+				--[[TF2]]["models/buildables/teleporter_light.mdl"] = SCAV_TELE_TF2,
+				["models/buildables/teleporter.mdl"] = SCAV_TELE_TF2,
+
+			}
+			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			if SERVER then
 			
 				util.AddNetworkString("scv_sfl")
-				
-				tab.Callback = function(self,tr)
-					if tr.HitSky then
-						return
-					end
+				local firesound = {
+					[SCAV_TELE_COMBINE] = "buttons/combine_button2.wav",
+					[SCAV_TELE_PORTAL] = "weapons/portalgun/portalgun_shoot_blue1.wav",
+					[SCAV_TELE_TF2] = "weapons/teleporter_ready.wav",
+				}
+				firesound = setmetatable(firesound, {__index = function() return "ambient/machines/catapult_throw.wav" end})
+				local hitsound = {
+					[SCAV_TELE_PORTAL] = "weapons/portalgun/portal_open3.wav",
+					[SCAV_TELE_TF2] = "weapons/teleporter_send.wav",
+				}
+				hitsound = setmetatable(hitsound, {__index = function() return "ambient/machines/teleport1.wav" end})
+				local invalidhitsound = PORTAL and "weapons/portalgun/portal_invalid_surface3.wav" or "physics/flesh/flesh_bloody_impact_hard1.wav"
+				tab.Callback = function(self, tr)
+					if not IsValid(self.Owner) or not self.Owner:Alive() then return end
+					if tr.HitSky then return end
+
 					local tracep = {}
-					tracep.start = tr.HitPos+vector_up+tr.HitNormal*32
-					tracep.endpos = tracep.start+vector_up*72
-					tracep.filter = self.Owner
-					tracep.mask = MASK_SHOT
-					tracep.mins = Vector(-24,-24,0)
-					tracep.maxs = Vector(24,24,0)
+						tracep.start = tr.HitPos + vector_up + tr.HitNormal * 32
+						tracep.endpos = tracep.start + vector_up * (self.Owner:Crouching() and 36 or 72)
+						tracep.filter = self.Owner
+						tracep.mask = MASK_SHOT
+						tracep.mins = Vector(-24, -24, 0)
+						tracep.maxs = Vector(24, 24, 0)
+					debugoverlay.SweptBox(tracep.start, tracep.endpos, tracep.mins, tracep.maxs, angle_zero, 15, Color(255, 0, 255, 255), true)
 					local tr2 = util.TraceHull(tracep)
 					if tr2.Hit then
-						self.Owner:EmitSound(IsMounted(400) --[[Portal]] and "weapons/portalgun/portal_invalid_surface3.wav" or "physics/flesh/flesh_bloody_impact_hard1.wav")
+						self.Owner:EmitSound(invalidhitsound)
 						return
 					end
-					local offset = tr.HitNormal*18
+					local offset = tr.HitNormal * 18
+					debugoverlay.Line(tr.HitPos, tr.HitPos + offset, 15, Color(0, 255, 0, 255), true)
 					if offset.z < 0 then
-						self.Owner:EmitSound(IsMounted(400) --[[Portal]] and "weapons/portalgun/portal_invalid_surface3.wav" or "physics/flesh/flesh_bloody_impact_hard1.wav")
+						self.Owner:EmitSound(invalidhitsound)
 						return
-					else
-						offset.z = 0
 					end
+					offset.z = 1
+					debugoverlay.Line(tr.HitPos, tr.HitPos + offset, 15, Color(255, 0, 0, 255), true)
+					debugoverlay.SweptBox(tr.HitPos + offset, tr.HitPos + offset + vector_up * (self.Owner:Crouching() and 36 or 72), Vector(-16, -16, 0), Vector(16, 16, 0), angle_zero, 15, Color(255, 255, 0, 255), true)
+
 					if tr.Hit then
 						net.Start("scv_sfl")
 							net.WriteEntity(self.Owner:GetWeapon("scav_gun"))
 							net.WriteFloat(130)
 							net.WriteFloat(1)
 						net.Send(self.Owner)
-						self.Owner:SetPos(tr.HitPos+offset)
-						local item = self.Owner:GetActiveWeapon()
-						if item.ammo == "models/weapons/w_portalgun.mdl" then
-							self.Owner:EmitSound("weapons/portalgun/portal_open3.wav")
-						elseif item.ammo == "models/buildables/teleporter_light.mdl" then
-							self.Owner:EmitSound("weapons/teleporter_send.wav")
-						else
-							self.Owner:EmitSound("ambient/machines/teleport1.wav")
-						end
+						self.Owner:SetPos(tr.HitPos + offset)
+						local item = self.Owner:GetActiveWeapon():GetCurrentItem()
+						if not item then return end
+						local tab = ScavData.models[item.ammo]
+						self.Owner:EmitSound(hitsound[tab.Identify[item.ammo]])
 					else
-						self.Owner:EmitSound(IsMounted(400) --[[Portal]] and "weapons/portalgun/portal_invalid_surface3.wav" or "physics/flesh/flesh_bloody_impact_hard1.wav")
+						self.Owner:EmitSound(invalidhitsound)
 					end
 				end
 				tab.proj = GProjectile()
 				tab.proj:SetCallback(tab.Callback)
-				tab.proj:SetBBox(Vector(-3,-3,-3),Vector(3,3,3))
+				tab.proj:SetBBox(Vector(-3, -3, -3), Vector(3, 3, 3))
 				tab.proj:SetPiercing(false)
 				tab.proj:SetGravity(vector_origin)
 				tab.proj:SetMask(MASK_SHOT)
 				local proj = tab.proj
 			
-				tab.FireFunc = function(self,item)
-					local pos = self.Owner:GetShootPos()+self:GetAimVector()*24+self:GetAimVector():Angle():Right()*4-self:GetAimVector():Angle():Up()*4
+				tab.FireFunc = function(self, item)
+					local pos = self.Owner:GetShootPos() + self:GetAimVector() * 24 + self:GetAimVector():Angle():Right() * 4 - self:GetAimVector():Angle():Up() * 4
 					local tab = ScavData.models[item.ammo]
-					local shootz = self.Owner:GetShootPos().z-self.Owner:GetPos().z
-					--s_proj.AddProjectile(self.Owner,self.Owner:GetShootPos(),self:GetAimVector()*5000,ScavData.models[self.inv.items[1].ammo].Callback,false,false,vector_origin,self.Owner,Vector(-8,-8,-8),Vector(8,8,8))
-					--					(Owner,     pos,                     velocity,                      callback,                                  ignoreworld,pierce,gravity,tablefilter,mins,maxs) --what the FUCK was I doing here?
+					local shootz = self.Owner:GetShootPos().z - self.Owner:GetPos().z
+					--s_proj.AddProjectile(self.Owner, self.Owner:GetShootPos(), self:GetAimVector() * 5000, ScavData.models[self.inv.items[1].ammo].Callback, false, false, vector_origin, self.Owner, Vector(-8, -8, -8), Vector(8, 8, 8))
+					--					(Owner,     pos,                     velocity,                      callback,                                  ignoreworld, pierce, gravity, tablefilter, mins, maxs) --what the FUCK was I doing here?
 					proj:SetOwner(self.Owner)
 					proj:SetFilter(self.Owner)
 					proj:SetPos(self.Owner:GetShootPos())
-					proj:SetVelocity(self:GetAimVector()*2000*self:GetForceScale())
+					local vel = self:GetAimVector() * 2000 * self:GetForceScale()
+					proj:SetVelocity(vel)
 					proj:Fire()
 					local ef = EffectData()
 					ef:SetOrigin(pos)
-					ef:SetStart(self:GetAimVector()*2000*self:GetForceScale())
+					ef:SetStart(vel)
 					ef:SetEntity(self.Owner)
-					if item.ammo == "models/weapons/w_portalgun.mdl" then
-						self.Owner:EmitSound("weapons/portalgun/portalgun_shoot_blue1.wav")
-					elseif item.ammo == "models/buildables/teleporter_light.mdl" then
-						self.Owner:EmitSound("weapons/teleporter_ready.wav")
-					elseif item.ammo == "models/props_combine/combine_teleport_2.mdl" then
-						self.Owner:EmitSound("buttons/combine_button2.wav")
-					else
-						self.Owner:EmitSound("ambient/machines/catapult_throw.wav")
-					end
-					util.Effect(IsMounted(400) --[[Portal]] and "ef_scav_portalbeam" or "ef_scav_portalbeam_hl2",ef,nil,true)
+					self.Owner:EmitSound(firesound[tab.Identify[item.ammo]])
+					util.Effect("ef_scav_portalbeam", ef, nil, true)
 					return false
 				end
-				ScavData.CollectFuncs["models/maxofs2d/hover_rings.mdl"] = ScavData.GiveOneOfItemInf
-				ScavData.CollectFuncs["models/props_lab/miniteleport.mdl"] = ScavData.GiveOneOfItemInf
-				ScavData.CollectFuncs["models/props_lab/teleportbulk.mdl"] = ScavData.GiveOneOfItemInf
-				ScavData.CollectFuncs["models/props_lab/teleportbulkeli.mdl"] = ScavData.GiveOneOfItemInf
-				ScavData.CollectFuncs["models/props_combine/combine_teleport_2.mdl"] = ScavData.GiveOneOfItemInf
-				--Portal
-				ScavData.CollectFuncs["models/weapons/w_portalgun.mdl"] = ScavData.GiveOneOfItemInf
-				--TF2
-				ScavData.CollectFuncs["models/buildables/teleporter_light.mdl"] = ScavData.GiveOneOfItemInf
-				ScavData.CollectFuncs["models/buildables/teleporter.mdl"] = function(self,ent) return {{ScavData.FormatModelname("models/buildables/teleporter_light.mdl"), SCAV_SHORT_MAX, ent:GetSkin()}} end
 			else
-				tab.FireFunc = function(self,item)
+				tab.FireFunc = function(self, item)
 					local tr = self.Owner:GetEyeTraceNoCursor()
 					local tab = ScavData.models[item.ammo]
 					return false
 				end
 			end
 			tab.Cooldown = 1
-		ScavData.RegisterFiremode(tab,"models/maxofs2d/hover_rings.mdl")
-		ScavData.RegisterFiremode(tab,"models/buildables/teleporter_light.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_lab/miniteleport.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_lab/teleportbulk.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_lab/teleportbulkeli.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_combine/combine_teleport_2.mdl")
+		ScavData.RegisterFiremode(tab, "models/maxofs2d/hover_rings.mdl", SCAV_SHORT_MAX)
+		ScavData.RegisterFiremode(tab, "models/buildables/teleporter_light.mdl", SCAV_SHORT_MAX)
+		ScavData.RegisterFiremode(tab, "models/props_lab/miniteleport.mdl", SCAV_SHORT_MAX)
+		ScavData.RegisterFiremode(tab, "models/props_lab/teleportbulk.mdl", SCAV_SHORT_MAX)
+		ScavData.RegisterFiremode(tab, "models/props_lab/teleportbulkeli.mdl", SCAV_SHORT_MAX)
+		ScavData.RegisterFiremode(tab, "models/props_combine/combine_teleport_2.mdl", SCAV_SHORT_MAX)
 		--Portal
-		ScavData.RegisterFiremode(tab,"models/weapons/w_portalgun.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_portalgun.mdl", SCAV_SHORT_MAX)
 		--TF2
-		ScavData.RegisterFiremode(tab,"models/buildables/teleporter_light.mdl")
+		ScavData.RegisterFiremode(tab, "models/buildables/teleporter_light.mdl", SCAV_SHORT_MAX)
+		ScavData.RegisterFiremode(tab, "models/buildables/teleporter.mdl", SCAV_SHORT_MAX)
 		
 --[[==============================================================================================
 	--Electricity beam
