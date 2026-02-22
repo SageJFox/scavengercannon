@@ -2717,8 +2717,7 @@ if SERVER then
 			ef:SetPos(ent:GetPos())
 			ef:SetAngles(ent:GetAngles())
 			ef:Spawn()
-			ParticleEffectAttach("scav_propdeath",PATTACH_ABSORIGIN_FOLLOW,ef,0)
-			--TODO: could ragdolls be made to pose like the original?
+			ParticleEffectAttach("scav_propdeath", PATTACH_ABSORIGIN_FOLLOW, ef, 0)
 		end
 	end
 
@@ -2827,13 +2826,20 @@ if SERVER then
 					end
 				end
 
-				self.nextfire = shoottime+(math.sqrt(mass) * 0.05) * self:GetCooldownScale()
+				self.nextfire = shoottime + (math.sqrt(mass) * 0.05) * self:GetCooldownScale()
 				self:SendWeaponAnim(ACT_VM_SECONDARYATTACK)
-				EntReaper.AddDyingEnt(prop,10)
-				prop:CallOnRemove("scavdeath",deathshit)
-				hook.Add("PropBreak","ScavPropDeathEffectCheck",function(client,prp)
-					prp:RemoveCallOnRemove("scavdeath")
-				end)
+				EntReaper.AddDyingEnt(prop, 10)
+				--instead of trying to copy the ragdoll's position to the death model, let's just use the ragdoll
+				if prop:IsRagdoll() then
+					timer.Simple(9.9, function()
+						if not IsValid(prop) then return end
+						ParticleEffectAttach("scav_propdeath", PATTACH_ABSORIGIN_FOLLOW, prop, 0)
+						prop:DrawShadow(false)
+						prop:SetMaterial("models/scavplasma.vmt")
+					end)
+				else
+					prop:CallOnRemove("scavdeath", deathshit)
+				end
 				self:SetSeqEndTime(self.nextfire - 0.1)
 				self:RemoveItem(1)
 				self.Owner:EmitSound(self.shootsound, 100, math.Clamp(120 - (self.nextfire - CurTime()) * 50, 30, 255))
@@ -2864,6 +2870,10 @@ if SERVER then
 		end
 
 	end
+
+	hook.Add("PropBreak", "ScavPropDeathEffectCheck", function(client, prp)
+		prp:RemoveCallOnRemove("scavdeath")
+	end)
 
 	function SWEP:CheckCanScav(ent)
 
