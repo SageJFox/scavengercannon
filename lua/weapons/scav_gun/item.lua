@@ -433,13 +433,13 @@ if CLIENT then
 
 		local self = inv.Owner
 		
-		if IsValid(self) then return end
+		if not IsValid(self) then return end
 		
 		if ScavData.models[item.ammo] and ScavData.models[item.ammo].OnPickup then
-			ScavData.models[item.ammo].OnPickup(self,item)
+			ScavData.models[item.ammo].OnPickup(self, item)
 		end
 		if inv:GetItemCount() == 1 and ScavData.models[item.ammo] and ScavData.models[item.ammo].OnArmed then
-			ScavData.models[item.ammo].OnArmed(self,item,"")
+			ScavData.models[item.ammo].OnArmed(self, item, "")
 		end
 		
 	end)
@@ -498,7 +498,7 @@ function ITEM:Remove(silent,pl,ignoredelay) --Calling this on the server will se
 		self.parent.Owner:OnItemRemoved(self)
 	end
 	
-	for k,v in ipairs(self.parent.items) do
+	for k, v in ipairs(self.parent.items) do
 		if v == self then
 			local postremoved = nil
 			local olditem = self.parent.items[k]
@@ -528,7 +528,7 @@ function ITEM:Remove(silent,pl,ignoredelay) --Calling this on the server will se
 								prop = ents.Create("prop_ragdoll")
 							elseif util.IsValidProp(olditem.ammo) then
 								prop = ents.Create("prop_physics")
-							elseif string.find(olditem.ammo,"*%d",0,false) then
+							elseif string.find(olditem.ammo, "*%d", 0, false) then
 								prop = ents.Create("func_physbox")
 							end
 
@@ -539,7 +539,7 @@ function ITEM:Remove(silent,pl,ignoredelay) --Calling this on the server will se
 								local phys = prop:GetPhysicsObject()
 								local mass = 0
 						
-								for i=0,prop:GetPhysicsObjectCount()-1 do --setup bone positions
+								for i=0,prop:GetPhysicsObjectCount() - 1 do --setup bone positions
 									local phys = prop:GetPhysicsObjectNum(i)
 									if IsValid(phys) then
 										mass = mass + phys:GetMass()
@@ -554,23 +554,23 @@ function ITEM:Remove(silent,pl,ignoredelay) --Calling this on the server will se
 							newfiremode = newitem:GetFiremodeTable().Name
 						end
 
-						local delaybuffer = self.parent.Owner.Owner:GetInfoNum("cl_scav_autoswitchdelay",.375) - oldfiremodedelay
+						local delaybuffer = self.parent.Owner.Owner:GetInfoNum("cl_scav_autoswitchdelay", 0.375) - oldfiremodedelay
 						if oldfiremode ~= newfiremode and delaybuffer > 0 then
 							net.Start("scv_s_time")
 								net.WriteEntity(self.parent.Owner)
-								net.WriteInt(math.floor(delaybuffer),32)
+								net.WriteInt(math.floor(delaybuffer), 32)
 								net.WriteFloat(delaybuffer - math.floor(delaybuffer))
 							net.Send(self.parent.Owner.Owner)
 							self.parent.Owner.nextfire = self.parent.Owner.nextfire + delaybuffer
 							if self.parent.Owner:IsValid() and self.parent.Owner.Owner:Alive() then
-								self.parent.Owner.Owner:EmitSound("npc/dog/dog_pneumatic1.wav",75,80,1)
+								self.parent.Owner.Owner:EmitSound("npc/dog/dog_pneumatic1.wav", 75, 80, 1)
 							end
 						end
 					end
 				end
 			end
 
-			table.remove(self.parent.items,k)
+			table.remove(self.parent.items, k)
 			self.valid = false
 			break
 		end
@@ -578,7 +578,7 @@ function ITEM:Remove(silent,pl,ignoredelay) --Calling this on the server will se
 	
 	self.parent.itemids[self.ID] = nil
 	self.parent.numberofitems = self.parent.numberofitems - 1
-	debugprint("items","dec itemcount to "..self.parent.numberofitems)
+	debugprint("items", "dec itemcount to " .. self.parent.numberofitems)
 	self.parent:Update()
 	
 end
@@ -588,7 +588,7 @@ if CLIENT then
 		local inv = ScavInventories[net.ReadInt(INVREADSIZE)]
 		if inv then
 			local id = net.ReadInt(IDREADSIZE)
-				timer.Simple(0.05, function()if inv.itemids[id] then inv.itemids[id]:Remove() end end)
+			timer.Simple(0.05, function() if inv.itemids[id] then inv.itemids[id]:Remove() end end)
 		end
 	end)
 	net.Receive("scv_s_time", function()
