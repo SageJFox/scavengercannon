@@ -120,7 +120,7 @@ devskins = {
 function SWEP:Reskin(steamid)
 	if devskins[steamid] ~= nil then
 		if IsValid(self.Owner:GetViewModel()) and self.Owner:GetActiveWeapon():GetClass() == "scav_gun" then
-			self.Owner:GetViewModel():SetSubMaterial(0,devskins[steamid])
+			self.Owner:GetViewModel():SetSubMaterial(0, devskins[steamid])
 		end
 	end
 end
@@ -167,12 +167,12 @@ function SWEP:SetNextSecondaryFire(time)
 	self.nextfire = time
 end
 
-function SWEP:SetChargeAttack(func,item) --pass no value to disable chargeattack
+function SWEP:SetChargeAttack(func, item) --pass no value to disable chargeattack
 	self.ChargeAttack = func
 	self.chargeitem = item
 end
 
-function SWEP:AddInaccuracy(amt,max) --this function is not networked, you must predict it correctly!
+function SWEP:AddInaccuracy(amt, max) --this function is not networked, you must predict it correctly!
 	self.Inaccuracy = math.Min(self.Inaccuracy + amt, (1 + max) or 1.1)
 end
 
@@ -207,7 +207,7 @@ if SERVER then
 	util.AddNetworkString("scv_lock")
 end
 
-function SWEP:Lock(starttime,endtime) --if you can call this on the server ahead of time, it'll allow you to lock the weapon without causing any synchronization errors if the player is still firing when it gets locked
+function SWEP:Lock(starttime, endtime) --if you can call this on the server ahead of time, it'll allow you to lock the weapon without causing any synchronization errors if the player is still firing when it gets locked
 
 	self.startlock = starttime
 	self.endlock = endtime
@@ -360,21 +360,21 @@ end
 
 if SERVER then
 
-	ScavData.GiveOneOfItem = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()), 1, ent:GetSkin()}} end
-	ScavData.GiveOneOfItemInf = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()), SCAV_SHORT_MAX, ent:GetSkin()}} end
+	ScavData.GiveOneOfItem = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 1, ent:GetSkin()}} end
+	ScavData.GiveOneOfItemInf = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), SCAV_SHORT_MAX, ent:GetSkin()}} end
 
 	local tracep = {}
 	tracep.mask = CONTENTS_SOLID
-	tracep.mins = Vector(-5,-5,-5)
-	tracep.maxs = Vector(5,5,5)
+	tracep.mins = Vector(-5, -5, -5)
+	tracep.maxs = Vector(5, 5, 5)
 
 	local dmg = DamageInfo()
 
 	util.AddNetworkString("scv_elec")
 
-	function ScavData.Electrocute(inflictor,attacker,position,radius,damage,effect) --works like util.blast damage but only damages entities in the water and uses shock damage
+	function ScavData.Electrocute(inflictor, attacker, position, radius, damage, effect) --works like util.blast damage but only damages entities in the water and uses shock damage
 
-		for _,v in ipairs(ents.FindInSphere(position,radius)) do
+		for _, v in ipairs(ents.FindInSphere(position, radius)) do
 			if v:WaterLevel() > 0 then --waterlevel is acting strange..
 
 				tracep.start = position
@@ -384,7 +384,7 @@ if SERVER then
 
 				if not tr.Hit then
 					dmg:SetDamageType(DMG_SHOCK)
-					dmg:SetDamage(math.max(1,(1-(tracep.endpos:Distance(position)/radius))*damage))
+					dmg:SetDamage(math.max(1, (1 - (tracep.endpos:Distance(position) / radius)) * damage))
 					dmg:SetDamagePosition(tracep.endpos)
 					dmg:SetAttacker(attacker)
 					dmg:SetInflictor(inflictor)
@@ -409,7 +409,7 @@ if SERVER then
 
 	util.AddNetworkString("scv_setsubammo")
 
-	function SWEP:TakeSubammo(item,amount)
+	function SWEP:TakeSubammo(item, amount)
 
 		if item.subammo ~= SCAV_SHORT_MAX and SERVER then
 			item.subammo = item.subammo - amount
@@ -417,8 +417,8 @@ if SERVER then
 
 		net.Start("scv_setsubammo")
 			net.WriteEntity(self)
-			net.WriteInt(item.subammo,16)
-			net.WriteInt(item.pos,8)
+			net.WriteInt(item.subammo, 16)
+			net.WriteInt(item.pos, 8)
 		net.Send(self.Owner)
 
 		if item == item and item.subammo <= 0 then
@@ -435,7 +435,7 @@ if SERVER then
 
 else
 
-	function SWEP:TakeSubammo(item,amount,nolink)
+	function SWEP:TakeSubammo(item, amount, nolink)
 
 		if item.subammo ~= SCAV_SHORT_MAX then
 			item.subammo = item.subammo - amount
@@ -453,7 +453,7 @@ else
 
 end
 
-function SWEP:MuzzleFlash2(effectname,isparticle)
+function SWEP:MuzzleFlash2(effectname, isparticle)
 
 	effectname = effectname or 1
 
@@ -472,10 +472,10 @@ function SWEP:MuzzleFlash2(effectname,isparticle)
 		ef:SetAttachment(att)
 
 		if not isparticle then
-			util.Effect(effectname,ef)
+			util.Effect(effectname, ef)
 		elseif type(effectname) == "number" then
 			ef:SetScale(effectname)
-			util.Effect("ef_scav_muzzleflare",ef)
+			util.Effect("ef_scav_muzzleflare", ef)
 		end
 	end
 end
@@ -485,16 +485,16 @@ if SERVER then
 else
 	net.Receive("scv_falloffsound", function()
 		local vec = net.ReadVector()
-		LocalPlayer():EmitSound(net.ReadString(),math.Clamp(100 - EyePos():Distance(vec) / 50,20,100))
+		LocalPlayer():EmitSound(net.ReadString(), math.Clamp(100 - EyePos():Distance(vec) / 50, 20, 100))
 	end)
 end
 
 --Localize a Scav string, replacing any instances of %#% with the second, etc. arguments
 ScavLocalize = function(...)
 	local arg = {...}
-	local strang = language.GetPhrase(tostring(table.remove(arg,1)))
-	for i,v in ipairs(arg) do
-		strang = string.Replace(strang,"%"..i.."%",language.GetPhrase(tostring(v)))
+	local strang = language.GetPhrase(tostring(table.remove(arg, 1)))
+	for i, v in ipairs(arg) do
+		strang = string.Replace(strang, "%" .. i .. "%", language.GetPhrase(tostring(v)))
 	end
 	return strang
 end
@@ -505,8 +505,8 @@ end
 
 if CLIENT then
 
-	CreateClientConVar("cl_scav_iconalpha","200",true,false)
-	CreateClientConVar("cl_scav_autoswitchdelay",".375",true,true,"Delay firing by this many seconds when automatically switching to another firemode.",0,1)
+	CreateClientConVar("cl_scav_iconalpha", "200", true, false)
+	CreateClientConVar("cl_scav_autoswitchdelay", ".375", true, true, "Delay firing by this many seconds when automatically switching to another firemode.", 0, 1)
 
 	CL_SCAVGUN = NULL
 
@@ -518,11 +518,11 @@ if CLIENT then
 	SWEP.rem_waiting 			= false
 	SWEP.zoomed 				= false
 
-	SWEP.vm_angles 				= Angle(0,0,0)
+	SWEP.vm_angles 				= Angle(0, 0, 0)
 
 	SWEP.ViewLerpTime			= 0
 	SWEP.ViewLerpDuration 		= 0
-	SWEP.ViewLerpAngles 		= Angle(0,0,0)
+	SWEP.ViewLerpAngles 		= Angle(0, 0, 0)
 
 	SWEP.FOVLerpTime 			= 0
 	SWEP.FOVLerpDuration 		= 0
@@ -532,16 +532,16 @@ if CLIENT then
 
 	SWEP.LastAnim 				= ACT_VM_IDLE
 
-	local color_red = Color(255,0,0,255)
-	local color_red_colorblind = Color(190,76,0,255)
-	local color_green = Color(0,255,0,255)
-	local color_green_colorblind = Color(124,218,255,255)
+	local color_red = Color(255, 0, 0, 255)
+	local color_red_colorblind = Color(190, 76, 0, 255)
+	local color_green = Color(0, 255, 0, 255)
+	local color_green_colorblind = Color(124, 218, 255, 255)
 
 	function SWEP:Precache()
 		util.PrecacheSound("buttons/lever7.wav")
 	end
 
-	net.Receive("ent_emitsound",function()
+	net.Receive("ent_emitsound", function()
 
 		local ent = net.ReadEntity()
 		local sound = net.ReadString()
@@ -571,16 +571,16 @@ if CLIENT then
 				postremoved = ScavData.models[self:GetCurrentItem().ammo].PostRemove
 			end
 
-			local item = table.remove(self.inv,pos)
+			local item = table.remove(self.inv, pos)
 
 			if postremoved then
-				postremoved(self,item)
+				postremoved(self, item)
 			end
 
 			local itemnew = self:GetCurrentItem()
 
 			if pos == 1 and itemnew and ScavData.models[itemnew.ammo] and ScavData.models[itemnew.ammo].OnArmed then
-				ScavData.models[itemnew.ammo].OnArmed(self,itemnew,item.ammo)
+				ScavData.models[itemnew.ammo].OnArmed(self, itemnew, item.ammo)
 			end
 
 			self.menu.icondisplay:Refresh()
@@ -602,13 +602,13 @@ if CLIENT then
 			end
 
 			if postremoved then
-				postremoved(self,item)
+				postremoved(self, item)
 			end
 
 			local itemnew = self:GetCurrentItem()
 
 			if item.pos == 1 and itemnew and itemnew:GetFiremodeTable() and itemnew:GetFiremodeTable().OnArmed then
-				itemnew:GetFiremodeTable().OnArmed(self,itemnew,item.ammo)
+				itemnew:GetFiremodeTable().OnArmed(self, itemnew, item.ammo)
 			end
 
 		end
@@ -624,7 +624,7 @@ if CLIENT then
 
 	function SWEP:OnItemReady(item)
 		if self:IsMenuOpen() then
-			self.Menu:AddIcon(item,item.ID,item.pos)
+			self.Menu:AddIcon(item, item.ID, item.pos)
 		end
 	end
 
@@ -632,6 +632,10 @@ if CLIENT then
 		if self:IsMenuOpen() then
 			self.Menu:UpdateDesiredAngles()
 		end
+		if inv.numberofitems < 2 then return end
+		local item = inv.items[1]:GetFiremodeTable()
+		if not item then return end
+		if item.OnArmed then item.OnArmed(self, inv.items[1]) end
 	end
 
 	net.Receive("scv_s_time", function()
@@ -648,10 +652,8 @@ if CLIENT then
 	end)
 
 	function SWEP:OnRemove()
-		if IsValid(self.Owner) and self.Owner == LocalPlayer() and self:IsMenuOpen() then
-			if IsValid(self.Menu) then
-				self.Menu:Remove()
-			end
+		if IsValid(self.Owner) and self.Owner == LocalPlayer() and self:IsMenuOpen() and IsValid(self.Menu) then
+			self.Menu:Remove()
 		end
 		if IsValid(self.Owner) and IsValid(self.Owner:GetViewModel()) then
 			self.Owner:GetViewModel():SetSubMaterial(0)
@@ -704,9 +706,9 @@ if CLIENT then
 
 		if not self:IsLocked() and self.ChargeAttack and self.nextfire < CurTime() then
 
+			if not self.inv.items[1] then self.ChargeAttack = nil end
 			local shoottime = CurTime()
 			local item = self.chargeitem or self.inv.items[self.predicteditem]
-			if not self.inv.items[1] then self.ChargeAttack = nil end
 			local cooldown = (self.inv.items[1] and self:ChargeAttack(item) or 0) * self:GetCooldownScale()
 			self.nextfire = CurTime() + cooldown
 			self.receivednextfire = UnPredictedCurTime()
@@ -811,7 +813,7 @@ if CLIENT then
 
 			if item and ScavData.models[item.ammo] and ScavData.models[item.ammo].FireFunc then --check to make sure that this item is valid and has a firemode
 
-				ScavData.models[item.ammo].FireFunc(self,item)
+				ScavData.models[item.ammo].FireFunc(self, item)
 				
 				local cooldown = ScavData.models[self.currentmodel].Cooldown * self:GetCooldownScale()
 
@@ -870,13 +872,13 @@ if CLIENT then
 	--------------------------------------------------------------------------------
 
 	local PANEL 	= {}
-	PANEL.BGColor 	= Color(50,50,50,255)
-	PANEL.TextColor = Color(255,255,255,255)
+	PANEL.BGColor 	= Color(50, 50, 50, 255)
+	PANEL.TextColor = Color(255, 255, 255, 255)
 	PANEL.wep 		= NULL
 
 
 	function PANEL:PlayerColor()
-		local bgcol = Vector(0,0,0)
+		local bgcol = Vector(0, 0, 0)
 		if IsValid(LocalPlayer()) then
 			if LocalPlayer():Team() == 1001 then --unassigned
 				bgcol = LocalPlayer():GetPlayerColor()
@@ -885,9 +887,9 @@ if CLIENT then
 				self.BGColor = team.GetColor(LocalPlayer():Team())
 			end
 			if (self.BGColor.r + self.BGColor.g + self.BGColor.b) / 3 < 150 then
-				self.TextColor = Color(255,255,255,255)
+				self.TextColor = Color(255, 255, 255, 255)
 			else
-				self.TextColor = Color(0,0,0,255)
+				self.TextColor = Color(0, 0, 0, 255)
 			end
 		end
 
@@ -899,14 +901,14 @@ if CLIENT then
 		include("autorun/scavgun_skins.lua")
 		self:SetSkin("sg_menu")
 		self:PlayerColor()
-		self.Preview = vgui.Create("SpawnIcon",self)
-		self.Preview:SetSize(64,64)
+		self.Preview = vgui.Create("SpawnIcon", self)
+		self.Preview:SetSize(64, 64)
 		self.Preview.parent = self
 		self:AutoSetPos()
 	end
 
 	function PANEL:AutoSetPos()
-		self:SetSize(268,96)
+		self:SetSize(268, 96)
 		self:SetPos(ScrW() - self:GetWide() - 32, ScrH() - self:GetTall() - 16)
 	end
 
@@ -936,7 +938,7 @@ if CLIENT then
 
 			if isscav and self.item and (self.wep.ChargeAttack or self.wep.inv:GetItemCount() > 0)  then
 				self.Preview:SetVisible(true)
-				self.Preview:SetModel(self.item.ammo,self.item.data)
+				self.Preview:SetModel(self.item.ammo, self.item.data)
 			else
 				self.Preview:SetVisible(false)
 				self.item = nil
@@ -946,7 +948,7 @@ if CLIENT then
 	end
 
 	function PANEL:Paint()
-		SKIN:PaintFrame(self,self:GetWide(),self:GetTall())
+		SKIN:PaintFrame(self, self:GetWide(), self:GetTall())
 	end
 
 	function PANEL:PaintOver()
@@ -962,7 +964,7 @@ if CLIENT then
 		if IsValid(wep) and wep:GetClass() == "scav_gun" then
 			surface.SetTextColor(self.TextColor)
 			surface.SetFont("Scav_MenuLarge")
-			surface.SetTextPos(96,48)
+			surface.SetTextPos(96, 48)
 
 			local firemodename = "#scav.scavcan.unknown"
 
@@ -972,32 +974,32 @@ if CLIENT then
 					if itemtab.Name then
 						firemodename = itemtab.Name
 					elseif itemtab.GetName then
-						firemodename = itemtab.GetName(wep,item)
+						firemodename = itemtab.GetName(wep, item)
 					end
 				end
 			end
 
 			surface.DrawText(firemodename)
-			surface.SetTextPos(96,16)
+			surface.SetTextPos(96, 16)
 
-			surface.DrawText(ScavLocalize("scav.scavcan.ammo",wep.inv:GetItemCount(),wep:GetCapacity()))
-			surface.SetTextPos(104,64)
+			surface.DrawText(ScavLocalize("scav.scavcan.ammo", wep.inv:GetItemCount(), wep:GetCapacity()))
+			surface.SetTextPos(104, 64)
 			surface.SetDrawColor(255, 255, 255, 200)
 			surface.DrawRect(16, 80, (wep.nextfire-UnPredictedCurTime()) * 256 / (wep.nextfire - wep.receivednextfire) - 32, 8)
 
 			if item then
 				if self.item.subammo == SCAV_SHORT_MAX then
-					surface.DrawText(ScavLocalize("scav.scavcan.subammo","scav.scavcan.inf"))
+					surface.DrawText(ScavLocalize("scav.scavcan.subammo", "scav.scavcan.inf"))
 				else
-					surface.DrawText(ScavLocalize("scav.scavcan.subammo",self.item.subammo))
+					surface.DrawText(ScavLocalize("scav.scavcan.subammo", self.item.subammo))
 				end
 			else
-				surface.DrawText(ScavLocalize("scav.scavcan.subammo","0"))
+				surface.DrawText(ScavLocalize("scav.scavcan.subammo", "0"))
 			end
 		end
 	end
 
-	vgui.Register("scav_hud",PANEL,"DPanel")
+	vgui.Register("scav_hud", PANEL, "DPanel")
 
 	SWEP.HUD = vgui.Create("scav_hud")
 
@@ -1031,7 +1033,7 @@ if CLIENT then
 		self.inv = inv
 	end)
 
-	net.Receive("scv_ht",function()
+	net.Receive("scv_ht", function()
 		local self = net.ReadEntity()
 		local htype = net.ReadString()
 		if IsValid(self) and IsValid(self.Owner) and self.Owner ~= LocalPlayer() and self.SetHoldType then
@@ -1043,7 +1045,7 @@ if CLIENT then
 		local self = net.ReadEntity()
 		local start = net.ReadFloat()
 		local endtime = net.ReadFloat()
-		self:Lock(start,endtime)
+		self:Lock(start, endtime)
 	end)
 
 	net.Receive("scv_setsubammo", function()
@@ -1058,17 +1060,17 @@ if CLIENT then
 
 	local function applyeffect(ent)
 		if IsValid(ent) then
-			ent:SetModelScale(0,0.1)
+			ent:SetModelScale(0, 0.1)
 			local edata = EffectData()
 			edata:SetOrigin(ent:GetPos())
 			edata:SetEntity(ent)
-			util.Effect("ef_scav_launch",edata,true,true)
+			util.Effect("ef_scav_launch", edata, true, true)
 			return true
 		end
 		return false
 	end
 
-	hook.Add("OnEntityCreated","scv_leffect",function(ent)
+	hook.Add("OnEntityCreated", "scv_leffect", function(ent)
 		if IsValid(ent) and ent:GetMaterial() == "scv_leffect" then
 			ent:SetMaterial()
 			applyeffect(ent)
@@ -1079,19 +1081,19 @@ if CLIENT then
 	------------/Drawing-----------------
 	-------------------------------------
 
-	local vec_white 		= Vector(1,1,1)
+	local vec_white 		= Vector(1, 1, 1)
 
 	local selecttex 		= surface.GetTextureID("hud/weapons/scav_gun")
-	local screencolvec 		= Vector(1,1,1)
+	local screencolvec 		= Vector(1, 1, 1)
 
 	SWEP.CrosshairFraction 	= 0
 	local c_hairtex 		= surface.GetTextureID("hud/scav_crosshair_corner")
 	local c_hairrotation 	= 0
 
-	function SWEP:DrawWeaponSelection(x,y,w,h,a)
-		local size = math.min(w,h)
+	function SWEP:DrawWeaponSelection(x, y, w, h, a)
+		local size = math.min(w, h)
 		surface.SetTexture(selecttex)
-		surface.SetDrawColor(255,255,255,a)
+		surface.SetDrawColor(255, 255, 255, a)
 		surface.DrawTexturedRect(x + (w - size) / 2, y + (h - size) / 2, size, size)
 	end
 
@@ -1100,32 +1102,32 @@ if CLIENT then
 	--------------------------------------------------------------------------------
 
 	local SCAV_RTMAT = Material("models/weapons/scavenger/screen")
-	local SCAV_RTSCREEN = GetRenderTarget("scav_screen","256","256")
-	local col_renderclear = Color(0,0,0,255)
+	local SCAV_RTSCREEN = GetRenderTarget("scav_screen", "256", "256")
+	local col_renderclear = Color(0, 0, 0, 255)
 
 	surface.CreateFont("ScavScreenFont", {font = "Trebuchet MS", size = 40, weight = 900, antialiasing = true, additive = false, outlined = false, blur = false})
 	surface.CreateFont("ScavScreenFontSm", {font = "Trebuchet MS", size = 32, weight = 900, antialiasing = true, additive = false, outlined = false, blur = false})
 	surface.CreateFont("ScavScreenFontSmX", {font = "Trebuchet MS", size = 24, weight = 900, antialiasing = true, additive = false, outlined = false, blur = false})
 
 	alpha = 12
-	greenscr = Color(108,172,24,alpha)
-	greenscr_colorblind = Color(124,218,255,alpha)
-	yellowscr = Color(172,172,24,alpha)
-	yellowscr_colorblind = Color(172,172,24,alpha)
-	redscr = Color(172,24,24,alpha)
-	redscr_colorblind = Color(190,76,0,alpha)
+	greenscr = Color(108, 172, 24, alpha)
+	greenscr_colorblind = Color(124, 218, 255, alpha)
+	yellowscr = Color(172, 172, 24, alpha)
+	yellowscr_colorblind = Color(172, 172, 24, alpha)
+	redscr = Color(172, 24, 24, alpha)
+	redscr_colorblind = Color(190, 76, 0, alpha)
 
 	function DrawScreenBKG(col)
 		--edge fade
 		surface.SetDrawColor(color_black)
-		surface.DrawRect(0,0,256,256)
+		surface.DrawRect(0, 0, 256, 256)
 		local i = 8
 		local j = 4
-		local u = 256-i*2
-		local v = 128-j*2
+		local u = 256 - i * 2
+		local v = 128 - j * 2
 		local a = alpha
 		while u > 0 and v > 0 and a < 255 do
-			draw.RoundedBox(32,i,j,math.max(1,u),math.max(1,v),col)
+			draw.RoundedBox(32, i, j, math.max(1, u), math.max(1, v), col)
 			i = i + 1
 			j = j + 1
 			u = u - 2
@@ -1134,22 +1136,22 @@ if CLIENT then
 		end
 	end
 
-	hook.Add("ScavScreenDrawOverride","NoOverride", function(self,check)
+	hook.Add("ScavScreenDrawOverride", "NoOverride", function(self, check)
 		local runcheck = check or false
 		if runcheck then return nil end
 	end)
 
-	hook.Add("ScavScreenDrawOverrideIdle","NoOverride", function(self,check)
+	hook.Add("ScavScreenDrawOverrideIdle", "NoOverride", function(self, check)
 		local runcheck = check or false
 		if runcheck then return nil end
 	end)
 
-	hook.Add("ScavScreenDrawOverridePost","NoOverride", function(self,check)
+	hook.Add("ScavScreenDrawOverridePost", "NoOverride", function(self, check)
 		local runcheck = check or false
 		if runcheck then return nil end
 	end)
 
-	hook.Add("ScavScreenDrawOverridePost","RadStatic",function(self)
+	hook.Add("ScavScreenDrawOverridePost", "RadStatic", function(self)
 		radthink = radthink or CurTime()
 		geiger = geiger or SCAV_SHORT_MAX
 		--GetInternalVariable("m_iGeigerRange")
@@ -1158,29 +1160,26 @@ if CLIENT then
 			if geiger < 800 then
 				geiger = geiger + 50
 			end
-			for _,v in pairs(ents.FindInBox(self.Owner:GetPos()-Vector(800,800,800),self.Owner:GetPos()+Vector(800,800,800))) do
+			for _, v in pairs(ents.FindInBox(self.Owner:GetPos() - Vector(800, 800, 800), self.Owner:GetPos() + Vector(800, 800, 800))) do
 				if v:GetStatusEffect("Radiation") then
-					geiger = math.min(geiger,self.Owner:GetPos():Distance(v:GetPos()))
+					geiger = math.min(geiger, self.Owner:GetPos():Distance(v:GetPos()))
 				end
 			end
 			radthink = CurTime() + 0.25
 		end
 		if geiger < 800 then
-			for i=1,(800-geiger) do
-				surface.SetDrawColor(255,255,255)
-				surface.DrawRect(math.Rand(0,255),math.Rand(0,127),math.Rand(1,math.ceil(i/100)),math.Rand(1,math.ceil(i/100)))
+			for i=1, (800 - geiger) do
+				surface.SetDrawColor(255, 255, 255)
+				surface.DrawRect(math.Rand(0, 255), math.Rand(0, 127), math.Rand(1, math.ceil(i / 100)), math.Rand(1, math.ceil(i / 100)))
 			end
 		end
 	end)
 
 	function SWEP:DrawIdle()
-		if not GetConVar("cl_scav_colorblindmode"):GetBool() then
-			DrawScreenBKG(greenscr)
-		else
-			DrawScreenBKG(greenscr_colorblind)
-		end
+		DrawScreenBKG(GetConVar("cl_scav_colorblindmode"):GetBool() and greenscr_colorblind or greenscr)
+
 		local vpos = 32
-		if string.find(language.GetPhrase("scav.scavcan.ok"),"\n") then
+		if string.find(language.GetPhrase("scav.scavcan.ok"), "\n") then
 			vpos = 12
 		end
 		local fontsize = "ScavScreenFont"
@@ -1188,17 +1187,14 @@ if CLIENT then
 			fontsize = "ScavScreenFontSm"
 			vpos = vpos + 8
 		end
-		draw.DrawText(ScavLocalize("scav.scavcan.status","scav.scavcan.ok"),fontsize,128,vpos,color_black,TEXT_ALIGN_CENTER)
+		draw.DrawText(ScavLocalize("scav.scavcan.status", "scav.scavcan.ok"), fontsize, 128, vpos, color_black, TEXT_ALIGN_CENTER)
 	end
 
 	function SWEP:DrawNice()
-		if not GetConVar("cl_scav_colorblindmode"):GetBool() then
-			DrawScreenBKG(greenscr)
-		else
-			DrawScreenBKG(greenscr_colorblind)
-		end
+		DrawScreenBKG(GetConVar("cl_scav_colorblindmode"):GetBool() and greenscr_colorblind or greenscr)
+
 		local vpos = 32
-		if string.find(language.GetPhrase("scav.scavcan.nice"),"\n") then
+		if string.find(language.GetPhrase("scav.scavcan.nice"), "\n") then
 			vpos = 12
 		end
 		local fontsize = "ScavScreenFont"
@@ -1206,17 +1202,14 @@ if CLIENT then
 			fontsize = "ScavScreenFontSm"
 			vpos = vpos + 8
 		end
-		draw.DrawText(ScavLocalize("scav.scavcan.status","scav.scavcan.nice"),fontsize,128,vpos,color_black,TEXT_ALIGN_CENTER)
+		draw.DrawText(ScavLocalize("scav.scavcan.status", "scav.scavcan.nice"), fontsize, 128, vpos, color_black, TEXT_ALIGN_CENTER)
 	end
 
 	function SWEP:DrawLocked()
-		if not GetConVar("cl_scav_colorblindmode"):GetBool() then
-			DrawScreenBKG(redscr)
-		else
-			DrawScreenBKG(redscr_colorblind)
-		end
+		DrawScreenBKG(GetConVar("cl_scav_colorblindmode"):GetBool() and redscr_colorblind or redscr)
+
 		local vpos = 32
-		if string.find(language.GetPhrase("scav.scavcan.locked"),"\n") then
+		if string.find(language.GetPhrase("scav.scavcan.locked"), "\n") then
 			vpos = 12
 		end
 		local fontsize = "ScavScreenFont"
@@ -1225,132 +1218,55 @@ if CLIENT then
 			vpos = vpos + 8
 		end
 		local _, use = math.modf(CurTime())
-		if use < .5 then
-			draw.DrawText(ScavLocalize("scav.scavcan.status","scav.scavcan.locked"),fontsize,128,vpos,color_white,TEXT_ALIGN_CENTER)
-		else
-			draw.DrawText(ScavLocalize("scav.scavcan.status","scav.scavcan.locked"),fontsize,128,vpos,color_black,TEXT_ALIGN_CENTER)
-		end
+		draw.DrawText(ScavLocalize("scav.scavcan.status", "scav.scavcan.locked"), fontsize, 128, vpos, (use < .5) and color_white or color_black, TEXT_ALIGN_CENTER)
 	end
 
-	function SWEP:DrawCooldown()
-		if not GetConVar("cl_scav_colorblindmode"):GetBool() then
-			DrawScreenBKG(yellowscr)
-		else
-			DrawScreenBKG(yellowscr_colorblind)
+	function SWEP:DrawCooldown(skipcheck)
+		--Check for firemode override
+		if skipcheck and #self.inv.items > 0 and 
+			IsValid(self.inv.items[1]) and
+			self.inv.items[1]:GetFiremodeTable() and 
+			self.inv.items[1]:GetFiremodeTable().ScreenCooldown then
+				self.inv.items[1]:GetFiremodeTable().ScreenCooldown(self, self:GetCurrentItem())
+				return
 		end
-		draw.DrawText(ScavLocalize("scav.scavcan.status","\0"),"ScavScreenFont",128,12,color_black,TEXT_ALIGN_CENTER)
-		local _, use = math.modf(math.abs(CurTime()-self.nextfire))
-		if use < .25 then
-			draw.DrawText(language.GetPhrase("scav.scavcan.recharge")..language.GetPhrase("scav.scavcan.progress0"),"ScavScreenFontSm",128,20,color_black,TEXT_ALIGN_CENTER)
-		elseif use < .5 then
-			draw.DrawText(language.GetPhrase("scav.scavcan.recharge")..language.GetPhrase("scav.scavcan.progress3"),"ScavScreenFontSm",128,20,color_black,TEXT_ALIGN_CENTER)
-		elseif use < .75 then
-			draw.DrawText(language.GetPhrase("scav.scavcan.recharge")..language.GetPhrase("scav.scavcan.progress2"),"ScavScreenFontSm",128,20,color_black,TEXT_ALIGN_CENTER)
-		else
-			draw.DrawText(language.GetPhrase("scav.scavcan.recharge")..language.GetPhrase("scav.scavcan.progress1"),"ScavScreenFontSm",128,20,color_black,TEXT_ALIGN_CENTER)
-		end
+		DrawScreenBKG(GetConVar("cl_scav_colorblindmode"):GetBool() and yellowscr_colorblind or yellowscr)
+		draw.DrawText(ScavLocalize("scav.scavcan.status", "\0"), "ScavScreenFont", 128, 12, color_black, TEXT_ALIGN_CENTER)
+		local _, use = math.modf((CurTime() - self.nextfire))
+		use = math.floor(use * 4) % 4
+		draw.DrawText(language.GetPhrase("scav.scavcan.recharge") .. language.GetPhrase("scav.scavcan.progress" .. tostring(use)), "ScavScreenFontSm", 128, 20, color_black, TEXT_ALIGN_CENTER)
 	end
 
 	function SWEP:DrawFiring()
-		if not GetConVar("cl_scav_colorblindmode"):GetBool() then
-			DrawScreenBKG(greenscr)
-		else
-			DrawScreenBKG(greenscr_colorblind)
-		end
+		DrawScreenBKG(GetConVar("cl_scav_colorblindmode"):GetBool() and greenscr_colorblind or greenscr)
+
 		local vpos = 12
 		local fontsize = "ScavScreenFont"
-		if #(language.GetPhrase("scav.scavcan.attack")..language.GetPhrase("scav.scavcan.progress3")) > 15 then
+		if #(language.GetPhrase("scav.scavcan.attack") .. language.GetPhrase("scav.scavcan.progress3")) > 15 then
 			fontsize = "ScavScreenFontSm"
 			vpos = vpos + 8
 		end
-		draw.DrawText(ScavLocalize("scav.scavcan.status","\0"),"ScavScreenFont",128,12,color_black,TEXT_ALIGN_CENTER)
+		draw.DrawText(ScavLocalize("scav.scavcan.status", "\0"), "ScavScreenFont", 128, 12, color_black, TEXT_ALIGN_CENTER)
 		local _, use = math.modf(CurTime())
-		if use < .25 then
-			draw.DrawText(language.GetPhrase("scav.scavcan.attack")..language.GetPhrase("scav.scavcan.progress0"),fontsize,128,vpos,color_black,TEXT_ALIGN_CENTER)
-		elseif use < .5 then
-			draw.DrawText(language.GetPhrase("scav.scavcan.attack")..language.GetPhrase("scav.scavcan.progress1"),fontsize,128,vpos,color_black,TEXT_ALIGN_CENTER)
-		elseif use < .75 then
-			draw.DrawText(language.GetPhrase("scav.scavcan.attack")..language.GetPhrase("scav.scavcan.progress2"),fontsize,128,vpos,color_black,TEXT_ALIGN_CENTER)
-		else
-			draw.DrawText(language.GetPhrase("scav.scavcan.attack")..language.GetPhrase("scav.scavcan.progress3"),fontsize,128,vpos,color_black,TEXT_ALIGN_CENTER)
-		end
+		use = math.floor(use * 4) % 4
+		draw.DrawText(language.GetPhrase("scav.scavcan.attack")..language.GetPhrase("scav.scavcan.progress" .. tostring(use)), fontsize, 128, vpos, color_black, TEXT_ALIGN_CENTER)
 	end
 
-	function SWEP:DrawAutoTargetScreen(on)
-		if not GetConVar("cl_scav_colorblindmode"):GetBool() then
-			if on then
-				DrawScreenBKG(greenscr)
-			else
-				DrawScreenBKG(redscr)
-			end
-		else
-			if on then
-				DrawScreenBKG(greenscr_colorblind)
-			else
-				DrawScreenBKG(redscr_colorblind)
-			end
-		end
-		local vpos = 12
-		local fontsize = "ScavScreenFontSm"
-		if #language.GetPhrase("scav.scavcan.autotarget") > 14 then
-			fontsize = "ScavScreenFontSmX"
-			vpos = vpos + 8
-		end
-		local _, use = math.modf(CurTime())
-		local col = color_black
-		if not on and use < .5 then
-			col = color_white
-		end
-		draw.DrawText(language.GetPhrase("scav.scavcan.autotarget"),fontsize,128,vpos,col,TEXT_ALIGN_CENTER)
-		if on then
-			draw.DrawText(language.GetPhrase("scav.scavcan.on"),"ScavScreenFont",128,20+vpos,col,TEXT_ALIGN_CENTER)
-		else
-			draw.DrawText(language.GetPhrase("scav.scavcan.off"),"ScavScreenFont",128,20+vpos,col,TEXT_ALIGN_CENTER)
-		end
-	end
+	local idle = idle ~= nil and idle or true
 
-	function SWEP:DrawRecycleBinScreen(on)
-		if not GetConVar("cl_scav_colorblindmode"):GetBool() then
-			if on then
-				DrawScreenBKG(greenscr)
-			else
-				DrawScreenBKG(redscr)
-			end
-		else
-			if on then
-				DrawScreenBKG(greenscr_colorblind)
-			else
-				DrawScreenBKG(redscr_colorblind)
-			end
-		end
-		local vpos = 12
-		local fontsize = "ScavScreenFontSm"
-		if #language.GetPhrase("scav.scavcan.recycling") > 14 then
-			fontsize = "ScavScreenFontSmX"
-			vpos = vpos + 8
-		end
-		local _, use = math.modf(CurTime())
-		local col = color_black
-		if not on and use < .5 then
-			col = color_white
-		end
-		draw.DrawText(language.GetPhrase("scav.scavcan.recycling"),fontsize,128,vpos,col,TEXT_ALIGN_CENTER)
-		if on then
-			draw.DrawText(language.GetPhrase("scav.scavcan.on"),"ScavScreenFont",128,20+vpos,col,TEXT_ALIGN_CENTER)
-		else
-			draw.DrawText(language.GetPhrase("scav.scavcan.off"),"ScavScreenFont",128,20+vpos,col,TEXT_ALIGN_CENTER)
-		end
+	function SWEP:ScreenCooldown(skipcooldowntime)
+	--number of seconds to ignore needing to show our cooldown screen
+	local skipcooldowntime = skipcooldowntime or 0.25
+		return ((self.nextfire - CurTime() > skipcooldowntime and self.nextfireearly == 0) or self.nextfireearly - CurTime() > skipcooldowntime) and not self.ChargeAttack
 	end
-
-	local idle = idle or true
 
 	function SWEP:DrawScreen()
 		local swide = ScrW()
 		local shigh = ScrH()
 		local rend = render.GetRenderTarget()
 		render.SetRenderTarget(SCAV_RTSCREEN)
-		--render.ClearRenderTarget(SCAV_RTSCREEN,col_renderclear)
-		render.SetViewPort(0,0,256,256)
+		--render.ClearRenderTarget(SCAV_RTSCREEN, col_renderclear)
+		render.SetViewPort(0, 0, 256, 256)
 		cam.Start2D()
 			local item = nil
 			if IsValid(self.inv.items[1]) then
@@ -1360,23 +1276,16 @@ if CLIENT then
 			if self:IsLocked() then
 				self:DrawLocked()
 			--Screen Draw Override Hook
-			elseif hook.Run("ScavScreenDrawOverride",self,true) then
-				hook.Run("ScavScreenDrawOverride",self)
+			elseif hook.Run("ScavScreenDrawOverride", self, true) then
+				hook.Run("ScavScreenDrawOverride", self)
 			--Screen Draw item function
 			elseif #self.inv.items > 0 and 
 				IsValid(self.inv.items[1]) and 
-				self.inv.items[1].GetFiremodeTable and 
 				self.inv.items[1]:GetFiremodeTable() and 
 				self.inv.items[1]:GetFiremodeTable().Screen then
 					self.inv.items[1]:GetFiremodeTable().Screen(self, self:GetCurrentItem())
-			--Auto-Targeting System screen
-			elseif item and item.Name == "#scav.scavcan.computer" then
-				self:DrawAutoTargetScreen(item.On)
-			--Recycling Bin screen
-			elseif item and item.Name == "#scav.scavcan.recyclebin" then
-				self:DrawRecycleBinScreen(item.On)
 			--Cooldown screen
-			elseif ((self.nextfire - CurTime() > 0.25 and self.nextfireearly == 0) or self.nextfireearly - CurTime() > 0.25) and not self.ChargeAttack then
+			elseif self:ScreenCooldown() then
 				self:DrawCooldown()
 				idle = false
 			--Nice screen
@@ -1385,26 +1294,9 @@ if CLIENT then
 			--Charge Attack Firing screen
 			elseif self.ChargeAttack then
 				self:DrawFiring()
-			--Seeking Rocket Screen
-			elseif item and item.Name == "#scav.scavcan.rocket" then
-				local seeking = false
-				for _, v in pairs(self.inv.items) do
-					if ScavData.models[v.ammo] and ScavData.models[v.ammo].Name == "#scav.scavcan.computer" then
-						seeking = ScavData.models[v.ammo].On
-						break
-					end
-				end
-				if seeking then
-					self:DrawAutoTargetScreen(seeking)
-				elseif hook.Run("ScavScreenDrawOverrideIdle",self,true) then
-					hook.Run("ScavScreenDrawOverrideIdle",self)
-				else
-					self:DrawIdle()
-					idle = true
-				end
 			--Screen Draw Override Idle Hook
-			elseif hook.Run("ScavScreenDrawOverrideIdle",self,true) and self.nextfire <= CurTime() then
-				hook.Run("ScavScreenDrawOverrideIdle",self)
+			elseif hook.Run("ScavScreenDrawOverrideIdle", self, true) and (self.nextfire <= CurTime() or idle) then
+				hook.Run("ScavScreenDrawOverrideIdle", self)
 			--Idle Screen
 			elseif self.nextfire <= CurTime() or idle then
 				self:DrawIdle()
@@ -1414,21 +1306,20 @@ if CLIENT then
 				self:DrawCooldown()
 			end
 			--Screen Post Draw Hook
-			if hook.Run("ScavScreenDrawOverridePost",self,true) then
-				hook.Run("ScavScreenDrawOverridePost",self)
+			if hook.Run("ScavScreenDrawOverridePost", self, true) then
+				hook.Run("ScavScreenDrawOverridePost", self)
 			end
 			--Screen Post Draw item function
 			if #self.inv.items > 0 and 
 				IsValid(self.inv.items[1]) and 
-				self.inv.items[1].GetFiremodeTable and 
 				self.inv.items[1]:GetFiremodeTable() and 
 				self.inv.items[1]:GetFiremodeTable().ScreenAdd then
 					self.inv.items[1]:GetFiremodeTable().ScreenAdd(self, self:GetCurrentItem())
 			end
 		cam.End2D()
 		render.SetRenderTarget(rend)
-		render.SetViewPort(0,0,swide,shigh)
-		SCAV_RTMAT:SetTexture("$basetexture",SCAV_RTSCREEN)
+		render.SetViewPort(0, 0, swide, shigh)
+		SCAV_RTMAT:SetTexture("$basetexture", SCAV_RTSCREEN)
 	end
 
 
@@ -1452,37 +1343,31 @@ if CLIENT then
 		local frac = self.CrosshairFraction
 		local x = pos.x
 		local y = pos.y
-		local cfrac = math.cos(c_hairrotation * 5) * frac * 16
-		local cfrac2 = math.cos(c_hairrotation * 5 + math.pi / 2) * frac * 16
-		local sfrac = math.sin(c_hairrotation * 5) * frac * 16
-		local sfrac2 = math.sin(c_hairrotation * 5 + math.pi / 2) * frac * 16
+		local cfrac  = math.cos(c_hairrotation * 5) * frac * 16
+		local cfrac2 = math.cos(c_hairrotation * 5  + math.pi / 2) * frac * 16
+		local sfrac  = math.sin(c_hairrotation * 5) * frac * 16
+		local sfrac2 = math.sin(c_hairrotation * 5  + math.pi / 2) * frac * 16
 		local size = frac * 16
-		local angoffset = -1 * math.deg(c_hairrotation * 5)
+		local angoffset = -math.deg(c_hairrotation * 5)
 
 		if self:GetCanScav() and IsValid(tr.Entity) then
-			if not GetConVar("cl_scav_colorblindmode"):GetBool() then
-				surface.SetDrawColor(color_green)
-			else
-				surface.SetDrawColor(color_green_colorblind)
-			end
+			surface.SetDrawColor(GetConVar("cl_scav_colorblindmode"):GetBool()and color_green_colorblind or color_green)
+
 			c_hairrotation = c_hairrotation + FrameTime()
 		elseif IsValid(tr.Entity) then
-			if not GetConVar("cl_scav_colorblindmode"):GetBool() then
-				surface.SetDrawColor(color_red)
-			else
-				surface.SetDrawColor(color_red_colorblind)
-			end
+			surface.SetDrawColor(GetConVar("cl_scav_colorblindmode"):GetBool() and color_red_colorblind or color_red)
 			-- X on the crosshair if we're trying to suck the unsuckable
 			if self.Owner:KeyDown(IN_ATTACK2) then
-				surface.DrawLine(x-size/2,y-size/2,x+size/2,y+size/2)
-				surface.DrawLine(x-size/2+1,y-size/2,x+size/2+1,y+size/2)
-				surface.DrawLine(x-size/2-1,y-size/2,x+size/2-1,y+size/2)
-				surface.DrawLine(x-size/2,y+size/2,x+size/2,y-size/2)
-				surface.DrawLine(x-size/2+1,y+size/2,x+size/2+1,y-size/2)
-				surface.DrawLine(x-size/2-1,y+size/2,x+size/2-1,y-size/2)
+				local halfsize = size / 2
+				surface.DrawLine(x - halfsize,		y - halfsize,	x + halfsize,		y + halfsize)
+				surface.DrawLine(x - halfsize + 1,	y - halfsize,	x + halfsize + 1,	y + halfsize)
+				surface.DrawLine(x - halfsize - 1,	y - halfsize,	x + halfsize - 1,	y + halfsize)
+				surface.DrawLine(x - halfsize,		y + halfsize,	x + halfsize,		y - halfsize)
+				surface.DrawLine(x - halfsize + 1,	y + halfsize,	x + halfsize + 1,	y - halfsize)
+				surface.DrawLine(x - halfsize - 1,	y + halfsize,	x + halfsize - 1,	y - halfsize)
 			end
 		else
-			surface.SetDrawColor(150,150,150,150)
+			surface.SetDrawColor(150, 150, 150, 150)
 		end
 		--draw the rotating colored crosshair
 		surface.DrawTexturedRectRotated(x + cfrac, y + sfrac, size, size, 225 + angoffset)
@@ -1501,11 +1386,11 @@ if CLIENT then
 
 	end
 
-	function SWEP:PreDrawViewModel(vm,wep,pl)
+	function SWEP:PreDrawViewModel(vm, wep, pl)
 		self:DrawScreen()
 	end
 
-	function SWEP:PostDrawViewModel(vm,wep,pl)
+	function SWEP:PostDrawViewModel(vm, wep, pl)
 	end
 
 	function SWEP:DestroyWModel()
@@ -1520,12 +1405,12 @@ if CLIENT then
 		self.wmodel = ClientsideModel(self.WorldModel, RENDERGROUP_OPAQUE)
 		if IsValid(self.wmodel) then
 			self.wmodel:SetParent(self:GetOwner()) --just a heads up, if you parent it to the weapon its pose parameters won't work because of bonemerging to existing bones
-			local meffects = bit.bor(EF_BONEMERGE,EF_NODRAW,EF_NOSHADOW)
+			local meffects = bit.bor(EF_BONEMERGE, EF_NODRAW, EF_NOSHADOW)
 			self.wmodel:AddEffects(meffects)
 			if IsValid(self.Owner) then
 				local steamid = self.Owner:AccountID()
 				if devskins[steamid] ~= nil then
-					self.wmodel:SetSubMaterial(0,devskins[steamid])
+					self.wmodel:SetSubMaterial(0, devskins[steamid])
 				end
 			end
 		end
@@ -1641,11 +1526,8 @@ if CLIENT then
 	end
 
 	function ITEMICON:PaintOver()
-		if self.item.subammo == SCAV_SHORT_MAX then
-			draw.DrawText("#scav.scavcan.inf", "Scav_DefaultSmallDropShadow", 60, 52, color_white, TEXT_ALIGN_RIGHT) --∞
-		else
-			draw.DrawText(self.item.subammo, "Scav_DefaultSmallDropShadow", 60, 52, color_white, TEXT_ALIGN_RIGHT)
-		end
+		local inf = self.item.subammo == SCAV_SHORT_MAX
+		draw.DrawText(inf and "#scav.scavcan.inf" or self.item.subammo, "Scav_DefaultSmallDropShadow", 60, 52, color_white, TEXT_ALIGN_RIGHT) --∞
 	end
 
 	vgui.Register("scavitemicon", ITEMICON, "SpawnIcon")
@@ -1664,10 +1546,10 @@ if CLIENT then
 	--allow mouse scrolling to move inventory while menu is open
 	function PANEL:OnMouseWheeled(delta)
 		if delta > 0 then
-			RunConsoleCommand("scv_itm_shft",1)
+			RunConsoleCommand("scv_itm_shft", 1)
 			return true
 		elseif delta < 0 then
-			RunConsoleCommand("scv_itm_shft",-1)
+			RunConsoleCommand("scv_itm_shft", -1)
 			return true
 		end
 	end
@@ -1685,22 +1567,22 @@ if CLIENT then
 
 		if not LocalPlayer():KeyDown(IN_RELOAD) then
 			gui.EnableScreenClicker(false)
-			for _,v in ipairs(self.icons) do
+			for _, v in ipairs(self.icons) do
 				if IsValid(v) then
 					v:Remove()
 				end
 			end
-			hook.Remove("HUDPaintBackground","Scav_Menu")
+			hook.Remove("HUDPaintBackground", "Scav_Menu")
 			self:Remove()
 		end
 
 		local delta = FrameTime()
-		local w = self:GetWide()/2
-		local h = self:GetTall()/2
+		local w = self:GetWide() / 2
+		local h = self:GetTall() / 2
 
-		for _,icon in pairs(self.icons) do
+		for _, icon in pairs(self.icons) do
 			if icon.desiredangle then
-				icon.currentangle = math.ApproachAngle(icon.currentangle,icon.desiredangle,delta * 720)
+				icon.currentangle = math.ApproachAngle(icon.currentangle, icon.desiredangle, delta * 720)
 				icon:SetPos(w + math.cos(math.rad(icon.currentangle)) * self.iconradius - 32, h - math.sin(math.rad(icon.currentangle)) * self.iconradius - 48)
 			end
 		end
@@ -1711,34 +1593,30 @@ if CLIENT then
 	end
 
 	function PANEL:UpdateDesiredAngles()
+		if self.angupdatesuppress then return end
 
-		if self.angupdatesuppress then
-			return
-		end
 		local itemnum = 0
 
-		for _,v in pairs(self.Weapon.inv.items) do
+		for _, v in pairs(self.Weapon.inv.items) do
 
 			local icon = self.iconids[v.ID]
 
 			if icon then
-				icon.desiredangle = (itemnum) * 360 / self.Weapon:GetCapacity()
+				icon.desiredangle = itemnum * 360 / self.Weapon:GetCapacity()
 				icon.pos = itemnum
 				icon:SetZPos(self.Weapon:GetCapacity() - itemnum)
 				itemnum = itemnum + 1
 			end
-
 		end
-
 	end
 
 	function PANEL:RemoveIconByID(itemid)
 
 		local icon = self.iconids[itemid]
 
-		for k,v in pairs(self.icons) do
+		for k, v in pairs(self.icons) do
 			if icon == v then
-				table.remove(self.icons,k)
+				table.remove(self.icons, k)
 				break
 			end
 		end
@@ -1749,34 +1627,34 @@ if CLIENT then
 
 	end
 
-	function PANEL:AddIcon(item,itemid,pos)
+	function PANEL:AddIcon(item, itemid, pos)
 		local icon = vgui.Create("scavitemicon", self)
 		icon:SetItem(item)
 		icon.id = itemid
 		self.iconids[itemid] = icon
-		table.insert(self.icons,pos or #self.icons + 1, icon)
+		table.insert(self.icons, pos or #self.icons + 1, icon)
 		self:UpdateDesiredAngles()
 		icon.currentangle = icon.desiredangle
 		return icon
 	end
 
-	--local bkgcol = Color(50,50,50)
+	--local bkgcol = Color(50, 50, 50)
 
 	function PANEL:Rebuild()
 
-		for k,v in pairs(self.icons) do
+		for k, v in pairs(self.icons) do
 			v:Remove()
 			self.icons[k] = nil
 		end
 
-		for k,v in pairs(self.iconids) do
+		for k, v in pairs(self.iconids) do
 			self.iconids[k] = nil
 		end
 
 		local itemnum = 0
 		self.angupdatesuppress = true
 
-		for k,v in pairs(self.Weapon.inv.items) do
+		for k, v in pairs(self.Weapon.inv.items) do
 			local icon = self:AddIcon(v, v.ID)
 			icon:SetZPos(self.Weapon:GetCapacity() - itemnum)
 			icon.pos = itemnum
@@ -1790,11 +1668,11 @@ if CLIENT then
 	end
 
 	function PANEL:AutoSetup()
-		self:SetSize(320,350)
+		self:SetSize(320, 350)
 		self:SetPos(ScrW() / 2 - self:GetWide() / 2, ScrH() / 2 - self:GetWide() / 2)
 	end
 
-	vgui.Register("scav_menu",PANEL,"DPanel")
+	vgui.Register("scav_menu", PANEL, "DPanel")
 
 	-- local triangle = {
 	-- 	{ x = sw*.51+(iconradius-32), y = (sh+iconradius/2-32)*.5 },
@@ -1812,11 +1690,11 @@ if CLIENT then
 			self.Menu:SetVisible(true)
 			self.Menu:MakePopup()
 			self.Menu:SetKeyboardInputEnabled(false)
-			--hook.Add("HUDPaintBackground","Scav_Menu",function()
+			--hook.Add("HUDPaintBackground", "Scav_Menu", function()
 				--better show our active item
-				--surface.SetDrawColor( 50,50,50 )
+				--surface.SetDrawColor( 50, 50, 50 )
 				--draw.NoTexture()
-				--draw.RoundedBoxEx(8,sw/2+iconradius-32,sh/2-32,64,64,bkgcol,true,true,true,false)
+				--draw.RoundedBoxEx(8, sw/2+iconradius-32, sh/2-32, 64, 64, bkgcol, true, true, true, false)
 				--surface.DrawPoly(triangle)
 			--end)
 		end
@@ -1830,14 +1708,14 @@ if CLIENT then
 
 	ScavData.ViewPunches = {}
 
-	function SWEP:SetViewLerp(oldangle,duration)
+	function SWEP:SetViewLerp(oldangle, duration)
 		duration = duration or 1
 		self.ViewLerpTime = CurTime()
 		self.ViewLerpDuration = duration
 		self.ViewLerpAngles = oldangle
 	end
 
-	function SWEP:SetFOVLerp(oldfov,duration)
+	function SWEP:SetFOVLerp(oldfov, duration)
 		duration = duration or 1
 		self.FOVLerpTime = CurTime()
 		self.FOVLerpDuration = duration
@@ -1849,7 +1727,7 @@ if CLIENT then
 		if not self then
 			return
 		end
-		self:SetViewLerp(net.ReadAngle(),net.ReadFloat())
+		self:SetViewLerp(net.ReadAngle(), net.ReadFloat())
 	end)
 
 	net.Receive("scv_sfl", function()
@@ -1857,10 +1735,10 @@ if CLIENT then
 		if not self then
 			return
 		end
-		self:SetFOVLerp(net.ReadFloat(),net.ReadFloat())
+		self:SetFOVLerp(net.ReadFloat(), net.ReadFloat())
 	end)
 
-	function SWEP:CalcView(pl,origin,angles,fov)
+	function SWEP:CalcView(pl, origin, angles, fov)
 
 		local totalviewpunch = nil
 
@@ -1885,11 +1763,11 @@ if CLIENT then
 			angles = angles + totalviewpunch
 		end
 
-		return origin,angles,fov
+		return origin, angles, fov
 
 	end
 
-	function SWEP:GetViewModelPosition(pos,ang)
+	function SWEP:GetViewModelPosition(pos, ang)
 		local totalviewpunch = ang
 		if self.Owner.viewpunch and (CurTime() - self.Owner.viewpunch.Created) < self.Owner.viewpunch.lifetime then
 			local wat = (CurTime() - self.Owner.viewpunch.Created) / self.Owner.viewpunch.lifetime
@@ -1900,7 +1778,7 @@ if CLIENT then
 
 	net.Receive("scv_vwpnch", function() LocalPlayer():ScavViewPunch(net.ReadAngle(), net.ReadFloat()) end)
 
-	local function NewViewPunch(angles,duration)
+	local function NewViewPunch(angles, duration)
 		local tab = {}
 		tab.angle = angles
 		tab.lifetime = duration
@@ -1908,18 +1786,18 @@ if CLIENT then
 		return tab
 	end
 
-	function PLAYER:ScavViewPunch(angles,duration,freeze)
+	function PLAYER:ScavViewPunch(angles, duration, freeze)
 		if not self.ScavViewPunches then
 			self.ScavViewPunches = {}
 		end
-		local vp = NewViewPunch(angles,duration)
-		table.insert(self.ScavViewPunches,vp)
+		local vp = NewViewPunch(angles, duration)
+		table.insert(self.ScavViewPunches, vp)
 	end
 
 	local totalviewpunch = Angle()
 	local expiredVPs = {}
 
-	hook.Add("CalcView","ScavViewPunch",function(pl,origin,angles,fov)
+	hook.Add("CalcView", "ScavViewPunch", function(pl, origin, angles, fov)
 		if not pl.ScavViewPunches or pl ~= GetViewEntity() then return end
 		local vpang = pl:GetCurrentScavViewPunch()
 		angles.p = angles.p + vpang.p
@@ -1933,16 +1811,16 @@ if CLIENT then
 			self.ScavViewPunches = {}
 		end
 
-		local angles = Angle(0,0,0)
+		local angles = Angle(0, 0, 0)
 
 		totalviewpunch.p = 0
 		totalviewpunch.y = 0
 		totalviewpunch.r = 0
 
-		for k,v in pairs(self.ScavViewPunches) do
+		for k, v in pairs(self.ScavViewPunches) do
 			local progress = (UnPredictedCurTime() - v.Created) / v.lifetime
 			if progress > 1 then
-				table.insert(expiredVPs,k)
+				table.insert(expiredVPs, k)
 			else
 				local progress = math.Clamp(progress, 0, 1)
 				local multiplier = math.sin(math.sqrt(progress) * math.pi)
@@ -1953,13 +1831,13 @@ if CLIENT then
 		end
 
 		local numexpVPs = #expiredVPs
-		for i=0,numexpVPs - 1 do
+		for i=0, numexpVPs - 1 do
 			table.remove(self.ScavViewPunches, expiredVPs[numexpVPs - i])
 			expiredVPs[numexpVPs - i] = nil
 		end
 
 		totalviewpunch.p = math.Max(-90 - angles.p, totalviewpunch.p)
-		totalviewpunch.p = math.Min(90 - angles.p, totalviewpunch.p)
+		totalviewpunch.p = math.Min( 90 - angles.p, totalviewpunch.p)
 
 		angles.p = angles.p + totalviewpunch.p
 		angles.y = angles.y + totalviewpunch.y
@@ -1980,9 +1858,9 @@ end
 
 if SERVER then
 
-	CreateConVar("scav_defaultlevel", 9, {FCVAR_ARCHIVE,FCVAR_REPLICATED,FCVAR_GAMEDLL})
-	CreateConVar("scav_pickupconstrained", 0, {FCVAR_ARCHIVE,FCVAR_GAMEDLL})
-	CreateConVar("scav_propprotect", 1, {FCVAR_ARCHIVE,FCVAR_GAMEDLL})
+	CreateConVar("scav_defaultlevel", 9, {FCVAR_ARCHIVE, FCVAR_REPLICATED, FCVAR_GAMEDLL})
+	CreateConVar("scav_pickupconstrained", 0, {FCVAR_ARCHIVE, FCVAR_GAMEDLL})
+	CreateConVar("scav_propprotect", 1, {FCVAR_ARCHIVE, FCVAR_GAMEDLL})
 
 	SWEP.spread 			= 0.1
 	SWEP.shootsound 		= "physics/metal/metal_barrel_impact_hard6.wav"
@@ -1992,8 +1870,8 @@ if SERVER then
 	SWEP.nextfire 			= 0
 	SWEP.nextfireearly 		= 0
 
-	SWEP.vmin1 				= Vector(-16,-16,-16)
-	SWEP.vmax1 				= Vector(16,16,16)
+	SWEP.vmin1 				= Vector(-16, -16, -16)
+	SWEP.vmax1 				= Vector(16, 16, 16)
 
 	SWEP.BarrelRotation 	= 0
 	SWEP.BarrelRestSpeed 	= 0
@@ -2015,7 +1893,7 @@ if SERVER then
 			ent:SetSkin(skin)
 			ent:SetNoDraw(true)
 			ent:Spawn()
-			timer.Simple(0,function()
+			timer.Simple(0, function()
 				if not IsValid(v) or not IsValid(ent) then return end
 				v:Scavenge(ent)
 			end)
@@ -2025,7 +1903,7 @@ if SERVER then
 
 	function SWEP:CreateBarrelSpinSound()
 		if IsValid(self.Owner) then
-			return CreateSound(self.Owner,"npc/combine_gunship/engine_rotor_loop1.wav")
+			return CreateSound(self.Owner, "npc/combine_gunship/engine_rotor_loop1.wav")
 		end
 	end
 
@@ -2038,7 +1916,7 @@ if SERVER then
 			net.WriteEntity(self)
 			net.WriteString(htype)
 		net.Send(rf)
-		self.BaseClass.SetHoldType(self,htype)
+		self.BaseClass.SetHoldType(self, htype)
 	end
 
 	util.AddNetworkString("scv_asgn")
@@ -2048,14 +1926,14 @@ if SERVER then
 		self.inv:AddPlayerToRecipientFilter(self.Owner)
 		net.Start("scv_asgn")
 			net.WriteEntity(self)
-			net.WriteInt(self.inv.ID,16)
+			net.WriteInt(self.inv.ID, 16)
 		net.Send(self.Owner)
 	end
 
 	function SWEP:EquipAmmo(pl)
 		local wep = pl:GetWeapon("scav_gun")
 		if IsValid(wep) then
-			wep:SetNWLevel(math.max(self:GetNWLevel(),wep:GetNWLevel()))
+			wep:SetNWLevel(math.max(self:GetNWLevel(), wep:GetNWLevel()))
 		end
 	end
 
@@ -2096,8 +1974,8 @@ if SERVER then
 
 			local mass = 0
 
-			for i=0,prop:GetPhysicsObjectCount()-1 do
-				mass = mass+prop:GetPhysicsObjectNum(i):GetMass()
+			for i=0, prop:GetPhysicsObjectCount() - 1 do
+				mass = mass + prop:GetPhysicsObjectNum(i):GetMass()
 			end
 
 			prop:Remove()
@@ -2123,13 +2001,13 @@ if SERVER then
 
 		--subammo stacking handling
 		local subammocounts = {}
-		for i=1,number do
+		for i=1, number do
 			subammocounts[i] = subammo
-			for k,v in ipairs(self.inv.items) do
+			for k, v in ipairs(self.inv.items) do
 				if ScavData.models[v.ammo] and ScavData.models[modelname] then
 					local maxammo = nil
 					if ScavData.models[v.ammo].MaxAmmo then
-						maxammo = ScavData.models[v.ammo].MaxAmmo or ScavData.models[v.ammo].GetMaxAmmo(wep,data)
+						maxammo = ScavData.models[v.ammo].MaxAmmo or ScavData.models[v.ammo].GetMaxAmmo(wep, data)
 					end
 					local identify = ScavData.models[v.ammo].Identify or false
 
@@ -2140,7 +2018,7 @@ if SERVER then
 						if itemtab.Name then
 							vname = itemtab.Name
 						elseif itemtab.GetName then
-							vname = itemtab.GetName(wep,v)
+							vname = itemtab.GetName(wep, v)
 						end
 					end
 					itemtab = ScavData.models[modelname]
@@ -2149,7 +2027,7 @@ if SERVER then
 						if itemtab.Name then
 							modelnamename = itemtab.Name
 						elseif itemtab.GetName then
-							modelnamename = itemtab.GetName(wep,data)
+							modelnamename = itemtab.GetName(wep, data)
 						end
 					end
 
@@ -2182,7 +2060,7 @@ if SERVER then
 		end
 
 
-		for i=1,math.min(number, availableslots) do
+		for i=1, math.min(number, availableslots) do
 
 			if subammocounts[i] and subammocounts[i] > 0 then
 
@@ -2228,7 +2106,7 @@ if SERVER then
 
 				local modeinfo = ScavData.models[item.ammo]
 				if modeinfo and modeinfo.OnPickup then
-					modeinfo.OnPickup(self,item)
+					modeinfo.OnPickup(self, item)
 				end
 
 			end
@@ -2246,7 +2124,7 @@ if SERVER then
 
 		if availableslots == self:GetCapacity() and modeinfo then
 			if modeinfo.OnArmed then
-				modeinfo.OnArmed(self,item,"")
+				modeinfo.OnArmed(self, item, "")
 			end
 			self:SetBarrelRestSpeed(modeinfo.BarrelRestSpeed or 0)
 		end
@@ -2273,7 +2151,7 @@ if SERVER then
 		end
 
 		if postremoved then
-			postremoved(self,itemold)
+			postremoved(self, itemold)
 		end
 
 		itemold:Remove()
@@ -2300,7 +2178,7 @@ if SERVER then
 
 	--Called in charge attacks to remove the item from the inventory, also for removing cloak when ammo is fully drained
 	function SWEP:RemoveItemValue(item)
-		for k,v in ipairs(self.inv.items) do
+		for k, v in ipairs(self.inv.items) do
 			if v == item then
 				return self:RemoveItem(k)
 			end
@@ -2320,7 +2198,7 @@ if SERVER then
 	end
 
 	--Player manually switches items in inventory
-	function SWEP.ShiftItems(pl,cmd,args)
+	function SWEP.ShiftItems(pl, cmd, args)
 
 		local self = pl:GetActiveWeapon()
 
@@ -2328,11 +2206,11 @@ if SERVER then
 			return
 		end
 
-		amt = math.Clamp(tonumber(args[1],10), -127, 128)
+		amt = math.Clamp(tonumber(args[1]), -127, 128)
 
 		local item = self:GetCurrentItem()
 
-		self.inv:ShiftItems(amt,pl)
+		self.inv:ShiftItems(amt, pl)
 
 		local itemnew = self:GetCurrentItem()
 		if not itemnew then
@@ -2355,9 +2233,9 @@ if SERVER then
 
 	concommand.Add("scv_itm_shft", SWEP.ShiftItems)
 
-	function SWEP:HasItem(name,exclude)
-		for _,v in ipairs(self.inv.items) do
-			if string.find(v.ammo,name,0,true) and ((exclude and not string.find(v.ammo, exclude, 0, true)) or not exclude) then
+	function SWEP:HasItem(name, exclude)
+		for _, v in ipairs(self.inv.items) do
+			if string.find(v.ammo, name, 0, true) and ((exclude and not string.find(v.ammo, exclude, 0, true)) or not exclude) then
 				return true
 			end
 		end
@@ -2365,7 +2243,7 @@ if SERVER then
 	end
 
 	function SWEP:HasItemName(name)
-		for _,v in ipairs(self.inv.items) do
+		for _, v in ipairs(self.inv.items) do
 			if v.ammo == name then
 				return true
 			end
@@ -2373,7 +2251,7 @@ if SERVER then
 		return false
 	end
 
-	local function CMDRemoveItem(pl,cmd,args)
+	local function CMDRemoveItem(pl, cmd, args)
 
 		local self = pl:GetActiveWeapon()
 
@@ -2384,7 +2262,7 @@ if SERVER then
 		local itemid = tonumber(args[1])
 
 		if self.inv.itemids[itemid] then
-			self.inv.itemids[itemid]:Remove(false,nil,true)
+			self.inv.itemids[itemid]:Remove(false, nil, true)
 			self:SaveInventorySnapshot()
 		end
 
@@ -2407,22 +2285,22 @@ if SERVER then
 	end
 
 
-	function SWEP:SetPanelPose(pose,speed)
+	function SWEP:SetPanelPose(pose, speed)
 		self.PanelTo = pose
 		self.PanelSpeed = speed
 	end
 
-	function SWEP:SetPanelPoseInstant(pose,speed)
+	function SWEP:SetPanelPoseInstant(pose, speed)
 		self.PanelPose = pose
 		self.PanelSpeed = speed or self.PanelSpeed
 	end
 
-	function SWEP:SetBlockPose(pose,speed)
+	function SWEP:SetBlockPose(pose, speed)
 		self.BlockTo = pose
 		self.BlockSpeed = speed
 	end
 
-	function SWEP:SetBlockPoseInstant(pose,speed)
+	function SWEP:SetBlockPoseInstant(pose, speed)
 		self.BlockPose = pose
 		self.PanelSpeed = speed or self.PanelSpeed
 	end
@@ -2459,7 +2337,7 @@ if SERVER then
 			vm:SetPoseParameter("spin", self.BarrelRotation)
 		end
 
-		self:SetPoseParameter("spin",self.BarrelRotation)
+		self:SetPoseParameter("spin", self.BarrelRotation)
 
 		if self.PanelPose ~= self.PanelTo then
 
@@ -2477,13 +2355,13 @@ if SERVER then
 
 		if self.BlockPose ~= self.BlockTo then
 
-			self.BlockPose = math.Approach(self.BlockPose,self.BlockTo,self.BlockSpeed*FrameTime())
+			self.BlockPose = math.Approach(self.BlockPose, self.BlockTo, self.BlockSpeed*FrameTime())
 
 			if vmexists then
-				vm:SetPoseParameter("block",self.BlockPose)
+				vm:SetPoseParameter("block", self.BlockPose)
 			end
 
-			self:SetPoseParameter("block",self.BlockPose)
+			self:SetPoseParameter("block", self.BlockPose)
 
 		else
 			self.BlockSpeed = 1
@@ -2535,9 +2413,9 @@ if SERVER then
 
 	function SWEP:SaveInventorySnapshot()
 		if self.inv and IsValid(self.Owner) then
-			saverestore.AddSaveHook("scavsave_"..self.Owner:SteamID64(), function(save)
-				saverestore.WriteTable(self.inv,save)
-				saverestore.SaveEntity(self,save)
+			saverestore.AddSaveHook("scavsave_" .. self.Owner:SteamID64(), function(save)
+				saverestore.WriteTable(self.inv, save)
+				saverestore.SaveEntity(self, save)
 				--print(save)
 			end)
 		end
@@ -2548,7 +2426,7 @@ if SERVER then
 		self.nextfireearly = 0
 		self.inv = self.inv or ScavInventory(self)
 
-		saverestore.AddRestoreHook("scavsave_"..self.Owner:SteamID64(), function(save)
+		saverestore.AddRestoreHook("scavsave_" .. self.Owner:SteamID64(), function(save)
 			local savedinv = saverestore.ReadTable(save)
 			if savedinv then
 				self.inv = savedinv
@@ -2581,7 +2459,7 @@ if SERVER then
 	end
 
 	function SWEP:OnRemove()
-		for _,v in pairs(self.soundloops) do
+		for _, v in pairs(self.soundloops) do
 			v:Stop()
 		end
 		if self:GetInventory() then
@@ -2602,7 +2480,7 @@ if SERVER then
 			self.Owner:EmitSound("npc/sniper/reload1.wav", 50, 100)
 			self.Owner:GetViewModel():SetPoseParameter("Block", 1)
 			self.BlockPose = 1
-			self:SetBlockPose(0,2)
+			self:SetBlockPose(0, 2)
 		end
 
 		if not (self.soundloops and self.soundloops.barrelspin) then
@@ -2646,12 +2524,12 @@ if SERVER then
 				self.shouldholster = wep:GetClass()
 			end
 
-			self:NextThink(CurTime()+0.05)
+			self:NextThink(CurTime() + 0.05)
 			return false
 
 		else
 
-			for _,v in pairs(self.soundloops) do
+			for _, v in pairs(self.soundloops) do
 				v:Stop()
 			end
 
@@ -2676,7 +2554,7 @@ if SERVER then
 		if not self.bsoundplay then
 			if not self.soundloops then self.soundloops = {} end
 			if not self.soundloops.barrelspin then self.soundloops.barrelspin = self:CreateBarrelSpinSound() end
-			self.soundloops.barrelspin:PlayEx(1,70)
+			self.soundloops.barrelspin:PlayEx(1, 70)
 			self.bsoundplay = true
 		end
 
@@ -2689,7 +2567,7 @@ if SERVER then
 			local tracep = {}
 			tracep.start = self.Owner:GetShootPos()
 			tracep.endpos = self.Owner:GetShootPos() + self.Owner:GetAimVector() * 56100 * FrameTime()
-			tracep.filter = {self.Owner,game.GetWorld()}
+			tracep.filter = {self.Owner, game.GetWorld()}
 			tracep.mask = MASK_SHOT
 			tracep.mins = self.vmin1
 			tracep.maxs = self.vmax1
@@ -2746,7 +2624,7 @@ if SERVER then
 			if not item then return end
 
 			if ScavData.models[item.ammo] and ScavData.models[item.ammo].Level > self:GetNWLevel() then
-				self.Owner:EmitSound("vehicles/APC/apc_shutdown.wav",80)
+				self.Owner:EmitSound("vehicles/APC/apc_shutdown.wav", 80)
 				self:SendWeaponAnim(ACT_VM_FIDGET)
 				self:SetNextPrimaryFire(shoottime + 2)
 				self:SetSeqEndTime(shoottime + 1)
@@ -2762,7 +2640,7 @@ if SERVER then
 
 			if modeinfo then
 
-				if modeinfo.FireFunc(self,item) then
+				if modeinfo.FireFunc(self, item) then
 					self.currentmodel = item.ammo
 					self:RemoveItem(1)
 				else
@@ -2792,7 +2670,7 @@ if SERVER then
 					prop.thrownby = self.Owner
 				elseif util.IsValidProp(item.ammo) then
 					prop = ents.Create("prop_physics")
-				elseif string.find(item.ammo,"*%d",0,false) then
+				elseif string.find(item.ammo, "*%d", 0, false) then
 					prop = ents.Create("func_physbox")
 				end
 
@@ -2817,7 +2695,7 @@ if SERVER then
 				local phys = prop:GetPhysicsObject()
 				local mass = 0
 
-				for i=0,prop:GetPhysicsObjectCount()-1 do --setup bone positions
+				for i = 0, prop:GetPhysicsObjectCount() - 1 do --setup bone positions
 					local phys = prop:GetPhysicsObjectNum(i)
 					if IsValid(phys) then
 						phys:SetVelocity(self:GetAimVector() * 2000 * self:GetForceScale())
@@ -2848,7 +2726,7 @@ if SERVER then
 
 				net.Start("scv_s_time")
 					net.WriteEntity(self)
-					net.WriteInt(math.floor(self.nextfire),32)
+					net.WriteInt(math.floor(self.nextfire), 32)
 					net.WriteFloat(self.nextfire - math.floor(self.nextfire))
 				net.Send(self.Owner)
 
@@ -2897,19 +2775,19 @@ if SERVER then
 		local modellist = {}
 
 		if ScavData.CollectFuncs[collectmodelname] then
-			--PrintTable(ScavData.CollectFuncs[collectmodelname](self,ent))
-			modellist = ScavData.CollectFuncs[collectmodelname](self,ent)
+			--PrintTable(ScavData.CollectFuncs[collectmodelname](self, ent))
+			modellist = ScavData.CollectFuncs[collectmodelname](self, ent)
 		else
 			modellist[1] = {collectmodelname}
 		end
 		for i=1,#modellist do
 			local modelname = modellist[i][1]
-			for k,v in pairs(self.inv.items) do
+			for k, v in pairs(self.inv.items) do
 				if ScavData.models[v.ammo] and ScavData.models[modelname] then
 
 					local maxammo = nil
 					if ScavData.models[v.ammo].MaxAmmo then
-						maxammo = ScavData.models[v.ammo].MaxAmmo or ScavData.models[v.ammo].GetMaxAmmo(wep,data)
+						maxammo = ScavData.models[v.ammo].MaxAmmo or ScavData.models[v.ammo].GetMaxAmmo(wep, data)
 					end
 
 					local identify = ScavData.models[v.ammo].Identify or false
@@ -2921,7 +2799,7 @@ if SERVER then
 						if itemtab.Name then
 							vname = itemtab.Name
 						elseif itemtab.GetName then
-							vname = itemtab.GetName(wep,v)
+							vname = itemtab.GetName(wep, v)
 						end
 					end
 
@@ -2931,7 +2809,7 @@ if SERVER then
 						if itemtab.Name then
 							modelnamename = itemtab.Name
 						elseif itemtab.GetName then
-							modelnamename = itemtab.GetName(wep,data)
+							modelnamename = itemtab.GetName(wep, data)
 						end
 					end
 
@@ -2972,24 +2850,24 @@ if SERVER then
 			for i=1,#collect do
 				self:AddItem(collect[i])
 			end
-		elseif string.find(modelname,"*%d",0,false) then
+		elseif string.find(modelname, "*%d", 0, false) then
 			self:AddItem(modelname, 1, 0)
 		else
 			self:AddItem(modelname, 1, ent:GetSkin())
 		end
 
 		if ScavData.CollectFX[modelname] then
-			ScavData.CollectFX[modelname](self,ent)
+			ScavData.CollectFX[modelname](self, ent)
 		end
 
 		ent.NoScav = true
 
 		local ef = EffectData()
-		ef:SetRadius(ent:OBBMaxs():Distance(ent:OBBMins())/2)
+		ef:SetRadius(ent:OBBMaxs():Distance(ent:OBBMins()) / 2)
 		ef:SetEntity(self.Owner)
 		ef:SetOrigin(ent:GetPos())
 
-		util.Effect("scav_pickup",ef,nil,true)
+		util.Effect("scav_pickup", ef, nil, true)
 
 		local pickup = ents.Create("scav_pickup")
 
