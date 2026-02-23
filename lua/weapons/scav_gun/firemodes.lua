@@ -40,7 +40,7 @@ tf2shelleject = function(self, shelltype)
 			brass:SetupBones()
 		end
 		-- Physics sounds
-		brass:AddCallback("PhysicsCollide",function(ent,data)
+		brass:AddCallback("PhysicsCollide", function(ent, data)
 			if (data.Speed > 50) then
 				ent:EmitSound(Sound(shell == "shotgun" and "Bounce.ShotgunShell" or "Bounce.Shell"))
 					end
@@ -106,7 +106,7 @@ local puterscreen = function(self, item)
 		col = color_white
 	end
 	draw.DrawText(language.GetPhrase("scav.scavcan.autotarget"), fontsize, 128, vpos, col, TEXT_ALIGN_CENTER)
-	draw.DrawText(language.GetPhrase(on and "scav.scavcan.on" or "scav.scavcan.off"), "ScavScreenFont", 128, 20 + vpos,col, TEXT_ALIGN_CENTER)
+	draw.DrawText(language.GetPhrase(on and "scav.scavcan.on" or "scav.scavcan.off"), "ScavScreenFont", 128, 20 + vpos, col, TEXT_ALIGN_CENTER)
 end
 
 --[[==============================================================================================
@@ -121,8 +121,8 @@ end
 			tab.Seeking = false
 			tab.tracep = {}
 			tab.tracep.mask = MASK_SHOT
-			tab.tracep.mins = Vector(-16,-16,-16)
-			tab.tracep.maxs = Vector(16,16,16)
+			tab.tracep.mins = Vector(-16, -16, -16)
+			tab.tracep.maxs = Vector(16, 16, 16)
 			local identify = {
 				--[HL2/Default] = 0,
 				--[[TF2]]["models/weapons/w_models/w_rocket.mdl"] = 1,
@@ -187,63 +187,63 @@ end
 						proj:GetPhysicsObject():EnableDrag(false)
 						proj:GetPhysicsObject():EnableGravity(false)
 						proj.SpeedScale = self:GetForceScale()
-						proj:GetPhysicsObject():SetVelocityInstantaneous((self:GetAimVector())*2000*self:GetForceScale())
+						proj:GetPhysicsObject():SetVelocityInstantaneous((self:GetAimVector()) * 2000 * self:GetForceScale())
 						proj:GetPhysicsObject():SetBuoyancyRatio(0)
 						--self.Owner:GetViewModel():SetSequence(self.Owner:GetViewModel():LookupSequence("fire3"))
-						--gamemode.Call("ScavFired",self.Owner,proj)
+						--gamemode.Call("ScavFired", self.Owner, proj)
 						self:AddBarrelSpin(575)
-						self.Owner:ViewPunch(Angle(math.Rand(-1,0),math.Rand(-0.1,0.1),0))
-						return self:TakeSubammo(item,1)
+						self.Owner:ViewPunch(Angle(math.Rand(-1, 0), math.Rand(-0.1, 0.1), 0))
+						return self:TakeSubammo(item, 1)
 					end
 				end
-				ScavData.CollectFuncs["models/weapons/w_rocket_launcher.mdl"] = function(self,ent) return {{"models/weapons/w_missile.mdl",3,0}} end --3 rockets from HL2 launcher - add seeking?
-				ScavData.CollectFuncs["models/items/ammocrate_rockets.mdl"] = function(self,ent) return {{"models/weapons/w_missile.mdl",3,0}} end --3 rockets from HL2 rocket crate
-				ScavData.CollectFuncs["models/weapons/w_missile_launch.mdl"] = function(self,ent) return {{"models/weapons/w_missile.mdl",1,0}} end --converts the rocket into a usable one
+				ScavData.CollectFuncs["models/weapons/w_rocket_launcher.mdl"] = function(self, ent) return {{"models/weapons/w_missile.mdl", 3, 0}} end --3 rockets from HL2 launcher - add seeking?
+				ScavData.CollectFuncs["models/items/ammocrate_rockets.mdl"] = function(self, ent) return {{"models/weapons/w_missile.mdl", 3, 0}} end --3 rockets from HL2 rocket crate
+				ScavData.CollectFuncs["models/weapons/w_missile_launch.mdl"] = function(self, ent) return {{"models/weapons/w_missile.mdl", 1, 0}} end --converts the rocket into a usable one
 				ScavData.CollectFuncs["models/weapons/w_missile_closed.mdl"] = ScavData.CollectFuncs["models/weapons/w_missile_launch.mdl"]
 				--TF2
-				ScavData.CollectFuncs["models/weapons/w_models/w_rocketlauncher.mdl"] = function(self,ent) return {{"models/weapons/w_models/w_rocket.mdl",4,0}} end --4 rockets from TF2 launcher
+				ScavData.CollectFuncs["models/weapons/w_models/w_rocketlauncher.mdl"] = function(self, ent) return {{"models/weapons/w_models/w_rocket.mdl", 4, 0}} end --4 rockets from TF2 launcher
 				ScavData.CollectFuncs["models/weapons/c_models/c_rocketlauncher/c_rocketlauncher.mdl"] = ScavData.CollectFuncs["models/weapons/w_models/w_rocketlauncher.mdl"]
 				ScavData.CollectFuncs["models/weapons/c_models/c_bet_rocketlauncher/c_bet_rocketlauncher.mdl"] = ScavData.CollectFuncs["models/weapons/w_models/w_rocketlauncher.mdl"]
 				ScavData.CollectFuncs["models/weapons/c_models/c_directhit/c_directhit.mdl"] = ScavData.CollectFuncs["models/weapons/w_models/w_rocketlauncher.mdl"]
 				ScavData.CollectFuncs["models/workshop_partner/weapons/c_models/c_bet_rocketlauncher/c_bet_rocketlauncher.mdl"] = ScavData.CollectFuncs["models/weapons/w_models/w_rocketlauncher.mdl"]
-				ScavData.CollectFuncs["models/workshop/weapons/c_models/c_atom_launcher/c_atom_launcher.mdl"] = function(self,ent) return {{"models/weapons/w_models/w_rocket_airstrike/w_rocket_airstrike.mdl",4,0}} end
+				ScavData.CollectFuncs["models/workshop/weapons/c_models/c_atom_launcher/c_atom_launcher.mdl"] = function(self, ent) return {{"models/weapons/w_models/w_rocket_airstrike/w_rocket_airstrike.mdl", 4, 0}} end
 				ScavData.CollectFuncs["models/weapons/c_models/c_rocketjumper/c_rocketjumper.mdl"] = ScavData.CollectFuncs["models/weapons/w_models/w_rocketlauncher.mdl"] --TODO: No damage?
-				ScavData.CollectFuncs["models/weapons/c_models/c_blackbox/c_blackbox.mdl"] = function(self,ent) return {{"models/weapons/w_models/w_rocket.mdl",3,0}} end --3 rockets from Black Box
+				ScavData.CollectFuncs["models/weapons/c_models/c_blackbox/c_blackbox.mdl"] = function(self, ent) return {{"models/weapons/w_models/w_rocket.mdl", 3, 0}} end --3 rockets from Black Box
 				ScavData.CollectFuncs["models/workshop/weapons/c_models/c_blackbox/c_blackbox.mdl"] = ScavData.CollectFuncs["models/weapons/c_models/c_blackbox/c_blackbox.mdl"]
 				ScavData.CollectFuncs["models/weapons/c_models/c_blackbox/c_blackbox_xmas.mdl"] = ScavData.CollectFuncs["models/weapons/c_models/c_blackbox/c_blackbox.mdl"]
 				ScavData.CollectFuncs["models/workshop/weapons/c_models/c_blackbox/c_blackbox_xmas.mdl"] = ScavData.CollectFuncs["models/weapons/c_models/c_blackbox/c_blackbox.mdl"]
 				ScavData.CollectFuncs["models/weapons/c_models/c_dumpster_device/c_dumpster_device.mdl"] = ScavData.CollectFuncs["models/weapons/c_models/c_blackbox/c_blackbox.mdl"]
 				ScavData.CollectFuncs["models/workshop/weapons/c_models/c_dumpster_device/c_dumpster_device.mdl"] = ScavData.CollectFuncs["models/weapons/c_models/c_blackbox/c_blackbox.mdl"]
-				ScavData.CollectFuncs["models/weapons/c_models/c_liberty_launcher/c_liberty_launcher.mdl"] = function(self,ent) return {{"models/weapons/w_models/w_rocket.mdl",5,0}} end --5 rockets from Libery Launcher
+				ScavData.CollectFuncs["models/weapons/c_models/c_liberty_launcher/c_liberty_launcher.mdl"] = function(self, ent) return {{"models/weapons/w_models/w_rocket.mdl", 5, 0}} end --5 rockets from Libery Launcher
 				ScavData.CollectFuncs["models/workshop/weapons/c_models/c_liberty_launcher/c_liberty_launcher.mdl"] = ScavData.CollectFuncs["models/weapons/c_models/c_liberty_launcher/c_liberty_launcher.mdl"]
-				ScavData.CollectFuncs["models/buildables/sentry3.mdl"] = function(self,ent) --4 rockets, 1 sentry from TF2 sentry (level 3)
-					return {{"models/buildables/sentry3_rockets.mdl",4,0},
-							{"models/buildables/sentry2.mdl",100,ent:GetSkin()}}
+				ScavData.CollectFuncs["models/buildables/sentry3.mdl"] = function(self, ent) --4 rockets, 1 sentry from TF2 sentry (level 3)
+					return {{"models/buildables/sentry3_rockets.mdl", 4, 0},
+							{"models/buildables/sentry2.mdl", 100, ent:GetSkin()}}
 				end
 				ScavData.CollectFuncs["models/weapons/c_models/c_drg_cowmangler/c_drg_cowmangler.mdl"] = ScavData.CollectFuncs["models/weapons/w_models/w_rocketlauncher.mdl"]
 				ScavData.CollectFuncs["models/workshop/weapons/c_models/c_drg_cowmangler/c_drg_cowmangler.mdl"] = ScavData.CollectFuncs["models/weapons/w_models/w_rocketlauncher.mdl"]
 				ScavData.CollectFuncs["models/pickups/pickup_powerup_supernova.mdl"] = ScavData.CollectFuncs["models/weapons/w_models/w_rocketlauncher.mdl"]
 				--Portal
-				ScavData.CollectFuncs["models/props_bts/rocket_sentry.mdl"] = function(self,ent) return {{"models/props_bts/rocket.mdl",5,0}} end --5 rockets from Portal rocket sentry
-				ScavData.CollectFuncs["models/props/tripwire_turret.mdl"] = function(self,ent) return {{"models/props_bts/rocket.mdl",5,0}} end --5 rockets from Portal rocket sentry
+				ScavData.CollectFuncs["models/props_bts/rocket_sentry.mdl"] = function(self, ent) return {{"models/props_bts/rocket.mdl", 5, 0}} end --5 rockets from Portal rocket sentry
+				ScavData.CollectFuncs["models/props/tripwire_turret.mdl"] = function(self, ent) return {{"models/props_bts/rocket.mdl", 5, 0}} end --5 rockets from Portal rocket sentry
 				--DoD:S
-				ScavData.CollectFuncs["models/weapons/w_bazooka.mdl"] = function(self,ent) return {{"models/weapons/w_bazooka_rocket.mdl",1,0}} end --1 rocket from Bazooka
-				ScavData.CollectFuncs["models/weapons/w_pschreck.mdl"] = function(self,ent) return {{"models/weapons/w_panzerschreck_rocket.mdl",1,0}} end --1 rocket from Panzer
+				ScavData.CollectFuncs["models/weapons/w_bazooka.mdl"] = function(self, ent) return {{"models/weapons/w_bazooka_rocket.mdl", 1, 0}} end --1 rocket from Bazooka
+				ScavData.CollectFuncs["models/weapons/w_pschreck.mdl"] = function(self, ent) return {{"models/weapons/w_panzerschreck_rocket.mdl", 1, 0}} end --1 rocket from Panzer
 			end
 			tab.Cooldown = 1
-		ScavData.RegisterFiremode(tab,"models/weapons/w_missile.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/w_missile_closed.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_missile.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_missile_closed.mdl")
 		--TF2
-		ScavData.RegisterFiremode(tab,"models/weapons/w_models/w_rocket.mdl")
-		ScavData.RegisterFiremode(tab,"models/buildables/sentry3_rockets.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_halloween/eyeball_projectile.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/w_models/w_rocket_airstrike/w_rocket_airstrike.mdl")
-		--ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_drg_cowmangler/c_drg_cowmangler.mdl") --TODO: infinite rockets from Cowmanger (on its own entity, probably)
+		ScavData.RegisterFiremode(tab, "models/weapons/w_models/w_rocket.mdl")
+		ScavData.RegisterFiremode(tab, "models/buildables/sentry3_rockets.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_halloween/eyeball_projectile.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_models/w_rocket_airstrike/w_rocket_airstrike.mdl")
+		--ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_drg_cowmangler/c_drg_cowmangler.mdl") --TODO: infinite rockets from Cowmanger (on its own entity, probably)
 		--Portal
-		ScavData.RegisterFiremode(tab,"models/props_bts/rocket.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_bts/rocket.mdl")
 		--DoD:S
-		ScavData.RegisterFiremode(tab,"models/weapons/w_bazooka_rocket.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/w_panzerschreck_rocket.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_bazooka_rocket.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_panzerschreck_rocket.mdl")
 		
 
 --[[==============================================================================================
@@ -255,7 +255,7 @@ end
 			tab.anim = ACT_VM_IDLE
 			tab.Level = 5
 			tab.On = true
-			tab.FireFunc = function(self,item)
+			tab.FireFunc = function(self, item)
 				tab.On = not tab.On
 				if SERVER then
 					self.Owner:EmitSound(tab.On and "buttons/button5.wav" or "buttons/button8.wav")
@@ -323,64 +323,64 @@ end
 				ScavData.CollectFuncs["models/props_underground/interactive_console.mdl"] = ScavData.GiveOneOfItemInf
 			end
 			tab.Cooldown = .25
-		ScavData.RegisterFiremode(tab,"models/props_lab/harddrive01.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_lab/harddrive02.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_lab/reciever01a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_lab/reciever01b.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_lab/reciever01c.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_lab/reciever01d.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_lab/reciever_cart.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_lab/harddrive01.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_lab/harddrive02.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_lab/reciever01a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_lab/reciever01b.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_lab/reciever01c.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_lab/reciever01d.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_lab/reciever_cart.mdl")
 		--CSS
-		ScavData.RegisterFiremode(tab,"models/props/cs_office/computer_case.mdl")
-		ScavData.RegisterFiremode(tab,"models/props/cs_office/computer_caseb.mdl")
-		ScavData.RegisterFiremode(tab,"models/props/cs_office/computer_caseb_p2.mdl")
-		ScavData.RegisterFiremode(tab,"models/props/cs_office/computer_caseb_p2a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props/cs_office/computer_caseb_p3.mdl")
-		ScavData.RegisterFiremode(tab,"models/props/cs_office/computer_caseb_p3a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props/cs_office/computer_caseb_p4.mdl")
-		ScavData.RegisterFiremode(tab,"models/props/cs_office/computer_caseb_p5.mdl")
-		ScavData.RegisterFiremode(tab,"models/props/cs_office/computer_caseb_p6.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/cs_office/computer_case.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/cs_office/computer_caseb.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/cs_office/computer_caseb_p2.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/cs_office/computer_caseb_p2a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/cs_office/computer_caseb_p3.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/cs_office/computer_caseb_p3a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/cs_office/computer_caseb_p4.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/cs_office/computer_caseb_p5.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/cs_office/computer_caseb_p6.mdl")
 		--TF2
-		ScavData.RegisterFiremode(tab,"models/props_spytech/control_room_console02.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_spytech/control_room_console04.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_spytech/computer_wall.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_spytech/computer_wall02.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_spytech/computer_wall03.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_spytech/computer_wall04.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_spytech/computer_wall05.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_spytech/computer_wall06.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_powerhouse/powerhouse_console01.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_powerhouse/powerhouse_console02.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_moonbase/moon_interior_computer01.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_moonbase/moon_interior_computer02.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_moonbase/moon_interior_computer03.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_moonbase/moon_interior_computer04.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_moonbase/moon_interior_computer05.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_moonbase/moon_interior_computer06.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_spytech/control_room_console02.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_spytech/control_room_console04.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_spytech/computer_wall.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_spytech/computer_wall02.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_spytech/computer_wall03.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_spytech/computer_wall04.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_spytech/computer_wall05.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_spytech/computer_wall06.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_powerhouse/powerhouse_console01.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_powerhouse/powerhouse_console02.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_moonbase/moon_interior_computer01.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_moonbase/moon_interior_computer02.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_moonbase/moon_interior_computer03.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_moonbase/moon_interior_computer04.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_moonbase/moon_interior_computer05.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_moonbase/moon_interior_computer06.mdl")
 		--L4D/2
-		ScavData.RegisterFiremode(tab,"models/props_placeable/radio_box.mdl")
-		ScavData.RegisterFiremode(tab,"models/props/terror/hamradio.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_placeable/radio_box.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/terror/hamradio.mdl")
 		--Portal
-		ScavData.RegisterFiremode(tab,"models/props/pc_case02/pc_case02.mdl")
-		ScavData.RegisterFiremode(tab,"models/props/pc_case_open/pc_case_open.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/pc_case02/pc_case02.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/pc_case_open/pc_case_open.mdl")
 		--DoD:S
-		ScavData.RegisterFiremode(tab,"models/props_misc/german_radio.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_misc/german_radio.mdl")
 		--Portal 2
-		ScavData.RegisterFiremode(tab,"models/props_office/computer_1980.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_office/computer_1980_flatscreen.mdl")
-		ScavData.RegisterFiremode(tab,"models/props/techdeco/computers/portablehddr01.mdl")
-		ScavData.RegisterFiremode(tab,"models/props/techdeco/computers/portablehddr02.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_office/computer_01_1970.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_office/computer_02_1970.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_office/computer_03_1970.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_office/computer_04_1970.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_office/computer_base01.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_office/computer_cabinet01.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_office/computer_cabinet02.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_office/computer_tall01.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_office/pc_1970.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_underground/computer_1980.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_underground/interactive_console.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_office/computer_1980.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_office/computer_1980_flatscreen.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/techdeco/computers/portablehddr01.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/techdeco/computers/portablehddr02.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_office/computer_01_1970.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_office/computer_02_1970.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_office/computer_03_1970.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_office/computer_04_1970.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_office/computer_base01.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_office/computer_cabinet01.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_office/computer_cabinet02.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_office/computer_tall01.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_office/pc_1970.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_underground/computer_1980.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_underground/interactive_console.mdl")
 		
 
 --[[==============================================================================================
@@ -393,11 +393,11 @@ end
 			tab.Level = 5
 			tab.tracep = {}
 			tab.tracep.mask = MASK_SHOT
-			tab.tracep.mins = Vector(-16,-16,-16)
-			tab.tracep.maxs = Vector(16,16,16)
+			tab.tracep.mins = Vector(-16, -16, -16)
+			tab.tracep.maxs = Vector(16, 16, 16)
 			tab.MaxAmmo = 10
 			if SERVER then
-				tab.FireFunc = function(self,item)
+				tab.FireFunc = function(self, item)
 					local proj = self:CreateEnt("scav_projectile_ice")
 					proj.Owner = self.Owner
 					proj:SetModel(item.ammo)
@@ -406,21 +406,21 @@ end
 					proj:SetOwner(self.Owner)
 					proj:Spawn()
 					self.Owner:SetAnimation(PLAYER_ATTACK1)
-					self.Owner:EmitSound("physics/glass/glass_strain1.wav",100,100)
-					self.Owner:EmitSound("weapons/ar2/npc_ar2_altfire.wav",100,100)
+					self.Owner:EmitSound("physics/glass/glass_strain1.wav", 100, 100)
+					self.Owner:EmitSound("weapons/ar2/npc_ar2_altfire.wav", 100, 100)
 					proj:GetPhysicsObject():Wake()
 					proj:GetPhysicsObject():EnableDrag(false)
 					proj:GetPhysicsObject():EnableGravity(false)
 					proj.SpeedScale = self:GetForceScale()
-					proj:GetPhysicsObject():SetVelocity((self:GetAimVector())*2000*self:GetForceScale())
+					proj:GetPhysicsObject():SetVelocity((self:GetAimVector()) * 2000 * self:GetForceScale())
 					proj:GetPhysicsObject():SetBuoyancyRatio(0)
-					self.Owner:ViewPunch(Angle(math.Rand(-1,0),math.Rand(-0.1,0.1),0))
-					return self:TakeSubammo(item,1)
+					self.Owner:ViewPunch(Angle(math.Rand(-1, 0), math.Rand(-0.1, 0.1), 0))
+					return self:TakeSubammo(item, 1)
 				end
 				ScavData.CollectFuncs["models/maxofs2d/hover_classic.mdl"] = ScavData.GiveOneOfItemInf
 				ScavData.CollectFuncs["models/xqm/rails/gumball_1.mdl"] = ScavData.GiveOneOfItemInf
 				--TF2
-				ScavData.CollectFuncs["models/weapons/c_models/c_xms_cold_shoulder/c_xms_cold_shoulder.mdl"] = function(self,ent) return {{self.christmas and "models/workshop/weapons/c_models/c_xms_cold_shoulder/c_xms_cold_shoulder_festivizer.mdl" or ScavData.FormatModelname(ent:GetModel()),SCAV_SHORT_MAX,ent:GetSkin()}} end
+				ScavData.CollectFuncs["models/weapons/c_models/c_xms_cold_shoulder/c_xms_cold_shoulder.mdl"] = function(self, ent) return {{self.christmas and "models/workshop/weapons/c_models/c_xms_cold_shoulder/c_xms_cold_shoulder_festivizer.mdl" or ScavData.FormatModelname(ent:GetModel()), SCAV_SHORT_MAX, ent:GetSkin()}} end
 				ScavData.CollectFuncs["models/workshop/weapons/c_models/c_xms_cold_shoulder/c_xms_cold_shoulder.mdl"] = ScavData.CollectFuncs["models/weapons/c_models/c_xms_cold_shoulder/c_xms_cold_shoulder.mdl"]
 				ScavData.CollectFuncs["models/workshop/weapons/c_models/c_xms_cold_shoulder/c_xms_cold_shoulder_festivizer.mdl"] = ScavData.GiveOneOfItemInf
 				--CSS
@@ -429,26 +429,26 @@ end
 				ScavData.CollectFuncs["models/props/cs_office/snowman_head.mdl"] = ScavData.GiveOneOfItemInf
 				--L4D2
 				ScavData.CollectFuncs["models/props_urban/ice_machine001.mdl"] = ScavData.GiveOneOfItemInf
-				ScavData.CollectFuncs["models/props_urban/plastic_icechest001.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),2,ent:GetSkin()}} end
+				ScavData.CollectFuncs["models/props_urban/plastic_icechest001.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 2, ent:GetSkin()}} end
 				ScavData.CollectFuncs["models/props_urban/plastic_icechest001_static.mdl"] = ScavData.CollectFuncs["models/props_urban/plastic_icechest001.mdl"]
 				ScavData.CollectFuncs["models/props_urban/plastic_icechest002.mdl"] = ScavData.CollectFuncs["models/props_urban/plastic_icechest001.mdl"]
 			end
 			tab.Cooldown = 1
-		ScavData.RegisterFiremode(tab,"models/maxofs2d/hover_classic.mdl")
-		ScavData.RegisterFiremode(tab,"models/xqm/rails/gumball_1.mdl")
+		ScavData.RegisterFiremode(tab, "models/maxofs2d/hover_classic.mdl")
+		ScavData.RegisterFiremode(tab, "models/xqm/rails/gumball_1.mdl")
 		--TF2
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_xms_cold_shoulder/c_xms_cold_shoulder.mdl")
-		ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_xms_cold_shoulder/c_xms_cold_shoulder.mdl")
-		ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_xms_cold_shoulder/c_xms_cold_shoulder_festivizer.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_xms_cold_shoulder/c_xms_cold_shoulder.mdl")
+		ScavData.RegisterFiremode(tab, "models/workshop/weapons/c_models/c_xms_cold_shoulder/c_xms_cold_shoulder.mdl")
+		ScavData.RegisterFiremode(tab, "models/workshop/weapons/c_models/c_xms_cold_shoulder/c_xms_cold_shoulder_festivizer.mdl")
 		--CSS
-		ScavData.RegisterFiremode(tab,"models/props/cs_office/snowman_body.mdl")
-		ScavData.RegisterFiremode(tab,"models/props/cs_office/snowman_face.mdl")
-		ScavData.RegisterFiremode(tab,"models/props/cs_office/snowman_head.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/cs_office/snowman_body.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/cs_office/snowman_face.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/cs_office/snowman_head.mdl")
 		--L4D2
-		ScavData.RegisterFiremode(tab,"models/props_urban/ice_machine001.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_urban/plastic_icechest001.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_urban/plastic_icechest001_static.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_urban/plastic_icechest002.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_urban/ice_machine001.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_urban/plastic_icechest001.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_urban/plastic_icechest001_static.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_urban/plastic_icechest002.mdl")
 	
 --[[==============================================================================================
 	--Flares
@@ -464,14 +464,14 @@ end
 				--[[TF2]]["models/weapons/w_models/w_flaregun_shell.mdl"] = 1,
 				--[[ASW]]["models/swarm/flare/flareweapon.mdl"] = 2,
 			}
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			if SERVER then
-				tab.FireFunc = function(self,item)
+				tab.FireFunc = function(self, item)
 						--local proj = self:CreateEnt("scav_projectile_flare")
 						local proj = self:CreateEnt("scav_projectile_flare2")
 						proj.Owner = self.Owner
 						proj:SetModel(item.ammo)
-						proj:SetPos(self.Owner:GetShootPos()-self:GetAimVector()*15+self:GetAimVector():Angle():Right()*2-self:GetAimVector():Angle():Up()*2)
+						proj:SetPos(self.Owner:GetShootPos()-self:GetAimVector() * 15 + self:GetAimVector():Angle():Right() * 2-self:GetAimVector():Angle():Up() * 2)
 						proj:SetAngles(self:GetAimVector():Angle())
 						proj:SetOwner(self.Owner)
 						proj:SetPhysicsAttacker(self.Owner)
@@ -483,14 +483,14 @@ end
 						self.Owner:EmitSound(self.shootsound)
 						proj:GetPhysicsObject():Wake()
 						proj:GetPhysicsObject():EnableDrag(false)
-						proj:GetPhysicsObject():SetVelocity(self:GetAimVector()*4000)
+						proj:GetPhysicsObject():SetVelocity(self:GetAimVector() * 4000)
 						proj:GetPhysicsObject():SetBuoyancyRatio(0)
 						proj:SetPhysicsAttacker(self.Owner)
-						self.Owner:ViewPunch(Angle(math.Rand(-1,0),math.Rand(-0.1,0.1),0))
-						return self:TakeSubammo(item,1)
+						self.Owner:ViewPunch(Angle(math.Rand(-1, 0), math.Rand(-0.1, 0.1), 0))
+						return self:TakeSubammo(item, 1)
 					end
 				--TF2
-				ScavData.CollectFuncs["models/weapons/c_models/c_flaregun_pyro/c_flaregun_pyro.mdl"] = function(self,ent) return {{"models/weapons/w_models/w_flaregun_shell.mdl",5,ent:GetSkin()}} end --5 flares from the TF2 flaregun
+				ScavData.CollectFuncs["models/weapons/c_models/c_flaregun_pyro/c_flaregun_pyro.mdl"] = function(self, ent) return {{"models/weapons/w_models/w_flaregun_shell.mdl", 5, ent:GetSkin()}} end --5 flares from the TF2 flaregun
 				ScavData.CollectFuncs["models/weapons/c_models/c_scorch_shot/c_scorch_shot.mdl"] = ScavData.CollectFuncs["models/weapons/c_models/c_flaregun_pyro/c_flaregun_pyro.mdl"]
 				ScavData.CollectFuncs["models/workshop/weapons/c_models/c_scorch_shot/c_scorch_shot.mdl"] = ScavData.CollectFuncs["models/weapons/c_models/c_scorch_shot/c_scorch_shot.mdl"]
 				ScavData.CollectFuncs["models/weapons/c_models/c_xms_flaregun/c_xms_flaregun.mdl"] = ScavData.CollectFuncs["models/weapons/c_models/c_flaregun_pyro/c_flaregun_pyro.mdl"]
@@ -499,22 +499,21 @@ end
 				ScavData.CollectFuncs["models/weapons/c_models/c_drg_manmelter/c_drg_manmelter.mdl"] = ScavData.CollectFuncs["models/weapons/c_models/c_flaregun_pyro/c_flaregun_pyro.mdl"] --TODO: infinite slower flares from manmelter
 				ScavData.CollectFuncs["models/workshop/weapons/c_models/c_drg_manmelter/c_drg_manmelter.mdl"] = ScavData.CollectFuncs["models/weapons/c_models/c_drg_manmelter/c_drg_manmelter.mdl"]
 				--L4D2
-				ScavData.CollectFuncs["models/props_fairgrounds/pyrotechnics_launcher.mdl"]	= function(self,ent) return {{"models/items/flare.mdl",3,ent:GetSkin()}} end --3 flares from the L4D2 Pyrotechnics
-				ScavData.CollectFuncs["models/props_fairgrounds/mortar_rack.mdl"] = function(self,ent) return {{"models/items/flare.mdl",7,ent:GetSkin()}} end --7 flares from the L4D2 Pyrotechnics Mortar
+				ScavData.CollectFuncs["models/props_fairgrounds/pyrotechnics_launcher.mdl"]	= function(self, ent) return {{"models/items/flare.mdl", 3, ent:GetSkin()}} end --3 flares from the L4D2 Pyrotechnics
+				ScavData.CollectFuncs["models/props_fairgrounds/mortar_rack.mdl"] = function(self, ent) return {{"models/items/flare.mdl", 7, ent:GetSkin()}} end --7 flares from the L4D2 Pyrotechnics Mortar
 				---ASW
-				ScavData.CollectFuncs["models/swarm/flare/flarebox.mdl"] = function(self,ent) return {{"models/swarm/flare/flareweapon.mdl",5,ent:GetSkin()}} end --5 flares from the TF2 flaregun
+				ScavData.CollectFuncs["models/swarm/flare/flarebox.mdl"] = function(self, ent) return {{"models/swarm/flare/flareweapon.mdl", 5, ent:GetSkin()}} end --5 flares from the TF2 flaregun
 			else
 				tab.fov = 10
 			end
 			tab.Cooldown = 1
-		ScavData.RegisterFiremode(tab,"models/items/flare.mdl")
+		ScavData.RegisterFiremode(tab, "models/items/flare.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/flare.mdl")
 		--TF2
-		ScavData.RegisterFiremode(tab,"models/weapons/w_models/w_flaregun_shell.mdl")
-		--Ep1
-		ScavData.RegisterFiremode(tab,"models/props_junk/flare.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_models/w_flaregun_shell.mdl")
 		--ASW
-		ScavData.RegisterFiremode(tab,"models/swarm/flare/flareweapon.mdl")
-		ScavData.RegisterFiremode(tab,"models/swarmprops/miscdeco/greenflare.mdl")
+		ScavData.RegisterFiremode(tab, "models/swarm/flare/flareweapon.mdl")
+		ScavData.RegisterFiremode(tab, "models/swarmprops/miscdeco/greenflare.mdl")
 		
 --[[==============================================================================================
 	--Arrows and Bolts (Impaler)
@@ -526,13 +525,13 @@ end
 			tab.Level = 8
 			tab.MaxAmmo = 6
 			if SERVER then
-				tab.FireFunc = function(self,item)
+				tab.FireFunc = function(self, item)
 					local proj = self:CreateEnt("scav_projectile_impaler")
 					proj.Owner = self.Owner
 					proj:SetModel(item.ammo)
-					proj:SetPos(self.Owner:GetShootPos()-self:GetAimVector()*15+self:GetAimVector():Angle():Right()*2-self:GetAimVector():Angle():Up()*2)
+					proj:SetPos(self.Owner:GetShootPos() - self:GetAimVector() * 15 + self:GetAimVector():Angle():Right() * 2 - self:GetAimVector():Angle():Up() * 2)
 					proj.angoffset = ScavData.GetEntityFiringAngleOffset(proj)
-					proj:SetAngles(self:GetAimVector():Angle()+proj.angoffset)
+					proj:SetAngles(self:GetAimVector():Angle() + proj.angoffset)
 					proj:SetOwner(self.Owner)
 					proj:SetSkin(item.data)
 					proj:Spawn()
@@ -543,7 +542,7 @@ end
 					
 
 					elseif item.ammo == "models/props_c17/trappropeller_blade.mdl" then
-						proj.Trail = util.SpriteTrail(proj,0,Color(255,255,255,255),true,2,0,0.3,0.25,"trails/smoke.vmt")
+						proj.Trail = util.SpriteTrail(proj, 0, Color(255, 255, 255, 255), true, 2, 0, 0.3, 0.25, "trails/smoke.vmt")
 						proj.DmgAmt = 100
 						proj.NoPin = true
 						proj.Drop = vector_origin
@@ -557,8 +556,8 @@ end
 					end
 
 					self.Owner:EmitSound(self.shootsound)
-					self.Owner:ViewPunch(Angle(math.Rand(-1,0),math.Rand(-0.1,0.1),0))
-					return self:TakeSubammo(item,1)
+					self.Owner:ViewPunch(Angle(math.Rand(-1, 0), math.Rand(-0.1, 0.1), 0))
+					return self:TakeSubammo(item, 1)
 				end
 				--[[
 				PLAYER.GetRagdollEntityOld = PLAYER.GetRagdollEntity
@@ -570,11 +569,11 @@ end
 						return self:GetRagdollEntityOld()
 					end
 				end
-				hook.Add("PlayerSpawn","ResetArrowRagdoll",function(pl) pl.ArrowRagdoll = NULL end)
-				hook.Add("PlayerDeath","NoArrowRagdoll",function(pl) if IsValid(pl.ArrowRagdoll) and pl:GetRagdollEntityOld() then pl:GetRagdollEntityOld():Remove() end end)
-				hook.Add("CreateEntityRagdoll","NoArrowRagdoll2",function(ent,rag) if IsValid(ent.ArrowRagdoll) then rag:Remove() end end)
+				hook.Add("PlayerSpawn", "ResetArrowRagdoll", function(pl) pl.ArrowRagdoll = NULL end)
+				hook.Add("PlayerDeath", "NoArrowRagdoll", function(pl) if IsValid(pl.ArrowRagdoll) and pl:GetRagdollEntityOld() then pl:GetRagdollEntityOld():Remove() end end)
+				hook.Add("CreateEntityRagdoll", "NoArrowRagdoll2", function(ent, rag) if IsValid(ent.ArrowRagdoll) then rag:Remove() end end)
 				--]]
-				function tab.OnArmed(self,item,olditemname)
+				function tab.OnArmed(self, item, olditemname)
 					if SERVER then
 						if item.ammo == "models/crossbow_bolt.mdl" then
 							self.Owner:EmitSound("weapons/crossbow/reload1.wav")
@@ -582,29 +581,29 @@ end
 					end
 				end
 
-				ScavData.CollectFuncs["models/items/crossbowrounds.mdl"] = function(self,ent) return {{"models/crossbow_bolt.mdl",6,ent:GetSkin()}} end --6 crossbow bolts from a bundle of bolts
-				ScavData.CollectFuncs["models/weapons/w_crossbow.mdl"] = function(self,ent) return {{"models/crossbow_bolt.mdl",1,ent:GetSkin()}} end --1 bolt from the crossbow
+				ScavData.CollectFuncs["models/items/crossbowrounds.mdl"] = function(self, ent) return {{"models/crossbow_bolt.mdl", 6, ent:GetSkin()}} end --6 crossbow bolts from a bundle of bolts
+				ScavData.CollectFuncs["models/weapons/w_crossbow.mdl"] = function(self, ent) return {{"models/crossbow_bolt.mdl", 1, ent:GetSkin()}} end --1 bolt from the crossbow
 				--TF2
-				ScavData.CollectFuncs["models/weapons/w_models/w_arrow.mdl"] = function(self,ent) return {{self.christmas and "models/weapons/w_models/w_arrow_xmas.mdl" or ScavData.FormatModelname(ent:GetModel()),1,0}} end
-				ScavData.CollectFuncs["models/weapons/c_models/c_claymore/c_claymore.mdl"] = function(self,ent) return {{self.christmas and "models/weapons/c_models/c_claymore/c_claymore_xmas.mdl" or ScavData.FormatModelname(ent:GetModel()),1,math.fmod(ent:GetSkin(),2)}} end
-				ScavData.CollectFuncs["models/weapons/c_models/c_dartgun.mdl"] = function(self,ent) return {{"models/weapons/c_models/c_dart.mdl",5,ent:GetSkin()}} end --5 darts from Sydney Sleeper
+				ScavData.CollectFuncs["models/weapons/w_models/w_arrow.mdl"] = function(self, ent) return {{self.christmas and "models/weapons/w_models/w_arrow_xmas.mdl" or ScavData.FormatModelname(ent:GetModel()), 1, 0}} end
+				ScavData.CollectFuncs["models/weapons/c_models/c_claymore/c_claymore.mdl"] = function(self, ent) return {{self.christmas and "models/weapons/c_models/c_claymore/c_claymore_xmas.mdl" or ScavData.FormatModelname(ent:GetModel()), 1, math.fmod(ent:GetSkin(), 2)}} end
+				ScavData.CollectFuncs["models/weapons/c_models/c_dartgun.mdl"] = function(self, ent) return {{"models/weapons/c_models/c_dart.mdl", 5, ent:GetSkin()}} end --5 darts from Sydney Sleeper
 				ScavData.CollectFuncs["models/workshop/weapons/c_models/c_sydney_sleeper/c_sydney_sleeper.mdl"] = ScavData.CollectFuncs["models/weapons/c_models/c_dartgun.mdl"]
-				ScavData.CollectFuncs["models/weapons/c_models/c_bow/c_bow.mdl"] = function(self,ent) return {{self.christmas and "models/weapons/w_models/w_arrow_xmas.mdl" or "models/weapons/w_models/w_arrow.mdl",3,0}} end --3 arrows from Huntsman
+				ScavData.CollectFuncs["models/weapons/c_models/c_bow/c_bow.mdl"] = function(self, ent) return {{self.christmas and "models/weapons/w_models/w_arrow_xmas.mdl" or "models/weapons/w_models/w_arrow.mdl", 3, 0}} end --3 arrows from Huntsman
 				ScavData.CollectFuncs["models/workshop_partner/weapons/c_models/c_bow_thief/c_bow_thief.mdl"] = ScavData.CollectFuncs["models/weapons/c_models/c_bow/c_bow.mdl"]
-				ScavData.CollectFuncs["models/weapons/c_models/c_crusaders_crossbow/c_crusaders_crossbow.mdl"] = function(self,ent) return {{self.christmas and "models/weapons/w_models/w_arrow_xmas.mdl" or "models/weapons/w_models/w_arrow.mdl",1,0}} end --1 arrow from Crusader's Crossbow TODO: syringe
+				ScavData.CollectFuncs["models/weapons/c_models/c_crusaders_crossbow/c_crusaders_crossbow.mdl"] = function(self, ent) return {{self.christmas and "models/weapons/w_models/w_arrow_xmas.mdl" or "models/weapons/w_models/w_arrow.mdl", 1, 0}} end --1 arrow from Crusader's Crossbow TODO: syringe
 				ScavData.CollectFuncs["models/workshop/weapons/c_models/c_crusaders_crossbow/c_crusaders_crossbow.mdl"] = ScavData.CollectFuncs["models/weapons/c_models/c_crusaders_crossbow/c_crusaders_crossbow.mdl"]
-				ScavData.CollectFuncs["models/weapons/c_models/c_bow/c_bow_xmas.mdl"] = function(self,ent) return {{"models/weapons/w_models/w_arrow_xmas.mdl",3,ent:GetSkin()}} end --3 festive arrows from festive Huntsman
-				ScavData.CollectFuncs["models/weapons/c_models/c_crusaders_crossbow/c_crusaders_crossbow_xmas.mdl"] = function(self,ent) return {{"models/weapons/w_models/w_arrow_xmas.mdl",1,ent:GetSkin()}} end --1 arrows from Crusader's Crossbow TODO: candy cane
+				ScavData.CollectFuncs["models/weapons/c_models/c_bow/c_bow_xmas.mdl"] = function(self, ent) return {{"models/weapons/w_models/w_arrow_xmas.mdl", 3, ent:GetSkin()}} end --3 festive arrows from festive Huntsman
+				ScavData.CollectFuncs["models/weapons/c_models/c_crusaders_crossbow/c_crusaders_crossbow_xmas.mdl"] = function(self, ent) return {{"models/weapons/w_models/w_arrow_xmas.mdl", 1, ent:GetSkin()}} end --1 arrows from Crusader's Crossbow TODO: candy cane
 				ScavData.CollectFuncs["models/workshop/weapons/c_models/c_crusaders_crossbow/c_crusaders_crossbow_xmas.mdl"] = ScavData.CollectFuncs["models/weapons/c_models/c_crusaders_crossbow/c_crusaders_crossbow_xmas.mdl"]
-				ScavData.CollectFuncs["models/weapons/c_models/c_tele_shotgun/c_tele_shotgun.mdl"] = function(self,ent) return {{"models/weapons/w_models/w_repair_claw.mdl",4,ent:GetSkin()}} end --4 claws from Rescue Ranger
+				ScavData.CollectFuncs["models/weapons/c_models/c_tele_shotgun/c_tele_shotgun.mdl"] = function(self, ent) return {{"models/weapons/w_models/w_repair_claw.mdl", 4, ent:GetSkin()}} end --4 claws from Rescue Ranger
 				ScavData.CollectFuncs["models/workshop/weapons/c_models/c_tele_shotgun/c_tele_shotgun.mdl"] = ScavData.CollectFuncs["models/weapons/c_models/c_tele_shotgun/c_tele_shotgun.mdl"]
 				ScavData.CollectFuncs["models/weapons/c_models/c_bow/c_bow_thief.mdl"] = ScavData.CollectFuncs["models/workshop_partner/weapons/c_models/c_bow_thief/c_bow_thief.mdl"]
 				ScavData.CollectFuncs["models/pickups/pickup_powerup_precision.mdl"] = ScavData.CollectFuncs["models/weapons/c_models/c_bow/c_bow.mdl"]
 				--FoF
-				ScavData.CollectFuncs["models/weapons/w_bow.mdl"] = function(self,ent) return {{"models/weapons/bowarrow_bolt.mdl",1,0}} end --1 arrow from bows
+				ScavData.CollectFuncs["models/weapons/w_bow.mdl"] = function(self, ent) return {{"models/weapons/bowarrow_bolt.mdl", 1, 0}} end --1 arrow from bows
 				ScavData.CollectFuncs["models/weapons/w_bow_black.mdl"] = ScavData.CollectFuncs["models/weapons/w_bow.mdl"]
 				ScavData.CollectFuncs["models/weapons/w_xbow.mdl"] = ScavData.CollectFuncs["models/weapons/w_bow.mdl"]
-				ScavData.CollectFuncs["models/weapons/w_axe_proj.mdl"] = function(self,ent) return {{"models/weapons/w_axe.mdl",1,0}} end --1 unscuffed axe model
+				ScavData.CollectFuncs["models/weapons/w_axe_proj.mdl"] = function(self, ent) return {{"models/weapons/w_axe.mdl", 1, 0}} end --1 unscuffed axe model
 			else
 				tab.fov = 10
 			end
@@ -612,74 +611,73 @@ end
 			
 			
 
-		ScavData.RegisterFiremode(tab,"models/crossbow_bolt.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/harpoon002a.mdl")
-		ScavData.RegisterFiremode(tab,"models/mixerman3d/other/arrow.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_c17/trappropeller_blade.mdl") --TODO: make its own entity? needs to spiIiIiIin. Also, on occassion when fired in tight quarters, doesn't render?
-		--Ep2
-		ScavData.RegisterFiremode(tab,"models/props_mining/railroad_spike01.mdl")
+		ScavData.RegisterFiremode(tab, "models/crossbow_bolt.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/harpoon002a.mdl")
+		ScavData.RegisterFiremode(tab, "models/mixerman3d/other/arrow.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_c17/trappropeller_blade.mdl") --TODO: make its own entity? needs to spiIiIiIin. Also, on occassion when fired in tight quarters, doesn't render?
+		ScavData.RegisterFiremode(tab, "models/props_mining/railroad_spike01.mdl")
 		--CSS
-		ScavData.RegisterFiremode(tab,"models/weapons/w_knife_ct.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/w_knife_t.mdl")
-		ScavData.RegisterFiremode(tab,"models/w_models/weapons/w_knife_t.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_knife/c_knife.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_knife_ct.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_knife_t.mdl")
+		ScavData.RegisterFiremode(tab, "models/w_models/weapons/w_knife_t.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_knife/c_knife.mdl")
 		--TF2
-		ScavData.RegisterFiremode(tab,"models/weapons/w_models/w_arrow.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/w_models/w_arrow_xmas.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_claymore/c_claymore.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_claymore/c_claymore_xmas.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_claidheamohmor/c_claidheamohmor.mdl")
-		ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_claidheamohmor/c_claidheamohmor.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_scout_sword/c_scout_sword.mdl")
-		ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_scout_sword/c_scout_sword.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_shogun_katana/c_shogun_katana.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_shogun_katana/c_shogun_katana_soldier.mdl")
-		ScavData.RegisterFiremode(tab,"models/workshop_partner/weapons/c_models/c_shogun_katana/c_shogun_katana.mdl")
-		ScavData.RegisterFiremode(tab,"models/workshop_partner/weapons/c_models/c_shogun_katana/c_shogun_katana_soldier.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_demo_sultan_sword/c_demo_sultan_sword.mdl")
-		ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_demo_sultan_sword/c_demo_sultan_sword.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_machete/c_machete.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_croc_knife/c_croc_knife.mdl")
-		ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_croc_knife/c_croc_knife.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_scimitar/c_scimitar.mdl")
-		ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_scimitar/c_scimitar.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_wood_machete/c_wood_machete.mdl")
-		ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_wood_machete/c_wood_machete.mdl")
-		ScavData.RegisterFiremode(tab,"models/workshop_partner/weapons/c_models/c_prinny_knife/c_prinny_knife.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_tw_eagle/c_tw_eagle.mdl")
-		ScavData.RegisterFiremode(tab,"models/workshop_partner/weapons/c_models/c_tw_eagle/c_tw_eagle.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_dart.mdl")
-		ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_sydney_sleeper/c_sydney_sleeper_dart.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/w_models/w_repair_claw.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/w_models/w_knife.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_acr_hookblade/c_acr_hookblade.mdl")
-		ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_acr_hookblade/c_acr_hookblade.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_ava_roseknife/c_ava_roseknife.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_ava_roseknife/c_ava_roseknife_v.mdl")
-		ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_ava_roseknife/c_ava_roseknife.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_switchblade/c_switchblade.mdl")
-		ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_switchblade/c_switchblade.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_sd_cleaver/c_sd_cleaver.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_sd_cleaver/v_sd_cleaver.mdl")
-		ScavData.RegisterFiremode(tab,"models/workshop_partner/weapons/c_models/c_sd_cleaver/c_sd_cleaver.mdl")
-		ScavData.RegisterFiremode(tab,"models/workshop_partner/weapons/c_models/c_sd_cleaver/v_sd_cleaver.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_shogun_kunai/c_shogun_kunai.mdl")
-		ScavData.RegisterFiremode(tab,"models/workshop_partner/weapons/c_models/c_shogun_kunai/c_shogun_kunai.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_voodoo_pin/c_voodoo_pin.mdl")
-		ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_voodoo_pin/c_voodoo_pin.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_eternal_reward/c_eternal_reward.mdl")
-		ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_eternal_reward/c_eternal_reward.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_models/w_arrow.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_models/w_arrow_xmas.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_claymore/c_claymore.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_claymore/c_claymore_xmas.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_claidheamohmor/c_claidheamohmor.mdl")
+		ScavData.RegisterFiremode(tab, "models/workshop/weapons/c_models/c_claidheamohmor/c_claidheamohmor.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_scout_sword/c_scout_sword.mdl")
+		ScavData.RegisterFiremode(tab, "models/workshop/weapons/c_models/c_scout_sword/c_scout_sword.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_shogun_katana/c_shogun_katana.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_shogun_katana/c_shogun_katana_soldier.mdl")
+		ScavData.RegisterFiremode(tab, "models/workshop_partner/weapons/c_models/c_shogun_katana/c_shogun_katana.mdl")
+		ScavData.RegisterFiremode(tab, "models/workshop_partner/weapons/c_models/c_shogun_katana/c_shogun_katana_soldier.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_demo_sultan_sword/c_demo_sultan_sword.mdl")
+		ScavData.RegisterFiremode(tab, "models/workshop/weapons/c_models/c_demo_sultan_sword/c_demo_sultan_sword.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_machete/c_machete.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_croc_knife/c_croc_knife.mdl")
+		ScavData.RegisterFiremode(tab, "models/workshop/weapons/c_models/c_croc_knife/c_croc_knife.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_scimitar/c_scimitar.mdl")
+		ScavData.RegisterFiremode(tab, "models/workshop/weapons/c_models/c_scimitar/c_scimitar.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_wood_machete/c_wood_machete.mdl")
+		ScavData.RegisterFiremode(tab, "models/workshop/weapons/c_models/c_wood_machete/c_wood_machete.mdl")
+		ScavData.RegisterFiremode(tab, "models/workshop_partner/weapons/c_models/c_prinny_knife/c_prinny_knife.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_tw_eagle/c_tw_eagle.mdl")
+		ScavData.RegisterFiremode(tab, "models/workshop_partner/weapons/c_models/c_tw_eagle/c_tw_eagle.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_dart.mdl")
+		ScavData.RegisterFiremode(tab, "models/workshop/weapons/c_models/c_sydney_sleeper/c_sydney_sleeper_dart.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_models/w_repair_claw.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_models/w_knife.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_acr_hookblade/c_acr_hookblade.mdl")
+		ScavData.RegisterFiremode(tab, "models/workshop/weapons/c_models/c_acr_hookblade/c_acr_hookblade.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_ava_roseknife/c_ava_roseknife.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_ava_roseknife/c_ava_roseknife_v.mdl")
+		ScavData.RegisterFiremode(tab, "models/workshop/weapons/c_models/c_ava_roseknife/c_ava_roseknife.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_switchblade/c_switchblade.mdl")
+		ScavData.RegisterFiremode(tab, "models/workshop/weapons/c_models/c_switchblade/c_switchblade.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_sd_cleaver/c_sd_cleaver.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_sd_cleaver/v_sd_cleaver.mdl")
+		ScavData.RegisterFiremode(tab, "models/workshop_partner/weapons/c_models/c_sd_cleaver/c_sd_cleaver.mdl")
+		ScavData.RegisterFiremode(tab, "models/workshop_partner/weapons/c_models/c_sd_cleaver/v_sd_cleaver.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_shogun_kunai/c_shogun_kunai.mdl")
+		ScavData.RegisterFiremode(tab, "models/workshop_partner/weapons/c_models/c_shogun_kunai/c_shogun_kunai.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_voodoo_pin/c_voodoo_pin.mdl")
+		ScavData.RegisterFiremode(tab, "models/workshop/weapons/c_models/c_voodoo_pin/c_voodoo_pin.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_eternal_reward/c_eternal_reward.mdl")
+		ScavData.RegisterFiremode(tab, "models/workshop/weapons/c_models/c_eternal_reward/c_eternal_reward.mdl")
 		--L4D2
-		ScavData.RegisterFiremode(tab,"models/weapons/melee/w_machete.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/melee/w_katana.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/melee/w_pitchfork.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/melee/w_machete.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/melee/w_katana.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/melee/w_pitchfork.mdl")
 		--Lost Coast
-		ScavData.RegisterFiremode(tab,"models/lostcoast/fisherman/harpoon.mdl")
+		ScavData.RegisterFiremode(tab, "models/lostcoast/fisherman/harpoon.mdl")
 		--FoF
-		ScavData.RegisterFiremode(tab,"models/weapons/bowarrow_bolt.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/w_axe.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/w_knife.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/w_machete.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/bowarrow_bolt.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_axe.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_knife.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_machete.mdl")
 		
 --[[==============================================================================================
 	--Scav Grenade
@@ -703,79 +701,79 @@ end
 				["models/weapons/w_dynamite_black.mdl"] = 6,
 				["models/weapons/w_dynamite_yellow.mdl"] = 6,
 			}
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			if SERVER then
-				tab.OnArmed = function(self,item,olditemname)
+				tab.OnArmed = function(self, item, olditemname)
 					local tab = ScavData.models[self.inv.items[1].ammo]
 					if tab.Identify[item.ammo] == 0 then
 						self.Owner:EmitSound("player/pl_scout_dodge_can_open.wav")
 				    end
 				end
-				tab.FireFunc = function(self,item)
-					self.Owner:ViewPunch(Angle(-5,math.Rand(-0.1,0.1),0))
+				tab.FireFunc = function(self, item)
+					self.Owner:ViewPunch(Angle(-5, math.Rand(-0.1, 0.1), 0))
 					local proj = self:CreateEnt("scav_projectile_grenade")
 					proj:SetModel(item.ammo)
 					proj.Owner = self.Owner
 					proj:SetOwner(self.Owner)
 					proj:SetPos(self:GetProjectileShootPos())
-					proj:SetAngles((self:GetAimVector():Angle():Up()*-1):Angle())
+					proj:SetAngles((self:GetAimVector():Angle():Up() * -1):Angle())
 					proj:Spawn()
 					proj:SetSkin(item.data)
 					proj:GetPhysicsObject():Wake()
 					proj:GetPhysicsObject():SetMass(1)
 					proj:GetPhysicsObject():EnableDrag(true)
 					proj:GetPhysicsObject():EnableGravity(true)
-					proj:GetPhysicsObject():ApplyForceOffset((self:GetAimVector())*2300,Vector(0,0,3)) --self:GetAimVector():Angle():Up()*0.1
-					timer.Simple(0, function() proj:GetPhysicsObject():AddAngleVelocity(Vector(0,10000,0)) end)
+					proj:GetPhysicsObject():ApplyForceOffset((self:GetAimVector()) * 2300, Vector(0, 0, 3)) --self:GetAimVector():Angle():Up() * 0.1
+					timer.Simple(0, function() proj:GetPhysicsObject():AddAngleVelocity(Vector(0, 10000, 0)) end)
 					self.Owner:SetAnimation(PLAYER_ATTACK1)
 					self.Owner:EmitSound(self.shootsound)
-					--gamemode.Call("ScavFired",self.Owner,proj)
-					return self:TakeSubammo(item,1)
+					--gamemode.Call("ScavFired", self.Owner, proj)
+					return self:TakeSubammo(item, 1)
 				end
-				ScavData.CollectFuncs["models/props_interiors/vendingmachinesoda01a.mdl"] = function(self,ent) --nine grenades + door from vending machine
-					return {{"models/props_junk/popcan01a.mdl",9,math.random(0,2)},
-							{"models/props_interiors/VendingMachineSoda01a_door.mdl",1,0}}
+				ScavData.CollectFuncs["models/props_interiors/vendingmachinesoda01a.mdl"] = function(self, ent) --nine grenades + door from vending machine
+					return {{"models/props_junk/popcan01a.mdl", 9, math.random(0, 2)},
+							{"models/props_interiors/VendingMachineSoda01a_door.mdl", 1, 0}}
 				end
 				--CSS
-				ScavData.CollectFuncs["models/props/cs_office/vending_machine.mdl"] = function(self,ent) return {{"models/props/cs_office/water_bottle.mdl",9,0}} end --nine grenades from vending machine
+				ScavData.CollectFuncs["models/props/cs_office/vending_machine.mdl"] = function(self, ent) return {{"models/props/cs_office/water_bottle.mdl", 9, 0}} end --nine grenades from vending machine
 				--TF2
-				ScavData.CollectFuncs["models/weapons/w_models/w_grenadelauncher.mdl"] = function(self,ent) return {{"models/weapons/w_models/w_grenade_grenadelauncher.mdl",4,math.fmod(ent:GetSkin(),2)}} end --4 grenades from TF2 grenade launcher
+				ScavData.CollectFuncs["models/weapons/w_models/w_grenadelauncher.mdl"] = function(self, ent) return {{"models/weapons/w_models/w_grenade_grenadelauncher.mdl", 4, math.fmod(ent:GetSkin(), 2)}} end --4 grenades from TF2 grenade launcher
 				ScavData.CollectFuncs["models/weapons/c_models/c_grenadelauncher/c_grenadelauncher.mdl"] = ScavData.CollectFuncs["models/weapons/w_models/w_grenadelauncher.mdl"]
 				ScavData.CollectFuncs["models/weapons/c_models/c_grenadelauncher/c_grenadelauncher_xmas.mdl"] = ScavData.CollectFuncs["models/weapons/w_models/w_grenadelauncher.mdl"]
-				ScavData.CollectFuncs["models/weapons/c_models/c_lochnload/c_lochnload.mdl"] = function(self,ent) return {{"models/weapons/w_models/w_grenade_grenadelauncher.mdl",2,math.fmod(ent:GetSkin(),2)}} end --2 grenades from TF2 Loch N Load
+				ScavData.CollectFuncs["models/weapons/c_models/c_lochnload/c_lochnload.mdl"] = function(self, ent) return {{"models/weapons/w_models/w_grenade_grenadelauncher.mdl", 2, math.fmod(ent:GetSkin(), 2)}} end --2 grenades from TF2 Loch N Load
 				ScavData.CollectFuncs["models/workshop/weapons/c_models/c_lochnload/c_lochnload.mdl"] = ScavData.CollectFuncs["models/weapons/c_models/c_lochnload/c_lochnload.mdl"]
-				ScavData.CollectFuncs["models/workshop/weapons/c_models/c_quadball/c_quadball.mdl"] = function(self,ent) return {{"models/workshop/weapons/c_models/c_quadball/w_quadball_grenade.mdl",4,math.fmod(ent:GetSkin(),2)}} end --4 round grenades from Iron Bomber
+				ScavData.CollectFuncs["models/workshop/weapons/c_models/c_quadball/c_quadball.mdl"] = function(self, ent) return {{"models/workshop/weapons/c_models/c_quadball/w_quadball_grenade.mdl", 4, math.fmod(ent:GetSkin(), 2)}} end --4 round grenades from Iron Bomber
 				--FoF
-				ScavData.CollectFuncs["models/weapons/w_dynamite.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),2,0}} end --2 dynamite from red
-				ScavData.CollectFuncs["models/weapons/w_dynamite_black.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),4,0}} end --4 dynamite from black
+				ScavData.CollectFuncs["models/weapons/w_dynamite.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 2, 0}} end --2 dynamite from red
+				ScavData.CollectFuncs["models/weapons/w_dynamite_black.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 4, 0}} end --4 dynamite from black
 				ScavData.CollectFuncs["models/weapons/w_dynamite_yellow.mdl"] = ScavData.GiveOneOfItemInf --inf dynamite from yellow
 			end
 			tab.Cooldown = 0.75
 		
-		ScavData.RegisterFiremode(tab,"models/props_junk/popcan01a.mdl")	
+		ScavData.RegisterFiremode(tab, "models/props_junk/popcan01a.mdl")	
 		--TF2
-		ScavData.RegisterFiremode(tab,"models/weapons/w_models/w_grenade_grenadelauncher.mdl")
-		ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_quadball/w_quadball_grenade.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_caber/c_caber.mdl")
-		ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_caber/c_caber.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_gameplay/can_crushed001.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_gameplay/can_crushed002.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_models/w_grenade_grenadelauncher.mdl")
+		ScavData.RegisterFiremode(tab, "models/workshop/weapons/c_models/c_quadball/w_quadball_grenade.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_caber/c_caber.mdl")
+		ScavData.RegisterFiremode(tab, "models/workshop/weapons/c_models/c_caber/c_caber.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_gameplay/can_crushed001.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_gameplay/can_crushed002.mdl")
 		--CSS
-		ScavData.RegisterFiremode(tab,"models/weapons/w_eq_fraggrenade.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/w_eq_fraggrenade_thrown.mdl")
-		ScavData.RegisterFiremode(tab,"models/props/cs_office/water_bottle.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_eq_fraggrenade.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_eq_fraggrenade_thrown.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/cs_office/water_bottle.mdl")
 		--FoF
-		ScavData.RegisterFiremode(tab,"models/weapons/w_dynamite.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/w_dynamite_black.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/w_dynamite_yellow.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_dynamite.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_dynamite_black.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_dynamite_yellow.mdl")
 		--L4D/2
-		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_sodacan01a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_sodacan01a_fullsheet.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_sodacan01a_crushed.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_sodacan01a_crushed_fullsheet.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_beercan01a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_beercan01a_crushed.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_beercan01a_fullsheet.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/garbage_sodacan01a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/garbage_sodacan01a_fullsheet.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/garbage_sodacan01a_crushed.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/garbage_sodacan01a_crushed_fullsheet.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/garbage_beercan01a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/garbage_beercan01a_crushed.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/garbage_beercan01a_fullsheet.mdl")
 		
 
 --[[==============================================================================================
@@ -787,44 +785,44 @@ end
 			tab.anim = ACT_VM_SECONDARYATTACK
 			tab.Level = 9
 			if SERVER then
-				tab.FireFunc = function(self,item)
-					self.Owner:ViewPunch(Angle(-20,math.Rand(-0.1,0.1),0))
+				tab.FireFunc = function(self, item)
+					self.Owner:ViewPunch(Angle(-20, math.Rand(-0.1, 0.1), 0))
 					local proj = self:CreateEnt("scav_projectile_payload")
 					proj:SetPhysicsAttacker(self.Owner)
 					proj:SetModel(item.ammo)
 					proj.Owner = self.Owner
 					proj:SetOwner(self.Owner)
 					proj:SetPos(self.Owner:GetShootPos())
-					--proj:SetAngles((self:GetAimVector():Angle():Up()*-1):Angle())
+					--proj:SetAngles((self:GetAimVector():Angle():Up() * -1):Angle())
 					proj:Spawn()
 					proj:SetSkin(item.data)
 					proj:GetPhysicsObject():Wake()
 					proj:GetPhysicsObject():EnableDrag(true)
 					proj:GetPhysicsObject():SetDragCoefficient(-10000)
 					proj:GetPhysicsObject():EnableGravity(true)
-					proj:GetPhysicsObject():SetVelocity(self:GetAimVector()*2500)
+					proj:GetPhysicsObject():SetVelocity(self:GetAimVector() * 2500)
 					self.Owner:SetAnimation(PLAYER_ATTACK1)
 					self.Owner:EmitSound(self.shootsound)
-					--gamemode.Call("ScavFired",self.Owner,proj)
+					--gamemode.Call("ScavFired", self.Owner, proj)
 					return true
 				end
-				ScavData.CollectFuncs["models/props_trainyard/bomb_cart.mdl"] = function(self,ent) return {{"models/props_trainyard/cart_bomb_separate.mdl",1,0}} end
+				ScavData.CollectFuncs["models/props_trainyard/bomb_cart.mdl"] = function(self, ent) return {{"models/props_trainyard/cart_bomb_separate.mdl", 1, 0}} end
 				ScavData.CollectFuncs["models/props_trainyard/bomb_cart_red.mdl"] = ScavData.CollectFuncs["models/props_trainyard/bomb_cart.mdl"]
 				ScavData.CollectFuncs["models/custom/dirty_bomb_cart.mdl"] = ScavData.CollectFuncs["models/props_trainyard/bomb_cart.mdl"]
-				ScavData.CollectFuncs["models/xqm/jetbody3.mdl"] = function(self,ent) return {{"models/props_phx/amraam.mdl",1,0,4}} end
+				ScavData.CollectFuncs["models/xqm/jetbody3.mdl"] = function(self, ent) return {{"models/props_phx/amraam.mdl", 1, 0, 4}} end
 				ScavData.CollectFuncs["models/xqm/jetbody3_s2.mdl"] = ScavData.CollectFuncs["models/xqm/jetbody3.mdl"]
 				ScavData.CollectFuncs["models/xqm/jetbody3_s3.mdl"] = ScavData.CollectFuncs["models/xqm/jetbody3.mdl"]
 				ScavData.CollectFuncs["models/xqm/jetbody3_s4.mdl"] = ScavData.CollectFuncs["models/xqm/jetbody3.mdl"]
 				ScavData.CollectFuncs["models/xqm/jetbody3_s5.mdl"] = ScavData.CollectFuncs["models/xqm/jetbody3.mdl"]
 			end
 			tab.Cooldown = 5
-		ScavData.RegisterFiremode(tab,"models/props_phx/misc/flakshell_big.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_phx/mk-82.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_phx/torpedo.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_phx/ww2bomb.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_phx/amraam.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_phx/misc/flakshell_big.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_phx/mk-82.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_phx/torpedo.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_phx/ww2bomb.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_phx/amraam.mdl")
 		--TF2
-		ScavData.RegisterFiremode(tab,"models/props_trainyard/cart_bomb_separate.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_trainyard/cart_bomb_separate.mdl")
 
 		
 --[[==============================================================================================
@@ -844,16 +842,16 @@ end
 				["models/props_buildables/mine_02.mdl"] = 1,
 			}
 			--Still want them unique when collected, so use different table
-			tab.Identify2 = setmetatable(identify, {__index = function() return 0 end} )
+			tab.Identify2 = setmetatable(identify, {__index = function() return 0 end})
 			if SERVER then
-				tab.FireFunc = function(self,item)
-						self.Owner:ViewPunch(Angle(-5,math.Rand(-0.1,0.1),0))
+				tab.FireFunc = function(self, item)
+						self.Owner:ViewPunch(Angle(-5, math.Rand(-0.1, 0.1), 0))
 						local proj = self:CreateEnt("scav_proximity_mine")
 						proj:SetModel(item.ammo)
 						proj.Owner = self.Owner
 						proj:SetOwner(self.Owner)
 						proj:SetPos(self.Owner:GetShootPos())
-						proj:SetAngles((self:GetAimVector():Angle():Up()*-1):Angle())
+						proj:SetAngles((self:GetAimVector():Angle():Up() * -1):Angle())
 						proj:Spawn()
 						if tab.Identify2[item.ammo] == 1 then
 							proj:SetSticky(false)
@@ -863,47 +861,47 @@ end
 						proj:GetPhysicsObject():SetMass(1)
 						proj:GetPhysicsObject():EnableDrag(true)
 						proj:GetPhysicsObject():EnableGravity(true)
-						--proj:GetPhysicsObject():ApplyForceOffset((self:GetAimVector()+Vector(0,0,0.1))*5000,Vector(0,0,3)) --self:GetAimVector():Angle():Up()*0.1
-						proj:GetPhysicsObject():SetVelocity(self:GetAimVector()*17000) --self:GetAimVector():Angle():Up()*0.1
-						timer.Simple(0, function() proj:GetPhysicsObject():AddAngleVelocity(Vector(0,10000,0)) end)
+						--proj:GetPhysicsObject():ApplyForceOffset((self:GetAimVector() + Vector(0, 0, 0.1)) * 5000, Vector(0, 0, 3)) --self:GetAimVector():Angle():Up() * 0.1
+						proj:GetPhysicsObject():SetVelocity(self:GetAimVector() * 17000) --self:GetAimVector():Angle():Up() * 0.1
+						timer.Simple(0, function() proj:GetPhysicsObject():AddAngleVelocity(Vector(0, 10000, 0)) end)
 						self.Owner:SetAnimation(PLAYER_ATTACK1)
 						self.Owner:EmitSound(self.shootsound)
 						self.Owner:AddScavExplosive(proj)
-						--gamemode.Call("ScavFired",self.Owner,proj)
-						return self:TakeSubammo(item,1)
+						--gamemode.Call("ScavFired", self.Owner, proj)
+						return self:TakeSubammo(item, 1)
 					end
 				--TF2
-				ScavData.CollectFuncs["models/weapons/w_models/w_stickybomb_launcher.mdl"] = function(self,ent) return {{"models/weapons/w_models/w_stickybomb.mdl",6,math.fmod(ent:GetSkin(),2)}} end --6 prox mines from the TF2 stickybomb launcher
+				ScavData.CollectFuncs["models/weapons/w_models/w_stickybomb_launcher.mdl"] = function(self, ent) return {{"models/weapons/w_models/w_stickybomb.mdl", 6, math.fmod(ent:GetSkin(), 2)}} end --6 prox mines from the TF2 stickybomb launcher
 				ScavData.CollectFuncs["models/weapons/c_models/c_stickybomb_launcher.mdl"] = ScavData.CollectFuncs["models/weapons/w_models/w_stickybomb_launcher.mdl"]
 				ScavData.CollectFuncs["models/weapons/c_models/c_stickybomb_launcher/c_stickybomb_launcher.mdl"] = ScavData.CollectFuncs["models/weapons/w_models/w_stickybomb_launcher.mdl"]
-				ScavData.CollectFuncs["models/weapons/c_models/c_scottish_resistance.mdl"] = function(self,ent) return {{"models/weapons/w_models/w_stickybomb_d.mdl",6,math.fmod(ent:GetSkin(),2)}} end --6 prox mines from the Scottish Resistance
+				ScavData.CollectFuncs["models/weapons/c_models/c_scottish_resistance.mdl"] = function(self, ent) return {{"models/weapons/w_models/w_stickybomb_d.mdl", 6, math.fmod(ent:GetSkin(), 2)}} end --6 prox mines from the Scottish Resistance
 				ScavData.CollectFuncs["models/weapons/c_models/c_scottish_resistance/c_scottish_resistance.mdl"] = ScavData.CollectFuncs["models/weapons/c_models/c_scottish_resistance.mdl"]
-				ScavData.CollectFuncs["models/weapons/c_models/c_sticky_jumper/c_sticky_jumper.mdl"] = function(self,ent) return {{"models/weapons/w_models/w_stickybomb2.mdl",2,math.fmod(ent:GetSkin(),2)}} end --2 prox mines from the Sticky Jumper TODO: no damage, self/teammates trigger too?
-				ScavData.CollectFuncs["models/workshop/weapons/c_models/c_kingmaker_sticky/c_kingmaker_sticky.mdl"] = function(self,ent) return {{"models/workshop/weapons/c_models/c_kingmaker_sticky/w_kingmaker_stickybomb.mdl",4,math.fmod(ent:GetSkin(),2)}} end --4 prox mines from the Quickie TODO: faster arm time, limit to 4?
+				ScavData.CollectFuncs["models/weapons/c_models/c_sticky_jumper/c_sticky_jumper.mdl"] = function(self, ent) return {{"models/weapons/w_models/w_stickybomb2.mdl", 2, math.fmod(ent:GetSkin(), 2)}} end --2 prox mines from the Sticky Jumper TODO: no damage, self/teammates trigger too?
+				ScavData.CollectFuncs["models/workshop/weapons/c_models/c_kingmaker_sticky/c_kingmaker_sticky.mdl"] = function(self, ent) return {{"models/workshop/weapons/c_models/c_kingmaker_sticky/w_kingmaker_stickybomb.mdl", 4, math.fmod(ent:GetSkin(), 2)}} end --4 prox mines from the Quickie TODO: faster arm time, limit to 4?
 				--L4D/2
-				ScavData.CollectFuncs["models/props_unique/doll01.mdl"] = function(self,ent) return {{"models/props_c17/doll01.mdl",1,0}} end --stack into regular babydoll
-				ScavData.CollectFuncs["models/props_junk/garbage_hubcap01a.mdl"] = function(self,ent) return {{"models/props_buildables/mine.mdl",1,0}} end --stack into mine (same visual model)
-				ScavData.CollectFuncs["models/props_placeable/mine_trophy.mdl"] = function(self,ent) return {{"models/props_buildables/mine.mdl",SCAV_SHORT_MAX,0}} end
+				ScavData.CollectFuncs["models/props_unique/doll01.mdl"] = function(self, ent) return {{"models/props_c17/doll01.mdl", 1, 0}} end --stack into regular babydoll
+				ScavData.CollectFuncs["models/props_junk/garbage_hubcap01a.mdl"] = function(self, ent) return {{"models/props_buildables/mine.mdl", 1, 0}} end --stack into mine (same visual model)
+				ScavData.CollectFuncs["models/props_placeable/mine_trophy.mdl"] = function(self, ent) return {{"models/props_buildables/mine.mdl", SCAV_SHORT_MAX, 0}} end
 			else
-				tab.FireFunc = function(self,item)
+				tab.FireFunc = function(self, item)
 					return false
 				end
 			end
 			tab.Cooldown = 0.75
-		ScavData.RegisterFiremode(tab,"models/scav/proxmine.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_c17/doll01.mdl")
+		ScavData.RegisterFiremode(tab, "models/scav/proxmine.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_c17/doll01.mdl")
 		--TF2
-		ScavData.RegisterFiremode(tab,"models/weapons/w_models/w_stickybomb.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/w_models/w_stickybomb3.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/w_models/w_stickybomb_d.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/w_models/w_stickybomb2.mdl")
-		ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_kingmaker_sticky/w_kingmaker_stickybomb.mdl")
-		--ScavData.RegisterFiremode(tab,"models/props_halloween/pumpkin_explode.mdl") --TODO: make it its own entity
+		ScavData.RegisterFiremode(tab, "models/weapons/w_models/w_stickybomb.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_models/w_stickybomb3.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_models/w_stickybomb_d.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_models/w_stickybomb2.mdl")
+		ScavData.RegisterFiremode(tab, "models/workshop/weapons/c_models/c_kingmaker_sticky/w_kingmaker_stickybomb.mdl")
+		--ScavData.RegisterFiremode(tab, "models/props_halloween/pumpkin_explode.mdl") --TODO: make it its own entity
 		--L4D/2
-		ScavData.RegisterFiremode(tab,"models/props_buildables/mine.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_buildables/mine_02.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_buildables/mine.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_buildables/mine_02.mdl")
 		--ASW
-		--ScavData.RegisterFiremode(tab,"models/items/mine/mine.mdl") -- physics are screwy
+		--ScavData.RegisterFiremode(tab, "models/items/mine/mine.mdl") -- physics are screwy
 		
 --[[==============================================================================================
 	--Tripmines
@@ -915,9 +913,9 @@ end
 			tab.Level = 6
 			tab.MaxAmmo = 10
 			if SERVER then
-				tab.FireFunc = function(self,item)
+				tab.FireFunc = function(self, item)
 					local tr = self.Owner:GetEyeTraceNoCursor()
-						if ((tr.HitPos-tr.StartPos):Length() > 64) or tr.Entity:GetClass() == "scav_tripmine" or (not tr.HitWorld and IsValid(tr.Entity) and (tr.Entity:GetMoveType() ~= MOVETYPE_VPHYSICS and tr.Entity:GetMoveType() ~= MOVETYPE_NONE and tr.Entity:GetMoveType() ~= MOVETYPE_PUSH)) then
+						if ((tr.HitPos - tr.StartPos):Length() > 64) or tr.Entity:GetClass() == "scav_tripmine" or (not tr.HitWorld and IsValid(tr.Entity) and (tr.Entity:GetMoveType() ~= MOVETYPE_VPHYSICS and tr.Entity:GetMoveType() ~= MOVETYPE_NONE and tr.Entity:GetMoveType() ~= MOVETYPE_PUSH)) then
 							self.Owner:EmitSound("buttons/button11.wav")
 							return false
 						end	
@@ -926,11 +924,11 @@ end
 						proj.Owner = self.Owner
 						proj:SetOwner(self.Owner)
 						if item.ammo == "models/weapons/w_slam.mdl" then
-							proj:SetPos(tr.HitPos+tr.HitNormal*2)
+							proj:SetPos(tr.HitPos + tr.HitNormal * 2)
 						else
 							proj:SetPos(tr.HitPos)
 						end
-						proj:SetAngles(tr.HitNormal:Angle()+Angle(90,0,0))
+						proj:SetAngles(tr.HitNormal:Angle() + Angle(90, 0, 0))
 						proj:Spawn()
 						proj:SetMoveType(MOVETYPE_NONE)
 						if not tr.HitWorld then
@@ -939,10 +937,10 @@ end
 						proj:SetSkin(item.data)
 						self.Owner:EmitSound("npc/roller/blade_cut.wav")
 						self.Owner:AddScavExplosive(proj)
-						return self:TakeSubammo(item,1)
+						return self:TakeSubammo(item, 1)
 					end
 			end
-			function tab.OnArmed(self,item,olditemname)
+			function tab.OnArmed(self, item, olditemname)
 				if SERVER then
 					if item.ammo == "models/weapons/w_slam.mdl" then
 						self.Owner:EmitSound("weapons/slam/mine_mode.wav")
@@ -950,16 +948,16 @@ end
 				end
 			end
 			tab.Cooldown = 0.75
-		ScavData.RegisterFiremode(tab,"models/props_lab/huladoll.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_lab/huladoll.mdl")
 		--HL2:DM
-		ScavData.RegisterFiremode(tab,"models/weapons/w_slam.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_slam.mdl")
 
 --[[==============================================================================================
 	--Proximity & Tripmine screen adjust
 ==============================================================================================]]--
 
 if CLIENT then
-	hook.Add("ScavScreenDrawOverrideIdle","ScavScreenProxTripMine",function(self)
+	hook.Add("ScavScreenDrawOverrideIdle", "ScavScreenProxTripMine", function(self)
 
 		if self:GetCurrentItem() == nil or self:GetCurrentItem():GetFiremodeInfo() == nil or 
 		(self:GetCurrentItem():GetFiremodeInfo().Name ~= "#scav.scavcan.proxmine" and
@@ -969,21 +967,21 @@ if CLIENT then
 		draw.NoTexture()
 		--draw empty slots
 		for i = 1, 6 do
-			surface.DrawCircle(16+32*i,80,13,color_black)
-			surface.DrawCircle(16+32*i,80,12,color_black)
-			surface.DrawCircle(16+32*i,80,11,color_black)
+			surface.DrawCircle(16 + 32 * i, 80, 13, color_black)
+			surface.DrawCircle(16 + 32 * i, 80, 12, color_black)
+			surface.DrawCircle(16 + 32 * i, 80, 11, color_black)
 		end
 		--draw filled
 		local owner = self:GetOwner()
 		if not IsValid(owner) then return end
 		local splodes = 0
 		--scav_tripmine, scav_proximity_mine
-		for _, v in ipairs(ents.FindByClass("scav_*mine")) do
+		for _, v in ipairs(ents.FindByClass("scav_ * mine")) do
 			if not IsValid(v) then continue end
 			if v.Owner == owner then splodes = splodes + 1 end
 		end
 			local rad = 8
-		for i = 1, splodes do draw.RoundedBox(rad,16+32*i-rad,80-rad,rad*2,rad*2,color_black) end
+		for i = 1, splodes do draw.RoundedBox(rad, 16 + 32 * i-rad, 80-rad, rad * 2, rad * 2, color_black) end
 		return true
 	end)
 end
@@ -1012,24 +1010,24 @@ end
 				--[[Boot]]["models/items/powerup_speed.mdl"] = 6,
 				["models/props_junk/shoe001a.mdl"] = 6,
 			}
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			if SERVER then
-				tab.FireFunc = function(self,item)
+				tab.FireFunc = function(self, item)
 					local tab = ScavData.models[self.inv.items[1].ammo]
 					local statfunction = {
 						[0] = function(self)
-							self.Owner:InflictStatusEffect("Shock",30,40)
-							self.Owner:InflictStatusEffect("Speed",20,3)
+							self.Owner:InflictStatusEffect("Shock", 30, 40)
+							self.Owner:InflictStatusEffect("Speed", 20, 3)
 							self.Owner:EmitSound("npc/scanner/scanner_nearmiss1.wav")
 						end,
 						[1] = function(self)
-							self.Owner:InflictStatusEffect("Shock",30,40)
-							self.Owner:InflictStatusEffect("Speed",20,3)
-							if IsMounted(440) then --TF2
+							self.Owner:InflictStatusEffect("Shock", 30, 40)
+							self.Owner:InflictStatusEffect("Speed", 20, 3)
+							if TF2 then
 								self.Owner:EmitSound("player/pl_scout_dodge_can_open.wav")
 								self.Owner:EmitSound("player/pl_scout_dodge_can_drink_fast.wav")
 							else
-								self.Owner:EmitSound("hl1/fvox/hiss.wav",75,150)
+								self.Owner:EmitSound("hl1/fvox/hiss.wav", 75, 150)
 								self.Owner:EmitSound("ambient/levels/canals/toxic_slime_gurgle4.wav")
 							end
 						end,
@@ -1039,100 +1037,100 @@ end
 								tab.Cooldown = 0.2
 								return false
 							else
-								self.Owner:InflictStatusEffect("Shock",30,40)
-								self.Owner:InflictStatusEffect("Speed",20,3)
-								if IsMounted(550) then --L4D2
+								self.Owner:InflictStatusEffect("Shock", 30, 40)
+								self.Owner:InflictStatusEffect("Speed", 20, 3)
+								if L4D2 then
 									self.Owner:EmitSound("weapons/adrenaline/adrenaline_cap_off.wav")
 								else
-									self.Owner:EmitSound("hl1/fvox/hiss.wav",75,180)
+									self.Owner:EmitSound("hl1/fvox/hiss.wav", 75, 180)
 								end
-								self.Owner:InflictStatusEffect("TemporaryHealth",25,1)
+								self.Owner:InflictStatusEffect("TemporaryHealth", 25, 1)
 							end
 						end,
 						[3] = function(self)
-							self.Owner:InflictStatusEffect("Shock",2,40)
-							self.Owner:InflictStatusEffect("Speed",5,3)
+							self.Owner:InflictStatusEffect("Shock", 2, 40)
+							self.Owner:InflictStatusEffect("Speed", 5, 3)
 							self.Owner:EmitSound("weapons/discipline_device_impact_01.wav")
 							self.Owner:EmitSound("weapons/discipline_device_power_up.wav")
 						end,
 						[4] = function(self)
-							self.Owner:InflictStatusEffect("Shock",30,40)
-							self.Owner:InflictStatusEffect("Speed",20,3)
+							self.Owner:InflictStatusEffect("Shock", 30, 40)
+							self.Owner:InflictStatusEffect("Speed", 20, 3)
 							self.Owner:EmitSound("items/powerup_pickup_agility.wav")
 						end,
 						[5] = function(self)
-							self.Owner:InflictStatusEffect("Shock",30,40)
-							self.Owner:InflictStatusEffect("Speed",20,3)
+							self.Owner:InflictStatusEffect("Shock", 30, 40)
+							self.Owner:InflictStatusEffect("Speed", 20, 3)
 							self.Owner:EmitSound("items/powerup_pickup_haste.wav")
 						end,
 						[6] = function(self)
-							self.Owner:InflictStatusEffect("Speed",20,3)
-							self.Owner:EmitSound("npc/metropolice/gear"..math.random(1,6)..".wav")
+							self.Owner:InflictStatusEffect("Speed", 20, 3)
+							self.Owner:EmitSound("npc/metropolice/gear" .. math.random(1, 6) .. ".wav")
 						end
 					}
 					statfunction[tab.Identify[item.ammo]](self)
-					return self:TakeSubammo(item,1)
+					return self:TakeSubammo(item, 1)
 				end
 				--CSS
-				ScavData.CollectFuncs["models/props/cs_office/trash_can.mdl"] = function(self,ent)
-					return {{"models/props/cs_office/trash_can_p7.mdl",1,ent:GetSkin(),1},
-							{"models/props/cs_office/trash_can_p8.mdl",1,ent:GetSkin(),1},
-							{"models/props/cs_office/trash_can_p.mdl",SCAV_SHORT_MAX,ent:GetSkin(),1}}
+				ScavData.CollectFuncs["models/props/cs_office/trash_can.mdl"] = function(self, ent)
+					return {{"models/props/cs_office/trash_can_p7.mdl", 1, ent:GetSkin(), 1},
+							{"models/props/cs_office/trash_can_p8.mdl", 1, ent:GetSkin(), 1},
+							{"models/props/cs_office/trash_can_p.mdl", SCAV_SHORT_MAX, ent:GetSkin(), 1}}
 				end
 				--TF2
-				ScavData.CollectFuncs["models/weapons/c_models/c_energy_drink/c_energy_drink.mdl"] = function(self,ent) return {{(self.christmas and ent:GetSkin() < 2) and "models/weapons/c_models/c_xms_energy_drink/c_xms_energy_drink.mdl" or ScavData.FormatModelname(ent:GetModel()),1,ent:GetSkin()}} end
+				ScavData.CollectFuncs["models/weapons/c_models/c_energy_drink/c_energy_drink.mdl"] = function(self, ent) return {{(self.christmas and ent:GetSkin() < 2) and "models/weapons/c_models/c_xms_energy_drink/c_xms_energy_drink.mdl" or ScavData.FormatModelname(ent:GetModel()), 1, ent:GetSkin()}} end
 			end
 			tab.Cooldown = 0.5
-		ScavData.RegisterFiremode(tab,"models/items/powerup_speed.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_syringeneedle001a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_energydrinkcan001a.mdl")
-		ScavData.RegisterFiremode(tab,"models/mechanics/various/211.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_coffeemug001a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_plasticbottle003a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/shoe001a.mdl")
+		ScavData.RegisterFiremode(tab, "models/items/powerup_speed.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/garbage_syringeneedle001a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/garbage_energydrinkcan001a.mdl")
+		ScavData.RegisterFiremode(tab, "models/mechanics/various/211.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/garbage_coffeemug001a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/garbage_plasticbottle003a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/shoe001a.mdl")
 		--TF2
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_energy_drink/c_energy_drink.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_xms_energy_drink/c_xms_energy_drink.mdl")
-		ScavData.RegisterFiremode(tab,"models/w_models/weapons/w_eq_adrenaline.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_riding_crop/c_riding_crop.mdl")
-		ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_riding_crop/c_riding_crop.mdl")
-		ScavData.RegisterFiremode(tab,"models/pickups/pickup_powerup_agility.mdl")
-		ScavData.RegisterFiremode(tab,"models/pickups/pickup_powerup_haste.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_2fort/coffeemachine.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_2fort/coffeepot.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_2fort/thermos.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_energy_drink/c_energy_drink.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_xms_energy_drink/c_xms_energy_drink.mdl")
+		ScavData.RegisterFiremode(tab, "models/w_models/weapons/w_eq_adrenaline.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_riding_crop/c_riding_crop.mdl")
+		ScavData.RegisterFiremode(tab, "models/workshop/weapons/c_models/c_riding_crop/c_riding_crop.mdl")
+		ScavData.RegisterFiremode(tab, "models/pickups/pickup_powerup_agility.mdl")
+		ScavData.RegisterFiremode(tab, "models/pickups/pickup_powerup_haste.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_2fort/coffeemachine.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_2fort/coffeepot.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_2fort/thermos.mdl")
 		--CSS
-		ScavData.RegisterFiremode(tab,"models/props/cs_office/trash_can_p7.mdl")
-		ScavData.RegisterFiremode(tab,"models/props/cs_office/trash_can_p8.mdl")
-		ScavData.RegisterFiremode(tab,"models/props/cs_office/coffee_mug.mdl")
-		ScavData.RegisterFiremode(tab,"models/props/cs_office/coffee_mug2.mdl")
-		ScavData.RegisterFiremode(tab,"models/props/cs_office/coffee_mug3.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/cs_office/trash_can_p7.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/cs_office/trash_can_p8.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/cs_office/coffee_mug.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/cs_office/coffee_mug2.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/cs_office/coffee_mug3.mdl")
 		--L4D/2
-		ScavData.RegisterFiremode(tab,"models/props_interiors/coffee_maker.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_unique/coffeemachine01.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_coffeecup01a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_coffeecup01a_fullsheet.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_coffeemug001a_fullsheet.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_unique/coffeepot01.mdl")
-		ScavData.RegisterFiremode(tab,"models/w_models/weapons/w_cola.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_fairgrounds/garbage_drinks_container.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_sodacup01a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_sodacup01a_fullsheet.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_interiors/coffee_maker.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_unique/coffeemachine01.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/garbage_coffeecup01a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/garbage_coffeecup01a_fullsheet.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/garbage_coffeemug001a_fullsheet.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_unique/coffeepot01.mdl")
+		ScavData.RegisterFiremode(tab, "models/w_models/weapons/w_cola.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_fairgrounds/garbage_drinks_container.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/garbage_sodacup01a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/garbage_sodacup01a_fullsheet.mdl")
 		--Portal/2
-		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_coffeemug001a_forevergibs.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_office/coffee_mug_01.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_office/coffee_mug_02.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_office/coffee_mug_03.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_office/coffee_mug_04.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_office/coffee_mug_05.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_office/coffee_mug_06.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_office/coffee_mug_07.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_office/coffee_mug_08.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_office/coffee_mug_09.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_office/coffee_mug_10.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_office/coffee_mug_11.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_office/coffee_mug_12.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_office/coffee_mug_17.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/garbage_coffeemug001a_forevergibs.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_office/coffee_mug_01.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_office/coffee_mug_02.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_office/coffee_mug_03.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_office/coffee_mug_04.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_office/coffee_mug_05.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_office/coffee_mug_06.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_office/coffee_mug_07.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_office/coffee_mug_08.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_office/coffee_mug_09.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_office/coffee_mug_10.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_office/coffee_mug_11.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_office/coffee_mug_12.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_office/coffee_mug_17.mdl")
 		
 --[[==============================================================================================
 	--Cloaking Watch
@@ -1140,11 +1138,11 @@ end
 		
 		local function cloakcheck(self)
 			if self.Cloak and (self.Cloak.subammo > 0) then
-				self.Cloak:SetSubammo(math.max(self.Cloak:GetSubammo()-1,0))
+				self.Cloak:SetSubammo(math.max(self.Cloak:GetSubammo() - 1, 0))
 				timer.Simple(1, function() cloakcheck(self) end)
 			else
 				if SERVER and self.Cloak then
-					self.Owner:InflictStatusEffect("Cloak",-self.Cloak.subammo,1)
+					self.Owner:InflictStatusEffect("Cloak", -self.Cloak.subammo, 1)
 					self:RemoveItemValue(self.Cloak)
 				end
 				self.Cloak = false
@@ -1157,30 +1155,30 @@ end
 			tab.Level = 7
 			tab.MaxAmmo = 90
 			local identify = {} --all cloaks are the same
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			if SERVER then
-				tab.FireFunc = function(self,item)
+				tab.FireFunc = function(self, item)
 					if self.Cloak and (self.Cloak ~= item) then
-						local leftover = item.subammo-self.Cloak.subammo
+						local leftover = item.subammo - self.Cloak.subammo
 						self.Cloak = item
-						self.Owner:InflictStatusEffect("Cloak",leftover,1)
+						self.Owner:InflictStatusEffect("Cloak", leftover, 1)
 					elseif not self.Cloak then
-						self.Owner:InflictStatusEffect("Cloak",item.subammo,1)
+						self.Owner:InflictStatusEffect("Cloak", item.subammo, 1)
 						self.Cloak = item
 						timer.Simple(1, function() cloakcheck(self) end)
 					else
-						self.Owner:InflictStatusEffect("Cloak",-self.Cloak.subammo,1)
+						self.Owner:InflictStatusEffect("Cloak", -self.Cloak.subammo, 1)
 						self.Cloak = false
 					end
 				end
 					
-				function tab.PostRemove(self,item)
+				function tab.PostRemove(self, item)
 					if item == self.Cloak then
-						self.Owner:InflictStatusEffect("Cloak",-self.Cloak.subammo,1)
+						self.Owner:InflictStatusEffect("Cloak", -self.Cloak.subammo, 1)
 						self.Cloak = false
 					end
 				end
-				ScavData.CollectFuncs["models/maxofs2d/hover_basic.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),30,0}} end --30 seconds of cloak
+				ScavData.CollectFuncs["models/maxofs2d/hover_basic.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 30, 0}} end --30 seconds of cloak
 				ScavData.CollectFuncs["models/props_junk/metal_paintcan001a.mdl"] = ScavData.CollectFuncs["models/maxofs2d/hover_basic.mdl"]
 				ScavData.CollectFuncs["models/props_junk/metal_paintcan001b.mdl"] = ScavData.CollectFuncs["models/maxofs2d/hover_basic.mdl"]
 				--CSS
@@ -1196,12 +1194,12 @@ end
 				ScavData.CollectFuncs["models/props_debris/paintbucket01.mdl"] = ScavData.CollectFuncs["models/props/cs_militia/paintbucket01.mdl"]
 				ScavData.CollectFuncs["models/props_debris/paintbucket01_static.mdl"] = ScavData.CollectFuncs["models/props/cs_militia/paintbucket01.mdl"]
 				--HL:S
-				ScavData.CollectFuncs["models/hassassin.mdl"] = function(self,ent) --30 seconds of cloak + 2 silenced pistols from a HL1 Assassin
-					return {{ScavData.FormatModelname(ent:GetModel()),30,0},
-							{"models/w_silencer.mdl",34,0}}
+				ScavData.CollectFuncs["models/hassassin.mdl"] = function(self, ent) --30 seconds of cloak + 2 silenced pistols from a HL1 Assassin
+					return {{ScavData.FormatModelname(ent:GetModel()), 30, 0},
+							{"models/w_silencer.mdl", 34, 0}}
 				end
 			else
-				tab.FireFunc = function(self,item)
+				tab.FireFunc = function(self, item)
 					if self.Cloak and (self.Cloak ~= item) then
 						self.Cloak = item
 					elseif not self.Cloak then
@@ -1216,23 +1214,23 @@ end
 			
 
 			tab.Cooldown = 1
-		ScavData.RegisterFiremode(tab,"models/maxofs2d/hover_basic.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/metal_paintcan001a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/metal_paintcan001b.mdl")
+		ScavData.RegisterFiremode(tab, "models/maxofs2d/hover_basic.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/metal_paintcan001a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/metal_paintcan001b.mdl")
 		--CSS
-		ScavData.RegisterFiremode(tab,"models/props/cs_militia/paintbucket01.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/cs_militia/paintbucket01.mdl")
 		--TF2
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_spy_watch.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_farm/paint_can001.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_farm/paint_can002.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_spy_watch.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_farm/paint_can001.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_farm/paint_can002.mdl")
 		--L4D/2
-		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_spraypaintcan01a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_spraypaintcan01a_fullsheet.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/metal_paintcan001b_static.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_debris/paintbucket01.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_debris/paintbucket01_static.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/garbage_spraypaintcan01a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/garbage_spraypaintcan01a_fullsheet.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/metal_paintcan001b_static.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_debris/paintbucket01.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_debris/paintbucket01_static.mdl")
 		--HL:S
-		ScavData.RegisterFiremode(tab,"models/hassassin.mdl")
+		ScavData.RegisterFiremode(tab, "models/hassassin.mdl")
 		
 	
 
@@ -1246,53 +1244,53 @@ end
 			tab.Level = 7
 			tab.MaxAmmo = 6
 			local identify = {} --all keys are the same
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			if SERVER then
-				tab.FireFunc = function(self,item)
+				tab.FireFunc = function(self, item)
 					--local tr = self.Owner:GetEyeTraceNoCursor()
 					local tracep = {}
 						tracep.start = self.Owner:GetShootPos()
-						tracep.endpos = self.Owner:GetShootPos()+self:GetAimVector()*48
+						tracep.endpos = self.Owner:GetShootPos() + self:GetAimVector() * 48
 						tracep.filter = self.Owner
 						tracep.mask = MASK_SOLID --MASK_SOLID_BRUSHONLY
 						local tr = util.TraceHull(tracep)
 						--print(tr.Entity)
-					if ((tr.HitPos-tr.StartPos):Length() > 48) or not IsValid(tr.Entity) or not (string.find(tr.Entity:GetClass(),"_door",0,true)) then
+					if ((tr.HitPos - tr.StartPos):Length() > 48) or not IsValid(tr.Entity) or not (string.find(tr.Entity:GetClass(), "_door", 0, true)) then
 						self.Owner:EmitSound("buttons/button11.wav")
 						return false
 					end
 					if tr.Entity:GetInternalVariable("m_bLocked") or --door is locked
-						(bit.band(tr.Entity:GetEFlags(),256) == 0 and bit.band(tr.Entity:GetEFlags(),1024) == 0 and string.find(tr.Entity:GetClass(),"func_door",0)) or --neither Use nor Touch Opens (func_door/_rotating)
-						(bit.band(tr.Entity:GetEFlags(),32768) ~= 0 and tr.Entity:GetClass() == "prop_door_rotating") then --Use doesn't open (prop_door_rotating)
-						tr.Entity:Fire("Unlock",1,0)
+						(bit.band(tr.Entity:GetEFlags(), 256) == 0 and bit.band(tr.Entity:GetEFlags(), 1024) == 0 and string.find(tr.Entity:GetClass(), "func_door", 0)) or --neither Use nor Touch Opens (func_door/_rotating)
+						(bit.band(tr.Entity:GetEFlags(), 32768) ~= 0 and tr.Entity:GetClass() == "prop_door_rotating") then --Use doesn't open (prop_door_rotating)
+						tr.Entity:Fire("Unlock", 1, 0)
 						if tr.Entity:GetClass() == "prop_door_rotating" and tr.Entity:GetInternalVariable("m_eDoorState") == 0 then --don't smack ourself in the face with the door if we can help it
-							tr.Entity:Fire("OpenAwayFrom","!activator",0.01,self.Owner)
+							tr.Entity:Fire("OpenAwayFrom", "!activator", 0.01, self.Owner)
 						else
-							tr.Entity:Fire("Toggle",1,0.01)
+							tr.Entity:Fire("Toggle", 1, 0.01)
 						end
-						return self:TakeSubammo(item,1)
+						return self:TakeSubammo(item, 1)
 					else
 						if tr.Entity:GetClass() == "prop_door_rotating" and tr.Entity:GetInternalVariable("m_eDoorState") == 0 then
-							tr.Entity:Fire("OpenAwayFrom","!activator",0,self.Owner)
+							tr.Entity:Fire("OpenAwayFrom", "!activator", 0, self.Owner)
 						else
-							tr.Entity:Fire("Toggle",1,0)
+							tr.Entity:Fire("Toggle", 1, 0)
 						end
 						return false
 					end
 				end
-				-- ScavData.CollectFuncs["models/lostcoast/fisherman/fisherman.mdl"] = function(self,ent) --effect
-				-- 	return {{ScavData.FormatModelname("models/lostcoast/fisherman/keys.mdl"),1,0},
-				-- 			{ScavData.FormatModelname("models/lostcoast/fisherman/harpoon.mdl"),1,0)}}
+				-- ScavData.CollectFuncs["models/lostcoast/fisherman/fisherman.mdl"] = function(self, ent) --effect
+				-- 	return {{ScavData.FormatModelname("models/lostcoast/fisherman/keys.mdl"), 1, 0},
+				-- 			{ScavData.FormatModelname("models/lostcoast/fisherman/harpoon.mdl"), 1, 0)}}
 				-- end
 			end
 			tab.Cooldown = 2
-		ScavData.RegisterFiremode(tab,"models/props_lab/keypad.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_lab/keypad.mdl")
 		--Lost Coast
-		ScavData.RegisterFiremode(tab,"models/lostcoast/fisherman/keys.mdl")
+		ScavData.RegisterFiremode(tab, "models/lostcoast/fisherman/keys.mdl")
 		--L4D/2
-		ScavData.RegisterFiremode(tab,"models/props_downtown/keycard_reader.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_downtown/keycard_reader.mdl")
 		--Wiremod
-		ScavData.RegisterFiremode(tab,"models/bull/buttons/key_switch.mdl")
+		ScavData.RegisterFiremode(tab, "models/bull/buttons/key_switch.mdl")
 
 --[[==============================================================================================
 	--Remote
@@ -1313,14 +1311,14 @@ end
 				--[[keyboard]]["models/props_c17/computer01_keyboard.mdl"] = 1,
 				["models/props/cs_office/computer_keyboard.mdl"] = 1,
 			}
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			local tracep = {}
-			tracep.mins = Vector(-2,-2,-2)
-			tracep.maxs = Vector(2,2,2)
+			tracep.mins = Vector(-2, -2, -2)
+			tracep.maxs = Vector(2, 2, 2)
 			local interactions = {}
 			interactions["gmod_hoverball"] = {
 				["HackTime"]=2,
-				["Action"]= function(self,ent)
+				["Action"]= function(self, ent)
 					if not ent.oldstrength then
 						ent.oldstrength = ent.strength
 						ent.strength = 0
@@ -1332,75 +1330,75 @@ end
 				}
 			interactions["scav_c4"] = {
 				["HackTime"]=5,
-				["Action"]= function(self,ent)
+				["Action"]= function(self, ent)
 					ent:Disarm()
 				end
 				}
 			interactions["scav_tripmine"] = {
 				["HackTime"]=5,
-				["Action"]= function(self,ent)
+				["Action"]= function(self, ent)
 					ent:SetArmed(not ent:IsArmed())
 				end
 				}
 			interactions["gmod_thruster"] = {
 				["HackTime"]=6,
-				["Action"]= function(self,ent)
+				["Action"]= function(self, ent)
 					ent:Switch(not ent:IsOn())
 				end
 				}
 			interactions["gmod_turret"] = {
 				["HackTime"]=6,
-				["Action"]= function(self,ent)
+				["Action"]= function(self, ent)
 					ent:SetOn(not ent:GetOn())
 				end
 				}
 			interactions["gmod_emitter"] = interactions["gmod_turret"]
 			interactions["gmod_dynamite"] = {
 				["HackTime"]=7,
-				["Action"]= function(self,ent)
+				["Action"]= function(self, ent)
 					ent:Explode()
 				end
 				}
 			interactions["gmod_wheel"] = {
 				["HackTime"]=3,
-				["Action"]= function(self,ent)
+				["Action"]= function(self, ent)
 					ent:Reverse()
 				end
 				}
 			interactions["npc_rollermine"] = {
 				["HackTime"]=2,
-				["Action"]= function(self,ent)
+				["Action"]= function(self, ent)
 					local hacked = not ent:GetInternalVariable("m_bHackedByAlyx")
 					ent:SetSaveValue("m_bHackedByAlyx", hacked)
-					ent:Fire("Skin",hacked and 1 or 0,0) --for whatever reason GMod doesn't have a rollermine model with skins in it (and the hack status doesn't automatically apply it) but in case the player has a fixed model, make it appear correctly
-					ent:Fire("InteractivePowerDown",nil,15,self.Owner,self)
+					ent:Fire("Skin", hacked and 1 or 0, 0) --for whatever reason GMod doesn't have a rollermine model with skins in it (and the hack status doesn't automatically apply it) but in case the player has a fixed model, make it appear correctly
+					ent:Fire("InteractivePowerDown", nil, 15, self.Owner, self)
 				end
 				}
 			interactions["npc_turret_floor"] = {
 				["HackTime"]=2,
-				["Action"]= function(self,ent)
-					ent:Fire("SelfDestruct",nil,0)
+				["Action"]= function(self, ent)
+					ent:Fire("SelfDestruct", nil, 0)
 				end
 				}
 			interactions["npc_manhack"] = {
 				["HackTime"]=1,
-				["Action"]= function(self,ent)
-					ent:Fire("InteractivePowerDown",nil,0)
+				["Action"]= function(self, ent)
+					ent:Fire("InteractivePowerDown", nil, 0)
 				end
 				}
 			interactions["prop_vehicle_jeep"] = {
 				["HackTime"]=2,
-				["Action"]= function(self,ent)
-					ent:Fire(ent.HackedOff and "TurnOn" or "TurnOff",nil,0)
+				["Action"]= function(self, ent)
+					ent:Fire(ent.HackedOff and "TurnOn" or "TurnOff", nil, 0)
 					ent.HackedOff = not ent.HackedOff
 				end
 				}
 			
 			interactions["prop_vehicle_jeep_old"] = interactions["prop_vehicle_jeep"]
 			interactions["prop_vehicle_airboat"] = interactions["prop_vehicle_jeep"]
-			function tab.ChargeAttack(self,item)
-				self.HackingProgress = (self.HackingProgress or 0)+0.05
-				self.BarrelRotation = self.BarrelRotation+math.random(-17,17)
+			function tab.ChargeAttack(self, item)
+				self.HackingProgress = (self.HackingProgress or 0) + 0.05
+				self.BarrelRotation = self.BarrelRotation + math.random(-17, 17)
 				if SERVER then
 					local dist = 9999999
 					if IsValid(self.HackTarget) then
@@ -1421,9 +1419,9 @@ end
 							success = true
 							local interaction = interactions[string.lower(self.HackTarget:GetClass())]
 							if interaction then
-								interaction.Action(self,self.HackTarget)
+								interaction.Action(self, self.HackTarget)
 							else
-								self.HackTarget:Fire("Use",nil,0)
+								self.HackTarget:Fire("Use", nil, 0)
 							end
 						else
 							self:EmitSound(tab.Identify[item.ammo] == 0 and "buttons/combine_button_locked.wav" or "hl1/fvox/fuzz.wav")
@@ -1437,7 +1435,7 @@ end
 						return 1
 					end
 				else
-					net.Receive("scav_hackdone",function()
+					net.Receive("scav_hackdone", function()
 						local wep = net.ReadEntity()
 						local success = net.ReadBool()
 						if IsValid(wep) then
@@ -1450,9 +1448,9 @@ end
 				end
 				return 0.05
 			end
-			function tab.FireFunc(self,item)
+			function tab.FireFunc(self, item)
 				tracep.start = self.Owner:GetShootPos()
-				tracep.endpos = tracep.start+self.Owner:GetAimVector()*1000
+				tracep.endpos = tracep.start + self.Owner:GetAimVector() * 1000
 				tracep.filter = self.Owner
 				local tr = util.TraceHull(tracep)
 				if IsValid(tr.Entity) then
@@ -1473,15 +1471,15 @@ end
 					--	self.ef_wires:Setendent(self.HackTarget)
 					--end
 				end
-				self:SetChargeAttack(tab.ChargeAttack,item)
+				self:SetChargeAttack(tab.ChargeAttack, item)
 				return false
 			end
 			if SERVER then
 				ScavData.CollectFuncs["models/props_c17/computer01_keyboard.mdl"] = ScavData.GiveOneOfItemInf
 				ScavData.CollectFuncs["models/alyx_emptool_prop.mdl"] = ScavData.GiveOneOfItemInf
-				ScavData.CollectFuncs["models/alyx.mdl"] = function(self,ent)
-					return {{ScavData.FormatModelname("models/alyx_emptool_prop.mdl"),SCAV_SHORT_MAX,0},
-							{ScavData.FormatModelname("models/weapons/w_alyx_gun.mdl"),30,0}}
+				ScavData.CollectFuncs["models/alyx.mdl"] = function(self, ent)
+					return {{ScavData.FormatModelname("models/alyx_emptool_prop.mdl"), SCAV_SHORT_MAX, 0},
+							{ScavData.FormatModelname("models/weapons/w_alyx_gun.mdl"), 30, 0}}
 				end
 				ScavData.CollectFuncs["models/alyx_interior.mdl"] = ScavData.CollectFuncs["models/alyx.mdl"]
 				ScavData.CollectFuncs["models/alyx_ep2.mdl"] = ScavData.CollectFuncs["models/alyx.mdl"]
@@ -1493,7 +1491,7 @@ end
 				ScavData.CollectFuncs["models/props/cs_office/projector_remote.mdl"] = ScavData.GiveOneOfItemInf
 				ScavData.CollectFuncs["models/weapons/w_defuser.mdl"] = ScavData.GiveOneOfItemInf
 				--TF2
-				ScavData.CollectFuncs["models/weapons/w_models/w_wrangler.mdl"] = function(self,ent) return {{self.christmas and "models/weapons/c_models/c_wrangler_xmas.mdl" or ScavData.FormatModelname(ent:GetModel()),SCAV_SHORT_MAX,ent:GetSkin(),1}} end
+				ScavData.CollectFuncs["models/weapons/w_models/w_wrangler.mdl"] = function(self, ent) return {{self.christmas and "models/weapons/c_models/c_wrangler_xmas.mdl" or ScavData.FormatModelname(ent:GetModel()), SCAV_SHORT_MAX, ent:GetSkin(), 1}} end
 				ScavData.CollectFuncs["models/weapons/c_models/c_wrangler.mdl"] = ScavData.CollectFuncs["models/weapons/w_models/w_wrangler.mdl"]
 				ScavData.CollectFuncs["models/weapons/c_models/c_wrangler_xmas.mdl"] = ScavData.GiveOneOfItemInf
 				ScavData.CollectFuncs["models/workshop/weapons/c_models/c_invasion_wrangler/c_invasion_wrangler.mdl"] = ScavData.GiveOneOfItemInf
@@ -1508,29 +1506,29 @@ end
 				ScavData.CollectFuncs["models/props/utilities/satellite_dish001a.mdl"] = ScavData.GiveOneOfItemInf
 				ScavData.CollectFuncs["models/props/utilities/satellite_dish002a.mdl"] = ScavData.GiveOneOfItemInf
 			end
-		ScavData.RegisterFiremode(tab,"models/props_c17/computer01_keyboard.mdl")
-		ScavData.RegisterFiremode(tab,"models/alyx_emptool_prop.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_rooftop/roof_dish001.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_rooftop/satellitedish02.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_c17/computer01_keyboard.mdl")
+		ScavData.RegisterFiremode(tab, "models/alyx_emptool_prop.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_rooftop/roof_dish001.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_rooftop/satellitedish02.mdl")
 		--CSS
-		ScavData.RegisterFiremode(tab,"models/props/cs_office/computer_keyboard.mdl")
-		ScavData.RegisterFiremode(tab,"models/props/cs_office/projector_remote.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/w_defuser.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/cs_office/computer_keyboard.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/cs_office/projector_remote.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_defuser.mdl")
 		--TF2
-		ScavData.RegisterFiremode(tab,"models/weapons/w_models/w_wrangler.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_wrangler.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_wrangler_xmas.mdl")
-		ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_invasion_wrangler/c_invasion_wrangler.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/w_models/w_builder.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/w_models/w_pda_engineer.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_spytech/satellite_dish001.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_powerhouse/emergency_launch_button.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_models/w_wrangler.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_wrangler.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_wrangler_xmas.mdl")
+		ScavData.RegisterFiremode(tab, "models/workshop/weapons/c_models/c_invasion_wrangler/c_invasion_wrangler.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_models/w_builder.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_models/w_pda_engineer.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_spytech/satellite_dish001.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_powerhouse/emergency_launch_button.mdl")
 		--L4D/2
-		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_remotecontrol01a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_rooftop/satellitedish_large01.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/garbage_remotecontrol01a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_rooftop/satellitedish_large01.mdl")
 		--ASW
-		ScavData.RegisterFiremode(tab,"models/props/utilities/satellite_dish001a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props/utilities/satellite_dish002a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/utilities/satellite_dish001a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/utilities/satellite_dish002a.mdl")
 	end
 		
 		
@@ -1545,34 +1543,34 @@ end
 			tab.Level = 4
 			tab.MaxAmmo = 150
 			local identify = {} --all nails are the same
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			if SERVER then
-				tab.FireFunc = function(self,item)
+				tab.FireFunc = function(self, item)
 					local proj = self:CreateEnt("scav_projectile_impaler")
 					proj.Owner = self.Owner
 					proj:SetOwner(self.Owner)
 					proj:SetPos(self:GetProjectileShootPos())
 					local ang = self.Owner:EyeAngles()
-					ang:RotateAroundAxis(self.Owner:GetAimVector(),90)
+					ang:RotateAroundAxis(self.Owner:GetAimVector(), 90)
 					proj:SetAngles(ang)
 					proj:SetModel(item.ammo)
 					proj:SetSkin(item.data)
 					proj.DmgAmt = 12
 					proj.NoPin = true
 					proj.Drop = vector_origin
-					proj.Trail = util.SpriteTrail(proj,0,Color(255,255,255,255),true,1,0,0.1,0.25,"trails/smoke.vmt")
+					proj.Trail = util.SpriteTrail(proj, 0, Color(255, 255, 255, 255), true, 1, 0, 0.1, 0.25, "trails/smoke.vmt")
 					proj:Spawn()
 					self.Owner:SetAnimation(PLAYER_ATTACK1)
-					self.Owner:EmitSound("physics/metal/weapon_impact_hard3.wav",75,70,1)
-					return self:TakeSubammo(item,1)
+					self.Owner:EmitSound("physics/metal/weapon_impact_hard3.wav", 75, 70, 1)
+					return self:TakeSubammo(item, 1)
 				end
-				ScavData.CollectFuncs["models/props_lab/cactus.mdl"] = function(self,ent) return {{"models/scav/nail.mdl",15,ent:GetSkin()}} end
+				ScavData.CollectFuncs["models/props_lab/cactus.mdl"] = function(self, ent) return {{"models/scav/nail.mdl", 15, ent:GetSkin()}} end
 				--TF2
-				ScavData.CollectFuncs["models/props_2fort/nail001.mdl"] = function(self,ent) return {{"models/scav/nail.mdl",1,ent:GetSkin()}} end
+				ScavData.CollectFuncs["models/props_2fort/nail001.mdl"] = function(self, ent) return {{"models/scav/nail.mdl", 1, ent:GetSkin()}} end
 				ScavData.CollectFuncs["models/props_2fort/nail002.mdl"] = ScavData.CollectFuncs["models/props_2fort/nail001.mdl"]
-				ScavData.CollectFuncs["models/props_foliage/cactus01.mdl"] = function(self,ent) return {{"models/scav/nail.mdl",30,ent:GetSkin()}} end
-				ScavData.CollectFuncs["models/weapons/w_models/w_nailgun.mdl"] = function(self,ent) return {{"models/scav/nail.mdl",50,ent:GetSkin()}} end
-				ScavData.CollectFuncs["models/weapons/c_models/c_boston_basher/c_boston_basher.mdl"] = function(self,ent) return {{"models/scav/nail.mdl",21,ent:GetSkin()}} end
+				ScavData.CollectFuncs["models/props_foliage/cactus01.mdl"] = function(self, ent) return {{"models/scav/nail.mdl", 30, ent:GetSkin()}} end
+				ScavData.CollectFuncs["models/weapons/w_models/w_nailgun.mdl"] = function(self, ent) return {{"models/scav/nail.mdl", 50, ent:GetSkin()}} end
+				ScavData.CollectFuncs["models/weapons/c_models/c_boston_basher/c_boston_basher.mdl"] = function(self, ent) return {{"models/scav/nail.mdl", 21, ent:GetSkin()}} end
 				ScavData.CollectFuncs["models/workshop/weapons/c_models/c_boston_basher/c_boston_basher.mdl"] = ScavData.CollectFuncs["models/weapons/c_models/c_boston_basher/c_boston_basher.mdl"]
 				--FoF
 				ScavData.CollectFuncs["models/elpaso/cactus1.mdl"] = ScavData.CollectFuncs["models/props_foliage/cactus01.mdl"]
@@ -1580,8 +1578,8 @@ end
 				ScavData.CollectFuncs["models/elpaso/cactus3.mdl"] = ScavData.CollectFuncs["models/props_foliage/cactus01.mdl"]
 			end
 			tab.Cooldown = 0.075
-		ScavData.RegisterFiremode(tab,"models/scav/nail.mdl")
-		ScavData.RegisterFiremode(tab,"models/scav/nailsmall.mdl")
+		ScavData.RegisterFiremode(tab, "models/scav/nail.mdl")
+		ScavData.RegisterFiremode(tab, "models/scav/nailsmall.mdl")
 		
 --[[==============================================================================================
 	--Shurikens
@@ -1593,10 +1591,10 @@ end
 			tab.Level = 4
 			tab.MaxAmmo = 20
 			local identify = {} --all shurikens are the same
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			if SERVER then
-				tab.FireFunc = function(self,item)
-					--self.Owner:ViewPunch(Angle(-5,math.Rand(-0.1,0.1),0))
+				tab.FireFunc = function(self, item)
+					--self.Owner:ViewPunch(Angle(-5, math.Rand(-0.1, 0.1), 0))
 					local proj = self:CreateEnt("scav_projectile_impaler")
 					proj:SetModel(item.ammo)
 					proj.Owner = self.Owner
@@ -1604,10 +1602,10 @@ end
 					proj:SetSkin(item.data)
 					proj:SetPos(self:GetProjectileShootPos())
 					local ang = self.Owner:EyeAngles()
-					ang:RotateAroundAxis(self.Owner:GetAimVector(),90)
+					ang:RotateAroundAxis(self.Owner:GetAimVector(), 90)
 					if item.ammo == "models/scav/shuriken.mdl" or
 						item.ammo == "models/weapons/scav/shuriken.mdl" then
-						proj.Trail = util.SpriteTrail(proj,0,Color(255,255,255,255),true,2,0,0.3,0.25,"trails/smoke.vmt")
+						proj.Trail = util.SpriteTrail(proj, 0, Color(255, 255, 255, 255), true, 2, 0, 0.3, 0.25, "trails/smoke.vmt")
 						proj.DmgAmt = 8
 						self.Owner:EmitSound("weapons/ar2/fire1.wav")
 					end
@@ -1616,18 +1614,18 @@ end
 					proj.Drop = vector_origin
 					proj:Spawn()
 					self.Owner:SetAnimation(PLAYER_ATTACK1)
-					return self:TakeSubammo(item,1)
+					return self:TakeSubammo(item, 1)
 				end
 				--L4D/2
-				ScavData.CollectFuncs["models/props_unique/jukebox01.mdl"] = function(self,ent) return {{"models/scav/shuriken.mdl",SCAV_SHORT_MAX,0}} end --TODO: record model
+				ScavData.CollectFuncs["models/props_unique/jukebox01.mdl"] = function(self, ent) return {{"models/scav/shuriken.mdl", SCAV_SHORT_MAX, 0}} end --TODO: record model
 				--Portal 2
-				ScavData.CollectFuncs["models/props_gameplay/laser_disc_player.mdl"] = function(self,ent) return {{"models/props_gameplay/laser_disc.mdl",SCAV_SHORT_MAX,0}} end
+				ScavData.CollectFuncs["models/props_gameplay/laser_disc_player.mdl"] = function(self, ent) return {{"models/props_gameplay/laser_disc.mdl", SCAV_SHORT_MAX, 0}} end
 			end
 			tab.Cooldown = 0.2
-		ScavData.RegisterFiremode(tab,"models/scav/shuriken.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/scav/shuriken.mdl")
+		ScavData.RegisterFiremode(tab, "models/scav/shuriken.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/scav/shuriken.mdl")
 		--Portal 2
-		ScavData.RegisterFiremode(tab,"models/props_gameplay/laser_disc.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_gameplay/laser_disc.mdl")
 		
 		
 --[[==============================================================================================
@@ -1640,60 +1638,60 @@ end
 			tab.Level = 9
 			tab.MaxAmmo = 4
 			local identify = {} --all tank shells are the same
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			PrecacheParticleSystem("scav_exp_fireball3_a")
 			if SERVER then
-				for i=3,7 do
-					util.PrecacheModel("models/props_combine/breenbust_Chunk0"..i..".mdl")
+				for i=3, 7 do
+					util.PrecacheModel("models/props_combine/breenbust_Chunk0" .. i .. ".mdl")
 				end
-				tab.FireFunc = function(self,item)
+				tab.FireFunc = function(self, item)
 					local tr = self.Owner:GetEyeTraceNoCursor()
 					local ef = EffectData()
 						ef:SetStart(self:GetPos())
 						ef:SetOrigin(tr.HitPos)
 						ef:SetEntity(self)
 						ef:SetScale(4)
-						util.Effect("ef_scav_tr2",ef,nil,true)
+						util.Effect("ef_scav_tr2", ef, nil, true)
 					self.Owner:SetAnimation(PLAYER_ATTACK1)
 					self.Owner:EmitSound("ambient/explosions/explode_1.wav")
-					self.Owner:ViewPunch(Angle(-50,math.Rand(-0.1,0.1),0))
+					self.Owner:ViewPunch(Angle(-50, math.Rand(-0.1, 0.1), 0))
 					if tr.HitSky then
-						return self:TakeSubammo(item,1)
+						return self:TakeSubammo(item, 1)
 					end
 					local ef = EffectData()
 						ef:SetOrigin(tr.HitPos)
 						ef:SetNormal(tr.HitNormal)
-						util.Effect("ef_scav_exp3",ef,nil,true)
-					util.Decal("Scorch",tr.HitPos+tr.HitNormal*8,tr.HitPos-tr.HitNormal*8)
+						util.Effect("ef_scav_exp3", ef, nil, true)
+					util.Decal("Scorch", tr.HitPos + tr.HitNormal * 8, tr.HitPos - tr.HitNormal * 8)
 					
-					util.ScreenShake(self:GetPos(),500,10,4,4000)
-					util.BlastDamage(self,self.Owner,tr.HitPos,512,250)
-					sound.Play("ambient/explosions/explode_3.wav",self:GetPos(),100,100)
-					--gamemode.Call("ScavFired",self.Owner,proj)
-					return self:TakeSubammo(item,1)
+					util.ScreenShake(self:GetPos(), 500, 10, 4, 4000)
+					util.BlastDamage(self, self.Owner, tr.HitPos, 512, 250)
+					sound.Play("ambient/explosions/explode_3.wav", self:GetPos(), 100, 100)
+					--gamemode.Call("ScavFired", self.Owner, proj)
+					return self:TakeSubammo(item, 1)
 				end
 				--CSS
-				ScavData.CollectFuncs["models/props/de_prodigy/ammo_can_01.mdl"] = function(self,ent) return {{"models/weapons/w_bullet.mdl",4,0,2}} end
-				ScavData.CollectFuncs["models/props/de_prodigy/ammo_can_02.mdl"] = function(self,ent) return {{"models/weapons/w_bullet.mdl",4,0,1}} end --4 tank shells from an ammo box
-				ScavData.CollectFuncs["models/props/de_prodigy/ammo_can_03.mdl"] = function(self,ent) return {{"models/weapons/w_bullet.mdl",4,0,3}} end
+				ScavData.CollectFuncs["models/props/de_prodigy/ammo_can_01.mdl"] = function(self, ent) return {{"models/weapons/w_bullet.mdl", 4, 0, 2}} end
+				ScavData.CollectFuncs["models/props/de_prodigy/ammo_can_02.mdl"] = function(self, ent) return {{"models/weapons/w_bullet.mdl", 4, 0, 1}} end --4 tank shells from an ammo box
+				ScavData.CollectFuncs["models/props/de_prodigy/ammo_can_03.mdl"] = function(self, ent) return {{"models/weapons/w_bullet.mdl", 4, 0, 3}} end
 			end
 			tab.Cooldown = 5
-		ScavData.RegisterFiremode(tab,"models/weapons/w_bullet.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_phx/gibs/flakgib1.mdl")
-		ScavData.RegisterFiremode(tab,"models/scav/tankshell.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_bullet.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_phx/gibs/flakgib1.mdl")
+		ScavData.RegisterFiremode(tab, "models/scav/tankshell.mdl")
 		--DoD:S
-		ScavData.RegisterFiremode(tab,"models/props_fortifications/flak38.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_vehicles/halftrackgun_us1.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_vehicles/sherman_tank.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_vehicles/sherman_tank_snow.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_vehicles/tiger_tank.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_vehicles/tiger_tank_navyb.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_vehicles/tiger_tank_tan.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_vehicles/tiger_tank_snow.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_fortifications/flak38.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_vehicles/halftrackgun_us1.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_vehicles/sherman_tank.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_vehicles/sherman_tank_snow.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_vehicles/tiger_tank.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_vehicles/tiger_tank_navyb.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_vehicles/tiger_tank_tan.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_vehicles/tiger_tank_snow.mdl")
 		--L4D/2
-		ScavData.RegisterFiremode(tab,"models/props_signs/burgersign.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_signs/burgersign_beacon.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_signs/raisedbillboard.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_signs/burgersign.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_signs/burgersign_beacon.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_signs/raisedbillboard.mdl")
 		
 		
 --[[==============================================================================================
@@ -1833,39 +1831,39 @@ end
 			tab.Level = 4
 			tab.MaxAmmo = 500
 			local identify = {} --all electricity beams are the same
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			if SERVER then
-				DoChargeSound = function(self,item,olditemname)
+				DoChargeSound = function(self, item, olditemname)
 					if item.ammo ~= olditemname then
 						self.Owner:EmitSound("weapons/scav_gun/chargeup.wav")
 					end
 				end
 				tab.OnArmed = DoChargeSound
-				tab.FireFunc = function(self,item)
+				tab.FireFunc = function(self, item)
 					if self.Owner:WaterLevel() > 1 then
-						ScavData.Electrocute(self,self.Owner,self.Owner:GetPos(),500,500,true)
+						ScavData.Electrocute(self, self.Owner, self.Owner:GetPos(), 500, 500, true)
 					else
 						local proj = self:CreateEnt("scav_projectile_elec")
 						proj.Owner = self.Owner
 						proj:SetPos(self:GetProjectileShootPos())
 						proj:SetAngles(self:GetAimVector():Angle())
-						proj.vel = self:GetAimVector()*1500
+						proj.vel = self:GetAimVector() * 1500
 						proj:SetOwner(self.Owner)
 						proj.SpeedScale = self:GetForceScale()
 						proj:Spawn()
 					end
 					self.Owner:SetAnimation(PLAYER_ATTACK1)
-					self.Owner:ViewPunch(Angle(math.Rand(-4,-3),math.Rand(-0.1,0.1),0))
-					--self.Owner:EmitSound("ambient/energy/NewSpark1"..math.random(0,1)..".wav")
+					self.Owner:ViewPunch(Angle(math.Rand(-4, -3), math.Rand(-0.1, 0.1), 0))
+					--self.Owner:EmitSound("ambient/energy/NewSpark1" .. math.random(0, 1) .. ".wav")
 					--self.Owner:EmitSound("weapons/physcannon/superphys_small_zap4.wav")
 					self.Owner:EmitSound("npc/scanner/scanner_electric1.wav")
-					return self:TakeSubammo(item,1)
+					return self:TakeSubammo(item, 1)
 				end
 								
-				ScavData.CollectFuncs["models/props_c17/substation_transformer01b.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),15,ent:GetSkin()}} end
+				ScavData.CollectFuncs["models/props_c17/substation_transformer01b.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 15, ent:GetSkin()}} end
 				ScavData.CollectFuncs["models/props_c17/substation_transformer01c.mdl"] = ScavData.CollectFuncs["models/props_c17/substation_transformer01b.mdl"]
 				ScavData.CollectFuncs["models/props_c17/substation_transformer01d.mdl"] = ScavData.CollectFuncs["models/props_c17/substation_transformer01b.mdl"]
-				ScavData.CollectFuncs["models/weapons/w_stunbaton.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),8,ent:GetSkin()}} end
+				ScavData.CollectFuncs["models/weapons/w_stunbaton.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 8, ent:GetSkin()}} end
 				ScavData.CollectFuncs["models/props_c17/consolebox01a.mdl"] = ScavData.CollectFuncs["models/weapons/w_stunbaton.mdl"]
 				ScavData.CollectFuncs["models/props_c17/consolebox03a.mdl"] = ScavData.CollectFuncs["models/props_c17/consolebox01a.mdl"]
 				ScavData.CollectFuncs["models/props_c17/consolebox05a.mdl"] = ScavData.CollectFuncs["models/props_c17/consolebox01a.mdl"]
@@ -1875,72 +1873,72 @@ end
 				ScavData.CollectFuncs["models/props_lab/powerbox02b.mdl"] = ScavData.CollectFuncs["models/props_c17/consolebox01a.mdl"]
 				ScavData.CollectFuncs["models/props_lab/powerbox02c.mdl"] = ScavData.CollectFuncs["models/props_c17/consolebox01a.mdl"]
 				ScavData.CollectFuncs["models/props_lab/powerbox02d.mdl"] = ScavData.CollectFuncs["models/props_c17/consolebox01a.mdl"]
-				ScavData.CollectFuncs["models/props_lab/powerbox03a.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),5,ent:GetSkin()}} end
+				ScavData.CollectFuncs["models/props_lab/powerbox03a.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 5, ent:GetSkin()}} end
 				ScavData.CollectFuncs["models/props_canal/generator01.mdl"] = ScavData.GiveOneOfItemInf
 				ScavData.CollectFuncs["models/props_canal/generator02.mdl"] = ScavData.GiveOneOfItemInf
 				ScavData.CollectFuncs["models/props_c17/substation_transformer01a.mdl"] = ScavData.GiveOneOfItemInf
 				--CSS
 				ScavData.CollectFuncs["models/props/de_prodigy/transformer.mdl"] = ScavData.GiveOneOfItemInf
 				--TF2
-				ScavData.CollectFuncs["models/weapons/c_models/c_drg_pomson/c_drg_pomson.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),4,0}} end --TODO: put pomson on its own firemode. Don't forget cloak drain!
-				ScavData.CollectFuncs["models/workshop/weapons/c_models/c_drg_pomson/c_drg_pomson.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),4,0}} end
+				ScavData.CollectFuncs["models/weapons/c_models/c_drg_pomson/c_drg_pomson.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 4, 0}} end --TODO: put pomson on its own firemode. Don't forget cloak drain!
+				ScavData.CollectFuncs["models/workshop/weapons/c_models/c_drg_pomson/c_drg_pomson.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 4, 0}} end
 				ScavData.CollectFuncs["models/weapons/c_models/c_drg_righteousbison/c_drg_righteousbison.mdl"] = ScavData.CollectFuncs["models/weapons/c_models/c_drg_pomson/c_drg_pomson.mdl"]
 				ScavData.CollectFuncs["models/workshop/weapons/c_models/c_drg_righteousbison/c_drg_righteousbison.mdl"] = ScavData.CollectFuncs["models/weapons/c_models/c_drg_pomson/c_drg_pomson.mdl"]
-				ScavData.CollectFuncs["models/weapons/w_models/w_sapper.mdl"] = function(self,ent) return {{self.christmas and "models/weapons/c_models/c_sapper/c_sapper_xmas.mdl" or ScavData.FormatModelname(ent:GetModel()),8,math.random(0,1)}} end
+				ScavData.CollectFuncs["models/weapons/w_models/w_sapper.mdl"] = function(self, ent) return {{self.christmas and "models/weapons/c_models/c_sapper/c_sapper_xmas.mdl" or ScavData.FormatModelname(ent:GetModel()), 8, math.random(0, 1)}} end
 				ScavData.CollectFuncs["models/weapons/w_models/w_sd_sapper.mdl"] = ScavData.CollectFuncs["models/weapons/w_stunbaton.mdl"]
 				ScavData.CollectFuncs["models/buildables/sd_sapper_dispenser.mdl"] = ScavData.CollectFuncs["models/weapons/w_models/w_sd_sapper.mdl"]
 				ScavData.CollectFuncs["models/workshop_partner/weapons/c_models/c_sd_sapper/c_sd_sapper.mdl"] = ScavData.CollectFuncs["models/weapons/w_models/w_sd_sapper.mdl"]
 				ScavData.CollectFuncs["models/weapons/c_models/c_sapper/c_sapper.mdl"] = ScavData.CollectFuncs["models/weapons/w_models/w_sapper.mdl"]
-				ScavData.CollectFuncs["models/weapons/c_models/c_sapper/c_sapper_xmas.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),8,ent:GetSkin()}} end
+				ScavData.CollectFuncs["models/weapons/c_models/c_sapper/c_sapper_xmas.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 8, ent:GetSkin()}} end
 				ScavData.CollectFuncs["models/weapons/c_models/c_p2rec/c_p2rec.mdl"] = ScavData.CollectFuncs["models/weapons/w_stunbaton.mdl"]
 				ScavData.CollectFuncs["models/workshop_partner/weapons/c_models/c_sd_neonsign/c_sd_neonsign.mdl"] = ScavData.CollectFuncs["models/weapons/w_stunbaton.mdl"]
 				ScavData.CollectFuncs["models/buildables/sapper_dispenser.mdl"] = ScavData.CollectFuncs["models/weapons/w_models/w_sapper.mdl"]
-				ScavData.CollectFuncs["models/buildables/gibs/sapper_gib002.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),3,0}} end
+				ScavData.CollectFuncs["models/buildables/gibs/sapper_gib002.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 3, 0}} end
 				ScavData.CollectFuncs["models/buildables/gibs/sapper_gib001.mdl"] = ScavData.CollectFuncs["models/buildables/gibs/sapper_gib002.mdl"]
 				ScavData.CollectFuncs["models/buildables/gibs/sd_sapper_gib002.mdl"] = ScavData.CollectFuncs["models/buildables/gibs/sapper_gib002.mdl"]
 				ScavData.CollectFuncs["models/buildables/gibs/sd_sapper_gib001.mdl"] = ScavData.CollectFuncs["models/buildables/gibs/sd_sapper_gib002.mdl"]
 			end
 			tab.Cooldown = 0.5
 			
-		ScavData.RegisterFiremode(tab,"models/props_c17/substation_transformer01b.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_c17/substation_transformer01c.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_c17/substation_transformer01d.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/w_stunbaton.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_c17/consolebox01a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_c17/consolebox03a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_c17/consolebox05a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_c17/utilityconducter001.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_lab/powerbox01a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_lab/powerbox02a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_lab/powerbox02b.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_lab/powerbox02c.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_lab/powerbox02d.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_lab/powerbox03a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_canal/generator01.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_canal/generator02.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_c17/substation_transformer01a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_c17/substation_transformer01b.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_c17/substation_transformer01c.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_c17/substation_transformer01d.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_stunbaton.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_c17/consolebox01a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_c17/consolebox03a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_c17/consolebox05a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_c17/utilityconducter001.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_lab/powerbox01a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_lab/powerbox02a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_lab/powerbox02b.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_lab/powerbox02c.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_lab/powerbox02d.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_lab/powerbox03a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_canal/generator01.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_canal/generator02.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_c17/substation_transformer01a.mdl")
 		--CSS
-		ScavData.RegisterFiremode(tab,"models/props/de_prodigy/transformer.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/de_prodigy/transformer.mdl")
 		--TF2
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_drg_pomson/c_drg_pomson.mdl")
-		ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_drg_pomson/c_drg_pomson.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_drg_righteousbison/c_drg_righteousbison.mdl")
-		ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_drg_righteousbison/c_drg_righteousbison.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/w_models/w_sapper.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/w_models/w_sd_sapper.mdl")
-		ScavData.RegisterFiremode(tab,"models/buildables/sd_sapper_dispenser.mdl")
-		ScavData.RegisterFiremode(tab,"models/workshop_partner/weapons/c_models/c_sd_sapper/c_sd_sapper.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_sapper/c_sapper.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_sapper/c_sapper_xmas.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_p2rec/c_p2rec.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_dex_arm/c_dex_arm.mdl")
-		ScavData.RegisterFiremode(tab,"models/workshop_partner/weapons/c_models/c_dex_arm/c_dex_arm.mdl")
-		ScavData.RegisterFiremode(tab,"models/workshop_partner/weapons/c_models/c_sd_neonsign/c_sd_neonsign.mdl")
-		ScavData.RegisterFiremode(tab,"models/buildables/gibs/sapper_gib001.mdl")
-		ScavData.RegisterFiremode(tab,"models/buildables/gibs/sapper_gib002.mdl")
-		ScavData.RegisterFiremode(tab,"models/buildables/gibs/sd_sapper_gib001.mdl")
-		ScavData.RegisterFiremode(tab,"models/buildables/gibs/sd_sapper_gib002.mdl")
-		ScavData.RegisterFiremode(tab,"models/buildables/sapper_dispenser.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_drg_pomson/c_drg_pomson.mdl")
+		ScavData.RegisterFiremode(tab, "models/workshop/weapons/c_models/c_drg_pomson/c_drg_pomson.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_drg_righteousbison/c_drg_righteousbison.mdl")
+		ScavData.RegisterFiremode(tab, "models/workshop/weapons/c_models/c_drg_righteousbison/c_drg_righteousbison.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_models/w_sapper.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_models/w_sd_sapper.mdl")
+		ScavData.RegisterFiremode(tab, "models/buildables/sd_sapper_dispenser.mdl")
+		ScavData.RegisterFiremode(tab, "models/workshop_partner/weapons/c_models/c_sd_sapper/c_sd_sapper.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_sapper/c_sapper.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_sapper/c_sapper_xmas.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_p2rec/c_p2rec.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_dex_arm/c_dex_arm.mdl")
+		ScavData.RegisterFiremode(tab, "models/workshop_partner/weapons/c_models/c_dex_arm/c_dex_arm.mdl")
+		ScavData.RegisterFiremode(tab, "models/workshop_partner/weapons/c_models/c_sd_neonsign/c_sd_neonsign.mdl")
+		ScavData.RegisterFiremode(tab, "models/buildables/gibs/sapper_gib001.mdl")
+		ScavData.RegisterFiremode(tab, "models/buildables/gibs/sapper_gib002.mdl")
+		ScavData.RegisterFiremode(tab, "models/buildables/gibs/sd_sapper_gib001.mdl")
+		ScavData.RegisterFiremode(tab, "models/buildables/gibs/sd_sapper_gib002.mdl")
+		ScavData.RegisterFiremode(tab, "models/buildables/sapper_dispenser.mdl")
 
 --[[==============================================================================================
 	--Hyper beam
@@ -1952,30 +1950,30 @@ end
 			tab.Level = 9
 			if SERVER then
 				tab.OnArmed = DoChargeSound
-				tab.FireFunc = function(self,item)
+				tab.FireFunc = function(self, item)
 					local proj = self:CreateEnt("scav_projectile_hyper")
-					self.Owner:EmitSound("ambient/explosions/explode_7.wav",100,190,0.65)
+					self.Owner:EmitSound("ambient/explosions/explode_7.wav", 100, 190, 0.65)
 					proj.Owner = self.Owner
 					proj:SetPos(self:GetProjectileShootPos())
 					proj:SetAngles(self:GetAimVector():Angle())
-					proj.vel = self:GetAimVector()*2000
+					proj.vel = self:GetAimVector() * 2000
 					proj:SetOwner(self.Owner)
 					proj:Spawn()
 					self.Owner:SetAnimation(PLAYER_ATTACK1)
-					self.Owner:ViewPunch(Angle(math.Rand(-4,-3),math.Rand(-0.1,0.1),0))
-					return self:TakeSubammo(item,1)
+					self.Owner:ViewPunch(Angle(math.Rand(-4, -3), math.Rand(-0.1, 0.1), 0))
+					return self:TakeSubammo(item, 1)
 				end
 				ScavData.CollectFuncs["models/metroid.mdl"] = ScavData.GiveOneOfItemInf
 				ScavData.CollectFuncs["models/props_combine/introomarea.mdl"] = ScavData.GiveOneOfItemInf
 			else
-				tab.FireFunc = function(self,item)
+				tab.FireFunc = function(self, item)
 					return false
 				end
 			end
 			tab.Cooldown = 0.3
 			
-		ScavData.RegisterFiremode(tab,"models/metroid.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_combine/introomarea.mdl")
+		ScavData.RegisterFiremode(tab, "models/metroid.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_combine/introomarea.mdl")
 		
 --[[==============================================================================================
 	--I just couldn't resist: The BFG9000
@@ -1990,24 +1988,24 @@ end
 			tab.Level = 9
 			tab.MaxAmmo = 4
 			local identify = {} --all bfgs are the same
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			if SERVER then
-				tab.OnArmed = function(self,item,olditemname)
+				tab.OnArmed = function(self, item, olditemname)
 					if item.ammo ~= olditemname then
 						self.Owner:EmitSound("weapons/scav_gun/chargeup.wav")
 					end
 				end
 			end
-			tab.ChargeAttack = function(self,item)
+			tab.ChargeAttack = function(self, item)
 				local tab = ScavData.models["models/props_vehicles/generatortrailer01.mdl"]
 				if SERVER then
-					self.soundloops.bfgcharge:PlayEx(100,60+math.min(self.WeaponCharge,4)*40)
-					self.soundloops.bfgcharge2:PlayEx(100,60+math.min(self.WeaponCharge,4)*40)
+					self.soundloops.bfgcharge:PlayEx(100, 60 + math.min(self.WeaponCharge, 4) * 40)
+					self.soundloops.bfgcharge2:PlayEx(100, 60 + math.min(self.WeaponCharge, 4) * 40)
 				end
 				if not self.Owner:KeyDown(IN_ATTACK) and (self.WeaponCharge >= 1) then
 					if SERVER then
 						local proj = self:CreateEnt("scav_projectile_bigshot")
-							proj.Charge = math.floor(math.min(self.WeaponCharge,4))
+							proj.Charge = math.floor(math.min(self.WeaponCharge, 4))
 							proj.Owner = self.Owner
 							proj:SetPos(self:GetProjectileShootPos())
 							proj:SetAngles(self:GetAimVector():Angle())
@@ -2015,9 +2013,9 @@ end
 							proj.SpeedScale = self:GetForceScale()
 							proj:Spawn()
 						if proj:GetPhysicsObject():IsValid() then
-							proj:GetPhysicsObject():SetVelocity(self:GetAimVector()*500)
+							proj:GetPhysicsObject():SetVelocity(self:GetAimVector() * 500)
 						end
-						self.Owner:ViewPunch(Angle(math.Rand(-4,-3),math.Rand(-0.1,0.1),0))
+						self.Owner:ViewPunch(Angle(math.Rand(-4, -3), math.Rand(-0.1, 0.1), 0))
 						net.Start("scv_falloffsound")
 							local rf = RecipientFilter()
 							rf:AddAllPlayers()
@@ -2026,13 +2024,13 @@ end
 						net.Send(rf)
 						self.soundloops.bfgcharge:Stop()
 						self.soundloops.bfgcharge2:Stop()
-						self:TakeSubammo(item,proj.Charge)
+						self:TakeSubammo(item, proj.Charge)
 						self:KillEffect()
 						if item.subammo <= 0 then
 							self:RemoveItemValue(item)
 						end
-						self:SetPanelPose(0,2)
-						self:SetBlockPose(0,2)
+						self:SetPanelPose(0, 2)
+						self:SetBlockPose(0, 2)
 					end
 					self.Owner:SetAnimation(PLAYER_ATTACK1)
 					self:SetChargeAttack()
@@ -2045,11 +2043,11 @@ end
 					return 3
 				else
 					tab.chargeanim = ACT_VM_FIDGET
-					self.WeaponCharge = self.WeaponCharge+0.05
+					self.WeaponCharge = self.WeaponCharge + 0.05
 					if self.WeaponCharge >= 6 and IsValid(self.Owner) then
 						if SERVER then
 							local proj = self:CreateEnt("scav_projectile_bigshot")
-								proj.Charge = math.floor(math.min(self.WeaponCharge,4))
+								proj.Charge = math.floor(math.min(self.WeaponCharge, 4))
 								proj.Owner = self.Owner
 								proj:SetPos(self:GetProjectileShootPos())
 								proj:SetAngles(self:GetAimVector():Angle())
@@ -2071,7 +2069,7 @@ end
 								self.Owner:Kill()
 							end
 						else
-							ParticleEffect("scav_exp_bigshot",self.Owner:GetPos(),Angle(0,0,0),Entity(0))
+							ParticleEffect("scav_exp_bigshot", self.Owner:GetPos(), Angle(0, 0, 0), Entity(0))
 						end
 						self.WeaponCharge = 0
 						self:SetChargeAttack()
@@ -2080,23 +2078,22 @@ end
 				end
 				return 0.025
 			end
-			tab.FireFunc = function(self,item)
-				self:SetChargeAttack(ScavData.models[self.inv.items[1].ammo].ChargeAttack,item)
+			tab.FireFunc = function(self, item)
+				self:SetChargeAttack(ScavData.models[self.inv.items[1].ammo].ChargeAttack, item)
 				if SERVER then
-					self.Owner:EmitSound("HL1/ambience/particle_suck1.wav",100,200)
+					self.Owner:EmitSound("HL1/ambience/particle_suck1.wav", 100, 200)
 					if not self.soundloops.bfgcharge then
-						self.soundloops.bfgcharge = CreateSound(self.Owner,"ambient/machines/combine_shield_loop3.wav")
-						self.soundloops.bfgcharge2 = CreateSound(self.Owner,"npc/attack_helicopter/aheli_crash_alert2.wav")
+						self.soundloops.bfgcharge = CreateSound(self.Owner, "ambient/machines/combine_shield_loop3.wav")
+						self.soundloops.bfgcharge2 = CreateSound(self.Owner, "npc/attack_helicopter/aheli_crash_alert2.wav")
 					end
 					self.ef_plasmacharge = self:CreateToggleEffect("scav_stream_plasmacharge")
-					self:SetPanelPose(0.5,0.25)
-					self:SetBlockPose(0.5,0.25)
+					self:SetPanelPose(0.5, 0.25)
+					self:SetBlockPose(0.5, 0.25)
 				end
 				return false
 			end
 			if SERVER then
-				ScavData.CollectFuncs["models/props_vehicles/generatortrailer01.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),4,0}} end
-				--Ep2
+				ScavData.CollectFuncs["models/props_vehicles/generatortrailer01.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 4, 0}} end
 				ScavData.CollectFuncs["models/props_mining/diesel_generator.mdl"] = ScavData.CollectFuncs["models/props_vehicles/generatortrailer01.mdl"]
 				--TF2
 				ScavData.CollectFuncs["models/props_mvm/construction_light02.mdl"] = ScavData.CollectFuncs["models/props_vehicles/generatortrailer01.mdl"]
@@ -2110,18 +2107,17 @@ end
 			end
 			tab.Cooldown = 0.1
 			
-		ScavData.RegisterFiremode(tab,"models/props_vehicles/generatortrailer01.mdl")
-		--Ep2
-		ScavData.RegisterFiremode(tab,"models/props_mining/diesel_generator.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_vehicles/generatortrailer01.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_mining/diesel_generator.mdl")
 		--TF2
-		ScavData.RegisterFiremode(tab,"models/props_mvm/construction_light02.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_mvm/construction_light02.mdl")
 		--L4D
-		ScavData.RegisterFiremode(tab,"models/props_vehicles/floodlight_generator_nolight.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_vehicles/floodlight_generator_nolight_static.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_vehicles/floodlight_generator_pose01_static.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_vehicles/floodlight_generator_pose02_static.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_vehicles/floodlight_generator_nolight.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_vehicles/floodlight_generator_nolight_static.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_vehicles/floodlight_generator_pose01_static.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_vehicles/floodlight_generator_pose02_static.mdl")
 		--DoD:S
-		ScavData.RegisterFiremode(tab,"models/props_vehicles/generator.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_vehicles/generator.mdl")
 		
 --[[==============================================================================================
 	--..Or this..
@@ -2132,7 +2128,7 @@ end
 			tab.chargeanim = ACT_VM_FIDGET
 			tab.RemoveOnCharge = false
 			tab.Level = 7
-			tab.ChargeAttack = function(self,item)
+			tab.ChargeAttack = function(self, item)
 				local tab = ScavData.models["models/props_phx/cannonball.mdl"]
 				if (not self.Owner:KeyDown(IN_ATTACK) and (self.WeaponCharge >= 0)) or (self.WeaponCharge >= 1) then
 					if SERVER then
@@ -2145,16 +2141,16 @@ end
 							proj:SetAngles(self:GetAimVector():Angle())
 							proj:SetOwner(self.Owner)
 							proj:Spawn()
-							proj:SetPos(self.Owner:GetShootPos()-proj:OBBCenter())
-							proj:GetPhysicsObject():SetVelocity(self:GetAimVector()*((self.WeaponCharge*3000)+500))
+							proj:SetPos(self.Owner:GetShootPos() - proj:OBBCenter())
+							proj:GetPhysicsObject():SetVelocity(self:GetAimVector() * ((self.WeaponCharge * 3000) + 500))
 							proj:SetPhysicsAttacker(self.Owner)
 							proj:GetPhysicsObject():SetDragCoefficient(-10000)
-						self:TakeSubammo(item,proj.Charge)
+						self:TakeSubammo(item, proj.Charge)
 						self:KillEffect()
 						self:RemoveItemValue(item)
 						self.soundloops.cannon:Stop()
 						self.Owner:EmitSound(self.shootsound)
-						--self.Owner:ViewPunch(Angle(math.Rand(-4,-3),math.Rand(-0.1,0.1),0))
+						--self.Owner:ViewPunch(Angle(math.Rand(-4, -3), math.Rand(-0.1, 0.1), 0))
 					end
 					self.Owner:SetAnimation(PLAYER_ATTACK1)
 					self:SetChargeAttack()
@@ -2163,50 +2159,50 @@ end
 					return 1
 				else
 					tab.chargeanim = ACT_VM_FIDGET
-					self.WeaponCharge = self.WeaponCharge+0.05
+					self.WeaponCharge = self.WeaponCharge + 0.05
 				end
 				return 0.1
 			end
-			tab.FireFunc = function(self,item)
+			tab.FireFunc = function(self, item)
 				if SERVER then
 					if not self.soundloops.cannon then
-						self.soundloops.cannon = CreateSound(self.Owner,"weapons/stickybomblauncher_charge_up.wav")
+						self.soundloops.cannon = CreateSound(self.Owner, "weapons/stickybomblauncher_charge_up.wav")
 						self.soundloops.cannon:ChangePitch(160)
 					end
 					self.soundloops.cannon:Play()
 				end
-				self:SetChargeAttack(ScavData.models[self.inv.items[1].ammo].ChargeAttack,item)
+				self:SetChargeAttack(ScavData.models[self.inv.items[1].ammo].ChargeAttack, item)
 				return false
 			end
 			if SERVER then
-				ScavData.CollectFuncs["models/props_phx/cannon.mdl"] = function(self,ent) return {{"models/props_phx/cannonball.mdl",1,0}} end --1 cannonball from cannon
+				ScavData.CollectFuncs["models/props_phx/cannon.mdl"] = function(self, ent) return {{"models/props_phx/cannonball.mdl", 1, 0}} end --1 cannonball from cannon
 				--TF2
-				ScavData.CollectFuncs["models/weapons/c_models/c_demo_cannon/c_demo_cannon.mdl"] = function(self,ent) return {{"models/weapons/w_models/w_cannonball.mdl",1,math.fmod(ent:GetSkin(),2)}} end --1 cannonball from TF2 Loose cannon
+				ScavData.CollectFuncs["models/weapons/c_models/c_demo_cannon/c_demo_cannon.mdl"] = function(self, ent) return {{"models/weapons/w_models/w_cannonball.mdl", 1, math.fmod(ent:GetSkin(), 2)}} end --1 cannonball from TF2 Loose cannon
 				ScavData.CollectFuncs["models/workshop/weapons/c_models/c_demo_cannon/c_demo_cannon.mdl"] = ScavData.CollectFuncs["models/weapons/c_models/c_demo_cannon/c_demo_cannon.mdl"]
 				--CSS
-				ScavData.CollectFuncs["models/props/de_inferno/cannon_gun.mdl"] = function(self,ent) return {{"models/props_phx/misc/smallcannonball.mdl",1,0}} end --1 cannonball from de_inferno cannon
+				ScavData.CollectFuncs["models/props/de_inferno/cannon_gun.mdl"] = function(self, ent) return {{"models/props_phx/misc/smallcannonball.mdl", 1, 0}} end --1 cannonball from de_inferno cannon
 				--L4D/2
-				ScavData.CollectFuncs["models/props_unique/airport/atlas.mdl"] = function(self,ent) --1 world from Atlas
-					return {{"models/props_unique/airport/atlas.mdl",1,0},
-							{"models/props_unique/airport/atlas_break_ball.mdl",1,0}}
+				ScavData.CollectFuncs["models/props_unique/airport/atlas.mdl"] = function(self, ent) --1 world from Atlas
+					return {{"models/props_unique/airport/atlas.mdl", 1, 0},
+							{"models/props_unique/airport/atlas_break_ball.mdl", 1, 0}}
 				end
 				--FoF
-				ScavData.CollectFuncs["models/weapons/cannon_top.mdl"] = function(self,ent) return {{"models/weapons/cannon_ball.mdl",1,0}} end --1 cannonball from cannon
+				ScavData.CollectFuncs["models/weapons/cannon_top.mdl"] = function(self, ent) return {{"models/weapons/cannon_ball.mdl", 1, 0}} end --1 cannonball from cannon
 			end
 			tab.Cooldown = 0.1
 			
-		ScavData.RegisterFiremode(tab,"models/props_phx/cannonball.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_phx/misc/smallcannonball.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_phx/cannonball_solid.mdl")
-		ScavData.RegisterFiremode(tab,"models/dynamite/dynamite.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_phx/cannonball.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_phx/misc/smallcannonball.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_phx/cannonball_solid.mdl")
+		ScavData.RegisterFiremode(tab, "models/dynamite/dynamite.mdl")
 		--TF2
-		ScavData.RegisterFiremode(tab,"models/weapons/w_models/w_cannonball.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_lakeside_event/bomb_temp.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_lakeside_event/bomb_temp_hat.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_models/w_cannonball.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_lakeside_event/bomb_temp.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_lakeside_event/bomb_temp_hat.mdl")
 		--L4D/2
-		ScavData.RegisterFiremode(tab,"models/props_unique/airport/atlas_break_ball.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_unique/airport/atlas_break_ball.mdl")
 		--FoF
-		ScavData.RegisterFiremode(tab,"models/weapons/cannon_ball.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/cannon_ball.mdl")
 
 
 
@@ -2225,30 +2221,30 @@ end
 			["models/props_spytech/control_room_console01.mdl"] = 1,
 			["models/props_spytech/control_room_console03.mdl"] = 1,
 		}
-		tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+		tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 		tab.MaxAmmo = 125
 		local bullet = {}
 			bullet.Num = 5
-			bullet.Spread = Vector(0.0625,0.0625,0)
+			bullet.Spread = Vector(0.0625, 0.0625, 0)
 			bullet.Tracer = 1
 			bullet.Force = 4
 			bullet.Damage = 5
 			bullet.Distance = 56756
 			bullet.TracerName = "Tracer" --ef_scav_tr_b throws errors if we use it with penetration
-		tab.Callback = function(attacker,tr,dmginfo)
+		tab.Callback = function(attacker, tr, dmginfo)
 			--bullet penetration
 			if IsValid(tr.Entity) and not tr.Entity:IsWorld() then --our bullets don't penetrate the world
 				local newbullet = table.Copy(bullet)
 					newbullet.Num = 1
 					newbullet.IgnoreEntity = tr.Entity
-					newbullet.Spread = Vector(0,0,0)
+					newbullet.Spread = Vector(0, 0, 0)
 					newbullet.Src = tr.StartPos + tr.Normal * (bullet.Distance * tr.Fraction)
 					newbullet.Dir = tr.Normal
 					bullet.TracerName = "Tracer" --ef_scav_tr_b throws errors if we use it with penetration
 					newbullet.Attacker = attacker
 					newbullet.Callback = tab.Callback --strips the splintering code from subsequent bullets
 				if SERVER then
-					timer.Simple(0.0025,function()
+					timer.Simple(0.0025, function()
 						local startpos = ents.Create("info_null")
 						if IsValid(startpos) then
 							startpos:SetPos(newbullet.Src)
@@ -2261,45 +2257,45 @@ end
 				end
 			end
 		end
-		function tab.OnArmed(self,item,olditemname)
+		function tab.OnArmed(self, item, olditemname)
 			if SERVER then
 				if olditemname == "" or not ScavData.models[olditemname] or ScavData.models[item.ammo].Name ~= ScavData.models[olditemname].Name then
 					local tab = ScavData.models[self.inv.items[1].ammo]
 					if tab.Identify[item.ammo] == 1 then --TF2
 						self.Owner:EmitSound("weapons/shotgun_cock_back.wav")
-						timer.Simple(.25,function() if IsValid(self) then self.Owner:EmitSound("weapons/shotgun_cock_forward.wav") end end)
+						timer.Simple(.25, function() if IsValid(self) then self.Owner:EmitSound("weapons/shotgun_cock_forward.wav") end end)
 					else --HL2
 						self.Owner:EmitSound("weapons/shotgun/shotgun_cock.wav")
 					end
 				end
 			end
 		end
-		tab.FireFunc = function(self,item)
-			self.Owner:ScavViewPunch(Angle(-10,math.Rand(-0.1,0.1),0),0.3)
+		tab.FireFunc = function(self, item)
+			self.Owner:ScavViewPunch(Angle(-10, math.Rand(-0.1, 0.1), 0), 0.3)
 			bullet.Src = self.Owner:GetShootPos()
 			bullet.Dir = self:GetAimVector()
-			bullet.Callback = function(attacker,tr,dmginfo)
-				tab.Callback(attacker,tr,dmginfo)
+			bullet.Callback = function(attacker, tr, dmginfo)
+				tab.Callback(attacker, tr, dmginfo)
 				if SERVER then
 					--splintering
-					local tracep = util.QuickTrace(tr.StartPos,tr.Normal*bullet.Distance,function( ent ) return ( ent:IsWorld() ) end)
+					local tracep = util.QuickTrace(tr.StartPos, tr.Normal * bullet.Distance, function( ent ) return ( ent:IsWorld() ) end)
 					local dist = Vector(tracep.StartPos - tracep.HitPos):LengthSqr()
 					local start, interval, max = 160, 32, 4 --distance to travel before starting splintering, interval between splinters, splinter this many times
 					if dist >= start then
-						for i=0,math.min(max-1,math.floor((dist - start) / interval)) do
+						for i=0, math.min(max - 1, math.floor((dist - start) / interval)) do
 							local bullet1 = {}
 								bullet1.Num = 1
 								bullet1.Attacker = attacker
-								bullet1.Spread = Vector(0,0,0)
+								bullet1.Spread = Vector(0, 0, 0)
 								bullet1.Tracer = 1
 								bullet.TracerName = "Tracer" --ef_scav_tr_b throws errors if we use it with penetration
 								bullet1.Force = bullet.Force
 								bullet1.Damage = bullet.Damage / 2
-								bullet1.Src = tracep.StartPos + tracep.Normal * (start + interval * i + math.random(-1,1))
+								bullet1.Src = tracep.StartPos + tracep.Normal * (start + interval * i + math.random(-1, 1))
 								bullet1.Dir = tracep.Normal:Angle():Right()
 							local bullet2 = table.Copy(bullet1)
 								bullet2.Dir = tracep.Normal:Angle():Right() * -1
-							timer.Simple(i/100,function() --gotta offset these calls slightly so they can all go through
+							timer.Simple(i/100, function() --gotta offset these calls slightly so they can all go through
 								local ent = ents.Create("info_null") --this is really gross but if we just use the attacker the tracer draws from the muzzle of the gun instead of its spawn pos
 									if IsValid(ent) then
 										ent:SetPos(bullet1.Src)
@@ -2309,7 +2305,7 @@ end
 										end
 									end
 							end)
-							timer.Simple((i + .5)/100,function()
+							timer.Simple((i + .5)/100, function()
 								local ent = ents.Create("info_null")
 								if IsValid(ent) then
 									ent:SetPos(bullet2.Src)
@@ -2333,18 +2329,18 @@ end
 				if SERVER then
 					self.Owner:EmitSound("weapons/shotgun_shoot.wav")
 				end
-				timer.Simple(0.4,function()
+				timer.Simple(0.4, function()
 					if SERVER then
 						self.Owner:EmitSound("weapons/shotgun_cock_back.wav")
-						timer.Simple(.25,function() if IsValid(self) then self.Owner:EmitSound("weapons/shotgun_cock_forward.wav") end end)
+						timer.Simple(.25, function() if IsValid(self) then self.Owner:EmitSound("weapons/shotgun_cock_forward.wav") end end)
 					end
-					tf2shelleject(self,"shotgun")
+					tf2shelleject(self, "shotgun")
 				end)
 			else --HL2
 				if SERVER then
 					self.Owner:EmitSound("weapons/shotgun/shotgun_fire6.wav")
 				end
-				timer.Simple(0.4,function()
+				timer.Simple(0.4, function()
 					if CLIENT ~= game.SinglePlayer() then
 						self.Owner:EmitSound("weapons/shotgun/shotgun_cock.wav")
 						local ef = EffectData()
@@ -2353,28 +2349,27 @@ end
 							ef:SetOrigin(attach.Pos)
 							ef:SetAngles(attach.Ang)
 							ef:SetEntity(self)
-							util.Effect("ShotgunShellEject",ef)
+							util.Effect("ShotgunShellEject", ef)
 						end
 					end
 				end)
 			end
-			if SERVER then return self:TakeSubammo(item,1) end
+			if SERVER then return self:TakeSubammo(item, 1) end
 		end
 		if SERVER then		
-			ScavData.CollectFuncs["models/props_trainstation/payphone001a.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),20,ent:GetSkin()}} end --20 shells from a phone booth
-			ScavData.CollectFuncs["models/props_trainstation/payphone_reciever001a.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),6,ent:GetSkin()}} end --6 shells from a receiver
-			--CSS
-			ScavData.CollectFuncs["models/props/cs_office/phone.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),10,ent:GetSkin()}} end -- 10 shells from a telephone
-			ScavData.CollectFuncs["models/props/cs_office/phone_p1.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),4,ent:GetSkin()}} end -- 4 shells from a base
-			ScavData.CollectFuncs["models/props/cs_office/phone_p2.mdl"] = ScavData.CollectFuncs["models/props_trainstation/payphone_reciever001a.mdl"]
-			ScavData.CollectFuncs["models/props/cs_militia/oldphone01.mdl"] = ScavData.CollectFuncs["models/props/cs_office/phone.mdl"]
-			ScavData.CollectFuncs["models/props/de_prodigy/desk_console1.mdl"] = ScavData.CollectFuncs["models/props_trainstation/payphone001a.mdl"]
-			ScavData.CollectFuncs["models/props/de_prodigy/desk_console1a.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),14,ent:GetSkin()}} end --14 shells from a phone console
-			ScavData.CollectFuncs["models/props/de_prodigy/desk_console1b.mdl"] = ScavData.CollectFuncs["models/props_trainstation/payphone_reciever001a.mdl"]
-			--Ep2
+			ScavData.CollectFuncs["models/props_trainstation/payphone001a.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 20, ent:GetSkin()}} end --20 shells from a phone booth
+			ScavData.CollectFuncs["models/props_trainstation/payphone_reciever001a.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 6, ent:GetSkin()}} end --6 shells from a receiver
 			ScavData.CollectFuncs["models/props_silo/desk_console1.mdl"] = ScavData.CollectFuncs["models/props/de_prodigy/desk_console1.mdl"]
 			ScavData.CollectFuncs["models/props_silo/desk_console1a.mdl"] = ScavData.CollectFuncs["models/props/de_prodigy/desk_console1a.mdl"]
 			ScavData.CollectFuncs["models/props_silo/desk_console1b.mdl"] = ScavData.CollectFuncs["models/props/de_prodigy/desk_console1b.mdl"]
+			--CSS
+			ScavData.CollectFuncs["models/props/cs_office/phone.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 10, ent:GetSkin()}} end -- 10 shells from a telephone
+			ScavData.CollectFuncs["models/props/cs_office/phone_p1.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 4, ent:GetSkin()}} end -- 4 shells from a base
+			ScavData.CollectFuncs["models/props/cs_office/phone_p2.mdl"] = ScavData.CollectFuncs["models/props_trainstation/payphone_reciever001a.mdl"]
+			ScavData.CollectFuncs["models/props/cs_militia/oldphone01.mdl"] = ScavData.CollectFuncs["models/props/cs_office/phone.mdl"]
+			ScavData.CollectFuncs["models/props/de_prodigy/desk_console1.mdl"] = ScavData.CollectFuncs["models/props_trainstation/payphone001a.mdl"]
+			ScavData.CollectFuncs["models/props/de_prodigy/desk_console1a.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 14, ent:GetSkin()}} end --14 shells from a phone console
+			ScavData.CollectFuncs["models/props/de_prodigy/desk_console1b.mdl"] = ScavData.CollectFuncs["models/props_trainstation/payphone_reciever001a.mdl"]
 			--TF2
 			ScavData.CollectFuncs["models/props_2fort/telephone001.mdl"] = ScavData.CollectFuncs["models/props/cs_office/phone.mdl"]
 			ScavData.CollectFuncs["models/props_spytech/control_room_console01.mdl"] = ScavData.CollectFuncs["models/props_trainstation/payphone001a.mdl"]
@@ -2393,36 +2388,35 @@ end
 			ScavData.CollectFuncs["models/props_junk/garbage_cellphone01a.mdl"] = ScavData.CollectFuncs["models/props/cs_office/phone_p2.mdl"]
 		end
 		tab.Cooldown = 1
-		ScavData.RegisterFiremode(tab,"models/props_trainstation/payphone001a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_trainstation/payphone_reciever001a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_trainstation/payphone001a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_trainstation/payphone_reciever001a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_silo/desk_console1.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_silo/desk_console1a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_silo/desk_console1b.mdl")
 		--CSS
-		ScavData.RegisterFiremode(tab,"models/props/cs_office/phone.mdl")
-		ScavData.RegisterFiremode(tab,"models/props/cs_office/phone_p1.mdl")
-		ScavData.RegisterFiremode(tab,"models/props/cs_office/phone_p2.mdl")
-		ScavData.RegisterFiremode(tab,"models/props/cs_militia/oldphone01.mdl")
-		ScavData.RegisterFiremode(tab,"models/props/de_prodigy/desk_console1.mdl")
-		ScavData.RegisterFiremode(tab,"models/props/de_prodigy/desk_console1a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props/de_prodigy/desk_console1b.mdl")
-		--Ep2
-		ScavData.RegisterFiremode(tab,"models/props_silo/desk_console1.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_silo/desk_console1a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_silo/desk_console1b.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/cs_office/phone.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/cs_office/phone_p1.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/cs_office/phone_p2.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/cs_militia/oldphone01.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/de_prodigy/desk_console1.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/de_prodigy/desk_console1a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/de_prodigy/desk_console1b.mdl")
 		--TF2
-		ScavData.RegisterFiremode(tab,"models/props_2fort/telephone001.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_spytech/control_room_console01.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_spytech/control_room_console03.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_2fort/telephone001.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_spytech/control_room_console01.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_spytech/control_room_console03.mdl")
 		--Portal
-		ScavData.RegisterFiremode(tab,"models/props_bts/phone_body.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_bts/phone_reciever.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_bts/phone_body.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_bts/phone_reciever.mdl")
 		--L4D/2
-		ScavData.RegisterFiremode(tab,"models/props_interiors/phone.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_interiors/phone_p1.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_interiors/phone_p2.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_interiors/phone_motel.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_equipment/phone_booth.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_equipment/phone_booth_indoor.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_unique/airport/phone_booth_airport.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_cellphone01a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_interiors/phone.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_interiors/phone_p1.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_interiors/phone_p2.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_interiors/phone_motel.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_equipment/phone_booth.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_equipment/phone_booth_indoor.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_unique/airport/phone_booth_airport.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/garbage_cellphone01a.mdl")
 
 
 --[[==============================================================================================
@@ -2438,8 +2432,8 @@ end
 			tab.RemoveOnCharge = false
 			tab.Cooldown = 0.1
 			if SERVER then
-				hook.Add("PlayerDeath","scv_cleargrapple",function(pl) if pl.GrappleAssist and IsValid(pl.GrappleAssist) then pl.GrappleAssist:Remove() end end)
-				tab.ChargeAttack = function(self,item)
+				hook.Add("PlayerDeath", "scv_cleargrapple", function(pl) if pl.GrappleAssist and IsValid(pl.GrappleAssist) then pl.GrappleAssist:Remove() end end)
+				tab.ChargeAttack = function(self, item)
 					local tab = ScavData.models["models/props_wasteland/cranemagnet01a.mdl"]
 					if self.grapplenohit then
 						self.grapplenohit = nil
@@ -2461,13 +2455,13 @@ end
 						self.Owner:SetMoveType(MOVETYPE_WALK)
 						if IsValid(self.GrappleAssist) then
 							local vel = self.GrappleAssist:GetVelocity()
-							--vel.x = vel.x*16
-							--vel.y = vel.y*16
+							--vel.x = vel.x * 16
+							--vel.y = vel.y * 16
 							if vel.z < 0 then
 								vel.z = 0
 							end
-							local length = math.max(vel:Length(),200)
-							self.Owner:SetVelocity(vel:GetNormalized()*length)
+							local length = math.max(vel:Length(), 200)
+							self.Owner:SetVelocity(vel:GetNormalized() * length)
 							self.GrappleAssist:Remove()
 							self:SetNWFiremodeEnt(NULL)
 						--else
@@ -2478,46 +2472,46 @@ end
 						tab.chargeanim = ACT_VM_FIDGET
 						self.Owner:SetLocalPos(vector_origin)
 						if self.Owner:KeyDown(IN_JUMP) then
-							self.GrappleTargetLength = math.min(self.GrappleTargetLength+3,1024)
+							self.GrappleTargetLength = math.min(self.GrappleTargetLength + 3, 1024)
 						end
 						if self.Owner.scavGoDown then
-							self.GrappleTargetLength = math.max(self.GrappleTargetLength-3,64)
+							self.GrappleTargetLength = math.max(self.GrappleTargetLength - 3, 64)
 						end
 						if self.Owner:KeyDown(IN_MOVELEFT) then
-							self.GrappleAssist:GetPhysicsObject():ApplyForceCenter((self.Owner:GetAngles()):Right()*-200)
+							self.GrappleAssist:GetPhysicsObject():ApplyForceCenter((self.Owner:GetAngles()):Right() * -200)
 						end
 						if self.Owner:KeyDown(IN_MOVERIGHT) then
-							self.GrappleAssist:GetPhysicsObject():ApplyForceCenter((self.Owner:GetAngles()):Right()*200)
+							self.GrappleAssist:GetPhysicsObject():ApplyForceCenter((self.Owner:GetAngles()):Right() * 200)
 						end
 						if self.Owner:KeyDown(IN_FORWARD) then
-							self.GrappleAssist:GetPhysicsObject():ApplyForceCenter((self.Owner:GetAngles()):Forward()*200)
+							self.GrappleAssist:GetPhysicsObject():ApplyForceCenter((self.Owner:GetAngles()):Forward() * 200)
 						end
 						if self.Owner:KeyDown(IN_BACK) then
-							self.GrappleAssist:GetPhysicsObject():ApplyForceCenter((self.Owner:GetAngles()):Forward()*-200)
+							self.GrappleAssist:GetPhysicsObject():ApplyForceCenter((self.Owner:GetAngles()):Forward() * -200)
 						end
 						
 						if self.GrappleAssistConstraint and IsValid(self.GrappleAssistConstraint) then
-							local length = math.Approach(self.GrappleAssistConstraint.length,self.GrappleTargetLength,3)
+							local length = math.Approach(self.GrappleAssistConstraint.length, self.GrappleTargetLength, 3)
 							self.GrappleAssistConstraint.length = length
-							self.GrappleAssistConstraint:Fire("SetSpringLength",length,0)
-							table.insert(self.GrappleAssist.AvgVel,1,self.GrappleAssist:GetPhysicsObject():GetVelocity())
+							self.GrappleAssistConstraint:Fire("SetSpringLength", length, 0)
+							table.insert(self.GrappleAssist.AvgVel, 1, self.GrappleAssist:GetPhysicsObject():GetVelocity())
 							if self.GrappleAssist.AvgVel[15] then
-								table.remove(self.GrappleAssist.AvgVel,15)
+								table.remove(self.GrappleAssist.AvgVel, 15)
 							end
 						end
 					end
 					return 0.01
 				end
-				tab.FireFunc = function(self,item)
+				tab.FireFunc = function(self, item)
 					local tracep = {}
 						tracep.mask = MASK_SHOT
-						tracep.mins = Vector(-8,-8,-8)
-						tracep.maxs = Vector(8,8,8)
+						tracep.mins = Vector(-8, -8, -8)
+						tracep.maxs = Vector(8, 8, 8)
 						tracep.start = self.Owner:GetShootPos()
-						tracep.endpos = self.Owner:GetShootPos()+self:GetAimVector()*1024
+						tracep.endpos = self.Owner:GetShootPos() + self:GetAimVector() * 1024
 						tracep.filter = self.Owner
 						local tr = util.TraceHull(tracep)
-					self:SetChargeAttack(ScavData.models[self.inv.items[1].ammo].ChargeAttack,item)
+					self:SetChargeAttack(ScavData.models[self.inv.items[1].ammo].ChargeAttack, item)
 					if tr.Hit and ((tr.MatType == MAT_METAL) or (tr.MatType == MAT_GRATE)) then
 						if not IsValid(tr.Entity) then
 							tr.Entity = game.GetWorld()
@@ -2534,7 +2528,7 @@ end
 							self.GrappleAssist:Spawn()
 							self:SetNWFiremodeEnt(self.GrappleAssist)
 							self.GrappleAssist:GetPhysicsObject():SetVelocity(self.Owner:GetVelocity())
-							self.GrappleAssist:GetPhysicsObject():SetDamping(0,9000)
+							self.GrappleAssist:GetPhysicsObject():SetDamping(0, 9000)
 							self.GrappleAssist:GetPhysicsObject():SetMaterial("gmod_silent")
 							self.GrappleAssist:SetNoDraw(true)
 							self.GrappleAssist:DrawShadow(false)
@@ -2545,16 +2539,16 @@ end
 						self.Owner:SetMoveType(MOVETYPE_VPHYSICS)
 						self.Owner:SetParent(self.GrappleAssist)
 						self.Owner:SetLocalPos(vector_origin)
-						self.Owner:SetLocalAngles(Angle(0,0,0))
-						local constr,rope = constraint.Elastic(self.GrappleAssist,tr.Entity,0,0,Vector(0,0,72),tr.HitPos-tr.Entity:GetPos(),99999,50,0,"cable/physbeam",0,false)
-						--self.GrappleTargetLength = math.min((self.GrappleAssist:GetPos()+Vector(0,0,72)):Distance(tr.HitPos),150)
+						self.Owner:SetLocalAngles(Angle(0, 0, 0))
+						local constr, rope = constraint.Elastic(self.GrappleAssist, tr.Entity, 0, 0, Vector(0, 0, 72), tr.HitPos - tr.Entity:GetPos(), 99999, 50, 0, "cable/physbeam", 0, false)
+						--self.GrappleTargetLength = math.min((self.GrappleAssist:GetPos() + Vector(0, 0, 72)):Distance(tr.HitPos), 150)
 						self.GrappleTargetLength = 200
 						self.GrappleAssistConstraint = constr
 						--self.Owner:SnapEyeAngles(eyeang)
 						--print(constr:GetClass())
 					elseif tr.Hit then
 						self.grapplenohit = true
-						tr.Entity:TakeDamage(10,self.Owner,self)
+						tr.Entity:TakeDamage(10, self.Owner, self)
 						self.ef_grapplebeam = self:CreateToggleEffect("scav_stream_grapplebeam")
 						self.ef_grapplebeam:SetEndPoint(tr.HitPos)
 					else
@@ -2578,7 +2572,7 @@ end
 				--Portal/2
 				ScavData.CollectFuncs["models/props/claw/claw.mdl"] = ScavData.GiveOneOfItemInf
 			else
-				tab.ChargeAttack = function(self,item)
+				tab.ChargeAttack = function(self, item)
 				local tab = ScavData.models["models/props_wasteland/cranemagnet01a.mdl"]
 					local par = self:GetNWFiremodeEnt()
 					if not self.Owner:KeyDown(IN_ATTACK) then
@@ -2587,50 +2581,50 @@ end
 						--self.WeaponCharge = 0
 						tab.chargeanim = ACT_VM_PRIMARYATTACK
 						if IsValid(par) then
-							self:SetViewLerp(EyeAngles(),0.3)
+							self:SetViewLerp(EyeAngles(), 0.3)
 							local ang = self:GetAimVector():Angle()
 							ang.r = 0
 							self.Owner:SetEyeAngles(ang)
 						end
 						return 0.25
 					elseif IsValid(par) then
-						--self.WeaponCharge = self.WeaponCharge+0.2
+						--self.WeaponCharge = self.WeaponCharge + 0.2
 						tab.chargeanim = ACT_VM_FIDGET
 					else
 						tab.chargeanim = nil
 					end
 					return 0.01
 				end
-				tab.FireFunc = function(self,item)
-					self:SetChargeAttack(ScavData.models[self.inv.items[1].ammo].ChargeAttack,item)
+				tab.FireFunc = function(self, item)
+					self:SetChargeAttack(ScavData.models[self.inv.items[1].ammo].ChargeAttack, item)
 					return false
 				end
 			end
 			
-			concommand.Add("+sgrapdown",function(pl,cmd,args) pl.scavGoDown = true end)
-			concommand.Add("-sgrapdown",function(pl,cmd,args) pl.scavGoDown = false end)
+			concommand.Add(" + sgrapdown", function(pl, cmd, args) pl.scavGoDown = true end)
+			concommand.Add("-sgrapdown", function(pl, cmd, args) pl.scavGoDown = false end)
 			
 			if CLIENT then
-				hook.Add("PlayerBindPress","scavgrap",function(pl,bind,pressed)
+				hook.Add("PlayerBindPress", "scavgrap", function(pl, bind, pressed)
 					local ent = pl:GetParent()
-					if (bind == "+duck") and IsValid(ent) and (ent:GetClass() == "scav_grappleassist") then
-						RunConsoleCommand(pressed and "+sgrapdown" or "-sgrapdown")
+					if (bind == " + duck") and IsValid(ent) and (ent:GetClass() == "scav_grappleassist") then
+						RunConsoleCommand(pressed and " + sgrapdown" or "-sgrapdown")
 						return true
 					end
 				end)
 			end
 			
-		ScavData.RegisterFiremode(tab,"models/props_wasteland/cranemagnet01a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_wasteland/cranemagnet01a.mdl")
 		--TF2
-		ScavData.RegisterFiremode(tab,"models/props_mining/cranehook001.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_trainyard/pulley_block001.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_forest/claw.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_mining/cranehook001.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_trainyard/pulley_block001.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_forest/claw.mdl")
 		--L4D/2
-		ScavData.RegisterFiremode(tab,"models/infected/smoker.mdl")
-		ScavData.RegisterFiremode(tab,"models/infected/smoker_l4d1.mdl")
-		ScavData.RegisterFiremode(tab,"models/infected/smoker_tongue_attach.mdl")
+		ScavData.RegisterFiremode(tab, "models/infected/smoker.mdl")
+		ScavData.RegisterFiremode(tab, "models/infected/smoker_l4d1.mdl")
+		ScavData.RegisterFiremode(tab, "models/infected/smoker_tongue_attach.mdl")
 		--Portal/2
-		ScavData.RegisterFiremode(tab,"models/props/claw/claw.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/claw/claw.mdl")
 		
 
 
@@ -2655,54 +2649,54 @@ end
 				--[[FoF Bell]]["models/monastery/bell_large.mdl"] = 4,
 				--TODO: More unique sounds for these. Guitar, piano, klaxon, Houndeye, radio, gramophone, etc. etc.
 			}
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			tab.MaxAmmo = 10
 			if SERVER then
-				tab.FireFunc = function(self,item)
+				tab.FireFunc = function(self, item)
 					local tab = ScavData.models[self.inv.items[1].ammo]
 					local proj = self:CreateEnt("scav_projectile_shockwave")
 					proj.Owner = self.Owner
 					proj:SetPos(self:GetProjectileShootPos())
-					--proj:SetPos(self.Owner:GetShootPos()-self:GetAimVector()*15+self:GetAimVector():Angle():Right()*6-self:GetAimVector():Angle():Up()*8)
+					--proj:SetPos(self.Owner:GetShootPos() - self:GetAimVector() * 15 + self:GetAimVector():Angle():Right() * 6 - self:GetAimVector():Angle():Up() * 8)
 					proj:SetAngles(self:GetAimVector():Angle())
-					proj.vel = self:GetAimVector()*2500
+					proj.vel = self:GetAimVector() * 2500
 					proj:SetOwner(self.Owner)
 					self.Owner:SetAnimation(PLAYER_ATTACK1)
-					self.Owner:ViewPunch(Angle(math.Rand(-4,-3),math.Rand(-0.1,0.1),0))
+					self.Owner:ViewPunch(Angle(math.Rand(-4, -3), math.Rand(-0.1, 0.1), 0))
 					local soundfx = {
-						[0] = function(self,proj)
-							self.Owner:EmitSound("ambient/explosions/explode_9.wav",75,100,0.66,CHAN_WEAPONS,SND_NOFLAGS,0)
-							self.Owner:EmitSound("npc/env_headcrabcanister/launch.wav",75,100,0.33,CHAN_WEAPONS,SND_NOFLAGS,0)
+						[0] = function(self, proj)
+							self.Owner:EmitSound("ambient/explosions/explode_9.wav", 75, 100, 0.66, CHAN_WEAPONS, SND_NOFLAGS, 0)
+							self.Owner:EmitSound("npc/env_headcrabcanister/launch.wav", 75, 100, 0.33, CHAN_WEAPONS, SND_NOFLAGS, 0)
 						end,
-						[1] = function(self,proj)
+						[1] = function(self, proj)
 							local drop = self:GetProjectileShootPos()
 							drop.z = drop.z - 12
 							proj:SetPos(drop)
-							proj.vel = self:GetAimVector()*-250
-							self.Owner:EmitSound("ambient/explosions/explode_9.wav",75,100,0.66,CHAN_WEAPONS,SND_NOFLAGS,0)
-							self.Owner:EmitSound("npc/antlion_guard/shove1.wav",75,100,0.5,CHAN_WEAPONS,SND_NOFLAGS,0)
+							proj.vel = self:GetAimVector() * -250
+							self.Owner:EmitSound("ambient/explosions/explode_9.wav", 75, 100, 0.66, CHAN_WEAPONS, SND_NOFLAGS, 0)
+							self.Owner:EmitSound("npc/antlion_guard/shove1.wav", 75, 100, 0.5, CHAN_WEAPONS, SND_NOFLAGS, 0)
 						end,
-						[2] = function(self,proj)
-							self.Owner:EmitSound("ambient/explosions/explode_9.wav",75,100,0.33,CHAN_WEAPONS,SND_NOFLAGS,0)
-							self.Owner:EmitSound("ambient/misc/brass_bell_c.wav",75,100,0.33,CHAN_WEAPONS,SND_NOFLAGS,0)
-							self.Owner:EmitSound("npc/env_headcrabcanister/launch.wav",75,100,0.33,CHAN_WEAPONS,SND_NOFLAGS,0)
+						[2] = function(self, proj)
+							self.Owner:EmitSound("ambient/explosions/explode_9.wav", 75, 100, 0.33, CHAN_WEAPONS, SND_NOFLAGS, 0)
+							self.Owner:EmitSound("ambient/misc/brass_bell_c.wav", 75, 100, 0.33, CHAN_WEAPONS, SND_NOFLAGS, 0)
+							self.Owner:EmitSound("npc/env_headcrabcanister/launch.wav", 75, 100, 0.33, CHAN_WEAPONS, SND_NOFLAGS, 0)
 						end,
-						[3] = function(self,proj)
-							self.Owner:EmitSound("ambient/explosions/explode_9.wav",75,100,0.33,CHAN_WEAPONS,SND_NOFLAGS,0)
-							self.Owner:EmitSound("physics/bigbell.wav",75,100,0.66,CHAN_WEAPONS,SND_NOFLAGS,0)
-							self.Owner:EmitSound("npc/env_headcrabcanister/launch.wav",75,100,0.33,CHAN_WEAPONS,SND_NOFLAGS,0)
+						[3] = function(self, proj)
+							self.Owner:EmitSound("ambient/explosions/explode_9.wav", 75, 100, 0.33, CHAN_WEAPONS, SND_NOFLAGS, 0)
+							self.Owner:EmitSound("physics/bigbell.wav", 75, 100, 0.66, CHAN_WEAPONS, SND_NOFLAGS, 0)
+							self.Owner:EmitSound("npc/env_headcrabcanister/launch.wav", 75, 100, 0.33, CHAN_WEAPONS, SND_NOFLAGS, 0)
 						end,
-						[4] = function(self,proj)
-							self.Owner:EmitSound("ambient/explosions/explode_9.wav",75,100,0.33,CHAN_WEAPONS,SND_NOFLAGS,0)
-							self.Owner:EmitSound("monastery/bell.wav",75,100,0.66,CHAN_WEAPONS,SND_NOFLAGS,0)
-							self.Owner:EmitSound("npc/env_headcrabcanister/launch.wav",75,100,0.33,CHAN_WEAPONS,SND_NOFLAGS,0)
+						[4] = function(self, proj)
+							self.Owner:EmitSound("ambient/explosions/explode_9.wav", 75, 100, 0.33, CHAN_WEAPONS, SND_NOFLAGS, 0)
+							self.Owner:EmitSound("monastery/bell.wav", 75, 100, 0.66, CHAN_WEAPONS, SND_NOFLAGS, 0)
+							self.Owner:EmitSound("npc/env_headcrabcanister/launch.wav", 75, 100, 0.33, CHAN_WEAPONS, SND_NOFLAGS, 0)
 						end
 					}
-					soundfx[tab.Identify[item.ammo]](self,proj)
+					soundfx[tab.Identify[item.ammo]](self, proj)
 					proj:Spawn()
-					return self:TakeSubammo(item,1)
+					return self:TakeSubammo(item, 1)
 				end
-				ScavData.CollectFuncs["models/props_phx/misc/fender.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),10,ent:GetSkin()}} end
+				ScavData.CollectFuncs["models/props_phx/misc/fender.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 10, ent:GetSkin()}} end
 				ScavData.CollectFuncs["models/props_lab/citizenradio.mdl"] = ScavData.CollectFuncs["models/props_phx/misc/fender.mdl"]
 				ScavData.CollectFuncs["models/props_wasteland/speakercluster01a.mdl"] = ScavData.CollectFuncs["models/props_lab/citizenradio.mdl"]
 				--CSS
@@ -2719,7 +2713,7 @@ end
 				ScavData.CollectFuncs["models/monastery/bell_large.mdl"] = ScavData.CollectFuncs["models/props/de_inferno/bell_large.mdl"]
 				--Portal
 				ScavData.CollectFuncs["models/props/radio_reference.mdl"] = ScavData.CollectFuncs["models/props/cs_office/radio.mdl"]
-				ScavData.CollectFuncs["models/props/food_can/food_can.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),1,ent:GetSkin()}} end
+				ScavData.CollectFuncs["models/props/food_can/food_can.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 1, ent:GetSkin()}} end
 				--TF2
 				ScavData.CollectFuncs["models/props_spytech/fire_bell01.mdl"] = ScavData.CollectFuncs["models/props/cs_office/radio.mdl"]
 				ScavData.CollectFuncs["models/props_spytech/fire_bell02.mdl"] = ScavData.CollectFuncs["models/props_spytech/fire_bell01.mdl"]
@@ -2752,53 +2746,53 @@ end
 			end
 			tab.Cooldown = 0.75
 			
-		ScavData.RegisterFiremode(tab,"models/props_phx/misc/fender.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_lab/citizenradio.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_wasteland/speakercluster01a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_phx/misc/fender.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_lab/citizenradio.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_wasteland/speakercluster01a.mdl")
 		--CSS
-		ScavData.RegisterFiremode(tab,"models/props/cs_office/radio.mdl")
-		ScavData.RegisterFiremode(tab,"models/props/cs_office/radio_p1.mdl")
-		ScavData.RegisterFiremode(tab,"models/props/de_inferno/bell_large.mdl")
-		ScavData.RegisterFiremode(tab,"models/props/de_inferno/bell_largeb.mdl")
-		ScavData.RegisterFiremode(tab,"models/props/de_inferno/bell_small.mdl")
-		ScavData.RegisterFiremode(tab,"models/props/de_inferno/bell_smallb.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/cs_office/radio.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/cs_office/radio_p1.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/de_inferno/bell_large.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/de_inferno/bell_largeb.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/de_inferno/bell_small.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/de_inferno/bell_smallb.mdl")
 		--TF2
-		ScavData.RegisterFiremode(tab,"models/props_spytech/fire_bell01.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_spytech/fire_bell02.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_spytech/siren001.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_bugle/c_bugle.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_battalion_bugle/c_battalion_bugle.mdl")
-		ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_battalion_bugle/c_battalion_bugle.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_shogun_warhorn/c_shogun_warhorn.mdl")
-		ScavData.RegisterFiremode(tab,"models/workshop_partner/weapons/c_models/c_shogun_warhorn/c_shogun_warhorn.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_spytech/intercom.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_sunshine/bell001.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_spytech/fire_bell01.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_spytech/fire_bell02.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_spytech/siren001.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_bugle/c_bugle.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_battalion_bugle/c_battalion_bugle.mdl")
+		ScavData.RegisterFiremode(tab, "models/workshop/weapons/c_models/c_battalion_bugle/c_battalion_bugle.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_shogun_warhorn/c_shogun_warhorn.mdl")
+		ScavData.RegisterFiremode(tab, "models/workshop_partner/weapons/c_models/c_shogun_warhorn/c_shogun_warhorn.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_spytech/intercom.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_sunshine/bell001.mdl")
 		--DoD:S
-		ScavData.RegisterFiremode(tab,"models/props_italian/anzio_bell.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_italian/gramophone.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_italian/anzio_bell.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_italian/gramophone.mdl")
 		--L4D2
-		ScavData.RegisterFiremode(tab,"models/props_fairgrounds/amp_plexi.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_fairgrounds/amp_stack.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_fairgrounds/amp_stack_small.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_fairgrounds/bass_amp.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_fairgrounds/front_speaker.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_fairgrounds/monitor_speaker.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_unique/jukebox01_body.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/melee/w_electric_guitar.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_rooftop/foghorn01.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_fairgrounds/strongmangame_bell.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_equipment/intercom.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_beancan01a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_beancan01a_fullsheet.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_fairgrounds/amp_plexi.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_fairgrounds/amp_stack.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_fairgrounds/amp_stack_small.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_fairgrounds/bass_amp.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_fairgrounds/front_speaker.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_fairgrounds/monitor_speaker.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_unique/jukebox01_body.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/melee/w_electric_guitar.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_rooftop/foghorn01.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_fairgrounds/strongmangame_bell.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_equipment/intercom.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/garbage_beancan01a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/garbage_beancan01a_fullsheet.mdl")
 		--Portal
-		ScavData.RegisterFiremode(tab,"models/props/radio_reference.mdl")
-		ScavData.RegisterFiremode(tab,"models/props/food_can/food_can.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/radio_reference.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/food_can/food_can.mdl")
 		--HL:S
-		ScavData.RegisterFiremode(tab,"models/houndeye.mdl")
+		ScavData.RegisterFiremode(tab, "models/houndeye.mdl")
 		--Portal 2
-		ScavData.RegisterFiremode(tab,"models/props_underground/intercom_panel.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_underground/intercom_panel.mdl")
 		--FoF
-		ScavData.RegisterFiremode(tab,"models/monastery/bell_large.mdl")
+		ScavData.RegisterFiremode(tab, "models/monastery/bell_large.mdl")
 
 --[[==============================================================================================
 	--Gas Canister 
@@ -2812,41 +2806,41 @@ end
 				--[Default] = 0,
 			--	--[[Beans]]["models/props/food_can/food_can.mdl"] = 1,
 			--}
-			--tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+			--tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			tab.MaxAmmo = 3
 			if SERVER then
-				tab.FireFunc = function(self,item)
+				tab.FireFunc = function(self, item)
 					local tab = ScavData.models[self.inv.items[1].ammo]
 					local proj = self:CreateEnt("scav_projectile_canister")
 						proj.Owner = self.Owner
 						local pos = self:GetProjectileShootPos()
-						pos:Add(self.Owner:GetAimVector()*72)
+						pos:Add(self.Owner:GetAimVector() * 72)
 						proj:SetPos(pos)
 						proj:SetModel(item.ammo)
 						proj:SetSkin(item.data)
 						proj:SetPhysicsAttacker(self.Owner)
-						--proj:SetPos(self.Owner:GetShootPos()-self:GetAimVector()*15+self:GetAimVector():Angle():Right()*6-self:GetAimVector():Angle():Up()*8)
+						--proj:SetPos(self.Owner:GetShootPos() - self:GetAimVector() * 15 + self:GetAimVector():Angle():Right() * 6 - self:GetAimVector():Angle():Up() * 8)
 						local ang = self:GetAimVector():Angle()
-						ang:Add(Angle(-90,0,0))
+						ang:Add(Angle(-90, 0, 0))
 						proj:SetAngles(ang)
 						proj:SetOwner(self.Owner)
 					proj:Spawn()
 					self.Owner:SetAnimation(PLAYER_ATTACK1)
-					self.Owner:ViewPunch(Angle(math.Rand(-4,-3),math.Rand(-0.1,0.1),0))
-					self.Owner:EmitSound("physics/metal/metal_canister_impact_hard"..math.random(3)..".wav")
-					return self:TakeSubammo(item,1)
+					self.Owner:ViewPunch(Angle(math.Rand(-4, -3), math.Rand(-0.1, 0.1), 0))
+					self.Owner:EmitSound("physics/metal/metal_canister_impact_hard" .. math.random(3) .. ".wav")
+					return self:TakeSubammo(item, 1)
 				end
 			end
 			tab.Cooldown = 1.5
 			
-		ScavData.RegisterFiremode(tab,"models/props_c17/canister01a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_c17/canister02a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_c17/canister01a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_c17/canister02a.mdl")
 		--TF2
-		ScavData.RegisterFiremode(tab,"models/props_2fort/propane_tank_tall01.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_2fort/propane_tank_tall01.mdl")
 		--L4D/2
-		ScavData.RegisterFiremode(tab,"models/props_equipment/oxygentank01.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_equipment/oxygentank01.mdl")
 		--Portal 2
-		ScavData.RegisterFiremode(tab,"models/br_debris/deb_gas_canister.mdl")
+		ScavData.RegisterFiremode(tab, "models/br_debris/deb_gas_canister.mdl")
 
 --[[==============================================================================================
 	--Disease Shot
@@ -2862,83 +2856,83 @@ end
 				["models/weapons/c_models/c_xms_urinejar.mdl"] = 1,
 				["models/weapons/c_models/c_breadmonster/c_breadmonster.mdl"] = 1,
 			}
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			tab.MaxAmmo = 10
 			if SERVER then
-				tab.FireFunc = function(self,item)
+				tab.FireFunc = function(self, item)
 					local proj = self:CreateEnt("scav_projectile_bio")
 						proj.Owner = self.Owner
 						proj:SetPos(self:GetProjectileShootPos())
-						--proj:SetPos(self.Owner:GetShootPos()-self:GetAimVector()*15+self:GetAimVector():Angle():Right()*6-self:GetAimVector():Angle():Up()*8)
+						--proj:SetPos(self.Owner:GetShootPos() - self:GetAimVector() * 15 + self:GetAimVector():Angle():Right() * 6 - self:GetAimVector():Angle():Up() * 8)
 						proj:SetAngles(self:GetAimVector():Angle())
-						proj.vel = self:GetAimVector()*2500
+						proj.vel = self:GetAimVector() * 2500
 						proj.SpeedScale = self:GetForceScale()
 						proj:SetOwner(self.Owner)
 						proj:Spawn()
 					--TODO: Eh, figure this out later
 					--if item.ammo == "models/weapons/c_models/urinejar.mdl" or item.ammo = "models/weapons/c_models/c_xms_urinejar.mdl" then
 					--	proj:SetMaterial("models/shiny")
-					--	proj:SetColor(240,220,50,255)
+					--	proj:SetColor(240, 220, 50, 255)
 					--end
 					self.Owner:SetAnimation(PLAYER_ATTACK1)
-					self.Owner:ViewPunch(Angle(math.Rand(-4,-3),math.Rand(-0.1,0.1),0))
-					return self:TakeSubammo(item,1)
+					self.Owner:ViewPunch(Angle(math.Rand(-4, -3), math.Rand(-0.1, 0.1), 0))
+					return self:TakeSubammo(item, 1)
 				end
-				ScavData.CollectFuncs["models/zombie/poison.mdl"] = function(self,ent)
-					local items = {{"models/zombie/poison.mdl",1,ent:GetSkin()}}
-					local hccount = ent:GetBodygroup(1)+ent:GetBodygroup(2)+ent:GetBodygroup(3)+ent:GetBodygroup(4)
-					if hccount > 0 then table.insert(items,1,{"models/headcrabblack.mdl",hccount,0}) end
+				ScavData.CollectFuncs["models/zombie/poison.mdl"] = function(self, ent)
+					local items = {{"models/zombie/poison.mdl", 1, ent:GetSkin()}}
+					local hccount = ent:GetBodygroup(1) + ent:GetBodygroup(2) + ent:GetBodygroup(3) + ent:GetBodygroup(4)
+					if hccount > 0 then table.insert(items, 1, {"models/headcrabblack.mdl", hccount, 0}) end
 					return items
 				end
-				ScavData.CollectFuncs["models/player/corpse1.mdl"] = function(self,ent) return {{"models/humans/corpse1.mdl",1,0}} end --playermodel conversion
+				ScavData.CollectFuncs["models/player/corpse1.mdl"] = function(self, ent) return {{"models/humans/corpse1.mdl", 1, 0}} end --playermodel conversion
 				--CSS
-				ScavData.CollectFuncs["models/props/de_train/biohazardtank.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),5,ent:GetSkin()}} end
-				ScavData.CollectFuncs["models/props/cs_militia/toilet.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),1,ent:GetSkin()}} end
-				ScavData.CollectFuncs["models/props/cs_militia/urine_trough.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),2,ent:GetSkin()}} end
+				ScavData.CollectFuncs["models/props/de_train/biohazardtank.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 5, ent:GetSkin()}} end
+				ScavData.CollectFuncs["models/props/cs_militia/toilet.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 1, ent:GetSkin()}} end
+				ScavData.CollectFuncs["models/props/cs_militia/urine_trough.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 2, ent:GetSkin()}} end
 				--TF2
-				ScavData.CollectFuncs["models/props_badlands/barrel01.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),2,ent:GetSkin()}} end
-				ScavData.CollectFuncs["models/props_hydro/water_barrel_cluster2.mdl"] = function(self,ent)
-					return {{"models/props_badlands/barrel01.mdl",10,0},
-							{"models/props_badlands/barrel01.mdl",6,0}}
+				ScavData.CollectFuncs["models/props_badlands/barrel01.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 2, ent:GetSkin()}} end
+				ScavData.CollectFuncs["models/props_hydro/water_barrel_cluster2.mdl"] = function(self, ent)
+					return {{"models/props_badlands/barrel01.mdl", 10, 0},
+							{"models/props_badlands/barrel01.mdl", 6, 0}}
 				end --eight barrels (x2 ea) from clusters
 				ScavData.CollectFuncs["models/props_hydro/water_barrel_cluster3.mdl"] = ScavData.CollectFuncs["models/props_hydro/water_barrel_cluster2.mdl"]
-				ScavData.CollectFuncs["models/weapons/c_models/urinejar.mdl"] = function(self,ent) return {{self.christmas and "models/weapons/c_models/c_xms_urinejar.mdl" or ScavData.FormatModelname(ent:GetModel()),1,math.random(0,1)}} end
+				ScavData.CollectFuncs["models/weapons/c_models/urinejar.mdl"] = function(self, ent) return {{self.christmas and "models/weapons/c_models/c_xms_urinejar.mdl" or ScavData.FormatModelname(ent:GetModel()), 1, math.random(0, 1)}} end
 				--L4D/2
-				ScavData.CollectFuncs["models/infected/boomer.mdl"] = function(self,ent) return {{IsMounted(550) --[[L4D2]] and "models/w_models/weapons/w_eq_bile_flask.mdl" or ScavData.FormatModelname(ent:GetModel()),3,0}} end --three boomer biles from a boomer/boomette
-				ScavData.CollectFuncs["models/props_debris/dead_cow_smallpile.mdl"] = function(self,ent) return {{"models/props_debris/dead_cow.mdl",4,ent:GetSkin()}} end
+				ScavData.CollectFuncs["models/infected/boomer.mdl"] = function(self, ent) return {{L4D2 and "models/w_models/weapons/w_eq_bile_flask.mdl" or ScavData.FormatModelname(ent:GetModel()), 3, 0}} end --three boomer biles from a boomer/boomette
+				ScavData.CollectFuncs["models/props_debris/dead_cow_smallpile.mdl"] = function(self, ent) return {{"models/props_debris/dead_cow.mdl", 4, ent:GetSkin()}} end
 				ScavData.CollectFuncs["models/infected/boomer_l4d1.mdl"] = ScavData.CollectFuncs["models/infected/boomer.mdl"]
 				ScavData.CollectFuncs["models/infected/boomette.mdl"] = ScavData.CollectFuncs["models/infected/boomer.mdl"]
-				ScavData.CollectFuncs["models/props_urban/outhouse001.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),3,ent:GetSkin()}} end
+				ScavData.CollectFuncs["models/props_urban/outhouse001.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 3, ent:GetSkin()}} end
 				ScavData.CollectFuncs["models/props_urban/outhouse002.mdl"] = ScavData.CollectFuncs["models/props_urban/outhouse001.mdl"]
 			end
 			tab.Cooldown = 1
 			
-		ScavData.RegisterFiremode(tab,"models/headcrabblack.mdl")
-		ScavData.RegisterFiremode(tab,"models/humans/corpse1.mdl") --reference to a Dark RP Hobo job I saw years ago
-		ScavData.RegisterFiremode(tab,"models/props_lab/jar01a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_lab/jar01b.mdl")
+		ScavData.RegisterFiremode(tab, "models/headcrabblack.mdl")
+		ScavData.RegisterFiremode(tab, "models/humans/corpse1.mdl") --reference to a Dark RP Hobo job I saw years ago
+		ScavData.RegisterFiremode(tab, "models/props_lab/jar01a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_lab/jar01b.mdl")
 		--CSS
-		ScavData.RegisterFiremode(tab,"models/props/de_train/biohazardtank.mdl")
-		ScavData.RegisterFiremode(tab,"models/props/cs_militia/toilet.mdl")
-		ScavData.RegisterFiremode(tab,"models/props/cs_militia/urine_trough.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/de_train/biohazardtank.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/cs_militia/toilet.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/cs_militia/urine_trough.mdl")
 		--TF2
-		ScavData.RegisterFiremode(tab,"models/props_badlands/barrel01.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/urinejar.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_xms_urinejar.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_breadmonster/c_breadmonster.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_breadmonster/c_breadmonster_milk.mdl")
-		ScavData.RegisterFiremode(tab,"models/pickups/pickup_powerup_plague.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_badlands/barrel01.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/urinejar.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_xms_urinejar.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_breadmonster/c_breadmonster.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_breadmonster/c_breadmonster_milk.mdl")
+		ScavData.RegisterFiremode(tab, "models/pickups/pickup_powerup_plague.mdl")
 		--L4D/2
-		ScavData.RegisterFiremode(tab,"models/infected/boomer.mdl")
-		ScavData.RegisterFiremode(tab,"models/w_models/weapons/w_eq_bile_flask.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_debris/dead_cow.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/pooh_bucket_01.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_interiors/toilet_c.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_interiors/toilet_d.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_urban/outhouse001.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_urban/outhouse002.mdl")
+		ScavData.RegisterFiremode(tab, "models/infected/boomer.mdl")
+		ScavData.RegisterFiremode(tab, "models/w_models/weapons/w_eq_bile_flask.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_debris/dead_cow.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/pooh_bucket_01.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_interiors/toilet_c.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_interiors/toilet_d.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_urban/outhouse001.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_urban/outhouse002.mdl")
 		--FoF
-		ScavData.RegisterFiremode(tab,"models/elpaso/horse_poo.mdl")
+		ScavData.RegisterFiremode(tab, "models/elpaso/horse_poo.mdl")
 		
 --[[==============================================================================================
 	--sniper rifle
@@ -2946,7 +2940,7 @@ end
 
 		do
 			local tab = {}
-			local dmgmodifier = function(attacker,tr,dmg)
+			local dmgmodifier = function(attacker, tr, dmg)
 					if tr.HitGroup == HITGROUP_HEAD then
 						dmg:ScaleDamage(10)
 					end
@@ -2966,39 +2960,39 @@ end
 				["models/weapons/w_combine_sniper.mdl"] = 0,
 				--[TF2] = 1
 			}
-			tab.Identify = setmetatable(identify, {__index = function() return 1 end} )
+			tab.Identify = setmetatable(identify, {__index = function() return 1 end})
 			tab.MaxAmmo = 25
 			tab.Cooldown = 0.01
 			tab.fov = 5
-			function tab.ChargeAttack(self,item)
-				if CurTime()-self.sniperzoomstart > 0.5 then
+			function tab.ChargeAttack(self, item)
+				if CurTime() - self.sniperzoomstart > 0.5 then
 					self:SetZoomed(true)
-					hook.Add("AdjustMouseSensitivity","ScavZoomedIn", function()
+					hook.Add("AdjustMouseSensitivity", "ScavZoomedIn", function()
 						return ScavData.models[self:GetCurrentItem().ammo].fov / GetConVar("fov_desired"):GetFloat()
 					end)
 					if CLIENT then
-						hook.Add( "RenderScreenspaceEffects","ScavScope", function()
+						hook.Add( "RenderScreenspaceEffects", "ScavScope", function()
 							DrawMaterialOverlay( "effects/combine_binocoverlay", 0.02 )
 						end )
 					end
 					if self.Owner:KeyDown(IN_ATTACK2) then --let the player cancel the scope with Mouse2
 						self:SetZoomed(false)
-						hook.Remove("AdjustMouseSensitivity","ScavZoomedIn")
+						hook.Remove("AdjustMouseSensitivity", "ScavZoomedIn")
 						if CLIENT then
-							hook.Remove("RenderScreenspaceEffects","ScavScope")
+							hook.Remove("RenderScreenspaceEffects", "ScavScope")
 						end
 						return 0.05
 					end
 				end
 				if not self.Owner:KeyDown(IN_ATTACK) then
-					if CurTime()-self.sniperzoomstart <= 0.5 or not self.Owner:KeyDown(IN_ATTACK2) then
+					if CurTime() - self.sniperzoomstart <= 0.5 or not self.Owner:KeyDown(IN_ATTACK2) then
 						local tab = ScavData.models[self.inv.items[1].ammo]
 						bullet.Src = self.Owner:GetShootPos()
 						bullet.Dir = self:GetAimVector()
 						if SERVER or not game.SinglePlayer() then
 							self.Owner:FireBullets(bullet)
 						end
-						timer.Simple(.45,function()
+						timer.Simple(.45, function()
 							if IsValid(self) then
 								local ef = EffectData()
 								local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
@@ -3009,17 +3003,17 @@ end
 									local brass = {
 									[0] = function(self)
 										if SERVER then
-											self:EmitSound("weapons/smg1/switch_burst.wav",75,100,1)
+											self:EmitSound("weapons/smg1/switch_burst.wav", 75, 100, 1)
 										else
-											util.Effect("RifleShellEject",ef)
+											util.Effect("RifleShellEject", ef)
 										end
 									end;
 									[1] = function(self)
 										if SERVER then
-											self:EmitSound("weapons/sniper_bolt_back.wav",75,100,1)
-											timer.Simple(.25,function() if IsValid(self) and IsValid(self.Owner) then self.Owner:EmitSound("weapons/sniper_bolt_forward.wav") end end)
+											self:EmitSound("weapons/sniper_bolt_back.wav", 75, 100, 1)
+											timer.Simple(.25, function() if IsValid(self) and IsValid(self.Owner) then self.Owner:EmitSound("weapons/sniper_bolt_forward.wav") end end)
 										end
-										tf2shelleject(self,"sniperrifle")
+										tf2shelleject(self, "sniperrifle")
 									end
 									}
 									brass[tab.Identify[item.ammo]](self)
@@ -3027,7 +3021,7 @@ end
 							end
 						end)
 						if SERVER then
-							self:TakeSubammo(item,1)
+							self:TakeSubammo(item, 1)
 							local soundfx = {
 								[0] = function(self)
 									self.Owner:EmitSound("NPC_Sniper.FireBullet")
@@ -3049,9 +3043,9 @@ end
 						end
 					end
 					self:SetZoomed(false)
-					hook.Remove("AdjustMouseSensitivity","ScavZoomedIn")
+					hook.Remove("AdjustMouseSensitivity", "ScavZoomedIn")
 					if CLIENT then
-						hook.Remove("RenderScreenspaceEffects","ScavScope")
+						hook.Remove("RenderScreenspaceEffects", "ScavScope")
 					end
 					tab.chargeanim = ACT_VM_SECONDARYATTACK
 					return 1
@@ -3059,18 +3053,17 @@ end
 				tab.chargeanim = ACT_VM_IDLE
 				return 0.05
 			end
-			function tab.FireFunc(self,item)
+			function tab.FireFunc(self, item)
 				if SERVER then
 					self.ef_lsight = self:CreateToggleEffect("scav_stream_sniper")
 				end
-				self:SetChargeAttack(tab.ChargeAttack,item)
+				self:SetChargeAttack(tab.ChargeAttack, item)
 				self.sniperzoomstart = CurTime()
 				return false
 			end
 			if SERVER then
-				ScavData.CollectFuncs["models/items/boxsniperrounds.mdl"] = function(self,ent) return {{"models/weapons/rifleshell.mdl",5,0}} end
-				--Ep2
-				ScavData.CollectFuncs["models/weapons/w_combine_sniper.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),5,ent:GetSkin()}} end
+				ScavData.CollectFuncs["models/items/boxsniperrounds.mdl"] = function(self, ent) return {{"models/weapons/rifleshell.mdl", 5, 0}} end
+				ScavData.CollectFuncs["models/weapons/w_combine_sniper.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 5, ent:GetSkin()}} end
 				--TF2
 				ScavData.CollectFuncs["models/weapons/w_models/w_sniperrifle.mdl"] = ScavData.CollectFuncs["models/weapons/w_combine_sniper.mdl"]
 				ScavData.CollectFuncs["models/weapons/c_models/c_sniperrifle/c_sniperrifle.mdl"] = ScavData.CollectFuncs["models/weapons/w_models/w_sniperrifle.mdl"]
@@ -3083,21 +3076,20 @@ end
 				ScavData.CollectFuncs["models/workshop_partner/weapons/c_models/c_dex_sniperrifle/c_dex_sniperrifle.mdl"] = ScavData.CollectFuncs["models/weapons/w_models/w_sniperrifle.mdl"]
 				ScavData.CollectFuncs["models/workshop/weapons/c_models/c_invasion_sniperrifle/c_invasion_sniperrifle.mdl"] = ScavData.CollectFuncs["models/weapons/w_models/w_sniperrifle.mdl"]
 			end
-			ScavData.RegisterFiremode(tab,"models/weapons/rifleshell.mdl")
-			--Ep2
-			ScavData.RegisterFiremode(tab,"models/weapons/w_combine_sniper.mdl")
+			ScavData.RegisterFiremode(tab, "models/weapons/rifleshell.mdl")
+			ScavData.RegisterFiremode(tab, "models/weapons/w_combine_sniper.mdl")
 			--TF2
-			ScavData.RegisterFiremode(tab,"models/weapons/shells/shell_sniperrifle.mdl")
-			ScavData.RegisterFiremode(tab,"models/weapons/w_models/w_sniperrifle.mdl")
-			ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_sniperrifle/c_sniperrifle.mdl")
-			ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_bazaar_sniper/c_bazaar_sniper.mdl")
-			ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_bazaar_sniper/c_bazaar_sniper.mdl")
-			ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_tfc_sniperrifle/c_tfc_sniperrifle.mdl")
-			ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_pro_rifle/c_pro_rifle.mdl")
-			ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_pro_rifle/c_pro_rifle.mdl")
-			ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_dex_sniperrifle/c_dex_sniperrifle.mdl")
-			ScavData.RegisterFiremode(tab,"models/workshop_partner/weapons/c_models/c_dex_sniperrifle/c_dex_sniperrifle.mdl")
-			ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_invasion_sniperrifle/c_invasion_sniperrifle.mdl")
+			ScavData.RegisterFiremode(tab, "models/weapons/shells/shell_sniperrifle.mdl")
+			ScavData.RegisterFiremode(tab, "models/weapons/w_models/w_sniperrifle.mdl")
+			ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_sniperrifle/c_sniperrifle.mdl")
+			ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_bazaar_sniper/c_bazaar_sniper.mdl")
+			ScavData.RegisterFiremode(tab, "models/workshop/weapons/c_models/c_bazaar_sniper/c_bazaar_sniper.mdl")
+			ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_tfc_sniperrifle/c_tfc_sniperrifle.mdl")
+			ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_pro_rifle/c_pro_rifle.mdl")
+			ScavData.RegisterFiremode(tab, "models/workshop/weapons/c_models/c_pro_rifle/c_pro_rifle.mdl")
+			ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_dex_sniperrifle/c_dex_sniperrifle.mdl")
+			ScavData.RegisterFiremode(tab, "models/workshop_partner/weapons/c_models/c_dex_sniperrifle/c_dex_sniperrifle.mdl")
+			ScavData.RegisterFiremode(tab, "models/workshop/weapons/c_models/c_invasion_sniperrifle/c_invasion_sniperrifle.mdl")
 		end
 		
 
@@ -3111,11 +3103,11 @@ end
 			tab.Level = 1
 			tab.fov = 2
 			local zoomhook = function()
-				hook.Add("AdjustMouseSensitivity","ScavZoomedIn", function()
+				hook.Add("AdjustMouseSensitivity", "ScavZoomedIn", function()
 					return tab.fov / GetConVar("fov_desired"):GetFloat()
 				end)
 			end
-			tab.FireFunc = function(self,item)
+			tab.FireFunc = function(self, item)
 				if not self:GetZoomed() then
 					tab.fov = 10
 					self:SetZoomed(true)
@@ -3132,18 +3124,18 @@ end
 				elseif tab.fov == 1 then
 					tab.fov = 10
 					self:SetZoomed(false)
-					hook.Remove("AdjustMouseSensitivity","ScavZoomedIn")
+					hook.Remove("AdjustMouseSensitivity", "ScavZoomedIn")
 				end
 				self.Owner:EmitSound("buttons/lightswitch2.wav")
 			end
-			tab.PostRemove = function(self,item)
+			tab.PostRemove = function(self, item)
 				if CLIENT then
 					tab.fov = GetConVar("fov_desired"):GetFloat()
 				else
 					tab.fov = 90
 				end
 				self:SetZoomed(false)
-				hook.Remove("AdjustMouseSensitivity","ScavZoomedIn")
+				hook.Remove("AdjustMouseSensitivity", "ScavZoomedIn")
 			end
 			tab.Cooldown = 0.25
 			if SERVER then
@@ -3152,10 +3144,10 @@ end
 				ScavData.CollectFuncs["models/gibs/gunship_gibs_eye.mdl"] = ScavData.GiveOneOfItemInf
 				ScavData.CollectFuncs["models/gibs/gunship_gibs_sensorarray.mdl"] = ScavData.GiveOneOfItemInf
 			end
-			ScavData.RegisterFiremode(tab,"models/props_combine/combine_binocular01.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_c17/light_magnifyinglamp02.mdl")
-			ScavData.RegisterFiremode(tab,"models/gibs/gunship_gibs_eye.mdl")
-			ScavData.RegisterFiremode(tab,"models/gibs/gunship_gibs_sensorarray.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_combine/combine_binocular01.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_c17/light_magnifyinglamp02.mdl")
+			ScavData.RegisterFiremode(tab, "models/gibs/gunship_gibs_eye.mdl")
+			ScavData.RegisterFiremode(tab, "models/gibs/gunship_gibs_sensorarray.mdl")
 		
 --[[==============================================================================================
 	-- Medkits
@@ -3164,28 +3156,28 @@ end
 		medkit = {
 			[0] = function(healent, noheal)
 				if SERVER and IsValid(healent) and not noheal then
-					healent:SetHealth(math.min(healent:GetMaxHealth(),healent:Health()+25))
+					healent:SetHealth(math.min(healent:GetMaxHealth(), healent:Health() + 25))
 					healent:EmitSound("items/smallmedkit1.wav")
 				end
 				return 2, 25
 			end,
 			[1] = function(healent, noheal)
 				if SERVER and IsValid(healent) and not noheal then
-					healent:SetHealth(math.min(healent:GetMaxHealth(),healent:Health()+10))
+					healent:SetHealth(math.min(healent:GetMaxHealth(), healent:Health() + 10))
 					healent:EmitSound("items/smallmedkit1.wav")
 				end
 				return 1, 10
 			end,
 			[2] = function(healent, noheal)
 				if SERVER and IsValid(healent) and not noheal then
-					healent:SetHealth(math.min(healent:GetMaxHealth(),healent:Health()+healent:GetMaxHealth()*0.205)) --20.5%
+					healent:SetHealth(math.min(healent:GetMaxHealth(), healent:Health() + healent:GetMaxHealth() * 0.205)) --20.5%
 					healent:EmitSound("items/smallmedkit1.wav")
 				end
 				return 1, IsValid(healent) and (healent:GetMaxHealth() * 0.205) or 20.5
 			end,
 			[3] = function(healent, noheal)
 				if SERVER and IsValid(healent) and not noheal then
-					healent:SetHealth(math.min(healent:GetMaxHealth(),healent:Health()+healent:GetMaxHealth()*0.5))
+					healent:SetHealth(math.min(healent:GetMaxHealth(), healent:Health() + healent:GetMaxHealth() * 0.5))
 					healent:EmitSound("items/smallmedkit1.wav")
 				end
 				return 2, IsValid(healent) and (healent:GetMaxHealth() * 0.5) or 50
@@ -3199,43 +3191,43 @@ end
 			end,
 			[5] = function(healent, noheal)
 				if SERVER and IsValid(healent) and not noheal then
-					healent:SetHealth(math.min(healent:GetMaxHealth(),healent:Health()+math.max(1,math.floor((healent:GetMaxHealth()-healent:Health())*0.8)))) --heal 80% of our current damage (or at least 1 health)
+					healent:SetHealth(math.min(healent:GetMaxHealth(), healent:Health() + math.max(1, math.floor((healent:GetMaxHealth() - healent:Health()) * 0.8)))) --heal 80% of our current damage (or at least 1 health)
 					healent:EmitSound("items/smallmedkit1.wav")
 				end
-				return 2, IsValid(healent) and (math.max(1,math.floor((healent:GetMaxHealth()-healent:Health())*0.8))) or 80
+				return 2, IsValid(healent) and (math.max(1, math.floor((healent:GetMaxHealth() - healent:Health()) * 0.8))) or 80
 			end,
 			[6] = function(healent, noheal)
 				if SERVER and IsValid(healent) and not noheal then
-					healent:SetHealth(math.min(healent:GetMaxHealth(),healent:Health()+50)) --TODO: Make this revive?
+					healent:SetHealth(math.min(healent:GetMaxHealth(), healent:Health() + 50)) --TODO: Make this revive?
 					healent:EmitSound("weapons/defibrillator/defibrillator_use.wav")
 				end
 				return 2, 50
 			end,
 			[7] = function(healent, noheal)
 				if SERVER and IsValid(healent) and not noheal then
-					healent:SetHealth(math.min(healent:GetMaxHealth(),healent:Health()+6))
+					healent:SetHealth(math.min(healent:GetMaxHealth(), healent:Health() + 6))
 					healent:EmitSound("items/smallmedkit1.wav")
 				end
 				return .5, 6
 			end,
 			[8] = function(healent, noheal)
 				if SERVER and IsValid(healent) and not noheal then
-					healent:SetHealth(math.min(healent:GetMaxHealth(),healent:Health()+4))
+					healent:SetHealth(math.min(healent:GetMaxHealth(), healent:Health() + 4))
 					healent:EmitSound("items/smallmedkit1.wav")
 				end
 				return .5, 4
 			end,
 			[9] = function(healent, noheal)
 				if SERVER and IsValid(healent) and not noheal then
-					healent:SetHealth(math.min(healent:GetMaxHealth(),healent:Health()+1))
+					healent:SetHealth(math.min(healent:GetMaxHealth(), healent:Health() + 1))
 					healent:EmitSound("items/smallmedkit1.wav")
 				end
 				return .5, 1
 			end,
 			[10] = function(healent, noheal)
 				if SERVER and IsValid(healent) and not noheal then
-					healent:SetHealth(math.min(healent:GetMaxHealth(),healent:Health()+50))
-					healent:InflictStatusEffect("Disease",-5,1)
+					healent:SetHealth(math.min(healent:GetMaxHealth(), healent:Health() + 50))
+					healent:InflictStatusEffect("Disease", -5, 1)
 					healent:EmitSound("items/smallmedkit1.wav")
 				end
 				return 2, 50
@@ -3265,15 +3257,15 @@ end
 				--[[Small Grub Nugget +1]]["models/grub_nugget_small.mdl"] = 9,
 				--[[ASW +50, -5 Disease]]["models/items/personalmedkit/personalmedkit.mdl"] = 10,
 			}
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			tab.MaxAmmo = 4
-			tab.vmin = Vector(-12,-12,-12)
-			tab.vmax = Vector(12,12,12)
-			tab.FireFunc = function(self,item)
+			tab.vmin = Vector(-12, -12, -12)
+			tab.vmax = Vector(12, 12, 12)
+			tab.FireFunc = function(self, item)
 				local healent = self.Owner
 				local tracep = {}
 				tracep.start = self.Owner:GetShootPos()
-				tracep.endpos = self.Owner:GetShootPos()+self:GetAimVector()*100
+				tracep.endpos = self.Owner:GetShootPos() + self:GetAimVector() * 100
 				tracep.filter = self.Owner
 				tracep.mask = MASK_SHOT
 				tracep.mins = tab.vmin
@@ -3292,13 +3284,13 @@ end
 				local starthealth = healent:Health()
 				tab.Cooldown = medkit[ScavData.models[self.inv.items[1].ammo].Identify[item.ammo]](healent)
 				local ef = EffectData()
-				ef:SetRadius(math.max(2,healent:Health()-starthealth))
+				ef:SetRadius(math.max(2, healent:Health() - starthealth))
 				ef:SetOrigin(self.Owner:GetPos())
 				ef:SetScale(self.Owner:EntIndex())
 				ef:SetEntity(healent)
-				util.Effect("ef_scav_heal",ef,nil,true)
+				util.Effect("ef_scav_heal", ef, nil, true)
 				if SERVER then
-					return self:TakeSubammo(item,1)
+					return self:TakeSubammo(item, 1)
 				end
 			end
 			tab.ReturnHealth = function(self, item)
@@ -3307,53 +3299,51 @@ end
 				return heal
 			end
 			if SERVER then
-				--Ep2
-				ScavData.CollectFuncs["models/antlion_grub_squashed.mdl"] = function(self,ent)
+				ScavData.CollectFuncs["models/antlion_grub_squashed.mdl"] = function(self, ent)
 					local healthratio = self.Owner:Health() / self.Owner:GetMaxHealth()
 					if healthratio > .9 then
-						return {{"models/grub_nugget_small.mdl",1,0}}
+						return {{"models/grub_nugget_small.mdl", 1, 0}}
 					elseif healthratio > .7 then
-						return {{"models/grub_nugget_medium.mdl",1,0}}
+						return {{"models/grub_nugget_medium.mdl", 1, 0}}
 					else
-						return {{"models/grub_nugget_large.mdl",1,0}}
+						return {{"models/grub_nugget_large.mdl", 1, 0}}
 					end
 				end
-				ScavData.CollectFX["models/antlion_grub_squashed.mdl"] = function(self,ent)
+				ScavData.CollectFX["models/antlion_grub_squashed.mdl"] = function(self, ent)
 					self.Owner:EmitSound("npc/antlion_grub/agrub_idle6.wav")
 					self.Owner:EmitSound("npc/antlion_grub/agrub_squish2.wav")
 				end
 				--TF2
-				ScavData.CollectFuncs["models/items/medkit_small.mdl"] = function(self,ent) return {{self.halloween and "models/props_halloween/halloween_medkit_small.mdl" or ScavData.FormatModelname(ent:GetModel()),1,0}} end
-				ScavData.CollectFuncs["models/items/medkit_medium.mdl"] = function(self,ent) return {{self.halloween and "models/props_halloween/halloween_medkit_medium.mdl" or ScavData.FormatModelname(ent:GetModel()),1,0}} end
-				ScavData.CollectFuncs["models/items/medkit_large.mdl"] = function(self,ent) return {{self.halloween and "models/props_halloween/halloween_medkit_large.mdl" or ScavData.FormatModelname(ent:GetModel()),1,0}} end
+				ScavData.CollectFuncs["models/items/medkit_small.mdl"] = function(self, ent) return {{self.halloween and "models/props_halloween/halloween_medkit_small.mdl" or ScavData.FormatModelname(ent:GetModel()), 1, 0}} end
+				ScavData.CollectFuncs["models/items/medkit_medium.mdl"] = function(self, ent) return {{self.halloween and "models/props_halloween/halloween_medkit_medium.mdl" or ScavData.FormatModelname(ent:GetModel()), 1, 0}} end
+				ScavData.CollectFuncs["models/items/medkit_large.mdl"] = function(self, ent) return {{self.halloween and "models/props_halloween/halloween_medkit_large.mdl" or ScavData.FormatModelname(ent:GetModel()), 1, 0}} end
 				--L4D/2
-				ScavData.CollectFuncs["models/w_models/weapons/w_eq_defibrillator_no_paddles.mdl"] = function(self,ent) return {{"models/w_models/weapons/w_eq_defibrillator.mdl",1,0}} end
+				ScavData.CollectFuncs["models/w_models/weapons/w_eq_defibrillator_no_paddles.mdl"] = function(self, ent) return {{"models/w_models/weapons/w_eq_defibrillator.mdl", 1, 0}} end
 				--HLS
-				ScavData.CollectFuncs["models/scientist.mdl"] = function(self,ent) return {{"models/w_medkit.mdl",1,0}} end
+				ScavData.CollectFuncs["models/scientist.mdl"] = function(self, ent) return {{"models/w_medkit.mdl", 1, 0}} end
 			end
-		ScavData.RegisterFiremode(tab,"models/items/healthkit.mdl")
-		ScavData.RegisterFiremode(tab,"models/healthvial.mdl")
+		ScavData.RegisterFiremode(tab, "models/items/healthkit.mdl")
+		ScavData.RegisterFiremode(tab, "models/healthvial.mdl")
+		ScavData.RegisterFiremode(tab, "models/grub_nugget_large.mdl")
+		ScavData.RegisterFiremode(tab, "models/grub_nugget_medium.mdl")
+		ScavData.RegisterFiremode(tab, "models/grub_nugget_small.mdl")
 		--TF2
-		ScavData.RegisterFiremode(tab,"models/items/medkit_small.mdl")
-		ScavData.RegisterFiremode(tab,"models/items/medkit_small_bday.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_halloween/halloween_medkit_small.mdl")
-		ScavData.RegisterFiremode(tab,"models/items/medkit_medium.mdl")
-		ScavData.RegisterFiremode(tab,"models/items/medkit_medium_bday.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_halloween/halloween_medkit_medium.mdl")
-		ScavData.RegisterFiremode(tab,"models/items/medkit_large.mdl")
-		ScavData.RegisterFiremode(tab,"models/items/medkit_large_bday.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_halloween/halloween_medkit_large.mdl")
+		ScavData.RegisterFiremode(tab, "models/items/medkit_small.mdl")
+		ScavData.RegisterFiremode(tab, "models/items/medkit_small_bday.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_halloween/halloween_medkit_small.mdl")
+		ScavData.RegisterFiremode(tab, "models/items/medkit_medium.mdl")
+		ScavData.RegisterFiremode(tab, "models/items/medkit_medium_bday.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_halloween/halloween_medkit_medium.mdl")
+		ScavData.RegisterFiremode(tab, "models/items/medkit_large.mdl")
+		ScavData.RegisterFiremode(tab, "models/items/medkit_large_bday.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_halloween/halloween_medkit_large.mdl")
 		--L4D/2
-		ScavData.RegisterFiremode(tab,"models/w_models/weapons/w_eq_medkit.mdl")
-		ScavData.RegisterFiremode(tab,"models/w_models/weapons/w_eq_defibrillator.mdl")
-		--Ep2
-		ScavData.RegisterFiremode(tab,"models/grub_nugget_large.mdl")
-		ScavData.RegisterFiremode(tab,"models/grub_nugget_medium.mdl")
-		ScavData.RegisterFiremode(tab,"models/grub_nugget_small.mdl")
+		ScavData.RegisterFiremode(tab, "models/w_models/weapons/w_eq_medkit.mdl")
+		ScavData.RegisterFiremode(tab, "models/w_models/weapons/w_eq_defibrillator.mdl")
 		--HLS
-		ScavData.RegisterFiremode(tab,"models/w_medkit.mdl")
+		ScavData.RegisterFiremode(tab, "models/w_medkit.mdl")
 		--ASW
-		ScavData.RegisterFiremode(tab,"models/items/personalmedkit/personalmedkit.mdl")
+		ScavData.RegisterFiremode(tab, "models/items/personalmedkit/personalmedkit.mdl")
 
 --[[==============================================================================================
 	-- Pain Pills (temporary health)
@@ -3364,13 +3354,13 @@ end
 			tab.anim = ACT_VM_IDLE
 			tab.Level = 1
 			tab.MaxAmmo = 3
-			tab.vmin = Vector(-12,-12,-12)
-			tab.vmax = Vector(12,12,12)
-			tab.FireFunc = function(self,item)
+			tab.vmin = Vector(-12, -12, -12)
+			tab.vmax = Vector(12, 12, 12)
+			tab.FireFunc = function(self, item)
 				local healent = self.Owner
 				local tracep = {}
 				tracep.start = self.Owner:GetShootPos()
-				tracep.endpos = self.Owner:GetShootPos()+self:GetAimVector()*100
+				tracep.endpos = self.Owner:GetShootPos() + self:GetAimVector() * 100
 				tracep.filter = self.Owner
 				tracep.mask = MASK_SHOT
 				tracep.mins = tab.vmin
@@ -3395,35 +3385,35 @@ end
 					tab.Cooldown = 0.2
 					return false
 				elseif SERVER then
-					healent:InflictStatusEffect("TemporaryHealth",50,1)
+					healent:InflictStatusEffect("TemporaryHealth", 50, 1)
 				end
 				if SERVER then
-					if IsMounted(550) or IsMounted(500) then --L4D2 or L4D
+					if L4D then
 						healent:EmitSound("player/items/pain_pills/pills_deploy_1.wav")
 					else
-						healent:EmitSound("weapons/smg1/switch_burst.wav",75,180,1)
+						healent:EmitSound("weapons/smg1/switch_burst.wav", 75, 180, 1)
 					end
 				end
 				
 				local ef = EffectData()
-				ef:SetRadius(math.max(2,healent:Health()-starthealth))
+				ef:SetRadius(math.max(2, healent:Health() - starthealth))
 				ef:SetOrigin(self.Owner:GetPos())
 				ef:SetScale(self.Owner:EntIndex())
 				ef:SetEntity(healent)
-				util.Effect("ef_scav_heal",ef,nil,true)
+				util.Effect("ef_scav_heal", ef, nil, true)
 				tab.Cooldown = 1
 				if SERVER then
-					return self:TakeSubammo(item,1)
+					return self:TakeSubammo(item, 1)
 				end
 			end
 			if SERVER then
 				--L4D/2
-				ScavData.CollectFuncs["models/survivors/survivor_manager.mdl"] = function(self,ent) return {{"models/w_models/weapons/w_eq_painpills.mdl",3,0}} end --3 pills from Louis
-				ScavData.CollectFX["models/survivors/survivor_manager.mdl"] = function(self,ent) self.Owner:EmitSound("player/survivor/voice/manager/takepills02.wav",75,100,1,CHAN_VOICE)end
+				ScavData.CollectFuncs["models/survivors/survivor_manager.mdl"] = function(self, ent) return {{"models/w_models/weapons/w_eq_painpills.mdl", 3, 0}} end --3 pills from Louis
+				ScavData.CollectFX["models/survivors/survivor_manager.mdl"] = function(self, ent) self.Owner:EmitSound("player/survivor/voice/manager/takepills02.wav", 75, 100, 1, CHAN_VOICE)end
 			end
-		ScavData.RegisterFiremode(tab,"models/scav/pill_bottle.mdl")
+		ScavData.RegisterFiremode(tab, "models/scav/pill_bottle.mdl")
 		--L4D/2
-		ScavData.RegisterFiremode(tab,"models/w_models/weapons/w_eq_painpills.mdl")
+		ScavData.RegisterFiremode(tab, "models/w_models/weapons/w_eq_painpills.mdl")
 
 --[[==============================================================================================
 	-- Blast Shower
@@ -3473,7 +3463,7 @@ end
 						self.Owner:InflictStatusEffect("Radiation", -1, 1)
 						self.Owner:InflictStatusEffect("Numb", -1, 1)
 						self.Owner:InflictStatusEffect("Deaf", -1, 1)
-						self.Owner:InflictStatusEffect("Drunk", -1, -.125)
+						self.Owner:InflictStatusEffect("Drunk", -1, -0.125)
 						self:TakeSubammo(item, totalStatuses)
 					end
 					local att = self:LookupAttachment("muzzle")
@@ -3593,21 +3583,21 @@ end
 				--[[Junk Food]]["models/props_equipment/snack_machine.mdl"] = 2,
 				["models/props_equipment/snack_machine2.mdl"] = 2,
 			}
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			tab.MaxAmmo = 3
-			tab.FireFunc = function(self,item)
+			tab.FireFunc = function(self, item)
 				if self.Owner:Health() >= self.Owner:GetMaxHealth() then
 					if SERVER then
-						self.Owner:EmitSound(IsMounted(440) --[[TF2]] and "vo/heavy_no02.mp3" or "phx/eggcrack.wav",75,100,1,CHAN_VOICE)
+						self.Owner:EmitSound(TF2 and "vo/heavy_no02.mp3" or "phx/eggcrack.wav", 75, 100, 1, CHAN_VOICE)
 					end
 					tab.Cooldown = .5
 					return false
 				else
 					tab.Cooldown = 2
 					if SERVER then
-						self.Owner:SetHealth(math.min(self.Owner:GetMaxHealth(),self.Owner:Health()+sandwichheal[ScavData.models[item.ammo].Identify[item.ammo]]))
-						self.Owner:EmitSound(IsMounted(440) --[[TF2]] and "vo/SandwichEat09.mp3" or "physics/flesh/flesh_squishy_impact_hard"..math.random(1,4)..".wav",75,100,1,CHAN_VOICE)
-						return self:TakeSubammo(item,1)
+						self.Owner:SetHealth(math.min(self.Owner:GetMaxHealth(), self.Owner:Health() + sandwichheal[ScavData.models[item.ammo].Identify[item.ammo]]))
+						self.Owner:EmitSound(TF2 and "vo/SandwichEat09.mp3" or "physics/flesh/flesh_squishy_impact_hard" .. math.random(1, 4) .. ".wav", 75, 100, 1, CHAN_VOICE)
+						return self:TakeSubammo(item, 1)
 					end
 				end
 			end
@@ -3616,72 +3606,72 @@ end
 			end
 			if SERVER then
 				--CSS
-				ScavData.CollectFuncs["models/props/cs_italy/bananna_bunch.mdl"] = function(self,ent) return {{"models/props/cs_italy/bananna.mdl",5,0}} end
+				ScavData.CollectFuncs["models/props/cs_italy/bananna_bunch.mdl"] = function(self, ent) return {{"models/props/cs_italy/bananna.mdl", 5, 0}} end
 				--TF2
-				ScavData.CollectFuncs["models/weapons/c_models/c_sandwich/c_sandwich.mdl"] = function(self,ent) return {{self.christmas and "models/weapons/c_models/c_sandwich/c_sandwich_xmas.mdl" or ScavData.FormatModelname(ent:GetModel()),1,math.random(0,1)}} end
-				ScavData.CollectFuncs["models/items/plate.mdl"] = function(self,ent) return {{self.christmas and "models/items/plate_sandwich_xmas.mdl" or ScavData.FormatModelname(ent:GetModel()),1,math.random(0,1)}} end
+				ScavData.CollectFuncs["models/weapons/c_models/c_sandwich/c_sandwich.mdl"] = function(self, ent) return {{self.christmas and "models/weapons/c_models/c_sandwich/c_sandwich_xmas.mdl" or ScavData.FormatModelname(ent:GetModel()), 1, math.random(0, 1)}} end
+				ScavData.CollectFuncs["models/items/plate.mdl"] = function(self, ent) return {{self.christmas and "models/items/plate_sandwich_xmas.mdl" or ScavData.FormatModelname(ent:GetModel()), 1, math.random(0, 1)}} end
 				--L4D/2
 				ScavData.CollectFuncs["models/props_equipment/snack_machine.mdl"] = ScavData.GiveOneOfItemInf
 			end
-		ScavData.RegisterFiremode(tab,"models/food/burger.mdl")
-		ScavData.RegisterFiremode(tab,"models/food/hotdog.mdl")
-		ScavData.RegisterFiremode(tab,"models/noesis/donut.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_phx/misc/egg.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_phx/misc/potato.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_bag001a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_milkcarton001a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_milkcarton002a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_takeoutcarton001a.mdl")
+		ScavData.RegisterFiremode(tab, "models/food/burger.mdl")
+		ScavData.RegisterFiremode(tab, "models/food/hotdog.mdl")
+		ScavData.RegisterFiremode(tab, "models/noesis/donut.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_phx/misc/egg.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_phx/misc/potato.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/garbage_bag001a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/garbage_milkcarton001a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/garbage_milkcarton002a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/garbage_takeoutcarton001a.mdl")
 		--CSS
-		ScavData.RegisterFiremode(tab,"models/props/cs_italy/bananna.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/cs_italy/bananna.mdl")
 		--TF2
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_sandwich/c_sandwich.mdl")
-		ScavData.RegisterFiremode(tab,"models/items/plate.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_banana/c_banana.mdl")
-		ScavData.RegisterFiremode(tab,"models/items/banana/banana.mdl")
-		ScavData.RegisterFiremode(tab,"models/items/banana/plate_banana.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_chocolate/c_chocolate.mdl") --todo: temporary extra max health
-		ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_chocolate/c_chocolate.mdl")
-		ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_chocolate/plate_chocolate.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_fishcake/c_fishcake.mdl")
-		ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_fishcake/c_fishcake.mdl")
-		ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_fishcake/plate_fishcake.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_sandwich/c_robo_sandwich.mdl")
-		ScavData.RegisterFiremode(tab,"models/items/plate_robo_sandwich.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_sandwich/c_sandwich_xmas.mdl")
-		ScavData.RegisterFiremode(tab,"models/items/plate_sandwich_xmas.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_bread/c_bread_baguette.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_bread/c_bread_burnt.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_bread/c_bread_cinnamon.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_bread/c_bread_cornbread.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_bread/c_bread_crumpet.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_bread/c_bread_plainloaf.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_bread/c_bread_pretzel.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_bread/c_bread_ration.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_bread/c_bread_russianblack.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_2fort/lunchbag.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_sandwich/c_sandwich.mdl")
+		ScavData.RegisterFiremode(tab, "models/items/plate.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_banana/c_banana.mdl")
+		ScavData.RegisterFiremode(tab, "models/items/banana/banana.mdl")
+		ScavData.RegisterFiremode(tab, "models/items/banana/plate_banana.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_chocolate/c_chocolate.mdl") --todo: temporary extra max health
+		ScavData.RegisterFiremode(tab, "models/workshop/weapons/c_models/c_chocolate/c_chocolate.mdl")
+		ScavData.RegisterFiremode(tab, "models/workshop/weapons/c_models/c_chocolate/plate_chocolate.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_fishcake/c_fishcake.mdl")
+		ScavData.RegisterFiremode(tab, "models/workshop/weapons/c_models/c_fishcake/c_fishcake.mdl")
+		ScavData.RegisterFiremode(tab, "models/workshop/weapons/c_models/c_fishcake/plate_fishcake.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_sandwich/c_robo_sandwich.mdl")
+		ScavData.RegisterFiremode(tab, "models/items/plate_robo_sandwich.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_sandwich/c_sandwich_xmas.mdl")
+		ScavData.RegisterFiremode(tab, "models/items/plate_sandwich_xmas.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_bread/c_bread_baguette.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_bread/c_bread_burnt.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_bread/c_bread_cinnamon.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_bread/c_bread_cornbread.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_bread/c_bread_crumpet.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_bread/c_bread_plainloaf.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_bread/c_bread_pretzel.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_bread/c_bread_ration.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_bread/c_bread_russianblack.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_2fort/lunchbag.mdl")
 		--L4D/2
-		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_takeoutbox01a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_cerealbox01a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_cerealbox01a_fullsheet.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_cerealbox02a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_cerealbox02a_fullsheet.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_pizzabox01a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_pizzabox01a_fullsheet.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_fairgrounds/garbage_pizza_box.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_milkcarton002a_fullsheet.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_smallbox01a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_smallbox01a_fullsheet.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_tunacan01a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_fastfoodcontainer01a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_frenchfrycup01a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_frenchfrycup01a_fullsheet.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/petfoodbag01.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_fairgrounds/garbage_hamburger_container.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_fairgrounds/garbage_popcorn_box.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_fairgrounds/garbage_popcorn_tub.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_equipment/snack_machine.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_equipment/snack_machine2.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/garbage_takeoutbox01a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/garbage_cerealbox01a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/garbage_cerealbox01a_fullsheet.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/garbage_cerealbox02a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/garbage_cerealbox02a_fullsheet.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/garbage_pizzabox01a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/garbage_pizzabox01a_fullsheet.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_fairgrounds/garbage_pizza_box.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/garbage_milkcarton002a_fullsheet.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/garbage_smallbox01a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/garbage_smallbox01a_fullsheet.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/garbage_tunacan01a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/garbage_fastfoodcontainer01a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/garbage_frenchfrycup01a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/garbage_frenchfrycup01a_fullsheet.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/petfoodbag01.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_fairgrounds/garbage_hamburger_container.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_fairgrounds/garbage_popcorn_box.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_fairgrounds/garbage_popcorn_tub.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_equipment/snack_machine.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_equipment/snack_machine2.mdl")
 
 --[[==============================================================================================
 	-- Crit Boost
@@ -3696,56 +3686,56 @@ end
 				--[Drink]] = 1,
 				--[[Steroid Keg]]["models/props_island/steroid_drum.mdl"] = 2,
 			}
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			if SERVER then
-				tab.FireFunc = function(self,item)
+				tab.FireFunc = function(self, item)
 					local tab = ScavData.models[self.inv.items[1].ammo]
 					local itemfx = { --TODO: add sounds, etc. for ones where appropriate
 						[0] = function(self)
-							self.Owner:InflictStatusEffect("DamageX",7,1.5)
-							self.Owner:EmitSound(IsMounted(440) --[[TF2]] and "weapons/buffed_on.wav" or "beams/beamstart5.wav")
+							self.Owner:InflictStatusEffect("DamageX", 7, 1.5)
+							self.Owner:EmitSound(TF2 and "weapons/buffed_on.wav" or "beams/beamstart5.wav")
 						end,
 						[1] = function(self)
-							self.Owner:InflictStatusEffect("DamageX",7,1.5)
-							if IsMounted(440) then --TF2
+							self.Owner:InflictStatusEffect("DamageX", 7, 1.5)
+							if TF2 then
 								self.Owner:EmitSound("player/pl_scout_dodge_can_open.wav")
 								self.Owner:EmitSound("player/pl_scout_dodge_can_drink_fast.wav")
 							else
-								self.Owner:EmitSound("hl1/fvox/hiss.wav",75,150)
+								self.Owner:EmitSound("hl1/fvox/hiss.wav", 75, 150)
 								self.Owner:EmitSound("ambient/levels/canals/toxic_slime_gurgle4.wav")
 							end
 						end,
 						[2] = function(self)
-							self.Owner:InflictStatusEffect("DamageX",15,1.5)
-							self.Owner:EmitSound("ambient/lair/yeti_statue_growl"..math.random(1,6)..".wav",75,100,1,CHAN_VOICE)
+							self.Owner:InflictStatusEffect("DamageX", 15, 1.5)
+							self.Owner:EmitSound("ambient/lair/yeti_statue_growl" .. math.random(1, 6) .. ".wav", 75, 100, 1, CHAN_VOICE)
 						end,
 					}
 					if IsValid(self.Owner) then itemfx[tab.Identify[item.ammo]](self) end
 					return true
 				end
 				--TF2
-				ScavData.CollectFuncs["models/props_island/steroid_drum_cluster.mdl"] = function(self,ent) return {{"models/props_island/steroid_drum.mdl",1,0,8}} end
-				ScavData.CollectFuncs["models/weapons/c_models/c_buffpack/c_buffpack.mdl"] = function(self,ent) return {{self.christmas and "models/weapons/c_models/c_buffpack/c_buffpack_xmas.mdl" or ScavData.FormatModelname(ent:GetModel()),1,math.random(0,1)}} end
+				ScavData.CollectFuncs["models/props_island/steroid_drum_cluster.mdl"] = function(self, ent) return {{"models/props_island/steroid_drum.mdl", 1, 0, 8}} end
+				ScavData.CollectFuncs["models/weapons/c_models/c_buffpack/c_buffpack.mdl"] = function(self, ent) return {{self.christmas and "models/weapons/c_models/c_buffpack/c_buffpack_xmas.mdl" or ScavData.FormatModelname(ent:GetModel()), 1, math.random(0, 1)}} end
 			end
 			tab.Cooldown = 2
-		ScavData.RegisterFiremode(tab,"models/weapons/w_package.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_metalcan001a.mdl") --Me spinich!
-		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_metalcan002a.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_package.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/garbage_metalcan001a.mdl") --Me spinich!
+		ScavData.RegisterFiremode(tab, "models/props_junk/garbage_metalcan002a.mdl")
 		--TF2
-		ScavData.RegisterFiremode(tab,"models/props_halloween/pumpkin_loot.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_buffalo_steak/c_buffalo_steak.mdl")
-		ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_buffalo_steak/c_buffalo_steak.mdl")
-		ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_buffalo_steak/plate_buffalo_steak.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_buffpack/c_buffpack.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_buffpack/c_buffpack_xmas.mdl")
-		ScavData.RegisterFiremode(tab,"models/pickups/pickup_powerup_crit.mdl")
-		ScavData.RegisterFiremode(tab,"models/pickups/pickup_powerup_strength.mdl")
-		ScavData.RegisterFiremode(tab,"models/pickups/pickup_powerup_strength_arm.mdl")
-		ScavData.RegisterFiremode(tab,"models/pickups/pickup_powerup_knockout.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_gameplay/pill_bottle01.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_island/steroid_drum.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_halloween/pumpkin_loot.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_buffalo_steak/c_buffalo_steak.mdl")
+		ScavData.RegisterFiremode(tab, "models/workshop/weapons/c_models/c_buffalo_steak/c_buffalo_steak.mdl")
+		ScavData.RegisterFiremode(tab, "models/workshop/weapons/c_models/c_buffalo_steak/plate_buffalo_steak.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_buffpack/c_buffpack.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_buffpack/c_buffpack_xmas.mdl")
+		ScavData.RegisterFiremode(tab, "models/pickups/pickup_powerup_crit.mdl")
+		ScavData.RegisterFiremode(tab, "models/pickups/pickup_powerup_strength.mdl")
+		ScavData.RegisterFiremode(tab, "models/pickups/pickup_powerup_strength_arm.mdl")
+		ScavData.RegisterFiremode(tab, "models/pickups/pickup_powerup_knockout.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_gameplay/pill_bottle01.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_island/steroid_drum.mdl")
 		--Portal
-		ScavData.RegisterFiremode(tab,"models/props/food_can/food_can_open.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/food_can/food_can_open.mdl")
 
 --[[==============================================================================================
 	-- Invulnerability
@@ -3759,16 +3749,16 @@ end
 				--[Default] = 0,
 				--[[MannPower Uber]]["models/pickups/pickup_powerup_uber.mdl"] = 1,
 			}
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			if SERVER then
-				tab.FireFunc = function(self,item)
+				tab.FireFunc = function(self, item)
 					local tab = ScavData.models[self.inv.items[1].ammo]
 					local itemfx = { --TODO: Sounds, etc. where appropriate
 						[0] = function(self)
-							self.Owner:InflictStatusEffect("Invuln",10,1)
+							self.Owner:InflictStatusEffect("Invuln", 10, 1)
 						end,
 						[1] = function(self)
-							self.Owner:InflictStatusEffect("Invuln",15,1)
+							self.Owner:InflictStatusEffect("Invuln", 15, 1)
 						end,
 					}
 					itemfx[tab.Identify[item.ammo]](self)
@@ -3777,9 +3767,9 @@ end
 			end
 			tab.Cooldown = 5
 		--CSS
-		ScavData.RegisterFiremode(tab,"models/props/de_tides/vending_turtle.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/de_tides/vending_turtle.mdl")
 		--TF2
-		ScavData.RegisterFiremode(tab,"models/pickups/pickup_powerup_uber.mdl")
+		ScavData.RegisterFiremode(tab, "models/pickups/pickup_powerup_uber.mdl")
 
 --[[==============================================================================================
 	-- Whiskey
@@ -3795,9 +3785,9 @@ end
 				["models/weapons/w_whiskey2.mdl"] = 1,
 				["models/items_fof/whiskey_world.mdl"] = 1,
 			}
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			tab.MaxAmmo = 6
-			tab.FireFunc = function(self,item)
+			tab.FireFunc = function(self, item)
 				if IsValid(self.Owner) then
 					if (self.Owner:Health() >= self.Owner:GetMaxHealth() and not self.Owner:GetStatusEffect("Radiation")) then
 						local tab = ScavData.models[self.inv.items[1].ammo]
@@ -3807,11 +3797,11 @@ end
 						tab.Cooldown = .5
 						return false
 					elseif SERVER then
-						self.Owner:SetHealth(math.min(self.Owner:GetMaxHealth(),self.Owner:Health()+25))
-						self.Owner:InflictStatusEffect("Radiation",-5,-1,self.Owner)
-						self.Owner:EmitSound(tab.Identify[item.ammo] == 1 and "player/whiskey_glug"..math.random(1,4)..".wav" or "ambient/levels/canals/toxic_slime_gurgle4.wav",75,100,1,CHAN_VOICE)
-						self.Owner:InflictStatusEffect("Drunk",10,.25)
-						return self:TakeSubammo(item,1)
+						self.Owner:SetHealth(math.min(self.Owner:GetMaxHealth(), self.Owner:Health() + 25))
+						self.Owner:InflictStatusEffect("Radiation", -5, -1, self.Owner)
+						self.Owner:EmitSound(tab.Identify[item.ammo] == 1 and "player/whiskey_glug" .. math.random(1, 4) .. ".wav" or "ambient/levels/canals/toxic_slime_gurgle4.wav", 75, 100, 1, CHAN_VOICE)
+						self.Owner:InflictStatusEffect("Drunk", 10, 0.25)
+						return self:TakeSubammo(item, 1)
 					end
 				end
 			end
@@ -3820,41 +3810,41 @@ end
 			end
 			if SERVER then
 				--L4D/2
-				ScavData.CollectFuncs["models/props_junk/garbage_sixpackbox01a.mdl"] = function(self,ent) return {{ScavData.FormatModelname("models/props_junk/glassbottle01a.mdl"),6,math.Round(math.Rand(0,1))}} end --6-pack
+				ScavData.CollectFuncs["models/props_junk/garbage_sixpackbox01a.mdl"] = function(self, ent) return {{ScavData.FormatModelname("models/props_junk/glassbottle01a.mdl"), 6, math.Round(math.Rand(0, 1))}} end --6-pack
 				ScavData.CollectFuncs["models/props_junk/garbage_sixpackbox01a_fullsheet.mdl"] = ScavData.CollectFuncs["models/props_junk/garbage_sixpackbox01a.mdl"]
 				--FoF
-				ScavData.CollectFuncs["models/weapons/w_whiskey.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),1,0}} end
-				ScavData.CollectFX["models/weapons/w_whiskey.mdl"] = function(self,ent)
-					local voice = {"voice","voice2","voice4"}
-					self.Owner:EmitSound("player/"..voice[math.random(3)].."/whiskey_passwhiskey"..math.random(2)..".wav",75,100,1,CHAN_VOICE)
+				ScavData.CollectFuncs["models/weapons/w_whiskey.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 1, 0}} end
+				ScavData.CollectFX["models/weapons/w_whiskey.mdl"] = function(self, ent)
+					local voice = {"voice", "voice2", "voice4"}
+					self.Owner:EmitSound("player/" .. voice[math.random(3)] .. "/whiskey_passwhiskey" .. math.random(2) .. ".wav", 75, 100, 1, CHAN_VOICE)
 				end
 				ScavData.CollectFuncs["models/weapons/w_whiskey2.mdl"] = ScavData.CollectFuncs["models/weapons/w_whiskey.mdl"]
 				ScavData.CollectFX["models/weapons/w_whiskey2.mdl"] = ScavData.CollectFX["models/weapons/w_whiskey.mdl"]
 				ScavData.CollectFuncs["models/items_fof/whiskey_world.mdl"] = ScavData.CollectFuncs["models/weapons/w_whiskey.mdl"]
 				ScavData.CollectFX["models/items_fof/whiskey_world.mdl"] = ScavData.CollectFX["models/weapons/w_whiskey.mdl"]
-				ScavData.CollectFuncs["models/elpaso/barrel2.mdl"] = function(self,ent) return {{ScavData.FormatModelname(math.random() < .5 and "models/weapons/w_whiskey.mdl" or "models/weapons/w_whiskey2.mdl"),5,0}} end
-				ScavData.CollectFX["models/elpaso/barrel2.mdl"] = function(self,ent)
-					local voice = {"voice","voice2","voice4"}
-					self.Owner:EmitSound("player/"..voice[math.random(3)].."/howl_yeehaw"..math.random(2)..".wav",75,100,1,CHAN_VOICE)
+				ScavData.CollectFuncs["models/elpaso/barrel2.mdl"] = function(self, ent) return {{ScavData.FormatModelname(math.random() < .5 and "models/weapons/w_whiskey.mdl" or "models/weapons/w_whiskey2.mdl"), 5, 0}} end
+				ScavData.CollectFX["models/elpaso/barrel2.mdl"] = function(self, ent)
+					local voice = {"voice", "voice2", "voice4"}
+					self.Owner:EmitSound("player/" .. voice[math.random(3)] .. "/howl_yeehaw" .. math.random(2) .. ".wav", 75, 100, 1, CHAN_VOICE)
 				end
 				ScavData.CollectFuncs["models/elpaso/barrel2_small.mdl"] = ScavData.CollectFuncs["models/elpaso/barrel2.mdl"]
 				ScavData.CollectFX["models/elpaso/barrel2_small.mdl"] = ScavData.CollectFX["models/elpaso/barrel2.mdl"]
 			end
 			tab.Cooldown = 1
-		ScavData.RegisterFiremode(tab,"models/props_junk/glassjug01.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_glassbottle001a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_glassbottle002a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/garbage_glassbottle003a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_junk/glassbottle01a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/glassjug01.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/garbage_glassbottle001a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/garbage_glassbottle002a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/garbage_glassbottle003a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/glassbottle01a.mdl")
 		--TF2
-		ScavData.RegisterFiremode(tab,"models/weapons/w_models/w_bottle.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_bottle/c_bottle.mdl")
-		ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_scotland_shard/c_scotland_shard.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_gameplay/bottle001.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_models/w_bottle.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_bottle/c_bottle.mdl")
+		ScavData.RegisterFiremode(tab, "models/workshop/weapons/c_models/c_scotland_shard/c_scotland_shard.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_gameplay/bottle001.mdl")
 		--FoF
-		ScavData.RegisterFiremode(tab,"models/weapons/w_whiskey.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/w_whiskey2.mdl")
-		ScavData.RegisterFiremode(tab,"models/items_fof/whiskey_world.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_whiskey.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_whiskey2.mdl")
+		ScavData.RegisterFiremode(tab, "models/items_fof/whiskey_world.mdl")
 
 --[[==============================================================================================
 	--plasmagun
@@ -3868,10 +3858,10 @@ PrecacheParticleSystem("scav_exp_plasma")
 			tab.anim = ACT_VM_RECOIL1
 			tab.Level = 4
 			local identify = {} --all plasma guns are the same
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			tab.MaxAmmo = 500
 			if SERVER then
-				tab.Callback = function(self,tr)	
+				tab.Callback = function(self, tr)	
 					if IsValid(tr.Entity) then
 						local dmg = DamageInfo()
 						dmg:SetDamage(15)
@@ -3885,47 +3875,47 @@ PrecacheParticleSystem("scav_exp_plasma")
 						end
 						dmg:SetDamageType(DMG_PLASMA)
 						tr.Entity:TakeDamageInfo(dmg)
-						--tr.Entity:TakeDamage(15,self.Owner,self.Owner)
+						--tr.Entity:TakeDamage(15, self.Owner, self.Owner)
 					end 
 				end
 				tab.proj = GProjectile()
 				tab.proj:SetCallback(tab.Callback)
-				tab.proj:SetBBox(Vector(-8,-8,-8),Vector(8,8,8))
+				tab.proj:SetBBox(Vector(-8, -8, -8), Vector(8, 8, 8))
 				tab.proj:SetPiercing(false)
 				tab.proj:SetGravity(vector_origin)
 				tab.proj:SetMask(MASK_SHOT)
-				tab.OnArmed = function(self,item,olditemname)
+				tab.OnArmed = function(self, item, olditemname)
 					if item.ammo ~= olditemname then
 						self.Owner:EmitSound("weapons/scav_gun/chargeup.wav")
 					end
 				end
 			end
-			tab.ChargeAttack = function(self,item)
+			tab.ChargeAttack = function(self, item)
 				if self.Owner:KeyDown(IN_ATTACK) then
-					local pos = self.Owner:GetShootPos()+self:GetAimVector()*24+self:GetAimVector():Angle():Right()*4-self:GetAimVector():Angle():Up()*4
-					local vel = self:GetAimVector()*2000*self:GetForceScale()
+					local pos = self.Owner:GetShootPos() + self:GetAimVector() * 24 + self:GetAimVector():Angle():Right() * 4-self:GetAimVector():Angle():Up() * 4
+					local vel = self:GetAimVector() * 2000 * self:GetForceScale()
 					if SERVER then
 						local proj = tab.proj
-						--local proj = s_proj.AddProjectile(self.Owner,pos,self:GetAimVector()*2000,ScavData.models[self.inv.items[1].ammo].Callback,false,false,vector_origin,self.Owner,Vector(-8,-8,-8),Vector(8,8,8))
+						--local proj = s_proj.AddProjectile(self.Owner, pos, self:GetAimVector() * 2000, ScavData.models[self.inv.items[1].ammo].Callback, false, false, vector_origin, self.Owner, Vector(-8, -8, -8), Vector(8, 8, 8))
 						proj:SetOwner(self.Owner)
 						proj:SetInflictor(self)
 						proj:SetPos(pos)
 						proj:SetVelocity(vel)
 						proj:SetFilter(self.Owner)
 						proj:Fire()
-						--self.Owner:EmitToAllButSelf("weapons/physcannon/energy_bounce2.wav",80,150)
+						--self.Owner:EmitToAllButSelf("weapons/physcannon/energy_bounce2.wav", 80, 150)
 						item.lastsound = item.lastsound or 0
-						self.Owner:StopSound("weapons/physcannon/energy_disintegrate"..(4+item.lastsound)..".wav")
-						item.lastsound = 1-(item.lastsound)
+						self.Owner:StopSound("weapons/physcannon/energy_disintegrate" .. (4 + item.lastsound) .. ".wav")
+						item.lastsound = 1 - item.lastsound
 						self:AddBarrelSpin(200)
-						self.Owner:EmitSound("weapons/physcannon/energy_disintegrate"..(4+item.lastsound)..".wav",80,255)
-						self:TakeSubammo(item,1) 
+						self.Owner:EmitSound("weapons/physcannon/energy_disintegrate" .. (4 + item.lastsound) .. ".wav", 80, 255)
+						self:TakeSubammo(item, 1) 
 					end
 					local ef = EffectData()
 						ef:SetOrigin(pos)
 						ef:SetStart(vel)
 						ef:SetEntity(self.Owner)
-					util.Effect("ef_scav_plasma",ef)
+					util.Effect("ef_scav_plasma", ef)
 					self:MuzzleFlash2(3)
 				end
 				local continuefiring = self:ProcessLinking(item) and self:StopChargeOnRelease()
@@ -3936,19 +3926,19 @@ PrecacheParticleSystem("scav_exp_plasma")
 				end
 				return 0.1
 			end
-			tab.FireFunc = function(self,item)
-				self:SetChargeAttack(ScavData.models[self.inv.items[1].ammo].ChargeAttack,item)
+			tab.FireFunc = function(self, item)
+				self:SetChargeAttack(ScavData.models[self.inv.items[1].ammo].ChargeAttack, item)
 				return false
 			end
 			if SERVER then
-				ScavData.CollectFuncs["models/items/car_battery01.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),50,ent:GetSkin()}} end
+				ScavData.CollectFuncs["models/items/car_battery01.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 50, ent:GetSkin()}} end
 				--TF2
-				ScavData.CollectFuncs["models/workshop/weapons/c_models/c_invasion_pistol/c_invasion_pistol.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),12,ent:GetSkin()}} end
+				ScavData.CollectFuncs["models/workshop/weapons/c_models/c_invasion_pistol/c_invasion_pistol.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 12, ent:GetSkin()}} end
 			end
 			tab.Cooldown = 0
-		ScavData.RegisterFiremode(tab,"models/items/car_battery01.mdl")
+		ScavData.RegisterFiremode(tab, "models/items/car_battery01.mdl")
 		--TF2
-		ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_invasion_pistol/c_invasion_pistol.mdl")
+		ScavData.RegisterFiremode(tab, "models/workshop/weapons/c_models/c_invasion_pistol/c_invasion_pistol.mdl")
 
 --[[==============================================================================================
 	--Frag 12 High-Explosive round
@@ -3959,28 +3949,28 @@ PrecacheParticleSystem("scav_exp_plasma")
 			tab.anim = ACT_VM_PRIMARYATTACK
 			tab.Level = 7
 			local identify = {} -- all frag 12 rounds are the same
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			tab.MaxAmmo = 40
 			tab.bullet = {}
 			tab.bullet.Num = 1
-			tab.bullet.Spread = Vector(0.03,0.03,0)
+			tab.bullet.Spread = Vector(0.03, 0.03, 0)
 			tab.bullet.Tracer = 1
 			tab.bullet.Force = 0
 			tab.bullet.Damage = 5
 			tab.bullet.TracerName = "ef_scav_tr_b"
-			tab.bullet.Callback = function(attacker,tr,dmginfo)
+			tab.bullet.Callback = function(attacker, tr, dmginfo)
 				if tr.HitSky then
 					return true
 				end
 				local ef = EffectData()
 					ef:SetOrigin(tr.HitPos)
-					util.Effect("ef_scav_expsmall",ef)
+					util.Effect("ef_scav_expsmall", ef)
 				if SERVER then
-					util.Decal("fadingscorch",tr.HitPos+tr.HitNormal*8,tr.HitPos-tr.HitNormal*8)
-					util.BlastDamage(attacker:GetActiveWeapon(),attacker,tr.HitPos,128,50)
+					util.Decal("fadingscorch", tr.HitPos + tr.HitNormal * 8, tr.HitPos - tr.HitNormal * 8)
+					util.BlastDamage(attacker:GetActiveWeapon(), attacker, tr.HitPos, 128, 50)
 				end
 			end
-			tab.FireFunc = function(self,item)
+			tab.FireFunc = function(self, item)
 				local tab = ScavData.models[self.inv.items[1].ammo]
 				tab.bullet.Src = self.Owner:GetShootPos()
 				tab.bullet.Dir = self:GetAimVector()
@@ -3989,16 +3979,16 @@ PrecacheParticleSystem("scav_exp_plasma")
 				end
 				self.Owner:SetAnimation(PLAYER_ATTACK1)
 				self.Owner:EmitSound("^weapons/ar2/fire1.wav")
-				if SERVER then return self:TakeSubammo(item,1) end
+				if SERVER then return self:TakeSubammo(item, 1) end
 			end
 			if SERVER then
 				--L4D2
-				ScavData.CollectFuncs["models/w_models/weapons/w_eq_explosive_ammopack.mdl"] = function(self,ent) return {{ent:GetModel(),40,ent:GetSkin()}} end
+				ScavData.CollectFuncs["models/w_models/weapons/w_eq_explosive_ammopack.mdl"] = function(self, ent) return {{ent:GetModel(), 40, ent:GetSkin()}} end
 			end
 			tab.Cooldown = 0.2
-		ScavData.RegisterFiremode(tab,"models/items/ammo/frag12round.mdl")
+		ScavData.RegisterFiremode(tab, "models/items/ammo/frag12round.mdl")
 		--L4D2
-		ScavData.RegisterFiremode(tab,"models/w_models/weapons/w_eq_explosive_ammopack.mdl")
+		ScavData.RegisterFiremode(tab, "models/w_models/weapons/w_eq_explosive_ammopack.mdl")
 
 --[[==============================================================================================
 	--Syringe Gun
@@ -4009,12 +3999,12 @@ PrecacheParticleSystem("scav_exp_plasma")
 			tab.anim = ACT_VM_PRIMARYATTACK
 			tab.Level = 4
 			local identify = {} --all syringe guns are the same
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			tab.MaxAmmo = 190 --150 + 40
-			local callback = function(self,tr)
+			local callback = function(self, tr)
 				if IsValid(tr.Entity) then
 					if tr.Entity:IsPlayer() or tr.Entity:IsNPC() or tr.Entity:IsNextBot() then
-						tr.Entity:InflictStatusEffect("Disease",5,1)
+						tr.Entity:InflictStatusEffect("Disease", 5, 1)
 					end
 					local dmg = DamageInfo()
 						dmg:SetDamage(1)
@@ -4033,16 +4023,16 @@ PrecacheParticleSystem("scav_exp_plasma")
 			if SERVER then
 				tab.proj = GProjectile()
 					tab.proj:SetCallback(callback)
-					tab.proj:SetBBox(Vector(-1,-1,-1),Vector(1,1,1))
+					tab.proj:SetBBox(Vector(-1, -1, -1), Vector(1, 1, 1))
 					tab.proj:SetPiercing(false)
-					tab.proj:SetGravity(Vector(0,0,-96))
+					tab.proj:SetGravity(Vector(0, 0, -96))
 					tab.proj:SetMask(MASK_SHOT)
 			end
-			tab.ChargeAttack = function(self,item)
+			tab.ChargeAttack = function(self, item)
 				if self.Owner:KeyDown(IN_ATTACK) then		
-					local vel = (VectorRand()*0.01+self:GetAimVector()):GetNormalized()*1500*self:GetForceScale()
-					local pos = self.Owner:GetShootPos()+self:GetAimVector()*24+self:GetAimVector():Angle():Right()*4-self:GetAimVector():Angle():Up()*4
-					--local proj = s_proj.AddProjectile(self.Owner,self.Owner:GetShootPos()+(self:GetAimVector():Angle():Right()*2-self:GetAimVector():Angle():Up()*2)*1,vel,ScavData.models["models/weapons/w_models/w_syringegun.mdl"].Callback,false,false,Vector(0,0,-96))
+					local vel = (VectorRand() * 0.01 + self:GetAimVector()):GetNormalized() * 1500 * self:GetForceScale()
+					local pos = self.Owner:GetShootPos() + self:GetAimVector() * 24 + self:GetAimVector():Angle():Right() * 4 - self:GetAimVector():Angle():Up() * 4
+					--local proj = s_proj.AddProjectile(self.Owner, self.Owner:GetShootPos() + (self:GetAimVector():Angle():Right() * 2 - self:GetAimVector():Angle():Up() * 2) * 1, vel, ScavData.models["models/weapons/w_models/w_syringegun.mdl"].Callback, false, false, Vector(0, 0, -96))
 					if SERVER then
 						local proj = tab.proj
 						proj:SetOwner(self.Owner)
@@ -4051,10 +4041,10 @@ PrecacheParticleSystem("scav_exp_plasma")
 						proj:SetVelocity(vel)
 						proj:SetFilter(self.Owner)
 						proj:Fire()
-						self:TakeSubammo(item,1)
+						self:TakeSubammo(item, 1)
 						if item.subammo == 0 then
 							self.Owner:EmitSound("weapons/syringegun_reload_air1.wav")
-							timer.Simple(0.25,function() if IsValid(self) and IsValid(self.Owner) then self.Owner:EmitSound("weapons/syringegun_reload_air2.wav") end end)
+							timer.Simple(0.25, function() if IsValid(self) and IsValid(self.Owner) then self.Owner:EmitSound("weapons/syringegun_reload_air2.wav") end end)
 						end
 					else
 						local ef = EffectData()
@@ -4062,7 +4052,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 							ef:SetStart(vel)
 							ef:SetEntity(self.Owner)
 							ef:SetScale(item.data)
-						util.Effect("ef_scav_syringe",ef)
+						util.Effect("ef_scav_syringe", ef)
 					end
 				end
 				local continuefiring = self:ProcessLinking(item) and self:StopChargeOnRelease()
@@ -4074,23 +4064,23 @@ PrecacheParticleSystem("scav_exp_plasma")
 				end
 				return 0.1
 			end
-			tab.FireFunc = function(self,item)
-				self:SetChargeAttack(ScavData.models[self.inv.items[1].ammo].ChargeAttack,item)
+			tab.FireFunc = function(self, item)
+				self:SetChargeAttack(ScavData.models[self.inv.items[1].ammo].ChargeAttack, item)
 				return false
 			end
 			if SERVER then
 				--TF2
-				ScavData.CollectFuncs["models/weapons/w_models/w_syringegun.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),40,ent:GetSkin()}} end
+				ScavData.CollectFuncs["models/weapons/w_models/w_syringegun.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 40, ent:GetSkin()}} end
 				ScavData.CollectFuncs["models/weapons/c_models/c_syringegun/c_syringegun.mdl"] = ScavData.CollectFuncs["models/weapons/w_models/w_syringegun.mdl"]
 				ScavData.CollectFuncs["models/weapons/c_models/c_leechgun/c_leechgun.mdl"] = ScavData.CollectFuncs["models/weapons/w_models/w_syringegun.mdl"]
 				ScavData.CollectFuncs["models/weapons/c_models/c_proto_syringegun/c_proto_syringegun.mdl"] = ScavData.CollectFuncs["models/weapons/w_models/w_syringegun.mdl"]
 			end
 			tab.Cooldown = 0
 		--TF2
-		ScavData.RegisterFiremode(tab,"models/weapons/w_models/w_syringegun.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_syringegun/c_syringegun.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_leechgun/c_leechgun.mdl")		
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_proto_syringegun/c_proto_syringegun.mdl")		
+		ScavData.RegisterFiremode(tab, "models/weapons/w_models/w_syringegun.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_syringegun/c_syringegun.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_leechgun/c_leechgun.mdl")		
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_proto_syringegun/c_proto_syringegun.mdl")		
 
 		
 --[[==============================================================================================
@@ -4133,10 +4123,10 @@ PrecacheParticleSystem("scav_exp_plasma")
 				["models/props_italian/boat_wooden03a.mdl"] = 10,
 				["models/leon/boat_normal.mdl"] = 10,
 			}
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			tab.MaxAmmo = 6
 			if SERVER then
-				tab.FireFunc = function(self,item)
+				tab.FireFunc = function(self, item)
 					local data = {
 						chunks = {},
 						mdl = "",
@@ -4147,60 +4137,60 @@ PrecacheParticleSystem("scav_exp_plasma")
 					}
 					local propdetails = {
 						[0] = function(data)
-							data.chunks = {"1","2","3","4","5","6","7"}
+							data.chunks = {"1", "2", "3", "4", "5", "6", "7"}
 							data.mdl = "models/props_combine/breenbust_Chunk0"
 							data.mass = 15
 						end,
 						[1] = function(data)
-							data.chunks = {"a","b","c","d","e","f","g","h","i","j","k"}
+							data.chunks = {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k"}
 							data.mdl = "models/props_debris/concrete_spawnchunk001"
 							data.mass = 25
 							data.drag = false
-							data.ang:Add(Angle(90,0,0))
+							data.ang:Add(Angle(90, 0, 0))
 						end,
 						[2] = function(data)
-							data.chunks = {"1","2","3","4","5","6","7"}
+							data.chunks = {"1", "2", "3", "4", "5", "6", "7"}
 							data.mdl = "models/props/cs_office/plant01_p"
 						end,
 						[3] = function(data)
-							data.chunks = {"1","2","3","4","5","6","7","8","9","10","11"}
+							data.chunks = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"}
 							data.mdl = "models/props/de_inferno/flower_barrel_p"
 						end,
 						[4] = function(data)
-							data.chunks = {"2","3","4","5","6","7","8","9","10"}
+							data.chunks = {"2", "3", "4", "5", "6", "7", "8", "9", "10"}
 							data.mdl = "models/props/de_inferno/fountain_bowl_p"
 						end,
 						[5] = function(data)
-							data.chunks = {"2","3","4","5","6","7","8","9","10","11","12","13","14"}
+							data.chunks = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14"}
 							data.mdl = "models/props/cs_militia/skylight_glass_p"
-							data.ang:Add(Angle(90,0,0))
+							data.ang:Add(Angle(90, 0, 0))
 						end,
 						[6] = function(data)
-							data.chunks = {"1","2","3","4","5","6","7","8","9"}
+							data.chunks = {"1", "2", "3", "4", "5", "6", "7", "8", "9"}
 							data.mdl = "models/props_unique/airport/atlas_break0"
-							data.pos:Add(Vector(0,0,-32))
+							data.pos:Add(Vector(0, 0, -32))
 							data.mass = 25
 							data.drag = false
 						end,
 						[7] = function(data)
-							data.chunks = {"1","2","3","4","5","6","7","8","9"}
+							data.chunks = {"1", "2", "3", "4", "5", "6", "7", "8", "9"}
 							data.mdl = "models/props_debris/concrete_column001a_chunk0"
-							data.ang:Add(Angle(0,0,90)) --horizontal spread
+							data.ang:Add(Angle(0, 0, 90)) --horizontal spread
 							data.mass = 25
 						end,
 						[8] = function(data)
-							data.chunks = {"1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26"}
+							data.chunks = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26"}
 							data.mdl = "models/npcs/turret/turret_fx_break_gib"
 							data.mass = 25
 						end,
 						[9] = function(data)
-							data.chunks = {"1","2","3","4","5","6"}
+							data.chunks = {"1", "2", "3", "4", "5", "6"}
 							data.mdl = "models/props_wasteland/barricade002a_chunk0"
-							data.ang:Add(Angle(0,90,0))
+							data.ang:Add(Angle(0, 90, 0))
 							data.mass = 25
 						end,
 						[10] = function(data)
-							data.chunks = {"1","2","3","4","5","6","7","8"}
+							data.chunks = {"1", "2", "3", "4", "5", "6", "7", "8"}
 							data.mdl = "models/props_canal/boat001b_chunk0"
 							data.mass = 25
 						end,
@@ -4208,14 +4198,14 @@ PrecacheParticleSystem("scav_exp_plasma")
 					local tab = ScavData.models[self.inv.items[1].ammo]
 					propdetails[tab.Identify[item.ammo]](data)
 					local chunkspawn = table.Copy(data.chunks)
-					while #chunkspawn > 7 do table.remove(chunkspawn,math.random(#chunkspawn)) end --only have a max of 7 chunks
+					while #chunkspawn > 7 do table.remove(chunkspawn, math.random(#chunkspawn)) end --only have a max of 7 chunks
 					--chunk 1 of the Portal 2 turrets has some special effects on it that'd be nice to always have
 					if tab.Identify[item.ammo] == 8 then chunkspawn[1] = "1" end
-					for i=1,#chunkspawn,1 do
-						local randvec = Vector(math.Rand(-0.1,0.1),math.Rand(-0.1,0.1),math.Rand(-0.1,0.1))
+					for i=1, #chunkspawn, 1 do
+						local randvec = Vector(math.Rand(-0.1, 0.1), math.Rand(-0.1, 0.1), math.Rand(-0.1, 0.1))
 						local proj = self:CreateEnt("prop_physics")
 						proj:SetModel(data.mdl .. chunkspawn[i] .. ".mdl")
-						proj:SetPos(data.pos + self:GetAimVector()*30+(randvec))
+						proj:SetPos(data.pos + self:GetAimVector() * 30 + (randvec))
 						proj:SetAngles(data.ang)
 						proj:SetPhysicsAttacker(self.Owner)
 						proj:SetCollisionGroup(COLLISION_GROUP_PROJECTILE)
@@ -4225,87 +4215,87 @@ PrecacheParticleSystem("scav_exp_plasma")
 							local physobj = proj:GetPhysicsObject()
 							if IsValid(physobj) then
 								if data.mass then physobj:SetMass(data.mass) end
-								physobj:AddGameFlag(bit.bor(FVPHYSICS_PENETRATING,FVPHYSICS_WAS_THROWN))
-								physobj:SetVelocity((self:GetAimVector()+randvec)*2500+self.Owner:GetVelocity())
+								physobj:AddGameFlag(bit.bor(FVPHYSICS_PENETRATING, FVPHYSICS_WAS_THROWN))
+								physobj:SetVelocity((self:GetAimVector() + randvec) * 2500 + self.Owner:GetVelocity())
 								physobj:SetBuoyancyRatio(0)
 								physobj:EnableDrag(data.drag)
 							end
-							proj:Fire("kill",1,"3")
-							--gamemode.Call("ScavFired",self.Owner,proj)
+							proj:Fire("kill", 1, "3")
+							--gamemode.Call("ScavFired", self.Owner, proj)
 						end
 					end
 					self.Owner:GetPhysicsObject(wake)
-					self.Owner:SetVelocity(self.Owner:GetVelocity()-self:GetAimVector()*200)
+					self.Owner:SetVelocity(self.Owner:GetVelocity() - self:GetAimVector() * 200)
 					self.Owner:SetAnimation(PLAYER_ATTACK1)
-					self.Owner:ViewPunch(Angle(math.Rand(-1,0)-8,math.Rand(-0.1,0.1),0))
+					self.Owner:ViewPunch(Angle(math.Rand(-9, 8), math.Rand(-0.1, 0.1), 0))
 					self.Owner:EmitSound("weapons/shotgun/shotgun_dbl_fire.wav")
 					timer.Simple(0.5, function() if IsValid(self) then self:SendWeaponAnim(ACT_VM_HOLSTER) end end)
-					timer.Simple(0.75, function() if IsValid(self) then self.Owner:EmitSound("weapons/shotgun/shotgun_reload3.wav",100,65) end end)
-					timer.Simple(1.75, function() if IsValid(self) then self.Owner:EmitSound("weapons/shotgun/shotgun_cock.wav",100,120) end end)
-					return self:TakeSubammo(item,1)
+					timer.Simple(0.75, function() if IsValid(self) then self.Owner:EmitSound("weapons/shotgun/shotgun_reload3.wav", 100, 65) end end)
+					timer.Simple(1.75, function() if IsValid(self) then self.Owner:EmitSound("weapons/shotgun/shotgun_cock.wav", 100, 120) end end)
+					return self:TakeSubammo(item, 1)
 				end
 				--Portal 2
-				ScavData.CollectFuncs["models/npcs/turret/turret_skeleton.mdl"] = function(self,ent)
+				ScavData.CollectFuncs["models/npcs/turret/turret_skeleton.mdl"] = function(self, ent)
 					local num = tostring(math.random(18))
-					if #num == 1 then num = "0"..num end
-					self.Owner:EmitSound("vo/turret_defective/sp_sabotage_factory_defect_test"..num..".wav",100,65)
-					return {{ScavData.FormatModelname(ent:GetModel()),1,0}}
+					if #num == 1 then num = "0" .. num end
+					self.Owner:EmitSound("vo/turret_defective/sp_sabotage_factory_defect_test" .. num .. ".wav", 100, 65)
+					return {{ScavData.FormatModelname(ent:GetModel()), 1, 0}}
 				end
 				ScavData.CollectFuncs["models/npcs/turret/turret_backwards.mdl"] = ScavData.CollectFuncs["models/npcs/turret/turret_skeleton.mdl"]
-				ScavData.CollectFuncs["models/npcs/turret/turret_debris_lrg.mdl"] = function(self,ent)
-					local givetab = {{ScavData.FormatModelname(math.random(2) == 1 and "models/npcs/turret/turret_skeleton.mdl" or "models/npcs/turret/turret_backwards.mdl"),math.random(3,10),0}}
-					if math.random(3) == 1 then table.insert(givetab,{ScavData.FormatModelname("models/npcs/turret/turret.mdl"),math.random(25,75),0}) end
+				ScavData.CollectFuncs["models/npcs/turret/turret_debris_lrg.mdl"] = function(self, ent)
+					local givetab = {{ScavData.FormatModelname(math.random(2) == 1 and "models/npcs/turret/turret_skeleton.mdl" or "models/npcs/turret/turret_backwards.mdl"), math.random(3, 10), 0}}
+					if math.random(3) == 1 then table.insert(givetab, {ScavData.FormatModelname("models/npcs/turret/turret.mdl"), math.random(25, 75), 0}) end
 					return givetab
 				end
-				ScavData.CollectFuncs["models/npcs/turret/turret_debris_med.mdl"] = function(self,ent)
-					local givetab = {{ScavData.FormatModelname(math.random(2) == 1 and "models/npcs/turret/turret_skeleton.mdl" or "models/npcs/turret/turret_backwards.mdl"),math.random(2,6),0}}
-					if math.random(4) == 1 then table.insert(givetab,{ScavData.FormatModelname("models/npcs/turret/turret.mdl"),math.random(25,75),0}) end
+				ScavData.CollectFuncs["models/npcs/turret/turret_debris_med.mdl"] = function(self, ent)
+					local givetab = {{ScavData.FormatModelname(math.random(2) == 1 and "models/npcs/turret/turret_skeleton.mdl" or "models/npcs/turret/turret_backwards.mdl"), math.random(2, 6), 0}}
+					if math.random(4) == 1 then table.insert(givetab, {ScavData.FormatModelname("models/npcs/turret/turret.mdl"), math.random(25, 75), 0}) end
 					return givetab
 				end
-				ScavData.CollectFuncs["models/npcs/turret/turret_debris_sml.mdl"] = function(self,ent) return {{ScavData.FormatModelname(math.random(2) == 1 and "models/npcs/turret/turret_skeleton.mdl" or "models/npcs/turret/turret_backwards.mdl"),math.random(1,4),0}} end
-				ScavData.CollectFuncs["models/npcs/monsters/monster_a.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),2,0}} end
+				ScavData.CollectFuncs["models/npcs/turret/turret_debris_sml.mdl"] = function(self, ent) return {{ScavData.FormatModelname(math.random(2) == 1 and "models/npcs/turret/turret_skeleton.mdl" or "models/npcs/turret/turret_backwards.mdl"), math.random(1, 4), 0}} end
+				ScavData.CollectFuncs["models/npcs/monsters/monster_a.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 2, 0}} end
 				ScavData.CollectFuncs["models/npcs/monsters/monster_a_box.mdl"] = ScavData.CollectFuncs["models/npcs/monsters/monster_a.mdl"]
 				ScavData.CollectFuncs["models/npcs/monsters/monster_a_head.mdl"] = ScavData.CollectFuncs["models/npcs/monsters/monster_a.mdl"]
 			end
 			tab.Cooldown = 2
-		ScavData.RegisterFiremode(tab,"models/props_combine/breenbust.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_debris/concrete_spawnplug001a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_debris/concrete_column001a_core.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_wasteland/barricade002a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_canal/boat001a.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_canal/boat001b.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_canal/boat002b.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_combine/breenbust.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_debris/concrete_spawnplug001a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_debris/concrete_column001a_core.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_wasteland/barricade002a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_canal/boat001a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_canal/boat001b.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_canal/boat002b.mdl")
 		--Lost Coast
-		ScavData.RegisterFiremode(tab,"models/lostcoast/props_wasteland/boat_wooden01a.mdl")
-		ScavData.RegisterFiremode(tab,"models/lostcoast/props_wasteland/boat_wooden02a.mdl")
+		ScavData.RegisterFiremode(tab, "models/lostcoast/props_wasteland/boat_wooden01a.mdl")
+		ScavData.RegisterFiremode(tab, "models/lostcoast/props_wasteland/boat_wooden02a.mdl")
 		--CSS
-		ScavData.RegisterFiremode(tab,"models/props/cs_office/plant01.mdl")
-		ScavData.RegisterFiremode(tab,"models/props/de_inferno/flower_barrel.mdl")
-		ScavData.RegisterFiremode(tab,"models/props/de_inferno/fountain_bowl.mdl")
-		ScavData.RegisterFiremode(tab,"models/props/cs_militia/skylight_glass.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/cs_office/plant01.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/de_inferno/flower_barrel.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/de_inferno/fountain_bowl.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/cs_militia/skylight_glass.mdl")
 		--L4D/2
-		ScavData.RegisterFiremode(tab,"models/props_unique/airport/atlas.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_fairgrounds/swan_boat.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_swamp/row_boat_ref.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_urban/boat002.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_vehicles/boat_covered.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_vehicles/boat_power.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_vehicles/boat_ski.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_vehicles/boat_smash.mdl")
-		ScavData.RegisterFiremode(tab,"models/lostcoast/props_wasteland/boat_wooden01a_static.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_unique/airport/atlas.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_fairgrounds/swan_boat.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_swamp/row_boat_ref.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_urban/boat002.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_vehicles/boat_covered.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_vehicles/boat_power.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_vehicles/boat_ski.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_vehicles/boat_smash.mdl")
+		ScavData.RegisterFiremode(tab, "models/lostcoast/props_wasteland/boat_wooden01a_static.mdl")
 		--Portal 2
-		ScavData.RegisterFiremode(tab,"models/npcs/turret/turret_skeleton.mdl")
-		ScavData.RegisterFiremode(tab,"models/npcs/turret/turret_backwards.mdl")
-		ScavData.RegisterFiremode(tab,"models/npcs/monsters/monster_a.mdl")
-		ScavData.RegisterFiremode(tab,"models/npcs/monsters/monster_a_box.mdl")
-		ScavData.RegisterFiremode(tab,"models/npcs/monsters/monster_a_head.mdl")
+		ScavData.RegisterFiremode(tab, "models/npcs/turret/turret_skeleton.mdl")
+		ScavData.RegisterFiremode(tab, "models/npcs/turret/turret_backwards.mdl")
+		ScavData.RegisterFiremode(tab, "models/npcs/monsters/monster_a.mdl")
+		ScavData.RegisterFiremode(tab, "models/npcs/monsters/monster_a_box.mdl")
+		ScavData.RegisterFiremode(tab, "models/npcs/monsters/monster_a_head.mdl")
 		--DoD:S
-		ScavData.RegisterFiremode(tab,"models/props_italian/boat_wooden03a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_italian/boat_wooden03a.mdl")
 		--FoF
-		if IsMounted(240) then --CSS
-			ScavData.RegisterFiremode(tab,"models/elpaso/plant01.mdl") --Chunks aren't in FoF, prop isn't breakable
+		if CSS then
+			ScavData.RegisterFiremode(tab, "models/elpaso/plant01.mdl") --Chunks aren't in FoF, prop isn't breakable
 		end
-		ScavData.RegisterFiremode(tab,"models/leon/boat_normal.mdl")
+		ScavData.RegisterFiremode(tab, "models/leon/boat_normal.mdl")
 	
 	
 	
@@ -4341,10 +4331,10 @@ PrecacheParticleSystem("scav_exp_plasma")
 				["models/props_gameplay/sign_barricade001a.mdl"] = 13,
 				["models/props_fortifications/traffic_barrier001.mdl"] = 13,
 			}
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			tab.MaxAmmo = 10
 			if SERVER then
-				tab.FireFunc = function(self,item)
+				tab.FireFunc = function(self, item)
 					local data = {
 						chunks = {},
 						mdl = "",
@@ -4352,78 +4342,78 @@ PrecacheParticleSystem("scav_exp_plasma")
 					}
 					local propdetails = {
 						[0] = function(data)
-							data.chunks = {"a","b","c","d","e","f","g","h","i","j","k","l","m"}
+							data.chunks = {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m"}
 							data.mdl = "models/props_wasteland/prison_toiletchunk01"
 						end,
 						[1] = function(data)
-							data.chunks = {"01","02","03","04","05","06","08","09","10","11","12","13","14"}
+							data.chunks = {"01", "02", "03", "04", "05", "06", "08", "09", "10", "11", "12", "13", "14"}
 							data.mdl = "models/props_interiors/toilet_b_breakable01_part"
 						end,
 						[2] = function(data)
-							data.chunks = {"01a","01b","01c","02a","02b","02c","02a"}
+							data.chunks = {"01a", "01b", "01c", "02a", "02b", "02c", "02a"}
 							data.mdl = "models/props_junk/watermelon01_chunk"
 						end,
 						[3] = function(data)
-							data.chunks = {"1","2","3","4","5","6","7","8"}
+							data.chunks = {"1", "2", "3", "4", "5", "6", "7", "8"}
 							data.mdl = "models/props_junk/vent001_chunk"
 						end,
 						[4] = function(data)
-							data.chunks = {"b","c","d","e","f","g","h"}
+							data.chunks = {"b", "c", "d", "e", "f", "g", "h"}
 							data.mdl = "models/props_wasteland/prison_sinkchunk001"
 						end,
 						[5] = function(data)
-							data.chunks = {"1","2","3","4","5","6","7","8","9","10","11"}
+							data.chunks = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"}
 							data.mdl = "models/props/de_inferno/wine_barrel_p"
 						end,
 						[6] = function(data)
-							data.chunks = {"1","2","3","4"}
-							data.mdl = string.sub(item.ammo,1,-5) .. "_damage_0"
+							data.chunks = {"1", "2", "3", "4"}
+							data.mdl = string.sub(item.ammo, 1, -5) .. "_damage_0"
 						end,
 						[7] = function(data)
-							data.chunks = {"1","2","3","4","5","6"}
+							data.chunks = {"1", "2", "3", "4", "5", "6"}
 							data.mdl = "models/props/de_inferno/claypot03_damage_0"
 						end,
 						[8] = function(data)
-							data.chunks = {"gib1","gib2","gib3","p1a","p1b","p2a","p2b","p3a","p3b","p4a","p4b","p5","p6a","p6b","p7a","p7b"}
+							data.chunks = {"gib1", "gib2", "gib3", "p1a", "p1b", "p2a", "p2b", "p3a", "p3b", "p4a", "p4b", "p5", "p6a", "p6b", "p7a", "p7b"}
 							data.mdl = "models/props/cs_office/projector_"
-							data.ang:Add(Angle(90,0,0))
+							data.ang:Add(Angle(90, 0, 0))
 						end,
 						[9] = function(data)
-							data.chunks = {"chunka","chunka1","chunka3","chunkb2","chunkb3","shard01"}
+							data.chunks = {"chunka", "chunka1", "chunka3", "chunkb2", "chunkb3", "shard01"}
 							data.mdl = "models/props_junk/wood_pallet001a_"
-							data.ang:Add(Angle(90,0,0))
+							data.ang:Add(Angle(90, 0, 0))
 						end,
 						[10] = function(data)
-							data.chunks = {"02","03","04","05","06","07","08","09","10","11","12"}
+							data.chunks = {"02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"}
 							data.mdl = "models/props/de_prodigy/wood_pallet_debris_"
-							data.ang:Add(Angle(90,0,0))
+							data.ang:Add(Angle(90, 0, 0))
 						end,
 						[11] = function(data)
-							data.chunks = {"02","04","06","09","10","11","12"}
+							data.chunks = {"02", "04", "06", "09", "10", "11", "12"}
 							data.mdl = "models/props_industrial/pallet01_gib"
-							data.ang:Add(Angle(90,0,0))
+							data.ang:Add(Angle(90, 0, 0))
 						end,
 						[12] = function(data)
-							data.chunks = {"09","10","11","12","13","14"}
+							data.chunks = {"09", "10", "11", "12", "13", "14"}
 							data.mdl = "models/props_industrial/brickpallets_break"
-							data.ang:Add(Angle(0,90,90))
+							data.ang:Add(Angle(0, 90, 90))
 						end,
 						[13] = function(data)
-							data.chunks = {"1","2","3","4","5"}
+							data.chunks = {"1", "2", "3", "4", "5"}
 							data.mdl = "models/props_wasteland/barricade001a_chunk0"
-							data.ang:Add(Angle(0,90,0))
+							data.ang:Add(Angle(0, 90, 0))
 						end,
 					}
 					local tab = ScavData.models[self.inv.items[1].ammo]
 					propdetails[tab.Identify[item.ammo]](data)
-					for i=1,#data.chunks,1 do
-						math.randomseed(CurTime()+i)
+					for i=1, #data.chunks, 1 do
+						math.randomseed(CurTime() + i)
 						local proj = self:CreateEnt("prop_physics")
-						proj:SetModel(data.mdl..data.chunks[i]..".mdl")
-						local randvec = Vector(math.sin(i),math.cos(i),math.sin(i)*math.cos(i))*0.05
-						--local randvec = Vector(math.Rand(-0.05,0.05),math.Rand(-0.05,0.05),math.Rand(-0.05,0.05))
-						--local randvec = Vector((i+math.random(-7,7))*0.01*(math.floor(CurTime())-CurTime()),(i+math.random(-6,6))*0.01*(math.floor(CurTime())-CurTime()),(i+math.random(-5,5))*0.01*(math.floor(CurTime())-CurTime()))
-						proj:SetPos(self.Owner:GetShootPos()+self:GetAimVector()*30+(randvec))
+						proj:SetModel(data.mdl .. data.chunks[i] .. ".mdl")
+						local randvec = Vector(math.sin(i), math.cos(i), math.sin(i) * math.cos(i)) * 0.05
+						--local randvec = Vector(math.Rand(-0.05, 0.05), math.Rand(-0.05, 0.05), math.Rand(-0.05, 0.05))
+						--local randvec = Vector((i + math.random(-7, 7)) * 0.01 * (math.floor(CurTime()) - CurTime()), (i + math.random(-6, 6)) * 0.01 * (math.floor(CurTime()) - CurTime()), (i + math.random(-5, 5)) * 0.01 * (math.floor(CurTime()) - CurTime()))
+						proj:SetPos(self.Owner:GetShootPos() + self:GetAimVector() * 30 + (randvec))
 						proj:SetAngles(data.ang)
 						proj:SetPhysicsAttacker(self.Owner)
 						proj:SetCollisionGroup(COLLISION_GROUP_PROJECTILE)
@@ -4435,28 +4425,28 @@ PrecacheParticleSystem("scav_exp_plasma")
 							if IsValid(physobj) then
 								physobj:SetMass(7)
 								physobj:AddGameFlag(FVPHYSICS_WAS_THROWN)
-								physobj:SetVelocity((self:GetAimVector()+randvec)*2500)
+								physobj:SetVelocity((self:GetAimVector() + randvec) * 2500)
 								physobj:SetBuoyancyRatio(0)
 							end
-							proj:Fire("kill",1,"2")
-							--gamemode.Call("ScavFired",self.Owner,proj)
+							proj:Fire("kill", 1, "2")
+							--gamemode.Call("ScavFired", self.Owner, proj)
 						end
 						self.Owner:SetAnimation(PLAYER_ATTACK1)
 					end
 			
-					self.Owner:ViewPunch(Angle(math.Rand(-1,0)-8,math.Rand(-0.1,0.1),0))
+					self.Owner:ViewPunch(Angle(math.Rand(-9, 8), math.Rand(-0.1, 0.1), 0))
 					self.Owner:EmitSound("weapons/shotgun/shotgun_dbl_fire.wav")
 					timer.Simple(0.25, function() if IsValid(self) then self:SendWeaponAnim(ACT_VM_HOLSTER) end end)
-					timer.Simple(0.5, function() if IsValid(self) then self.Owner:EmitSound("weapons/shotgun/shotgun_reload3.wav",100,65) end end)
-					timer.Simple(1, function() if IsValid(self) then self.Owner:EmitSound("weapons/shotgun/shotgun_cock.wav",100,120) end end)
-					return self:TakeSubammo(item,1)
+					timer.Simple(0.5, function() if IsValid(self) then self.Owner:EmitSound("weapons/shotgun/shotgun_reload3.wav", 100, 65) end end)
+					timer.Simple(1, function() if IsValid(self) then self.Owner:EmitSound("weapons/shotgun/shotgun_cock.wav", 100, 120) end end)
+					return self:TakeSubammo(item, 1)
 				end
 			end
 			if SERVER then
 				--CSS
-				ScavData.CollectFuncs["models/props/cs_assault/moneypallet.mdl"] = function(self,ent) return {
-					{ScavData.FormatModelname("models/props/cs_assault/money.mdl"),1,0,5},
-					{ScavData.FormatModelname("models/props/de_prodigy/wood_pallet_01.mdl"),1,0}
+				ScavData.CollectFuncs["models/props/cs_assault/moneypallet.mdl"] = function(self, ent) return {
+					{ScavData.FormatModelname("models/props/cs_assault/money.mdl"), 1, 0, 5},
+					{ScavData.FormatModelname("models/props/de_prodigy/wood_pallet_01.mdl"), 1, 0}
 				} end
 				ScavData.CollectFuncs["models/props/cs_assault/moneypalleta.mdl"] = ScavData.CollectFuncs["models/props/cs_assault/moneypallet.mdl"]
 				ScavData.CollectFuncs["models/props/cs_assault/moneypalletb.mdl"] = ScavData.CollectFuncs["models/props/cs_assault/moneypallet.mdl"]
@@ -4475,18 +4465,18 @@ PrecacheParticleSystem("scav_exp_plasma")
 				ScavData.CollectFuncs["models/props/cs_assault/moneypallet03d.mdl"] = ScavData.CollectFuncs["models/props/cs_assault/moneypallet.mdl"]
 				ScavData.CollectFuncs["models/props/cs_assault/moneypallet03e.mdl"] = ScavData.CollectFuncs["models/props/cs_assault/moneypallet.mdl"]
 				--TF2
-				ScavData.CollectFuncs["models/props_farm/pallet001.mdl"] = function(self,ent) return {{ScavData.FormatModelname("models/props_junk/wood_pallet001a.mdl"),1,0}} end
+				ScavData.CollectFuncs["models/props_farm/pallet001.mdl"] = function(self, ent) return {{ScavData.FormatModelname("models/props_junk/wood_pallet001a.mdl"), 1, 0}} end
 				ScavData.CollectFuncs["models/props_mvm/sack_stack_pallet.mdl"] = ScavData.CollectFuncs["models/props_farm/pallet001.mdl"]
 				--L4D/2
-				ScavData.CollectFuncs["models/props_industrial/pallet_stack01.mdl"] = function(self,ent) return {{ScavData.FormatModelname("models/props_industrial/pallet01.mdl"),10,0}} end
+				ScavData.CollectFuncs["models/props_industrial/pallet_stack01.mdl"] = function(self, ent) return {{ScavData.FormatModelname("models/props_industrial/pallet01.mdl"), 10, 0}} end
 				ScavData.CollectFuncs["models/props_industrial/pallet_stack_docks.mdl"] = ScavData.CollectFuncs["models/props_industrial/pallet_stack01.mdl"]
-				ScavData.CollectFuncs["models/props_industrial/pallet_barrels_water01.mdl"] = function(self,ent) return {
-					{ScavData.FormatModelname("models/props_industrial/pallet_barrels_water01_single.mdl"),1,0,4},
-					{ScavData.FormatModelname("models/props_industrial/pallet01.mdl"),1,0}
+				ScavData.CollectFuncs["models/props_industrial/pallet_barrels_water01.mdl"] = function(self, ent) return {
+					{ScavData.FormatModelname("models/props_industrial/pallet_barrels_water01_single.mdl"), 1, 0, 4},
+					{ScavData.FormatModelname("models/props_industrial/pallet01.mdl"), 1, 0}
 				} end
 				ScavData.CollectFuncs["models/props_industrial/pallet_barrels_water01_docks.mdl"] = ScavData.CollectFuncs["models/props_industrial/pallet_barrels_water01.mdl"]
-				ScavData.CollectFuncs["models/props_industrial/brickpallets.mdl"] = function(self,ent) return {{ScavData.FormatModelname("models/props_industrial/brickpallets_break01.mdl"),8,0}} end
-				ScavData.CollectFuncs["models/props_industrial/brickpallets_break02.mdl"] = function(self,ent) return {{ScavData.FormatModelname("models/props_industrial/brickpallets_break01.mdl"),1,0}} end
+				ScavData.CollectFuncs["models/props_industrial/brickpallets.mdl"] = function(self, ent) return {{ScavData.FormatModelname("models/props_industrial/brickpallets_break01.mdl"), 8, 0}} end
+				ScavData.CollectFuncs["models/props_industrial/brickpallets_break02.mdl"] = function(self, ent) return {{ScavData.FormatModelname("models/props_industrial/brickpallets_break01.mdl"), 1, 0}} end
 				ScavData.CollectFuncs["models/props_industrial/brickpallets_break03.mdl"] = ScavData.CollectFuncs["models/props_industrial/brickpallets_break02.mdl"]
 				ScavData.CollectFuncs["models/props_industrial/brickpallets_break04.mdl"] = ScavData.CollectFuncs["models/props_industrial/brickpallets_break02.mdl"]
 				ScavData.CollectFuncs["models/props_industrial/brickpallets_break05.mdl"] = ScavData.CollectFuncs["models/props_industrial/brickpallets_break02.mdl"]
@@ -4495,36 +4485,36 @@ PrecacheParticleSystem("scav_exp_plasma")
 				ScavData.CollectFuncs["models/props_industrial/brickpallets_break08.mdl"] = ScavData.CollectFuncs["models/props_industrial/brickpallets_break02.mdl"]
 			end
 			tab.Cooldown = 1.25
-			ScavData.RegisterFiremode(tab,"models/props_wasteland/prison_toilet01.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_c17/furnituretoilet001a.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_junk/watermelon01.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_wasteland/prison_sink001a.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_wasteland/prison_sink001b.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_junk/vent001.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_junk/wood_pallet001a.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_wasteland/barricade001a.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_wasteland/prison_toilet01.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_c17/furnituretoilet001a.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_junk/watermelon01.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_wasteland/prison_sink001a.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_wasteland/prison_sink001b.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_junk/vent001.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_junk/wood_pallet001a.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_wasteland/barricade001a.mdl")
 			--CSS
-			ScavData.RegisterFiremode(tab,"models/props/de_inferno/wine_barrel.mdl")
-			ScavData.RegisterFiremode(tab,"models/props/de_inferno/claypot01.mdl")
-			ScavData.RegisterFiremode(tab,"models/props/de_inferno/claypot02.mdl")
-			ScavData.RegisterFiremode(tab,"models/props/de_inferno/claypot03.mdl")
-			ScavData.RegisterFiremode(tab,"models/props/cs_office/projector.mdl")
-			ScavData.RegisterFiremode(tab,"models/props/de_prodigy/wood_pallet_01.mdl")
+			ScavData.RegisterFiremode(tab, "models/props/de_inferno/wine_barrel.mdl")
+			ScavData.RegisterFiremode(tab, "models/props/de_inferno/claypot01.mdl")
+			ScavData.RegisterFiremode(tab, "models/props/de_inferno/claypot02.mdl")
+			ScavData.RegisterFiremode(tab, "models/props/de_inferno/claypot03.mdl")
+			ScavData.RegisterFiremode(tab, "models/props/cs_office/projector.mdl")
+			ScavData.RegisterFiremode(tab, "models/props/de_prodigy/wood_pallet_01.mdl")
 			--TF2
-			ScavData.RegisterFiremode(tab,"models/props_gameplay/sign_barricade001a.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_gameplay/sign_barricade001a.mdl")
 			--L4D/2
-			ScavData.RegisterFiremode(tab,"models/props_interiors/urinal01.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_interiors/toilet.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_interiors/toilet_b.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_interiors/toilet_b_breakable01.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_interiors/toilet_elongated.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_industrial/pallet01.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_industrial/brickpallets_break01.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_fortifications/traffic_barrier001.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_interiors/urinal01.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_interiors/toilet.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_interiors/toilet_b.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_interiors/toilet_b_breakable01.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_interiors/toilet_elongated.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_industrial/pallet01.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_industrial/brickpallets_break01.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_fortifications/traffic_barrier001.mdl")
 			--Portal
-			ScavData.RegisterFiremode(tab,"models/props/toilet_body_reference.mdl")
+			ScavData.RegisterFiremode(tab, "models/props/toilet_body_reference.mdl")
 			--ASW
-			ScavData.RegisterFiremode(tab,"models/props/furniture/misc/toilet.mdl")
+			ScavData.RegisterFiremode(tab, "models/props/furniture/misc/toilet.mdl")
 	
 --[[==============================================================================================
 	--Flamethrower
@@ -4537,7 +4527,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 			["scav_projectile_flare2"] = true
 			}
 		
-		local firecredit = function(ent,dmginfo)
+		local firecredit = function(ent, dmginfo)
 			local inflictor = dmginfo:GetInflictor()
 			local attacker = dmginfo:GetAttacker()
 			local amount = dmginfo:GetDamage()
@@ -4552,7 +4542,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 				end
 			end
 		end
-		hook.Add("EntityTakeDamage","GiveFireCredit",firecredit)
+		hook.Add("EntityTakeDamage", "GiveFireCredit", firecredit)
 		
 
 		local tab = {}
@@ -4560,31 +4550,31 @@ PrecacheParticleSystem("scav_exp_plasma")
 			tab.anim = ACT_VM_IDLE
 			tab.Level = 4
 			local identify = {} --all flamethrowers are the same
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			tab.MaxAmmo = 1000
 			tab.Cooldown = 0.1
-			function tab.ChargeAttack(self,item)
+			function tab.ChargeAttack(self, item)
 				if SERVER then --SERVER
 					local tab = ScavData.models[self.inv.items[1].ammo]
 					local proj = tab.proj
-					local extpos = self.Owner:GetShootPos()+self:GetAimVector()*75
-					for k,v in ipairs(ents.FindByClass("env_fire")) do
+					local extpos = self.Owner:GetShootPos() + self:GetAimVector() * 75
+					for k, v in ipairs(ents.FindByClass("env_fire")) do
 						if v:GetPos():Distance(extpos) < 75 then
-							v:Fire("StartFire",1,0)
+							v:Fire("StartFire", 1, 0)
 						end
 					end
 						proj:SetOwner(self.Owner)
 						proj:SetInflictor(self)
 						proj:SetFilter(self.Owner)
 						proj:SetPos(self.Owner:GetShootPos())
-						proj:SetVelocity((self:GetAimVector()+VectorRand()*0.1):GetNormalized()*360) --was 460 --+self.Owner:GetVelocity()
+						proj:SetVelocity((self:GetAimVector() + VectorRand() * 0.1):GetNormalized() * 360) --was 460 -- + self.Owner:GetVelocity()
 						proj:SetLifetime(self:GetForceScale())
 						proj:Fire()
 					if self.Owner:GetGroundEntity() == NULL then
-						self.Owner:SetVelocity(self:GetAimVector()*-45)
+						self.Owner:SetVelocity(self:GetAimVector() * -45)
 					end
 					self:AddBarrelSpin(400)
-					self:TakeSubammo(item,1)
+					self:TakeSubammo(item, 1)
 				end
 				local continuefiring = self:ProcessLinking(item) and self:StopChargeOnRelease()
 				if not continuefiring then
@@ -4596,24 +4586,24 @@ PrecacheParticleSystem("scav_exp_plasma")
 				end
 				return 0.1
 			end
-			function tab.FireFunc(self,item)
+			function tab.FireFunc(self, item)
 				if SERVER then
 					self.ef_fthrow = self:CreateToggleEffect("scav_stream_fthrow")
 				end
-				self:SetChargeAttack(tab.ChargeAttack,item)
-				--tab.ChargeAttack(self,item)
+				self:SetChargeAttack(tab.ChargeAttack, item)
+				--tab.ChargeAttack(self, item)
 				return false
 			end
 			if SERVER then
 				local proj = GProjectile()
-				local function callback(self,tr)
+				local function callback(self, tr)
 					local ent = tr.Entity
-					if IsValid(ent) and (not ent:IsPlayer() or gamemode.Call("PlayerShouldTakeDamage",ent,self.Owner)) then
-						ent:Ignite(5,0)
+					if IsValid(ent) and (not ent:IsPlayer() or gamemode.Call("PlayerShouldTakeDamage", ent, self.Owner)) then
+						ent:Ignite(5, 0)
 						ent.ignitedby = self.Owner
 						local dmg = DamageInfo()
-						dmg:SetDamage((self.deathtime-CurTime())*7)
-						dmg:SetDamageForce(tr.Normal*30)
+						dmg:SetDamage((self.deathtime - CurTime()) * 7)
+						dmg:SetDamageForce(tr.Normal * 30)
 						dmg:SetDamagePosition(tr.HitPos)
 						if IsValid(self:GetOwner()) then
 							dmg:SetAttacker(self:GetOwner())
@@ -4630,35 +4620,34 @@ PrecacheParticleSystem("scav_exp_plasma")
 					return
 				end
 				proj:SetCallback(callback)
-				proj:SetBBox(Vector(-7,-7,-7),Vector(7,7,7))
+				proj:SetBBox(Vector(-7, -7, -7), Vector(7, 7, 7))
 				proj:SetPiercing(true)
 				proj:SetGravity(vector_origin)
-				proj:SetMask(bit.bor(MASK_SHOT,CONTENTS_WATER,CONTENTS_SLIME))
+				proj:SetMask(bit.bor(MASK_SHOT, CONTENTS_WATER, CONTENTS_SLIME))
 				proj:SetLifetime(1)
 				tab.proj = proj
 
-				ScavData.CollectFuncs["models/props_junk/propanecanister001a.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),100,ent:GetSkin()}} end
-				ScavData.CollectFuncs["models/props_junk/propane_tank001a.mdl"] = function(self,ent) return {{ent:GetModel(),50,ent:GetSkin()}} end
-				ScavData.CollectFuncs["models/props_c17/canister_propane01a.mdl"] = function(self,ent) return {{ent:GetModel(),200,ent:GetSkin()}} end
+				ScavData.CollectFuncs["models/props_junk/propanecanister001a.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 100, ent:GetSkin()}} end
+				ScavData.CollectFuncs["models/props_junk/propane_tank001a.mdl"] = function(self, ent) return {{ent:GetModel(), 50, ent:GetSkin()}} end
+				ScavData.CollectFuncs["models/props_c17/canister_propane01a.mdl"] = function(self, ent) return {{ent:GetModel(), 200, ent:GetSkin()}} end
 				ScavData.CollectFuncs["models/props_wasteland/gaspump001a.mdl"] = ScavData.CollectFuncs["models/props_c17/canister_propane01a.mdl"]
 				ScavData.CollectFuncs["models/props_citizen_tech/firetrap_propanecanister01a.mdl"] = ScavData.CollectFuncs["models/props_c17/canister_propane01a.mdl"]
 				ScavData.CollectFuncs["models/props_citizen_tech/firetrap_propanecanister01b.mdl"] = ScavData.CollectFuncs["models/props_c17/canister_propane01a.mdl"]
-				ScavData.CollectFuncs["models/props_junk/metalgascan.mdl"] = function(self,ent) return {{ent:GetModel(),25,ent:GetSkin()}} end
+				ScavData.CollectFuncs["models/props_junk/metalgascan.mdl"] = function(self, ent) return {{ent:GetModel(), 25, ent:GetSkin()}} end
 				ScavData.CollectFuncs["models/props_junk/gascan001a.mdl"] = ScavData.CollectFuncs["models/props_junk/metalgascan.mdl"]
-				--Ep2
-				ScavData.CollectFuncs["models/props_mining/oiltank01.mdl"] = function(self,ent) return {{ent:GetModel(),400,ent:GetSkin()}} end
+				ScavData.CollectFuncs["models/props_mining/oiltank01.mdl"] = function(self, ent) return {{ent:GetModel(), 400, ent:GetSkin()}} end
 				--TF2
 				ScavData.CollectFuncs["models/weapons/c_models/c_flamethrower/c_flamethrower.mdl"] = ScavData.CollectFuncs["models/props_c17/canister_propane01a.mdl"]
 				ScavData.CollectFuncs["models/weapons/c_models/c_degreaser/c_degreaser.mdl"] = ScavData.CollectFuncs["models/weapons/c_models/c_flamethrower/c_flamethrower.mdl"]
 				ScavData.CollectFuncs["models/workshop/weapons/c_models/c_degreaser/c_degreaser.mdl"] = ScavData.CollectFuncs["models/weapons/c_models/c_degreaser/c_degreaser.mdl"]
-				ScavData.CollectFuncs["models/weapons/c_models/c_flamethrower/c_backburner.mdl"] = function(self,ent) return {{self.christmas and "models/weapons/c_models/c_flamethrower/c_backburner_xmas.mdl" or ScavData.FormatModelname(ent:GetModel()),200,ent:GetSkin()}} end
+				ScavData.CollectFuncs["models/weapons/c_models/c_flamethrower/c_backburner.mdl"] = function(self, ent) return {{self.christmas and "models/weapons/c_models/c_flamethrower/c_backburner_xmas.mdl" or ScavData.FormatModelname(ent:GetModel()), 200, ent:GetSkin()}} end
 				ScavData.CollectFuncs["models/weapons/c_models/c_drg_phlogistinator/c_drg_phlogistinator.mdl"] = ScavData.CollectFuncs["models/weapons/c_models/c_flamethrower/c_flamethrower.mdl"] --TODO: phlog effect
 				ScavData.CollectFuncs["models/workshop/weapons/c_models/c_drg_phlogistinator/c_drg_phlogistinator.mdl"] = ScavData.CollectFuncs["models/weapons/c_models/c_drg_phlogistinator/c_drg_phlogistinator.mdl"]
 				ScavData.CollectFuncs["models/weapons/c_models/c_flamethrower/c_backburner_xmas.mdl"] = ScavData.CollectFuncs["models/weapons/c_models/c_flamethrower/c_backburner.mdl"]
 				ScavData.CollectFuncs["models/workshop_partner/weapons/c_models/c_ai_flamethrower/c_ai_flamethrower.mdl"] = ScavData.CollectFuncs["models/weapons/c_models/c_flamethrower/c_flamethrower.mdl"]
 				ScavData.CollectFuncs["models/weapons/c_models/c_rainblower/c_rainblower.mdl"] = ScavData.CollectFuncs["models/weapons/c_models/c_flamethrower/c_flamethrower.mdl"] --TODO: Rainbow fire effect
-				ScavData.CollectFuncs["models/props_farm/oilcan01.mdl"] = function(self,ent) return {{ent:GetModel(),75,ent:GetSkin()}} end
-				ScavData.CollectFuncs["models/props_farm/oilcan01b.mdl"] = function(self,ent) return {{ent:GetModel(),50,ent:GetSkin()}} end
+				ScavData.CollectFuncs["models/props_farm/oilcan01.mdl"] = function(self, ent) return {{ent:GetModel(), 75, ent:GetSkin()}} end
+				ScavData.CollectFuncs["models/props_farm/oilcan01b.mdl"] = function(self, ent) return {{ent:GetModel(), 50, ent:GetSkin()}} end
 				ScavData.CollectFuncs["models/props_farm/oilcan02.mdl"] = ScavData.CollectFuncs["models/props_junk/metalgascan.mdl"]
 				ScavData.CollectFuncs["models/props_farm/gibs/shelf_props01_gib_oilcan01.mdl"] = ScavData.CollectFuncs["models/props_farm/oilcan02.mdl"]
 				ScavData.CollectFuncs["models/weapons/c_models/c_gascan/c_gascan.mdl"] = ScavData.CollectFuncs["models/props_farm/oilcan02.mdl"]
@@ -4666,40 +4655,39 @@ PrecacheParticleSystem("scav_exp_plasma")
 				ScavData.CollectFuncs["models/props_equipment/gas_pump.mdl"] = ScavData.CollectFuncs["models/props_wasteland/gaspump001a.mdl"]
 				ScavData.CollectFuncs["models/props_equipment/gas_pump_nodebris.mdl"] = ScavData.CollectFuncs["models/props_equipment/gas_pump.mdl"]
 				ScavData.CollectFuncs["models/props_urban/gas_pump001.mdl"] = ScavData.CollectFuncs["models/props_equipment/gas_pump.mdl"]
-				ScavData.CollectFuncs["models/props_unique/wooden_barricade_gascans.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),500,ent:GetSkin()}} end
+				ScavData.CollectFuncs["models/props_unique/wooden_barricade_gascans.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 500, ent:GetSkin()}} end
 				ScavData.CollectFuncs["models/props_placeable/gascan_trophy.mdl"] = ScavData.GiveOneOfItemInf
 			end
-			ScavData.RegisterFiremode(tab,"models/props_junk/propanecanister001a.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_junk/propane_tank001a.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_c17/canister_propane01a.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_wasteland/gaspump001a.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_citizen_tech/firetrap_propanecanister01a.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_citizen_tech/firetrap_propanecanister01b.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_junk/metalgascan.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_junk/gascan001a.mdl")
-			--Ep2
-			ScavData.RegisterFiremode(tab,"models/props_mining/oiltank01.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_junk/propanecanister001a.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_junk/propane_tank001a.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_c17/canister_propane01a.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_wasteland/gaspump001a.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_citizen_tech/firetrap_propanecanister01a.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_citizen_tech/firetrap_propanecanister01b.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_junk/metalgascan.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_junk/gascan001a.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_mining/oiltank01.mdl")
 			--TF2
-			ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_flamethrower/c_flamethrower.mdl")
-			ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_degreaser/c_degreaser.mdl")
-			ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_degreaser/c_degreaser.mdl")
-			ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_drg_phlogistinator/c_drg_phlogistinator.mdl")
-			ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_drg_phlogistinator/c_drg_phlogistinator.mdl")
-			ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_flamethrower/c_backburner.mdl")
-			ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_flamethrower/c_backburner_xmas.mdl")
-			ScavData.RegisterFiremode(tab,"models/workshop_partner/weapons/c_models/c_ai_flamethrower/c_ai_flamethrower.mdl")
-			ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_rainblower/c_rainblower.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_farm/oilcan01.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_farm/oilcan01b.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_farm/oilcan02.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_farm/gibs/shelf_props01_gib_oilcan01.mdl")
-			ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_gascan/c_gascan.mdl")
+			ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_flamethrower/c_flamethrower.mdl")
+			ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_degreaser/c_degreaser.mdl")
+			ScavData.RegisterFiremode(tab, "models/workshop/weapons/c_models/c_degreaser/c_degreaser.mdl")
+			ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_drg_phlogistinator/c_drg_phlogistinator.mdl")
+			ScavData.RegisterFiremode(tab, "models/workshop/weapons/c_models/c_drg_phlogistinator/c_drg_phlogistinator.mdl")
+			ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_flamethrower/c_backburner.mdl")
+			ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_flamethrower/c_backburner_xmas.mdl")
+			ScavData.RegisterFiremode(tab, "models/workshop_partner/weapons/c_models/c_ai_flamethrower/c_ai_flamethrower.mdl")
+			ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_rainblower/c_rainblower.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_farm/oilcan01.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_farm/oilcan01b.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_farm/oilcan02.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_farm/gibs/shelf_props01_gib_oilcan01.mdl")
+			ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_gascan/c_gascan.mdl")
 			--L4D/2
-			ScavData.RegisterFiremode(tab,"models/props_equipment/gas_pump.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_equipment/gas_pump_nodebris.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_urban/gas_pump001.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_unique/wooden_barricade_gascans.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_placeable/gascan_trophy.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_equipment/gas_pump.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_equipment/gas_pump_nodebris.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_urban/gas_pump001.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_unique/wooden_barricade_gascans.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_placeable/gascan_trophy.mdl")
 				
 --[[==============================================================================================
 	--Fireball
@@ -4710,24 +4698,24 @@ PrecacheParticleSystem("scav_exp_plasma")
 			tab.anim = ACT_VM_IDLE
 			tab.Level = 4
 			local identify = {} -- all fireballs are the same
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			tab.MaxAmmo = 40
 			tab.Cooldown = 0.8
 			tab.CooldownScale = 1
 
-			PrecacheParticleSystem(IsMounted(440) --[[TF2]] and "projectile_fireball" or "scav_projectile_fireball")
+			PrecacheParticleSystem(TF2 and "projectile_fireball" or "scav_projectile_fireball")
 			
 			if SERVER then
-				tab.Callback = function(self,tr)
+				tab.Callback = function(self, tr)
 					local ent = tr.Entity
 					if IsValid(ent) then
-						if not ent:IsPlayer() or gamemode.Call("PlayerShouldTakeDamage",ent,self.Owner) then
+						if not ent:IsPlayer() or gamemode.Call("PlayerShouldTakeDamage", ent, self.Owner) then
 							local dmg = DamageInfo()
 								local multiplier = 1
 								if ent:IsOnFire() then multiplier = 3 end --TODO: triple damage should only count on center of projectile
 								if ent:IsNPC() then multiplier = multiplier * .5 end --nerf damage against NPCs
-								dmg:SetDamage((15 + (self.deathtime-CurTime())*5)*multiplier) -- 15-20 damage per shot, tripled if the target is on fire
-								dmg:SetDamageForce(tr.Normal*30)
+								dmg:SetDamage((15 + (self.deathtime - CurTime()) * 5) * multiplier) -- 15-20 damage per shot, tripled if the target is on fire
+								dmg:SetDamageForce(tr.Normal * 30)
 								dmg:SetDamagePosition(tr.HitPos)
 								if IsValid(self:GetOwner()) then
 									dmg:SetAttacker(self:GetOwner())
@@ -4738,28 +4726,28 @@ PrecacheParticleSystem("scav_exp_plasma")
 							local reduced = self.Owner:GetWeapon("scav_gun").nextfire - tab.Cooldown / 3
 							if self.hits == 0 then
 								self.Owner:GetWeapon("scav_gun").nextfire = reduced
-								if IsMounted(440) then --TF2
-									sound.Play("weapons/dragons_fury_impact_hit.wav",tr.HitPos,75,100,.75)
+								if TF2 then
+									sound.Play("weapons/dragons_fury_impact_hit.wav", tr.HitPos, 75, 100, 0.75)
 								else
-									sound.Play("player/pl_burnpain2.wav",tr.HitPos,75,120,1)
+									sound.Play("player/pl_burnpain2.wav", tr.HitPos, 75, 120, 1)
 								end
 								self.hits = self.hits + 1
 							end
 							net.Start("scv_s_time")
 								net.WriteEntity(self.Owner:GetWeapon("scav_gun"))
-								net.WriteInt(math.floor(reduced),32)
+								net.WriteInt(math.floor(reduced), 32)
 								net.WriteFloat(reduced - math.floor(reduced))
 							net.Send(self.Owner)
-							dmg:SetDamageType(bit.bor(DMG_DIRECT,DMG_BURN))
+							dmg:SetDamageType(bit.bor(DMG_DIRECT, DMG_BURN))
 							ent:TakeDamageInfo(dmg)
-							ent:Ignite(3,0)
+							ent:Ignite(3, 0)
 							ent.ignitedby = self.Owner
 						end
 						if not (ent:IsPlayer() or ent:IsNPC() or ent:IsNextBot()) then
-							if IsMounted(440) then --TF2
-								sound.Play("weapons/dragons_fury_impact.wav",tr.HitPos,75,100,.75)
+							if TF2 then
+								sound.Play("weapons/dragons_fury_impact.wav", tr.HitPos, 75, 100, 0.75)
 							else
-								sound.Play("player/pl_burnpain2.wav",tr.HitPos,75,80,1)
+								sound.Play("player/pl_burnpain2.wav", tr.HitPos, 75, 80, 1)
 							end
 							if ent:IsWorld() then
 								--TODO: add a smaller hull check here so shots that only just barely brush the world don't get eaten (probably consistent with the bonus damage check)
@@ -4772,21 +4760,21 @@ PrecacheParticleSystem("scav_exp_plasma")
 				end
 				tab.proj = GProjectile()
 				tab.proj:SetCallback(tab.Callback)
-				tab.proj:SetBBox(Vector(-16,-16,-16),Vector(16,16,16))
+				tab.proj:SetBBox(Vector(-16, -16, -16), Vector(16, 16, 16))
 				tab.proj:SetPiercing(true)
 				tab.proj:SetGravity(vector_origin)
-				tab.proj:SetMask(bit.bor(MASK_SHOT,CONTENTS_WATER,CONTENTS_SLIME))
+				tab.proj:SetMask(bit.bor(MASK_SHOT, CONTENTS_WATER, CONTENTS_SLIME))
 				tab.proj:SetLifetime(0.17533333)
 				tab.proj.hits = 0
 				--local proj = tab.proj
 
-				function tab.FireFunc(self,item)
+				function tab.FireFunc(self, item)
 					local tab = ScavData.models[self.inv.items[1].ammo]
 					local proj = tab.proj
-					local extpos = self.Owner:GetShootPos()+self:GetAimVector()*75
-					for k,v in ipairs(ents.FindByClass("env_fire")) do
+					local extpos = self.Owner:GetShootPos() + self:GetAimVector() * 75
+					for k, v in ipairs(ents.FindByClass("env_fire")) do
 						if v:GetPos():Distance(extpos) < 75 then
-							v:Fire("StartFire",1,0)
+							v:Fire("StartFire", 1, 0)
 						end
 					end
 					local tab = ScavData.models[item.ammo]
@@ -4794,32 +4782,31 @@ PrecacheParticleSystem("scav_exp_plasma")
 					proj:SetInflictor(self)
 					proj:SetFilter(self.Owner)
 					proj:SetPos(self.Owner:GetShootPos())
-					proj:SetVelocity(self:GetAimVector()*3000*self:GetForceScale())
-					proj:SetLifetime(0.17533333*self:GetForceScale())
+					proj:SetVelocity(self:GetAimVector() * 3000 * self:GetForceScale())
+					proj:SetLifetime(0.17533333 * self:GetForceScale())
 					proj:Fire()
 
-					local pos = self.Owner:GetShootPos()+self:GetAimVector()*24+self:GetAimVector():Angle():Right()*4-self:GetAimVector():Angle():Up()*4
+					local pos = self.Owner:GetShootPos() + self:GetAimVector() * 24 + self:GetAimVector():Angle():Right() * 4 - self:GetAimVector():Angle():Up() * 4
 					local ef = EffectData()
 						ef:SetOrigin(pos)
-						ef:SetStart(self:GetAimVector()*3000*self:GetForceScale())
+						ef:SetStart(self:GetAimVector() * 3000 * self:GetForceScale())
 						ef:SetEntity(self.Owner)
-					if IsMounted(440) then --TF2
-						self.Owner:EmitSound("weapons/dragons_fury_shoot.wav",75,100,.5)
+					if TF2 then
+						self.Owner:EmitSound("weapons/dragons_fury_shoot.wav", 75, 100, 0.5)
 					else
-						self.Owner:EmitSound("ambient/fire/mtov_flame2.wav",75,150,1)
+						self.Owner:EmitSound("ambient/fire/mtov_flame2.wav", 75, 150, 1)
 					end
-					util.Effect("ef_scav_fireball",ef,nil,true)
+					util.Effect("ef_scav_fireball", ef, nil, true)
 					if self.Owner:GetGroundEntity() == NULL then
-						self.Owner:SetVelocity(self:GetAimVector()*-45)
+						self.Owner:SetVelocity(self:GetAimVector() * -45)
 					end
 					self:AddBarrelSpin(500)
-					return self:TakeSubammo(item,1)
+					return self:TakeSubammo(item, 1)
 				end
-				ScavData.CollectFuncs["models/props_c17/furniturefireplace001a.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),40,ent:GetSkin()}} end
+				ScavData.CollectFuncs["models/props_c17/furniturefireplace001a.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 40, ent:GetSkin()}} end
 				ScavData.CollectFuncs["models/props_c17/furniturestove001a.mdl"] = ScavData.CollectFuncs["models/props_c17/furniturefireplace001a.mdl"]
 				ScavData.CollectFuncs["models/props_wasteland/kitchen_stove001a.mdl"] = ScavData.CollectFuncs["models/props_c17/furniturefireplace001a.mdl"]
 				ScavData.CollectFuncs["models/props_wasteland/kitchen_stove002a.mdl"] = ScavData.CollectFuncs["models/props_c17/furniturefireplace001a.mdl"]
-				--Ep2
 				ScavData.CollectFuncs["models/props_forest/stove01.mdl"] = ScavData.CollectFuncs["models/props_c17/furniturefireplace001a.mdl"]
 				--CSS
 				ScavData.CollectFuncs["models/props/cs_militia/stove01.mdl"] = ScavData.CollectFuncs["models/props_c17/furniturefireplace001a.mdl"]
@@ -4829,7 +4816,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 				--DoD:S
 				ScavData.CollectFuncs["models/props_furniture/kitchen_oven1.mdl"] = ScavData.CollectFuncs["models/props_c17/furniturefireplace001a.mdl"]
 				--L4D/2
-				ScavData.CollectFuncs["models/props_interiors/makeshift_stove_battery.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),10,ent:GetSkin()}} end
+				ScavData.CollectFuncs["models/props_interiors/makeshift_stove_battery.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 10, ent:GetSkin()}} end
 				ScavData.CollectFuncs["models/props_junk/torchoven_01.mdl"] = ScavData.CollectFuncs["models/props_interiors/makeshift_stove_battery.mdl"]
 				ScavData.CollectFuncs["models/props_interiors/stove02.mdl"] = ScavData.CollectFuncs["models/props_c17/furniturefireplace001a.mdl"]
 				ScavData.CollectFuncs["models/props_interiors/stove03_industrial.mdl"] = ScavData.CollectFuncs["models/props_c17/furniturefireplace001a.mdl"]
@@ -4837,27 +4824,26 @@ PrecacheParticleSystem("scav_exp_plasma")
 				--FoF
 				ScavData.CollectFuncs["models/props/forest/furnace_2.mdl"] = ScavData.CollectFuncs["models/props_c17/furniturefireplace001a.mdl"]
 			end
-			ScavData.RegisterFiremode(tab,"models/props_c17/furniturefireplace001a.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_c17/furniturestove001a.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_wasteland/kitchen_stove001a.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_wasteland/kitchen_stove002a.mdl")
-			--Ep2
-			ScavData.RegisterFiremode(tab,"models/props_forest/stove01.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_c17/furniturefireplace001a.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_c17/furniturestove001a.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_wasteland/kitchen_stove001a.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_wasteland/kitchen_stove002a.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_forest/stove01.mdl")
 			--CSS
-			ScavData.RegisterFiremode(tab,"models/props/cs_militia/stove01.mdl")
+			ScavData.RegisterFiremode(tab, "models/props/cs_militia/stove01.mdl")
 			--TF2
-			ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_flameball/c_flameball.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_forest/kitchen_stove.mdl")
+			ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_flameball/c_flameball.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_forest/kitchen_stove.mdl")
 			--DoD:S
-			ScavData.RegisterFiremode(tab,"models/props_furniture/kitchen_oven1.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_furniture/kitchen_oven1.mdl")
 			--L4D/2
-			ScavData.RegisterFiremode(tab,"models/props_interiors/makeshift_stove_battery.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_junk/torchoven_01.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_interiors/stove02.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_interiors/stove03_industrial.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_interiors/stove04_industrial.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_interiors/makeshift_stove_battery.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_junk/torchoven_01.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_interiors/stove02.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_interiors/stove03_industrial.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_interiors/stove04_industrial.mdl")
 			--FoF
-			ScavData.RegisterFiremode(tab,"models/props/forest/furnace_2.mdl")
+			ScavData.RegisterFiremode(tab, "models/props/forest/furnace_2.mdl")
 
 --[[==============================================================================================
 	--Fire Extinguisher
@@ -4869,31 +4855,31 @@ PrecacheParticleSystem("scav_exp_plasma")
 				tab.anim = ACT_VM_IDLE
 				tab.Level = 4
 				local identify = {} --all fire extinguishers are the same
-				tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+				tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 				tab.MaxAmmo = 250
 				tab.Cooldown = 0.1
 				local tracep = {}
 
-				local vmin = Vector(-12,-12,-12)
-				local vmax = Vector(12,12,12)
+				local vmin = Vector(-12, -12, -12)
+				local vmax = Vector(12, 12, 12)
 				tracep.mins = vmin
 				tracep.maxs = vmax
 				tracep.mask = MASK_SHOT
-				function tab.ChargeAttack(self,item)
+				function tab.ChargeAttack(self, item)
 					if SERVER then --SERVER
 						tracep.start = self.Owner:GetShootPos()
-						tracep.endpos = self.Owner:GetShootPos()+self:GetAimVector()*150
+						tracep.endpos = self.Owner:GetShootPos() + self:GetAimVector() * 150
 						tracep.filter = self.Owner
 						local tr = util.TraceHull(tracep)
 						if tr.Hit and tr.HitPos then
 							local extents = ents.FindInSphere(tr.HitPos, 80)
-							for index,ent in pairs(extents) do
+							for index, ent in pairs(extents) do
 								if ent then
 									ent:Extinguish()
 									if vFireInstalled and ent.SoftExtinguish then ent:SoftExtinguish(10) end
 									if ent:GetMoveType() ~= MOVETYPE_VPHYSICS and (not ent:IsPlayer() or ent ~= self.Owner) then
 										if ent:IsPlayer() then
-											ent:SendHUDOverlay(color_white,2)
+											ent:SendHUDOverlay(color_white, 2)
 										end
 										local dmg = DamageInfo()
 										dmg:SetAttacker(self.Owner)
@@ -4904,18 +4890,18 @@ PrecacheParticleSystem("scav_exp_plasma")
 										dmg:SetDamageType(DMG_CHEMICAL)
 										ent:TakeDamageInfo(dmg)
 										if ent:IsPlayer() or ent:IsNPC() or ent:IsNextBot() then
-											ent:SetVelocity((ent:GetPos()-self:GetPos()):GetNormalized()*1000)
+											ent:SetVelocity((ent:GetPos() - self:GetPos()):GetNormalized() * 1000)
 										end
 									elseif ent:GetPhysicsObject():IsValid() then
-										ent:GetPhysicsObject():ApplyForceOffset((ent:GetPos()-self:GetPos()):GetNormalized()*1000,tr.HitPos)
+										ent:GetPhysicsObject():ApplyForceOffset((ent:GetPos() - self:GetPos()):GetNormalized() * 1000, tr.HitPos)
 									end
 								end
 							end
 						end
-						local extpos = self.Owner:GetShootPos()+self:GetAimVector()*75
-						for k,v in ipairs(ents.FindByClass("env_fire")) do
+						local extpos = self.Owner:GetShootPos() + self:GetAimVector() * 75
+						for k, v in ipairs(ents.FindByClass("env_fire")) do
 							if v:GetPos():Distance(extpos) < 75 then
-								v:Fire("ExtinguishTemporary",0,0)
+								v:Fire("ExtinguishTemporary", 0, 0)
 							end
 						end
 						local proj = GProjectile()
@@ -4923,13 +4909,13 @@ PrecacheParticleSystem("scav_exp_plasma")
 							proj:SetInflictor(self)
 							proj:SetFilter(self.Owner)
 							proj:SetPos(self.Owner:GetShootPos())
-							proj:SetVelocity((self:GetAimVector()+VectorRand()*0.1):GetNormalized()*100*math.Rand(1,6)*self:GetForceScale()+self.Owner:GetVelocity())
+							proj:SetVelocity((self:GetAimVector() + VectorRand() * 0.1):GetNormalized() * 100 * math.Rand(1, 6) * self:GetForceScale() + self.Owner:GetVelocity())
 							proj:Fire()
 						if self.Owner:GetGroundEntity() == NULL then
-							self.Owner:SetVelocity(self:GetAimVector()*-54)
+							self.Owner:SetVelocity(self:GetAimVector() * -54)
 						end
 						self:AddBarrelSpin(100)
-						self:TakeSubammo(item,1)
+						self:TakeSubammo(item, 1)
 					end
 					local continuefiring = self:ProcessLinking(item) and self:StopChargeOnRelease()
 					if not continuefiring then
@@ -4941,28 +4927,28 @@ PrecacheParticleSystem("scav_exp_plasma")
 					end
 					return 0.1
 				end
-				function tab.FireFunc(self,item)
+				function tab.FireFunc(self, item)
 					if SERVER then
 						self.ef_exting = self:CreateToggleEffect("scav_stream_extinguisher")
 					end
-					self:SetChargeAttack(tab.ChargeAttack,item)
+					self:SetChargeAttack(tab.ChargeAttack, item)
 					return false
 				end
 				if SERVER then
 					--TODO: Default prop
 					--CSS
-					ScavData.CollectFuncs["models/props/cs_office/fire_extinguisher.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),100,0}} end
+					ScavData.CollectFuncs["models/props/cs_office/fire_extinguisher.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 100, 0}} end
 					--TF2
 					ScavData.CollectFuncs["models/props_2fort/fire_extinguisher.mdl"] = ScavData.CollectFuncs["models/props/cs_office/fire_extinguisher.mdl"]
 					--ASW
 					ScavData.CollectFuncs["models/swarm/fireext/fireextpickup.mdl"] = ScavData.CollectFuncs["models/props/cs_office/fire_extinguisher.mdl"]
 				end
 			--CSS
-			ScavData.RegisterFiremode(tab,"models/props/cs_office/fire_extinguisher.mdl")
+			ScavData.RegisterFiremode(tab, "models/props/cs_office/fire_extinguisher.mdl")
 			--TF2
-			ScavData.RegisterFiremode(tab,"models/props_2fort/fire_extinguisher.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_2fort/fire_extinguisher.mdl")
 			--ASW
-			ScavData.RegisterFiremode(tab,"models/swarm/fireext/fireextpickup.mdl")
+			ScavData.RegisterFiremode(tab, "models/swarm/fireext/fireextpickup.mdl")
 		end
 		
 --[[==============================================================================================
@@ -4975,23 +4961,23 @@ PrecacheParticleSystem("scav_exp_plasma")
 				tab.anim = ACT_VM_IDLE
 				tab.Level = 4
 				local identify = {} --all acid sprayers are the same
-				tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+				tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 				tab.MaxAmmo = 1000
 				tab.Cooldown = 0.1
-				function tab.ChargeAttack(self,item)
+				function tab.ChargeAttack(self, item)
 					if SERVER then --SERVER
 						local proj = tab.proj
 							proj:SetOwner(self.Owner)
 							proj:SetInflictor(self)
 							proj:SetFilter(self.Owner)
 							proj:SetPos(self.Owner:GetShootPos())
-							proj:SetVelocity((self:GetAimVector()+VectorRand()*0.1):GetNormalized()*100*math.Rand(1,6)*self:GetForceScale()+self.Owner:GetVelocity())
+							proj:SetVelocity((self:GetAimVector() + VectorRand() * 0.1):GetNormalized() * 100 * math.Rand(1, 6) * self:GetForceScale() + self.Owner:GetVelocity())
 							proj:Fire()
 						if self.Owner:GetGroundEntity() == NULL then
-							self.Owner:SetVelocity(self:GetAimVector()*-35)
+							self.Owner:SetVelocity(self:GetAimVector() * -35)
 						end
 						self:AddBarrelSpin(100)
-						self:TakeSubammo(item,1)
+						self:TakeSubammo(item, 1)
 					end
 					local continuefiring = self:ProcessLinking(item) and self:StopChargeOnRelease()
 					if not continuefiring then
@@ -5003,20 +4989,20 @@ PrecacheParticleSystem("scav_exp_plasma")
 					end
 					return 0.1
 				end
-				function tab.FireFunc(self,item)
+				function tab.FireFunc(self, item)
 					if SERVER then
 						self.ef_aspray = self:CreateToggleEffect("scav_stream_aspray")
 					end
-					self:SetChargeAttack(tab.ChargeAttack,item)
+					self:SetChargeAttack(tab.ChargeAttack, item)
 					return false
 				end
 				if SERVER then
 					local proj = GProjectile()
-					local function callback(self,tr)
+					local function callback(self, tr)
 						local ent = tr.Entity
-						if IsValid(ent) and (not ent:IsPlayer() or gamemode.Call("PlayerShouldTakeDamage",ent,self.Owner)) then
-							ent:InflictStatusEffect("Acid",100,(self.deathtime-CurTime())/2,self:GetOwner())
-							ent:EmitSound("ambient/levels/canals/toxic_slime_sizzle"..math.random(2,4)..".wav")
+						if IsValid(ent) and (not ent:IsPlayer() or gamemode.Call("PlayerShouldTakeDamage", ent, self.Owner)) then
+							ent:InflictStatusEffect("Acid", 100, (self.deathtime - CurTime()) / 2, self:GetOwner())
+							ent:EmitSound("ambient/levels/canals/toxic_slime_sizzle" .. math.random(2, 4) .. ".wav")
 						end
 						if not (tr.Entity:IsPlayer() or tr.Entity:IsNPC() or tr.Entity:IsNextBot()) then
 							self:SetPiercing(false)
@@ -5024,28 +5010,28 @@ PrecacheParticleSystem("scav_exp_plasma")
 						return
 					end
 					proj:SetCallback(callback)
-					proj:SetBBox(Vector(-8,-8,-8),Vector(8,8,8))
+					proj:SetBBox(Vector(-8, -8, -8), Vector(8, 8, 8))
 					proj:SetPiercing(true)
-					proj:SetGravity(Vector(0,0,-96))
-					proj:SetMask(bit.bor(MASK_SHOT,CONTENTS_WATER,CONTENTS_SLIME))
+					proj:SetGravity(Vector(0, 0, -96))
+					proj:SetMask(bit.bor(MASK_SHOT, CONTENTS_WATER, CONTENTS_SLIME))
 					proj:SetLifetime(1)
 					tab.proj = proj
-					ScavData.CollectFuncs["models/props_junk/plasticbucket001a.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),200,ent:GetSkin()}} end
-					ScavData.CollectFuncs["models/props_lab/crematorcase.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),1000,ent:GetSkin()}} end
-					ScavData.CollectFuncs["models/props_junk/garbage_plasticbottle001a.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),50,ent:GetSkin()}} end
+					ScavData.CollectFuncs["models/props_junk/plasticbucket001a.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 200, ent:GetSkin()}} end
+					ScavData.CollectFuncs["models/props_lab/crematorcase.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 1000, ent:GetSkin()}} end
+					ScavData.CollectFuncs["models/props_junk/garbage_plasticbottle001a.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 50, ent:GetSkin()}} end
 					ScavData.CollectFuncs["models/props_junk/garbage_plasticbottle002a.mdl"] = ScavData.CollectFuncs["models/props_junk/garbage_plasticbottle001a.mdl"]
 					--CSS
-					ScavData.CollectFuncs["models/props/cs_italy/orange.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),1,0}} end
-					ScavData.CollectFuncs["models/props/de_inferno/crate_fruit_break_gib2.mdl"] = function(self,ent) return {{"models/props/cs_italy/orange.mdl",1,0}} end
-					ScavData.CollectFuncs["models/props/de_inferno/crate_fruit_break.mdl"] = function(self,ent) return {{"models/props/de_inferno/crate_fruit_break.mdl",400,0}} end
+					ScavData.CollectFuncs["models/props/cs_italy/orange.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 1, 0}} end
+					ScavData.CollectFuncs["models/props/de_inferno/crate_fruit_break_gib2.mdl"] = function(self, ent) return {{"models/props/cs_italy/orange.mdl", 1, 0}} end
+					ScavData.CollectFuncs["models/props/de_inferno/crate_fruit_break.mdl"] = function(self, ent) return {{"models/props/de_inferno/crate_fruit_break.mdl", 400, 0}} end
 					ScavData.CollectFuncs["models/props/de_inferno/crate_fruit_break_p1.mdl"] = ScavData.CollectFuncs["models/props/de_inferno/crate_fruit_break_pl.mdl"]
-					ScavData.CollectFuncs["models/props/de_inferno/crates_fruit1.mdl"] = function(self,ent) return {{"models/props/de_inferno/crate_fruit_break.mdl",400,0,18}} end  --TODO:gotta redo the numbers on these
-					ScavData.CollectFuncs["models/props/de_inferno/crates_fruit1_p1.mdl"] = function(self,ent) return {{"models/props/de_inferno/crate_fruit_break.mdl",400,0,15}} end
-					ScavData.CollectFuncs["models/props/de_inferno/crates_fruit2.mdl"] = function(self,ent) return {{"models/props/de_inferno/crate_fruit_break.mdl",400,0,13}} end
+					ScavData.CollectFuncs["models/props/de_inferno/crates_fruit1.mdl"] = function(self, ent) return {{"models/props/de_inferno/crate_fruit_break.mdl", 400, 0, 18}} end  --TODO:gotta redo the numbers on these
+					ScavData.CollectFuncs["models/props/de_inferno/crates_fruit1_p1.mdl"] = function(self, ent) return {{"models/props/de_inferno/crate_fruit_break.mdl", 400, 0, 15}} end
+					ScavData.CollectFuncs["models/props/de_inferno/crates_fruit2.mdl"] = function(self, ent) return {{"models/props/de_inferno/crate_fruit_break.mdl", 400, 0, 13}} end
 					ScavData.CollectFuncs["models/props/de_inferno/crates_fruit2_p1.mdl"] = ScavData.CollectFuncs["models/props/de_inferno/crates_fruit2.mdl"]
 					--L4D/2
-					ScavData.CollectFuncs["models/props_equipment/fountain_drinks.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),300,ent:GetSkin()}} end
-					ScavData.CollectFuncs["models/infected/spitter.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),1000,0}} end
+					ScavData.CollectFuncs["models/props_equipment/fountain_drinks.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 300, ent:GetSkin()}} end
+					ScavData.CollectFuncs["models/infected/spitter.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 1000, 0}} end
 					ScavData.CollectFuncs["models/props_junk/garbage_plasticbottle001a_clientside.mdl"] = ScavData.CollectFuncs["models/props_junk/garbage_plasticbottle001a.mdl"]
 					ScavData.CollectFuncs["models/props_junk/garbage_plasticbottle001a_fullsheet.mdl"] = ScavData.CollectFuncs["models/props_junk/garbage_plasticbottle001a.mdl"]
 					ScavData.CollectFuncs["models/props_junk/garbage_plasticbottle001a_static.mdl"] = ScavData.CollectFuncs["models/props_junk/garbage_plasticbottle001a.mdl"]
@@ -5053,23 +5039,23 @@ PrecacheParticleSystem("scav_exp_plasma")
 					ScavData.CollectFuncs["models/props_junk/garbage_cleanercan01a.mdl"] = ScavData.CollectFuncs["models/props_junk/garbage_plasticbottle002a.mdl"]
 					ScavData.CollectFuncs["models/props_junk/garbage_cleanercan01a_fullsheet.mdl"] = ScavData.CollectFuncs["models/props_junk/garbage_cleanercan01a.mdl"]
 				end
-			ScavData.RegisterFiremode(tab,"models/props_junk/plasticbucket001a.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_lab/crematorcase.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_junk/garbage_plasticbottle001a.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_junk/garbage_plasticbottle002a.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_junk/plasticbucket001a.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_lab/crematorcase.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_junk/garbage_plasticbottle001a.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_junk/garbage_plasticbottle002a.mdl")
 			--CSS
-			ScavData.RegisterFiremode(tab,"models/props/cs_italy/orange.mdl")
-			ScavData.RegisterFiremode(tab,"models/props/de_inferno/crate_fruit_break.mdl")
-			ScavData.RegisterFiremode(tab,"models/props/de_inferno/crate_fruit_break_p1.mdl")
+			ScavData.RegisterFiremode(tab, "models/props/cs_italy/orange.mdl")
+			ScavData.RegisterFiremode(tab, "models/props/de_inferno/crate_fruit_break.mdl")
+			ScavData.RegisterFiremode(tab, "models/props/de_inferno/crate_fruit_break_p1.mdl")
 			--L4D/2
-			ScavData.RegisterFiremode(tab,"models/props_equipment/fountain_drinks.mdl")
-			ScavData.RegisterFiremode(tab,"models/infected/spitter.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_junk/garbage_plasticbottle001a_clientside.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_junk/garbage_plasticbottle001a_fullsheet.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_junk/garbage_plasticbottle001a_static.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_junk/garbage_plasticbottle002a_fullsheet.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_junk/garbage_cleanercan01a.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_junk/garbage_cleanercan01a_fullsheet.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_equipment/fountain_drinks.mdl")
+			ScavData.RegisterFiremode(tab, "models/infected/spitter.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_junk/garbage_plasticbottle001a_clientside.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_junk/garbage_plasticbottle001a_fullsheet.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_junk/garbage_plasticbottle001a_static.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_junk/garbage_plasticbottle002a_fullsheet.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_junk/garbage_cleanercan01a.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_junk/garbage_cleanercan01a_fullsheet.mdl")
 		end
 
 --[[==============================================================================================
@@ -5082,23 +5068,23 @@ PrecacheParticleSystem("scav_exp_plasma")
 				tab.anim = ACT_VM_IDLE
 				tab.Level = 4
 				local identify = {} --all freezing gases are the same
-				tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+				tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 				tab.MaxAmmo = 200
 				tab.Cooldown = 0.1
-				function tab.ChargeAttack(self,item)
+				function tab.ChargeAttack(self, item)
 					if SERVER then --SERVER
 						local proj = tab.proj
 							proj:SetOwner(self.Owner)
 							proj:SetInflictor(self)
 							proj:SetFilter(self.Owner)
 							proj:SetPos(self.Owner:GetShootPos())
-							proj:SetVelocity((self:GetAimVector()+VectorRand()*0.1):GetNormalized()*100*math.Rand(1,6)*self:GetForceScale()+self.Owner:GetVelocity())
+							proj:SetVelocity((self:GetAimVector() + VectorRand() * 0.1):GetNormalized() * 100 * math.Rand(1, 6) * self:GetForceScale() + self.Owner:GetVelocity())
 							proj:Fire()
 						if self.Owner:GetGroundEntity() == NULL then
-							self.Owner:SetVelocity(self:GetAimVector()*-35)
+							self.Owner:SetVelocity(self:GetAimVector() * -35)
 						end
 						self:AddBarrelSpin(100)
-						self:TakeSubammo(item,1)
+						self:TakeSubammo(item, 1)
 					end
 					local continuefiring = self:ProcessLinking(item) and self:StopChargeOnRelease()
 					if not continuefiring then
@@ -5110,18 +5096,18 @@ PrecacheParticleSystem("scav_exp_plasma")
 					end
 					return 0.1
 				end
-				function tab.FireFunc(self,item)
+				function tab.FireFunc(self, item)
 					if SERVER then
 						self.ef_frzgas = self:CreateToggleEffect("scav_stream_freezegas")
 					end
-					self:SetChargeAttack(tab.ChargeAttack,item)
+					self:SetChargeAttack(tab.ChargeAttack, item)
 					return false
 				end
 				if SERVER then
 					local proj = GProjectile()
-					local function callback(self,tr)
+					local function callback(self, tr)
 						local ent = tr.Entity
-						if IsValid(ent) and (not ent:IsPlayer() or gamemode.Call("PlayerShouldTakeDamage",ent,self:GetOwner())) then
+						if IsValid(ent) and (not ent:IsPlayer() or gamemode.Call("PlayerShouldTakeDamage", ent, self:GetOwner())) then
 							local dmg = DamageInfo()
 							dmg:SetAttacker(self:GetOwner())
 							if IsValid(self:GetOwner()) then
@@ -5138,21 +5124,21 @@ PrecacheParticleSystem("scav_exp_plasma")
 							local slowfactor = 0.8
 							local slowstatus = ent:GetStatusEffect("Slow")
 							if slowstatus then
-								slowfactor = slowstatus.Value*0.8
+								slowfactor = slowstatus.Value * 0.8
 							end
-							ent:InflictStatusEffect("Slow",0.35,slowfactor,self:GetOwner())
+							ent:InflictStatusEffect("Slow", 0.35, slowfactor, self:GetOwner())
 							local slow = ent:GetStatusEffect("Slow")
 							if slow then
 								if ent:IsPlayer() and (slow.Value < 0.3) then
-									ent:InflictStatusEffect("Frozen",0.1,0,self:GetOwner())
-								elseif not ent:IsPlayer() and ((ent:IsNPC() and ((ent:Health() < 10) or (slow.EndTime > CurTime()+3))) or not ent:IsNPC()) then
-									ent:InflictStatusEffect("Frozen",0.2,0,self:GetOwner())
+									ent:InflictStatusEffect("Frozen", 0.1, 0, self:GetOwner())
+								elseif not ent:IsPlayer() and ((ent:IsNPC() and ((ent:Health() < 10) or (slow.EndTime > CurTime() + 3))) or not ent:IsNPC()) then
+									ent:InflictStatusEffect("Frozen", 0.2, 0, self:GetOwner())
 								end
 							end
 						end
 						-- Create ice platforms on water
 						if tr.MatType == MAT_SLOSH then
-							local pos = tr.HitPos*1
+							local pos = tr.HitPos * 1
 							local ice = NULL
 							local model = "models/scav/iceplatform.mdl"
 							for _, v in ipairs(ents.FindInSphere(pos, 8)) do
@@ -5180,18 +5166,17 @@ PrecacheParticleSystem("scav_exp_plasma")
 						return
 					end
 					proj:SetCallback(callback)
-					proj:SetBBox(Vector(-8,-8,-8),Vector(8,8,8))
+					proj:SetBBox(Vector(-8, -8, -8), Vector(8, 8, 8))
 					proj:SetPiercing(true)
 					proj:SetGravity(vector_origin)
-					proj:SetMask(bit.bor(MASK_SHOT,CONTENTS_WATER,CONTENTS_SLIME))
+					proj:SetMask(bit.bor(MASK_SHOT, CONTENTS_WATER, CONTENTS_SLIME))
 					proj:SetLifetime(1)
 					tab.proj = proj
-					ScavData.CollectFuncs["models/props_c17/furniturefridge001a.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),100,0}} end
+					ScavData.CollectFuncs["models/props_c17/furniturefridge001a.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 100, 0}} end
 					ScavData.CollectFuncs["models/props_interiors/refrigerator01a.mdl"] = ScavData.CollectFuncs["models/props_c17/furniturefridge001a.mdl"]
-					ScavData.CollectFuncs["models/props_wasteland/kitchen_fridge001a.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),150,0}} end
+					ScavData.CollectFuncs["models/props_wasteland/kitchen_fridge001a.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 150, 0}} end
 					ScavData.CollectFuncs["models/props_c17/display_cooler01a.mdl"] = ScavData.CollectFuncs["models/props_wasteland/kitchen_fridge001a.mdl"]
-					--Ep2
-					ScavData.CollectFuncs["models/props_silo/acunit01.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),200,ent:GetSkin()}} end
+					ScavData.CollectFuncs["models/props_silo/acunit01.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 200, ent:GetSkin()}} end
 					ScavData.CollectFuncs["models/props_silo/acunit02.mdl"] = ScavData.CollectFuncs["models/props_c17/furniturefridge001a.mdl"]
 					ScavData.CollectFuncs["models/props_forest/refrigerator01.mdl"] = ScavData.CollectFuncs["models/props_silo/acunit01.mdl"]
 					--TF2
@@ -5211,56 +5196,55 @@ PrecacheParticleSystem("scav_exp_plasma")
 					ScavData.CollectFuncs["models/props/cs_militia/refrigerator01.mdl"] = ScavData.CollectFuncs["models/props_forest/refrigerator01.mdl"]
 					--L4D/2
 					ScavData.CollectFuncs["models/props_equipment/cooler.mdl"] = ScavData.CollectFuncs["models/props/de_train/acunit1.mdl"]
-					ScavData.CollectFuncs["models/props_downtown/mini_fridge.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),50,0}} end
+					ScavData.CollectFuncs["models/props_downtown/mini_fridge.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 50, 0}} end
 					ScavData.CollectFuncs["models/props_interiors/fridge_mini.mdl"] = ScavData.CollectFuncs["models/props_downtown/mini_fridge.mdl"]
 					ScavData.CollectFuncs["models/props_rooftop/acunit01.mdl"] = ScavData.CollectFuncs["models/props/cs_assault/acunit01.mdl"]
 					ScavData.CollectFuncs["models/props_rooftop/acunit2.mdl"] = ScavData.CollectFuncs["models/props/cs_assault/acunit01.mdl"]
 					ScavData.CollectFuncs["models/props_urban/air_conditioner001.mdl"] = ScavData.CollectFuncs["models/props/cs_assault/acunit01.mdl"]
 					ScavData.CollectFuncs["models/props_interiors/refrigerator02_main.mdl"] = ScavData.CollectFuncs["models/props_wasteland/kitchen_fridge001a.mdl"]
 					ScavData.CollectFuncs["models/props_interiors/refrigerator03.mdl"] = ScavData.CollectFuncs["models/props_interiors/refrigerator02_main.mdl"]
-					ScavData.CollectFuncs["models/props_interiors/refrigerator03_damaged_01.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),10,0}} end
+					ScavData.CollectFuncs["models/props_interiors/refrigerator03_damaged_01.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 10, 0}} end
 					ScavData.CollectFuncs["models/props_urban/fridge001.mdl"] = ScavData.CollectFuncs["models/props_c17/furniturefridge001a.mdl"]
 					ScavData.CollectFuncs["models/props_urban/fridge002.mdl"] = ScavData.CollectFuncs["models/props_urban/fridge001.mdl"]
 					--ASW
 					ScavData.CollectFuncs["models/props/furniture/misc/fridge.mdl"] = ScavData.CollectFuncs["models/props_c17/furniturefridge001a.mdl"]
 				end
-			ScavData.RegisterFiremode(tab,"models/props_c17/furniturefridge001a.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_interiors/refrigerator01a.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_wasteland/kitchen_fridge001a.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_c17/display_cooler01a.mdl")
-			--Ep2
-			ScavData.RegisterFiremode(tab,"models/props_silo/acunit01.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_silo/acunit02.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_forest/refrigerator01.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_c17/furniturefridge001a.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_interiors/refrigerator01a.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_wasteland/kitchen_fridge001a.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_c17/display_cooler01a.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_silo/acunit01.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_silo/acunit02.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_forest/refrigerator01.mdl")
 			--TF2
-			ScavData.RegisterFiremode(tab,"models/props_soho/acunit001.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_soho/acunit001b.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_soho/acunit002.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_soho/acunit002b.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_soho/acunit003.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_soho/acunit003b.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_soho/acunit004.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_soho/acunit004b.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_soho/acunit001.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_soho/acunit001b.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_soho/acunit002.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_soho/acunit002b.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_soho/acunit003.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_soho/acunit003b.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_soho/acunit004.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_soho/acunit004b.mdl")
 			--CSS
-			ScavData.RegisterFiremode(tab,"models/props/cs_assault/acunit01.mdl")
-			ScavData.RegisterFiremode(tab,"models/props/cs_assault/acunit02.mdl")
-			ScavData.RegisterFiremode(tab,"models/props/de_train/acunit1.mdl")
-			ScavData.RegisterFiremode(tab,"models/props/de_train/acunit2.mdl")
-			ScavData.RegisterFiremode(tab,"models/props/cs_militia/refrigerator01.mdl")
+			ScavData.RegisterFiremode(tab, "models/props/cs_assault/acunit01.mdl")
+			ScavData.RegisterFiremode(tab, "models/props/cs_assault/acunit02.mdl")
+			ScavData.RegisterFiremode(tab, "models/props/de_train/acunit1.mdl")
+			ScavData.RegisterFiremode(tab, "models/props/de_train/acunit2.mdl")
+			ScavData.RegisterFiremode(tab, "models/props/cs_militia/refrigerator01.mdl")
 			--L4D/2
-			ScavData.RegisterFiremode(tab,"models/props_equipment/cooler.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_downtown/mini_fridge.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_interiors/fridge_mini.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_rooftop/acunit01.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_rooftop/acunit2.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_urban/air_conditioner001.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_interiors/refrigerator02_main.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_interiors/refrigerator03.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_interiors/refrigerator03_damaged_01.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_urban/fridge001.mdl")
-			ScavData.RegisterFiremode(tab,"models/props_urban/fridge002.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_equipment/cooler.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_downtown/mini_fridge.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_interiors/fridge_mini.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_rooftop/acunit01.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_rooftop/acunit2.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_urban/air_conditioner001.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_interiors/refrigerator02_main.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_interiors/refrigerator03.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_interiors/refrigerator03_damaged_01.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_urban/fridge001.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_urban/fridge002.mdl")
 			--ASW
-			ScavData.RegisterFiremode(tab,"models/props/furniture/misc/fridge.mdl")
+			ScavData.RegisterFiremode(tab, "models/props/furniture/misc/fridge.mdl")
 		end
 
 --[[==============================================================================================
@@ -5273,13 +5257,13 @@ PrecacheParticleSystem("scav_exp_plasma")
 				tab.anim = ACT_VM_SWINGMISS
 				tab.Level = 4
 				local identify = {} --all plasma blades are the same
-				tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+				tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 				tab.Cooldown = 0.15
 				local tracep = {}
-				tracep.mins = Vector(-8,-8,-8)
-				tracep.maxs = Vector(8,8,8)
-				function tab.ChargeAttack(self,item)
-					self.slicestage = self.slicestage+1
+				tracep.mins = Vector(-8, -8, -8)
+				tracep.maxs = Vector(8, 8, 8)
+				function tab.ChargeAttack(self, item)
+					self.slicestage = self.slicestage + 1
 					if SERVER then --SERVER
 						
 						local vm = self.Owner:GetViewModel()
@@ -5289,7 +5273,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 						else
 							tracep.start = att.Pos
 						end
-						tracep.endpos = tracep.start+self.Owner:GetAimVector()*50
+						tracep.endpos = tracep.start + self.Owner:GetAimVector() * 50
 						tracep.filter = self.Owner
 						local tr = util.TraceHull(tracep)
 						if tr.Hit then
@@ -5298,12 +5282,12 @@ PrecacheParticleSystem("scav_exp_plasma")
 						end
 						if IsValid(tr.Entity) then
 							local dmg = DamageInfo()
-							dmg:SetDamageType(bit.bor(DMG_SLASH,DMG_PLASMA,DMG_ENERGYBEAM))
+							dmg:SetDamageType(bit.bor(DMG_SLASH, DMG_PLASMA, DMG_ENERGYBEAM))
 							dmg:SetDamage(30)
 							dmg:SetDamagePosition(tr.HitPos)
 							dmg:SetAttacker(self.Owner)
 							dmg:SetInflictor(self)
-							dmg:SetDamageForce(tr.Normal*900)
+							dmg:SetDamageForce(tr.Normal * 900)
 							tr.Entity:TakeDamageInfo(dmg)
 						end
 						if tr.Hit then
@@ -5311,7 +5295,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 							edata:SetOrigin(tr.HitPos)
 							edata:SetNormal(tr.HitNormal)
 							edata:SetEntity(tr.Entity)
-							util.Effect(tr.MatType == MAT_FLESH and "BloodImpact" or "StunstickImpact",edata,true,true)
+							util.Effect(tr.MatType == MAT_FLESH and "BloodImpact" or "StunstickImpact", edata, true, true)
 						end
 					end
 					if self.slicestage > 8 then
@@ -5323,12 +5307,12 @@ PrecacheParticleSystem("scav_exp_plasma")
 					end
 					return 0.025
 				end
-				function tab.FireFunc(self,item)
+				function tab.FireFunc(self, item)
 					if SERVER then
 						self.ef_pblade = self:CreateToggleEffect("scav_stream_pblade")
 					end
 					tracep.start = self.Owner:GetShootPos()
-					tracep.endpos = tracep.start+self.Owner:GetAimVector()*50
+					tracep.endpos = tracep.start + self.Owner:GetAimVector() * 50
 					tracep.filter = self.Owner
 					local tr = util.TraceHull(tracep)
 					if tr.Hit then
@@ -5336,7 +5320,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 					else
 						tab.anim = ACT_VM_SWINGMISS
 					end
-					self:SetChargeAttack(tab.ChargeAttack,item)
+					self:SetChargeAttack(tab.ChargeAttack, item)
 					self:SetHoldType("melee")
 					self.Owner:SetAnimation(PLAYER_ATTACK1)
 					self.slicestage = 0
@@ -5347,9 +5331,9 @@ PrecacheParticleSystem("scav_exp_plasma")
 					--TF2
 					ScavData.CollectFuncs["models/workshop/weapons/c_models/c_invasion_bat/c_invasion_bat.mdl"] = ScavData.GiveOneOfItemInf
 				end
-				ScavData.RegisterFiremode(tab,"models/props_phx2/garbage_metalcan001a.mdl")
+				ScavData.RegisterFiremode(tab, "models/props_phx2/garbage_metalcan001a.mdl")
 				--TF2
-				ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_invasion_bat/c_invasion_bat.mdl")
+				ScavData.RegisterFiremode(tab, "models/workshop/weapons/c_models/c_invasion_bat/c_invasion_bat.mdl")
 		end
 		
 --[[==============================================================================================
@@ -5612,9 +5596,9 @@ PrecacheParticleSystem("scav_exp_plasma")
 				tab.Cooldown = 0.025
 				tab.Health = 40
 				local tracep = {}
-				tracep.mins = Vector(-12,-12,-12)
-				tracep.maxs = Vector(12,12,12)
-				function tab.ChargeAttack(self,item)
+				tracep.mins = Vector(-12, -12, -12)
+				tracep.maxs = Vector(12, 12, 12)
+				function tab.ChargeAttack(self, item)
 					if SERVER then
 						self:AddBarrelSpin(25)
 					end
@@ -5628,28 +5612,28 @@ PrecacheParticleSystem("scav_exp_plasma")
 					end
 					return 0.025
 				end
-				function tab.FireFunc(self,item)
+				function tab.FireFunc(self, item)
 					if SERVER then
 						self.ef_pblade = self:CreateToggleEffect("scav_stream_shield")
 						self.ef_pblade:SetCollisionGroup(COLLISION_GROUP_BREAKABLE_GLASS)
 					end
-					self:SetChargeAttack(tab.ChargeAttack,item)
+					self:SetChargeAttack(tab.ChargeAttack, item)
 					return false
 				end
-				-- function tab.Think(self,item) --I have no idea what I'm doing
+				-- function tab.Think(self, item) --I have no idea what I'm doing
 				-- 	if IsValid(self.ef_pblade) then
 				-- 		tab.mins, tab.maxs = self.ef_pblade:GetCollisionBounds()
 				-- 	end
 				-- end
-				function tab.Break(self,item)
+				function tab.Break(self, item)
 					if IsValid(self.ef_pblade) then
 						local tr = self.Owner:GetEyeTrace()
 						self.ef_pblade:GibBreakClient( tr.HitNormal * -100)
-						timer.Simple(0,function() self.ef_pblade:Kill() end)
+						timer.Simple(0, function() self.ef_pblade:Kill() end)
 					end
 					return true
 				end
-				ScavData.RegisterFiremode(tab,"models/props_italian/ava_stained_glass.mdl")
+				ScavData.RegisterFiremode(tab, "models/props_italian/ava_stained_glass.mdl")
 		end
 
 --[[==============================================================================================
@@ -5662,16 +5646,16 @@ PrecacheParticleSystem("scav_exp_plasma")
 				tab.anim = ACT_VM_IDLE
 				tab.Level = 4
 				local identify = {} --all lasers are the same
-				tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+				tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 				tab.MaxAmmo = 300
 				tab.Cooldown = 0.01
 				local tracep = {}
-				tracep.mins = Vector(-2,-2,-2)
-				tracep.maxs = Vector(2,2,2)
-				function tab.ChargeAttack(self,item)
+				tracep.mins = Vector(-2, -2, -2)
+				tracep.maxs = Vector(2, 2, 2)
+				function tab.ChargeAttack(self, item)
 					if SERVER then
 						tracep.start = self.Owner:GetShootPos()
-						tracep.endpos = tracep.start+self.Owner:GetAimVector()*10000
+						tracep.endpos = tracep.start + self.Owner:GetAimVector() * 10000
 						tracep.filter = self.Owner
 						local tr = util.TraceHull(tracep)
 						if IsValid(tr.Entity) then
@@ -5685,9 +5669,9 @@ PrecacheParticleSystem("scav_exp_plasma")
 								if IsValid(tr.Entity) and tr.Entity.Health then
 									if not (tr.Entity:IsPlayer() or tr.Entity:IsNPC() or tr.Entity:IsNextBot()) and tr.Entity:Health() ~= 0 and tr.Entity:Health() <= 5 then
 										if tr.Entity:GetClass() ~= "func_breakable_surf" then
-											tr.Entity:Fire("break",nil,0,self.Owner,self)
+											tr.Entity:Fire("break", nil, 0, self.Owner, self)
 										else
-											tr.Entity:Fire("shatter","(0.5,0.5,0)",0,self.Owner,self)
+											tr.Entity:Fire("shatter", "(0.5, 0.5, 0)", 0, self.Owner, self)
 										end
 									else
 										tr.Entity:TakeDamageInfo(dmg)
@@ -5698,7 +5682,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 							end
 						end
 						self:AddBarrelSpin(200)
-						self:TakeSubammo(item,1)
+						self:TakeSubammo(item, 1)
 					end
 					local continuefiring = self:ProcessLinking(item) and self:StopChargeOnRelease()
 					if not continuefiring then
@@ -5710,23 +5694,23 @@ PrecacheParticleSystem("scav_exp_plasma")
 					end
 					return 0.05
 				end
-				function tab.FireFunc(self,item)
+				function tab.FireFunc(self, item)
 					if SERVER then
 						self.ef_beam = self:CreateToggleEffect("scav_stream_laser")
 					end
-					self:SetChargeAttack(tab.ChargeAttack,item)
+					self:SetChargeAttack(tab.ChargeAttack, item)
 					return false
 				end
 				if SERVER then
-					ScavData.CollectFuncs["models/roller.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),200,ent:GetSkin()}} end
+					ScavData.CollectFuncs["models/roller.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 200, ent:GetSkin()}} end
 					ScavData.CollectFuncs["models/roller_spikes.mdl"] = ScavData.CollectFuncs["models/roller.mdl"]
 					ScavData.CollectFuncs["models/roller_vehicledriver.mdl"] = ScavData.CollectFuncs["models/roller.mdl"]
 					ScavData.CollectFuncs["models/stalker.mdl"]	= ScavData.CollectFuncs["models/roller.mdl"]
 				end
-				ScavData.RegisterFiremode(tab,"models/roller.mdl")
-				ScavData.RegisterFiremode(tab,"models/roller_spikes.mdl")
-				ScavData.RegisterFiremode(tab,"models/roller_vehicledriver.mdl")
-				ScavData.RegisterFiremode(tab,"models/stalker.mdl")
+				ScavData.RegisterFiremode(tab, "models/roller.mdl")
+				ScavData.RegisterFiremode(tab, "models/roller_spikes.mdl")
+				ScavData.RegisterFiremode(tab, "models/roller_vehicledriver.mdl")
+				ScavData.RegisterFiremode(tab, "models/stalker.mdl")
 		end
 		
 --[[==============================================================================================
@@ -5739,14 +5723,14 @@ PrecacheParticleSystem("scav_exp_plasma")
 				tab.chargeanim = ACT_VM_FIDGET
 				tab.Level = 6
 				local identify = {} --all arc beams are the same
-				tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+				tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 				tab.MaxAmmo = 300
 				tab.Cooldown = 0.01
-				function tab.ChargeAttack(self,item)
+				function tab.ChargeAttack(self, item)
 					if SERVER then
-						self:SetPanelPoseInstant(0.4,6)
-						self:SetBlockPoseInstant(1,1)
-						self:TakeSubammo(item,1)
+						self:SetPanelPoseInstant(0.4, 6)
+						self:SetBlockPoseInstant(1, 1)
+						self:TakeSubammo(item, 1)
 					end
 					local continuefiring = self:ProcessLinking(item) and self:StopChargeOnRelease()
 					if not continuefiring then
@@ -5760,16 +5744,16 @@ PrecacheParticleSystem("scav_exp_plasma")
 					--tab.anim = ACT_VM_FIDGET
 					return 0.05
 				end
-				function tab.FireFunc(self,item)
+				function tab.FireFunc(self, item)
 					if SERVER then
 						self.ef_parc = self:CreateToggleEffect("scav_stream_tesla")
 					end
-					self:SetChargeAttack(tab.ChargeAttack,item)
+					self:SetChargeAttack(tab.ChargeAttack, item)
 					return false
 				end
 				if SERVER then
-					ScavData.CollectFuncs["models/props_lab/tpplug.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),100,ent:GetSkin()}} end
-					ScavData.CollectFuncs["models/props_lab/tpplugholder.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),200,ent:GetSkin()}} end
+					ScavData.CollectFuncs["models/props_lab/tpplug.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 100, ent:GetSkin()}} end
+					ScavData.CollectFuncs["models/props_lab/tpplugholder.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 200, ent:GetSkin()}} end
 					ScavData.CollectFuncs["models/props_c17/utilityconnecter006.mdl"] = ScavData.CollectFuncs["models/props_lab/tpplugholder.mdl"]
 					ScavData.CollectFuncs["models/props_c17/utilityconnecter006b.mdl"] = ScavData.CollectFuncs["models/props_c17/utilityconnecter006.mdl"]
 					ScavData.CollectFuncs["models/props_c17/utilityconnecter006c.mdl"] = ScavData.CollectFuncs["models/props_c17/utilityconnecter006.mdl"]
@@ -5782,13 +5766,12 @@ PrecacheParticleSystem("scav_exp_plasma")
 					ScavData.CollectFuncs["models/props_c17/utilitypole01d.mdl"] = ScavData.GiveOneOfItemInf
 					ScavData.CollectFuncs["models/props_c17/utilitypole02b.mdl"] = ScavData.GiveOneOfItemInf
 					ScavData.CollectFuncs["models/props_c17/utilitypole03a.mdl"] = ScavData.GiveOneOfItemInf
-					--Ep2
 					ScavData.CollectFuncs["models/props_lab/incubatorplug.mdl"] = ScavData.CollectFuncs["models/props_lab/tpplug.mdl"]
 					ScavData.CollectFuncs["models/props_lab/power_cable001a.mdl"] = ScavData.CollectFuncs["models/props_lab/tpplugholder.mdl"]
 					ScavData.CollectFuncs["models/props_lab/power_cable002a.mdl"] = ScavData.CollectFuncs["models/props_lab/power_cable001a.mdl"]
 					--TF2
 					ScavData.CollectFuncs["models/props_hydro/substation_transformer01.mdl"] = ScavData.CollectFuncs["models/props_c17/utilityconnecter006.mdl"]
-					ScavData.CollectFuncs["models/props_swamp/bug_zapper.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),50,0}} end
+					ScavData.CollectFuncs["models/props_swamp/bug_zapper.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 50, 0}} end
 					ScavData.CollectFuncs["models/weapons/c_models/c_dex_arm/c_dex_arm.mdl"] = ScavData.CollectFuncs["models/props_c17/utilityconnecter006.mdl"]
 					ScavData.CollectFuncs["models/workshop_partner/weapons/c_models/c_dex_arm/c_dex_arm.mdl"] = ScavData.CollectFuncs["models/weapons/c_models/c_dex_arm/c_dex_arm.mdl"]
 					ScavData.CollectFuncs["models/props_2fort/telephonepole001.mdl"] = ScavData.GiveOneOfItemInf
@@ -5804,41 +5787,40 @@ PrecacheParticleSystem("scav_exp_plasma")
 					ScavData.CollectFuncs["models/items/teslacoil/teslacoil.mdl"] = ScavData.CollectFuncs["models/props_c17/utilityconnecter006.mdl"]
 					ScavData.CollectFuncs["models/weapons/mininglaser/mininglaser.mdl"] = ScavData.CollectFuncs["models/props_c17/utilityconnecter006.mdl"]
 				end
-				ScavData.RegisterFiremode(tab,"models/props_lab/tpplug.mdl")
-				ScavData.RegisterFiremode(tab,"models/props_lab/tpplugholder.mdl")
-				ScavData.RegisterFiremode(tab,"models/props_c17/utilityconnecter006.mdl")
-				ScavData.RegisterFiremode(tab,"models/props_c17/utilityconnecter006b.mdl")
-				ScavData.RegisterFiremode(tab,"models/props_c17/utilityconnecter006c.mdl")
-				ScavData.RegisterFiremode(tab,"models/props_c17/utilityconnecter006d.mdl")
-				ScavData.RegisterFiremode(tab,"models/props_c17/utilitypolemount01a.mdl")
-				ScavData.RegisterFiremode(tab,"models/props_c17/substation_circuitbreaker01a.mdl")
-				ScavData.RegisterFiremode(tab,"models/props_c17/substation_stripebox01a.mdl")
-				ScavData.RegisterFiremode(tab,"models/props_c17/utilitypole01a.mdl")
-				ScavData.RegisterFiremode(tab,"models/props_c17/utilitypole01b.mdl")
-				ScavData.RegisterFiremode(tab,"models/props_c17/utilitypole01d.mdl")
-				ScavData.RegisterFiremode(tab,"models/props_c17/utilitypole02b.mdl")
-				ScavData.RegisterFiremode(tab,"models/props_c17/utilitypole03a.mdl")
-				--Ep2
-				ScavData.RegisterFiremode(tab,"models/props_lab/incubatorplug.mdl")
-				ScavData.RegisterFiremode(tab,"models/props_lab/power_cable001a.mdl")
-				ScavData.RegisterFiremode(tab,"models/props_lab/power_cable002a.mdl")
+				ScavData.RegisterFiremode(tab, "models/props_lab/tpplug.mdl")
+				ScavData.RegisterFiremode(tab, "models/props_lab/tpplugholder.mdl")
+				ScavData.RegisterFiremode(tab, "models/props_c17/utilityconnecter006.mdl")
+				ScavData.RegisterFiremode(tab, "models/props_c17/utilityconnecter006b.mdl")
+				ScavData.RegisterFiremode(tab, "models/props_c17/utilityconnecter006c.mdl")
+				ScavData.RegisterFiremode(tab, "models/props_c17/utilityconnecter006d.mdl")
+				ScavData.RegisterFiremode(tab, "models/props_c17/utilitypolemount01a.mdl")
+				ScavData.RegisterFiremode(tab, "models/props_c17/substation_circuitbreaker01a.mdl")
+				ScavData.RegisterFiremode(tab, "models/props_c17/substation_stripebox01a.mdl")
+				ScavData.RegisterFiremode(tab, "models/props_c17/utilitypole01a.mdl")
+				ScavData.RegisterFiremode(tab, "models/props_c17/utilitypole01b.mdl")
+				ScavData.RegisterFiremode(tab, "models/props_c17/utilitypole01d.mdl")
+				ScavData.RegisterFiremode(tab, "models/props_c17/utilitypole02b.mdl")
+				ScavData.RegisterFiremode(tab, "models/props_c17/utilitypole03a.mdl")
+				ScavData.RegisterFiremode(tab, "models/props_lab/incubatorplug.mdl")
+				ScavData.RegisterFiremode(tab, "models/props_lab/power_cable001a.mdl")
+				ScavData.RegisterFiremode(tab, "models/props_lab/power_cable002a.mdl")
 				--TF2
-				ScavData.RegisterFiremode(tab,"models/props_hydro/substation_transformer01.mdl")
-				ScavData.RegisterFiremode(tab,"models/props_swamp/bug_zapper.mdl")
-				ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_dex_arm/c_dex_arm.mdl")
-				ScavData.RegisterFiremode(tab,"models/workshop_partner/weapons/c_models/c_dex_arm/c_dex_arm.mdl")
-				ScavData.RegisterFiremode(tab,"models/props_2fort/telephonepole001.mdl")
-				ScavData.RegisterFiremode(tab,"models/props_farm/powertower01.mdl")
-				ScavData.RegisterFiremode(tab,"models/props_farm/powertower01_skybox.mdl")
-				ScavData.RegisterFiremode(tab,"models/props_farm/powertower02.mdl")
-				ScavData.RegisterFiremode(tab,"models/props_farm/powertower02_skybox.mdl")
+				ScavData.RegisterFiremode(tab, "models/props_hydro/substation_transformer01.mdl")
+				ScavData.RegisterFiremode(tab, "models/props_swamp/bug_zapper.mdl")
+				ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_dex_arm/c_dex_arm.mdl")
+				ScavData.RegisterFiremode(tab, "models/workshop_partner/weapons/c_models/c_dex_arm/c_dex_arm.mdl")
+				ScavData.RegisterFiremode(tab, "models/props_2fort/telephonepole001.mdl")
+				ScavData.RegisterFiremode(tab, "models/props_farm/powertower01.mdl")
+				ScavData.RegisterFiremode(tab, "models/props_farm/powertower01_skybox.mdl")
+				ScavData.RegisterFiremode(tab, "models/props_farm/powertower02.mdl")
+				ScavData.RegisterFiremode(tab, "models/props_farm/powertower02_skybox.mdl")
 				--L4D/2
-				ScavData.RegisterFiremode(tab,"models/props_shacks/bug_lamp01.mdl")
-				ScavData.RegisterFiremode(tab,"models/props_c17/substation_circuitbreaker03.mdl")
-				ScavData.RegisterFiremode(tab,"models/props_street/phonepole1_tall.mdl")
+				ScavData.RegisterFiremode(tab, "models/props_shacks/bug_lamp01.mdl")
+				ScavData.RegisterFiremode(tab, "models/props_c17/substation_circuitbreaker03.mdl")
+				ScavData.RegisterFiremode(tab, "models/props_street/phonepole1_tall.mdl")
 				--ASW
-				ScavData.RegisterFiremode(tab,"models/items/teslacoil/teslacoil.mdl")
-				ScavData.RegisterFiremode(tab,"models/weapons/mininglaser/mininglaser.mdl")
+				ScavData.RegisterFiremode(tab, "models/items/teslacoil/teslacoil.mdl")
+				ScavData.RegisterFiremode(tab, "models/weapons/mininglaser/mininglaser.mdl")
 		end
 
 --[[==============================================================================================
@@ -5851,11 +5833,11 @@ PrecacheParticleSystem("scav_exp_plasma")
 				tab.chargeanim = ACT_VM_FIDGET
 				tab.Level = 6
 				local identify = {} --all mediguns are the same
-				tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+				tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 				tab.Cooldown = 0.01
-				function tab.ChargeAttack(self,item)
+				function tab.ChargeAttack(self, item)
 					if SERVER then
-						self:SetBlockPoseInstant(1,1)
+						self:SetBlockPoseInstant(1, 1)
 					end
 					local continuefiring = self:StopChargeOnRelease()
 					if not continuefiring then
@@ -5869,12 +5851,12 @@ PrecacheParticleSystem("scav_exp_plasma")
 					--tab.anim = ACT_VM_FIDGET
 					return 0.05
 				end
-				function tab.FireFunc(self,item)
+				function tab.FireFunc(self, item)
 					if SERVER then
 						self.ef_medigun = self:CreateToggleEffect("scav_stream_medigun")
 						self.ef_medigun:Setblue((item.data % 2 == 1))
 					end
-					self:SetChargeAttack(tab.ChargeAttack,item)
+					self:SetChargeAttack(tab.ChargeAttack, item)
 					return false
 				end
 				if SERVER then
@@ -5888,28 +5870,28 @@ PrecacheParticleSystem("scav_exp_plasma")
 					ScavData.CollectFuncs["models/workshop/weapons/c_models/c_medigun_defense/c_medigun_defense.mdl"] =	ScavData.GiveOneOfItemInf
 					ScavData.CollectFuncs["models/workshop/weapons/c_models/c_medigun_defense/c_medigun_defensepack.mdl"] =	ScavData.GiveOneOfItemInf
 					ScavData.CollectFuncs["models/buildables/dispenser_light.mdl"] = ScavData.GiveOneOfItemInf
-					ScavData.CollectFuncs["models/buildables/dispenser.mdl"] = function(self,ent) return {{"models/buildables/dispenser_light.mdl",SCAV_SHORT_MAX,ent:GetSkin()}} end
+					ScavData.CollectFuncs["models/buildables/dispenser.mdl"] = function(self, ent) return {{"models/buildables/dispenser_light.mdl", SCAV_SHORT_MAX, ent:GetSkin()}} end
 					ScavData.CollectFuncs["models/buildables/dispenser_lvl2_light.mdl"] = ScavData.GiveOneOfItemInf
-					ScavData.CollectFuncs["models/buildables/dispenser_lvl2.mdl"] = function(self,ent) return {{"models/buildables/dispenser_lvl2_light.mdl",SCAV_SHORT_MAX,ent:GetSkin()}} end
+					ScavData.CollectFuncs["models/buildables/dispenser_lvl2.mdl"] = function(self, ent) return {{"models/buildables/dispenser_lvl2_light.mdl", SCAV_SHORT_MAX, ent:GetSkin()}} end
 					ScavData.CollectFuncs["models/buildables/dispenser_lvl3_light.mdl"] = ScavData.GiveOneOfItemInf
-					ScavData.CollectFuncs["models/buildables/dispenser_lvl3.mdl"] = function(self,ent) return {{"models/buildables/dispenser_lvl3_light.mdl",SCAV_SHORT_MAX,ent:GetSkin()}} end
+					ScavData.CollectFuncs["models/buildables/dispenser_lvl3.mdl"] = function(self, ent) return {{"models/buildables/dispenser_lvl3_light.mdl", SCAV_SHORT_MAX, ent:GetSkin()}} end
 					--ASW
 					ScavData.CollectFuncs["models/weapons/healgun/healgun.mdl"] =	ScavData.GiveOneOfItemInf
 				end
 				--TF2
-				ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_medigun/c_medigun.mdl")
-				ScavData.RegisterFiremode(tab,"models/weapons/w_models/w_medigun.mdl")
-				ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_proto_medigun/c_proto_medigun.mdl")
-				ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_proto_backpack/c_proto_backpack.mdl")
-				ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_medigun_defense/c_medigun_defense.mdl")
-				ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_medigun_defense/c_medigun_defensepack.mdl")
-				ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_medigun_defense/c_medigun_defense.mdl")
-				ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_medigun_defense/c_medigun_defensepack.mdl")
-				ScavData.RegisterFiremode(tab,"models/buildables/dispenser_light.mdl")
-				ScavData.RegisterFiremode(tab,"models/buildables/dispenser_lvl2_light.mdl")
-				ScavData.RegisterFiremode(tab,"models/buildables/dispenser_lvl3_light.mdl")
+				ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_medigun/c_medigun.mdl")
+				ScavData.RegisterFiremode(tab, "models/weapons/w_models/w_medigun.mdl")
+				ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_proto_medigun/c_proto_medigun.mdl")
+				ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_proto_backpack/c_proto_backpack.mdl")
+				ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_medigun_defense/c_medigun_defense.mdl")
+				ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_medigun_defense/c_medigun_defensepack.mdl")
+				ScavData.RegisterFiremode(tab, "models/workshop/weapons/c_models/c_medigun_defense/c_medigun_defense.mdl")
+				ScavData.RegisterFiremode(tab, "models/workshop/weapons/c_models/c_medigun_defense/c_medigun_defensepack.mdl")
+				ScavData.RegisterFiremode(tab, "models/buildables/dispenser_light.mdl")
+				ScavData.RegisterFiremode(tab, "models/buildables/dispenser_lvl2_light.mdl")
+				ScavData.RegisterFiremode(tab, "models/buildables/dispenser_lvl3_light.mdl")
 				--ASW
-				ScavData.RegisterFiremode(tab,"models/weapons/healgun/healgun.mdl")
+				ScavData.RegisterFiremode(tab, "models/weapons/healgun/healgun.mdl")
 		end
 
 --[[==============================================================================================
@@ -5923,40 +5905,40 @@ PrecacheParticleSystem("scav_exp_plasma")
 			tab.anim = ACT_VM_PRIMARYATTACK
 			tab.Level = 7
 			local identify = {} --all gamma ray beams are the same
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			tab.MaxAmmo = 10
-			tab.vmin = Vector(-4,-4,-4)
-			tab.vmax = Vector(4,4,4)
+			tab.vmin = Vector(-4, -4, -4)
+			tab.vmax = Vector(4, 4, 4)
 			tab.dmginfo = DamageInfo()
 			if SERVER then
-				DoChargeSound = function(self,item,olditemname)
+				DoChargeSound = function(self, item, olditemname)
 					if item.ammo ~= olditemname then
 						self.Owner:EmitSound("weapons/scav_gun/chargeup.wav")
 					end
 				end
 			end
 			tab.OnArmed = DoChargeSound
-			tab.FireFunc = function(self,item)
+			tab.FireFunc = function(self, item)
 				local tab = ScavData.models["models/props/de_nuke/nuclearcontainerboxclosed.mdl"]
 				local startpos = self.Owner:GetShootPos()
-				local filter = {self.Owner,Entity(0)}
+				local filter = {self.Owner, Entity(0)}
 				local tr
 				local tracep = {}
 				tracep.start = startpos
-				tracep.endpos = self.Owner:GetShootPos()+(self:GetAimVector()+VectorRand()*0.02):GetNormalized()*10000
+				tracep.endpos = self.Owner:GetShootPos() + (self:GetAimVector() + VectorRand() * 0.02):GetNormalized() * 10000
 				tracep.filter = filter
 				tracep.mask = MASK_SHOT
 				tracep.mins = tab.vmin
 				tracep.maxs = tab.vmax
 				local isspot = false
 				if SERVER then
-					for i=1,32 do
+					for i=1, 32 do
 						tr = util.TraceHull(tracep)
 						local ent = tr.Entity
 						--prevent a bunch of radioactive spots from being spammed on top of one another
 						if not isspot then
-							local nearby = ents.FindInSphere(tr.HitPos,300)
-							for k,v in ipairs(nearby) do
+							local nearby = ents.FindInSphere(tr.HitPos, 300)
+							for k, v in ipairs(nearby) do
 								if v:GetName() == "ScavGun_GammaRay_WorldSpot" then
 									isspot = true
 									break
@@ -5975,12 +5957,12 @@ PrecacheParticleSystem("scav_exp_plasma")
 								ent:Spawn()
 								ent:PhysicsDestroy()
 								ent:SetName("ScavGun_GammaRay_WorldSpot")
-								ent:Fire("kill",nil,5)
+								ent:Fire("kill", nil, 5)
 							end
 						end
 						if IsValid(ent) and not ent:IsWorld() then
 							if not ent:IsFriendlyToPlayer(self.Owner) then
-								ent:InflictStatusEffect("Radiation",10,3,self.Owner)
+								ent:InflictStatusEffect("Radiation", 10, 3, self.Owner)
 								local dmg = tab.dmginfo
 								dmg:SetAttacker(self.Owner)
 								dmg:SetInflictor(self)
@@ -5990,8 +5972,8 @@ PrecacheParticleSystem("scav_exp_plasma")
 								dmg:SetDamageType(DMG_RADIATION)
 								ent:TakeDamageInfo(dmg)
 							end
-							ParticleEffect("scav_exp_rad",tr.HitPos,Angle(0,0,0),Entity(0))
-							table.insert(tracep.filter,ent)
+							ParticleEffect("scav_exp_rad", tr.HitPos, Angle(0, 0, 0), Entity(0))
+							table.insert(tracep.filter, ent)
 							if not IsValid(tr.Entity) or (tr.Entity:GetClass() == "npc_strider") then
 								break
 							end
@@ -6005,8 +5987,8 @@ PrecacheParticleSystem("scav_exp_plasma")
 						tr = util.TraceHull(tracep)
 						local ent = tr.Entity
 						if IsValid(ent) and not ent:IsWorld() then
-							ParticleEffect("scav_exp_rad",tr.HitPos,Angle(0,0,0),Entity(0))
-							table.insert(filter,ent)
+							ParticleEffect("scav_exp_rad", tr.HitPos, Angle(0, 0, 0), Entity(0))
+							table.insert(filter, ent)
 							if (tr.Entity:GetClass() == "npc_strider") then
 								break
 							end
@@ -6020,34 +6002,33 @@ PrecacheParticleSystem("scav_exp_plasma")
 				efdata:SetEntity(self)
 				efdata:SetOrigin(self:GetPos())
 				efdata:SetStart(tr.HitPos)
-				util.Effect("ef_scav_radbeam",efdata)
+				util.Effect("ef_scav_radbeam", efdata)
 				self:MuzzleFlash2(4)
-				self.nextfireearly = CurTime()+0.1
-				--self.Owner:ScavViewPunch(Angle(math.Rand(-3,-4),math.Rand(-2,2),0),0.25)
+				self.nextfireearly = CurTime() + 0.1
+				--self.Owner:ScavViewPunch(Angle(math.Rand(-3, -4), math.Rand(-2, 2), 0), 0.25)
 				if SERVER then
 					self:AddBarrelSpin(1000)
 					self.Owner:EmitSound("npc/scanner/scanner_electric2.wav")
-					return self:TakeSubammo(item,1)
+					return self:TakeSubammo(item, 1)
 				end
 			end
 			if SERVER then
-				ScavData.CollectFuncs["models/scav/rad_hl2.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),10,ent:GetSkin()}} end
-				ScavData.CollectFuncs["models/props_lab/crystalbulk.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),10,ent:GetSkin()}} end
-				--Ep2
-				ScavData.CollectFuncs["models/props_silo/silo_workspace1.mdl"] = function(self,ent) return {{ScavData.FormatModelname("models/scav/rad_hl2.mdl"),10,ent:GetSkin(),3}} end -- 3 cases from workstation
+				ScavData.CollectFuncs["models/scav/rad_hl2.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 10, ent:GetSkin()}} end
+				ScavData.CollectFuncs["models/props_lab/crystalbulk.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 10, ent:GetSkin()}} end
+				ScavData.CollectFuncs["models/props_silo/silo_workspace1.mdl"] = function(self, ent) return {{ScavData.FormatModelname("models/scav/rad_hl2.mdl"), 10, ent:GetSkin(), 3}} end -- 3 cases from workstation
 				--CSS
 				ScavData.CollectFuncs["models/props/de_nuke/nuclearcontainerboxclosed.mdl"] = ScavData.CollectFuncs["models/props_lab/crystalbulk.mdl"]
 				ScavData.CollectFuncs["models/props_badlands/barrel03.mdl"] = ScavData.CollectFuncs["models/props/de_nuke/nuclearcontainerboxclosed.mdl"]
 				--TF2
-				ScavData.CollectFuncs["models/props_badlands/barrel_flatbed01.mdl"] = function(self,ent) return {{"models/props_badlands/barrel03.mdl",10,ent:GetSkin(),3}} end
+				ScavData.CollectFuncs["models/props_badlands/barrel_flatbed01.mdl"] = function(self, ent) return {{"models/props_badlands/barrel03.mdl", 10, ent:GetSkin(), 3}} end
 			end
 			tab.Cooldown = 1
-		ScavData.RegisterFiremode(tab,"models/scav/rad_hl2.mdl")
-		ScavData.RegisterFiremode(tab,"models/props_lab/crystalbulk.mdl")
+		ScavData.RegisterFiremode(tab, "models/scav/rad_hl2.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_lab/crystalbulk.mdl")
 		--CSS
-		ScavData.RegisterFiremode(tab,"models/props/de_nuke/nuclearcontainerboxclosed.mdl")
+		ScavData.RegisterFiremode(tab, "models/props/de_nuke/nuclearcontainerboxclosed.mdl")
 		--TF2
-		ScavData.RegisterFiremode(tab,"models/props_badlands/barrel03.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_badlands/barrel03.mdl")
 
 --[[==============================================================================================
 	--Phazon Beam
@@ -6062,38 +6043,38 @@ PrecacheParticleSystem("scav_exp_plasma")
 			local dmg = DamageInfo()
 			local tracep = {}
 			tracep.mask = MASK_SHOT
-			tracep.mins = Vector(-2,-2,-2)
-			tracep.maxs = Vector(2,2,2)
-			tab.ChargeAttack = function(self,item)
+			tracep.mins = Vector(-2, -2, -2)
+			tracep.maxs = Vector(2, 2, 2)
+			tab.ChargeAttack = function(self, item)
 				local shootpos = self.Owner:GetShootPos()
 				tracep.start = shootpos
 				tracep.filter = self.Owner
-				for i=1,2 do
-					tracep.endpos = shootpos+(self:GetAimVector()+VectorRand()*0.075):GetNormalized()*400
+				for i=1, 2 do
+					tracep.endpos = shootpos + (self:GetAimVector() + VectorRand() * 0.075):GetNormalized() * 400
 					local tr = util.TraceHull(tracep)
 					if tr.Hit then
-						ParticleEffect("scav_exp_phazon_1",tr.HitPos,refangle,Entity(0))
+						ParticleEffect("scav_exp_phazon_1", tr.HitPos, refangle, Entity(0))
 					end
 					if IsValid(tr.Entity) then
 						dmg:SetAttacker(self.Owner)
 						dmg:SetInflictor(self)
 						dmg:SetDamagePosition(tr.HitPos)
-						if string.find(tr.Entity:GetClass(),"npc_antlion") then
-							dmg:SetDamageType(bit.bor(DMG_BUCKSHOT,DMG_ALWAYSGIB)) --TODO: figure out what god damn combination of damage types make all the different types of antlions die how they're supposed to
+						if string.find(tr.Entity:GetClass(), "npc_antlion") then
+							dmg:SetDamageType(bit.bor(DMG_BUCKSHOT, DMG_ALWAYSGIB)) --TODO: figure out what god damn combination of damage types make all the different types of antlions die how they're supposed to
 						else
-							dmg:SetDamageType(bit.bor(DMG_ENERGYBEAM,DMG_RADIATION,DMG_BLAST,DMG_GENERIC,DMG_ALWAYSGIB,DMG_DISSOLVE))
+							dmg:SetDamageType(bit.bor(DMG_ENERGYBEAM, DMG_RADIATION, DMG_BLAST, DMG_GENERIC, DMG_ALWAYSGIB, DMG_DISSOLVE))
 						end
 						dmg:SetDamage(4)
-						dmg:SetDamageForce(tr.Normal*24000)
+						dmg:SetDamageForce(tr.Normal * 24000)
 						if tr.Entity:IsNPC() and SERVER then
 							--tr.Entity:SetSchedule(SCHED_BIG_FLINCH)
 							tr.Entity:SetSchedule(SCHED_FLINCH_PHYSICS)
 						end
 						if tr.Entity:GetClass() == "prop_ragdoll" then
-							for i=0,tr.Entity:GetPhysicsObjectCount()-1 do
+							for i=0, tr.Entity:GetPhysicsObjectCount() - 1 do
 								local phys = tr.Entity:GetPhysicsObjectNum(i)
 								if phys then
-									phys:SetVelocity(VectorRand()*math.random(3,90))
+									phys:SetVelocity(VectorRand() * math.random(3, 90))
 								end
 							end
 						end
@@ -6105,15 +6086,15 @@ PrecacheParticleSystem("scav_exp_plasma")
 					edata:SetOrigin(self.Owner:GetShootPos())
 					edata:SetEntity(self.Owner)
 					edata:SetNormal(self:GetAimVector())
-					util.Effect("ef_scav_phazon",edata)
-					util.Effect("ef_scav_phazon",edata)
+					util.Effect("ef_scav_phazon", edata)
+					util.Effect("ef_scav_phazon", edata)
 					if SERVER then
-						self.Owner:EmitSound("weapons/physcannon/energy_sing_flyby"..math.random(1,2)..".wav",100,255)
-						self:TakeSubammo(item,1)
+						self.Owner:EmitSound("weapons/physcannon/energy_sing_flyby" .. math.random(1, 2) .. ".wav", 100, 255)
+						self:TakeSubammo(item, 1)
 					else
 						local vmdl = self.Owner:GetViewModel()
 						if IsValid(vmdl) then
-							ParticleEffectAttach("scav_vm_phazon",PATTACH_POINT_FOLLOW,vmdl,vmdl:LookupAttachment("muzzle"))
+							ParticleEffectAttach("scav_vm_phazon", PATTACH_POINT_FOLLOW, vmdl, vmdl:LookupAttachment("muzzle"))
 						end
 					end
 					self.Owner:SetAnimation(PLAYER_ATTACK1)
@@ -6121,9 +6102,9 @@ PrecacheParticleSystem("scav_exp_plasma")
 					self:StopChargeOnRelease()
 					return 0.025		
 				end
-			tab.FireFunc = function(self,item)
-				self:SetChargeAttack(ScavData.models[self.inv.items[1].ammo].ChargeAttack,item)
-				self.Owner:EmitSound("ambient/fire/gascan_ignite1.wav",100,90)
+			tab.FireFunc = function(self, item)
+				self:SetChargeAttack(ScavData.models[self.inv.items[1].ammo].ChargeAttack, item)
+				self.Owner:EmitSound("ambient/fire/gascan_ignite1.wav", 100, 90)
 				return false
 			end
 			if SERVER then
@@ -6131,7 +6112,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 			end
 			tab.Cooldown = 0.025 --40/sec
 
-			ScavData.RegisterFiremode(tab,"models/dav0r/hoverball.mdl")
+			ScavData.RegisterFiremode(tab, "models/dav0r/hoverball.mdl")
 
 --[[==============================================================================================
 	--Minigun
@@ -6148,17 +6129,17 @@ PrecacheParticleSystem("scav_exp_plasma")
 				["models/weapons/gatling_top.mdl"] = 0,
 				--[TF2] = 1,
 			}
-			tab.Identify = setmetatable(identify, {__index = function() return 1 end} )
+			tab.Identify = setmetatable(identify, {__index = function() return 1 end})
 			tab.MaxAmmo = 200
 			tab.BarrelRestSpeed = 1000
-			tab.ChargeAttack = function(self,item)
+			tab.ChargeAttack = function(self, item)
 				if self.Owner:KeyDown(IN_ATTACK) then
 					local tab = ScavData.models[self.inv.items[1].ammo]
 					local bullet = {}
 						bullet.Num = 2
 						bullet.Src = self.Owner:GetShootPos()
 						bullet.Dir = self:GetAimVector()
-						bullet.Spread = Vector(0.05,0.05,0)
+						bullet.Spread = Vector(0.05, 0.05, 0)
 						bullet.Tracer = 3
 						bullet.Force = 5
 						bullet.Damage = 6
@@ -6170,13 +6151,13 @@ PrecacheParticleSystem("scav_exp_plasma")
 					self:MuzzleFlash2()
 					if CLIENT and game.SinglePlayer() then
 						if not self.Owner:Crouching() or not (IsValid(self.Owner:GetGroundEntity()) or self.Owner:GetGroundEntity():IsWorld()) then
-							self.Owner:SetEyeAngles((VectorRand()*0.1+self:GetAimVector()):Angle()) --BUG TODO: Very choppy
+							self.Owner:SetEyeAngles((VectorRand() * 0.1 + self:GetAimVector()):Angle()) --BUG TODO: Very choppy
 						else
-							self.Owner:SetEyeAngles((VectorRand()*0.02+self:GetAimVector()):Angle())
+							self.Owner:SetEyeAngles((VectorRand() * 0.02 + self:GetAimVector()):Angle())
 						end
 					end
 					self.Owner:SetAnimation(PLAYER_ATTACK1)
-					timer.Simple(.025,function()
+					timer.Simple(.025, function()
 						if not self.Owner:GetViewModel() then return end
 						local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
 						if attach then
@@ -6187,18 +6168,18 @@ PrecacheParticleSystem("scav_exp_plasma")
 											ef:SetOrigin(attach.Pos)
 											ef:SetAngles(attach.Ang)
 											ef:SetEntity(self)
-										util.Effect("RifleShellEject",ef)
+										util.Effect("RifleShellEject", ef)
 									end
 								end,
 								[1] = function(attach)
-									tf2shelleject(self,"minigun")
+									tf2shelleject(self, "minigun")
 								end,
 							}
 							brass[tab.Identify[item.ammo]](attach)
 						end
 					end)
 					if SERVER then 
-						self:TakeSubammo(item,1)
+						self:TakeSubammo(item, 1)
 					end
 				end
 				local continuefiring = self:ProcessLinking(item) and self:StopChargeOnRelease()
@@ -6219,19 +6200,19 @@ PrecacheParticleSystem("scav_exp_plasma")
 					return 0.05
 				end
 			end
-			tab.FireFunc = function(self,item)
-				self:SetChargeAttack(ScavData.models[self.inv.items[1].ammo].ChargeAttack,item)
+			tab.FireFunc = function(self, item)
+				self:SetChargeAttack(ScavData.models[self.inv.items[1].ammo].ChargeAttack, item)
 				if SERVER then
 					self.Owner:EmitSound("weapons/minigun_wind_up.wav")
-					self.soundloops.minigunspin = CreateSound(self.Owner,"weapons/minigun_spin.wav")
-					self.soundloops.minigunfire = CreateSound(self.Owner,"weapons/minigun_shoot.wav")
+					self.soundloops.minigunspin = CreateSound(self.Owner, "weapons/minigun_spin.wav")
+					self.soundloops.minigunfire = CreateSound(self.Owner, "weapons/minigun_shoot.wav")
 					self:SetBarrelRestSpeed(900)
 				end								
 				return false
 			end
 			if SERVER then
 				--TF2
-				ScavData.CollectFuncs["models/weapons/w_models/w_minigun.mdl"] = function(self,ent) return {{ScavData.FormatModelname(ent:GetModel()),200,ent:GetSkin()}} end
+				ScavData.CollectFuncs["models/weapons/w_models/w_minigun.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 200, ent:GetSkin()}} end
 				ScavData.CollectFuncs["models/weapons/c_models/c_canton/c_canton.mdl"] = ScavData.CollectFuncs["models/weapons/w_models/w_minigun.mdl"]
 				ScavData.CollectFuncs["models/workshop_partner/weapons/c_models/c_canton/c_canton.mdl"] = ScavData.CollectFuncs["models/weapons/c_models/c_canton/c_canton.mdl"]
 				ScavData.CollectFuncs["models/weapons/c_models/c_tomislav/c_tomislav.mdl"] = ScavData.CollectFuncs["models/weapons/w_models/w_minigun.mdl"]
@@ -6245,7 +6226,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 				--L4D/2
 				ScavData.CollectFuncs["models/w_models/weapons/50cal.mdl"] = ScavData.CollectFuncs["models/weapons/w_models/w_minigun.mdl"]
 				ScavData.CollectFuncs["models/w_models/weapons/w_minigun.mdl"] = ScavData.CollectFuncs["models/weapons/w_models/w_minigun.mdl"]
-				ScavData.CollectFuncs["models/w_models/weapons/50_cal_broken.mdl"] = function(self,ent) return {{"models/w_models/weapons/50cal.mdl",200,0}} end
+				ScavData.CollectFuncs["models/w_models/weapons/50_cal_broken.mdl"] = function(self, ent) return {{"models/w_models/weapons/50cal.mdl", 200, 0}} end
 				--ASW
 				ScavData.CollectFuncs["models/weapons/autogun/autogun.mdl"] = ScavData.CollectFuncs["models/weapons/w_models/w_minigun.mdl"]
 				ScavData.CollectFuncs["models/weapons/minigun/minigun.mdl"] = ScavData.CollectFuncs["models/weapons/w_models/w_minigun.mdl"]
@@ -6255,25 +6236,25 @@ PrecacheParticleSystem("scav_exp_plasma")
 			tab.Cooldown = 1
 			
 		--TF2
-		ScavData.RegisterFiremode(tab,"models/weapons/w_models/w_minigun.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_canton/c_canton.mdl")
-		ScavData.RegisterFiremode(tab,"models/workshop_partner/weapons/c_models/c_canton/c_canton.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_tomislav/c_tomislav.mdl")
-		ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_tomislav/c_tomislav.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_gatling_gun/c_gatling_gun.mdl")
-		ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_gatling_gun/c_gatling_gun.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_iron_curtain/c_iron_curtain.mdl")
-		ScavData.RegisterFiremode(tab,"models/workshop/weapons/c_models/c_iron_curtain/c_iron_curtain.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_minigun/c_minigun.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_minigun/c_minigun_natascha.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_models/w_minigun.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_canton/c_canton.mdl")
+		ScavData.RegisterFiremode(tab, "models/workshop_partner/weapons/c_models/c_canton/c_canton.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_tomislav/c_tomislav.mdl")
+		ScavData.RegisterFiremode(tab, "models/workshop/weapons/c_models/c_tomislav/c_tomislav.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_gatling_gun/c_gatling_gun.mdl")
+		ScavData.RegisterFiremode(tab, "models/workshop/weapons/c_models/c_gatling_gun/c_gatling_gun.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_iron_curtain/c_iron_curtain.mdl")
+		ScavData.RegisterFiremode(tab, "models/workshop/weapons/c_models/c_iron_curtain/c_iron_curtain.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_minigun/c_minigun.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_minigun/c_minigun_natascha.mdl")
 		--L4D/2
-		ScavData.RegisterFiremode(tab,"models/w_models/weapons/50cal.mdl")
-		ScavData.RegisterFiremode(tab,"models/w_models/weapons/w_minigun.mdl")
+		ScavData.RegisterFiremode(tab, "models/w_models/weapons/50cal.mdl")
+		ScavData.RegisterFiremode(tab, "models/w_models/weapons/w_minigun.mdl")
 		--ASW
-		ScavData.RegisterFiremode(tab,"models/weapons/autogun/autogun.mdl")
-		ScavData.RegisterFiremode(tab,"models/weapons/minigun/minigun.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/autogun/autogun.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/minigun/minigun.mdl")
 		--FoF
-		ScavData.RegisterFiremode(tab,"models/weapons/gatling_top.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/gatling_top.mdl")
 
 --[[==============================================================================================
 	--Recycle Bin
@@ -6363,7 +6344,7 @@ end
 
 	--Radioactive/Biohazard Barrels
 		local tab = {}
-			function tab.GetName(self,item)
+			function tab.GetName(self, item)
 				if (istable(item) and item:GetData() > 1 and item:GetData() < 7) or (not istable(item) and item > 1 and item < 7) then
 					return "#scav.scavcan.disease"
 				else
@@ -6373,55 +6354,55 @@ end
 			tab.anim = ACT_VM_SECONDARYATTACK
 			tab.Level = 4
 			local identify = {} --both should return 0
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
+			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			tab.MaxAmmo = 10 --luckily, both are ten
-			tab.FireFunc = function(self,item)
+			tab.FireFunc = function(self, item)
 				local tab = ScavData.models["models/props/de_train/barrel.mdl"]
 				if (item.data > 1) and (item.data < 7) then
 					tab.Cooldown = ScavData.models["models/props/de_train/biohazardtank.mdl"].Cooldown
 					tab.anim = ScavData.models["models/props/de_train/biohazardtank.mdl"].anim
 					if SERVER then --no clientside firefunction here
-						return ScavData.models["models/props/de_train/biohazardtank.mdl"].FireFunc(self,item)
+						return ScavData.models["models/props/de_train/biohazardtank.mdl"].FireFunc(self, item)
 					else
 						return true
 					end
 				else
 					tab.Cooldown = ScavData.models["models/props/de_nuke/nuclearcontainerboxclosed.mdl"].Cooldown
 					tab.anim = ScavData.models["models/props/de_nuke/nuclearcontainerboxclosed.mdl"].anim
-					return ScavData.models["models/props/de_nuke/nuclearcontainerboxclosed.mdl"].FireFunc(self,item)
+					return ScavData.models["models/props/de_nuke/nuclearcontainerboxclosed.mdl"].FireFunc(self, item)
 				end
 			end
 			if SERVER then
-				tab.OnArmed = function(self,item,olditemname)
+				tab.OnArmed = function(self, item, olditemname)
 					if (item.ammo ~= olditemname) and ((item.data < 2) or (item.data > 6)) then
 						self.Owner:EmitSound("weapons/scav_gun/chargeup.wav")
 					end
 				end
-				ScavData.CollectFuncs["models/props/de_train/barrel.mdl"] = function(self,ent)
+				ScavData.CollectFuncs["models/props/de_train/barrel.mdl"] = function(self, ent)
 					if (ent:GetSkin() > 1) and (ent:GetSkin() < 7) then
-						return {{ScavData.FormatModelname(ent:GetModel()),1,ent:GetSkin()}}
+						return {{ScavData.FormatModelname(ent:GetModel()), 1, ent:GetSkin()}}
 					else
-						return {{ScavData.FormatModelname(ent:GetModel()),10,ent:GetSkin()}}
+						return {{ScavData.FormatModelname(ent:GetModel()), 10, ent:GetSkin()}}
 					end
 				end
-				ScavData.CollectFuncs["models/props/de_train/pallet_barrels.mdl"] = function(self,ent) return {
-					{ScavData.FormatModelname("models/props/de_train/barrel.mdl"),4,math.random(2,5)},
-					{ScavData.FormatModelname("models/props/de_prodigy/wood_pallet_01.mdl"),1,0}
+				ScavData.CollectFuncs["models/props/de_train/pallet_barrels.mdl"] = function(self, ent) return {
+					{ScavData.FormatModelname("models/props/de_train/barrel.mdl"), 4, math.random(2, 5)},
+					{ScavData.FormatModelname("models/props/de_prodigy/wood_pallet_01.mdl"), 1, 0}
 				} end
 			end
 			tab.Cooldown = 0.1
-			ScavData.RegisterFiremode(tab,"models/props/de_train/barrel.mdl")
+			ScavData.RegisterFiremode(tab, "models/props/de_train/barrel.mdl")
 
 	--Bonk/Crit-A-Cola
 		local tab = {}
-			function tab.GetName(self,item)
+			function tab.GetName(self, item)
 				if (istable(item) and item:GetData() > 1) or (not istable(item) and item > 1) then
 					return "#scav.scavcan.crit"
 				else
 					return "#scav.scavcan.stim"
 				end
 			end
-			function tab.GetMaxAmmo(self,item)
+			function tab.GetMaxAmmo(self, item)
 				if (istable(item) and item:GetData() < 2) or (not istable(item) and item < 2) then
 					return 6
 				end
@@ -6429,20 +6410,20 @@ end
 			tab.anim = ACT_VM_IDLE
 			tab.Level = 1
 			tab.Identify = ScavData.models["models/weapons/c_models/c_energy_drink/c_energy_drink.mdl"].Identify
-			tab.FireFunc = function(self,item)
+			tab.FireFunc = function(self, item)
 				local tab = ScavData.models["models/weapons/c_models/c_energy_drink/c_energy_drink.mdl"]
 				if item.data > 1 then
 					tab.Cooldown = ScavData.models["models/weapons/w_package.mdl"].Cooldown
 					tab.anim = ScavData.models["models/weapons/w_package.mdl"].anim
-					if SERVER then return ScavData.models["models/weapons/w_package.mdl"].FireFunc(self,item) end
+					if SERVER then return ScavData.models["models/weapons/w_package.mdl"].FireFunc(self, item) end
 				else
 					tab.Cooldown = ScavData.models["models/items/powerup_speed.mdl"].Cooldown
 					tab.anim = ScavData.models["models/items/powerup_speed.mdl"].anim
-					if SERVER then return ScavData.models["models/items/powerup_speed.mdl"].FireFunc(self,item) end
+					if SERVER then return ScavData.models["models/items/powerup_speed.mdl"].FireFunc(self, item) end
 				end
 			end
 			if SERVER then
-				tab.OnArmed = function(self,item,olditemname)
+				tab.OnArmed = function(self, item, olditemname)
 					if item:GetData() < 2 then
 						self.MaxAmmo = ScavData.models["models/items/powerup_speed.mdl"].MaxAmmo
 					end
@@ -6450,36 +6431,36 @@ end
 				end
 			end
 			tab.Cooldown = 0.1
-			ScavData.RegisterFiremode(tab,"models/weapons/c_models/c_energy_drink/c_energy_drink.mdl")
+			ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_energy_drink/c_energy_drink.mdl")
 
 		local tab = {}
 			if SERVER then
-				ScavData.CollectFuncs["models/items/ammopack_small.mdl"] = function(self,ent)
-					return {{"models/weapons/shells/shell_shotgun.mdl",2,0},
-							{"models/weapons/w_models/w_pistol.mdl",12,0,1}}
+				ScavData.CollectFuncs["models/items/ammopack_small.mdl"] = function(self, ent)
+					return {{"models/weapons/shells/shell_shotgun.mdl", 2, 0},
+							{"models/weapons/w_models/w_pistol.mdl", 12, 0, 1}}
 				end
 				ScavData.CollectFuncs["models/items/ammopack_small_bday.mdl"] = ScavData.CollectFuncs["models/items/ammopack_small.mdl"]
-				ScavData.CollectFuncs["models/items/ammopack_medium.mdl"] = function(self,ent)
-					return {{"models/weapons/shells/shell_shotgun.mdl",4,0},
-							{"models/weapons/w_models/w_pistol.mdl",24,0}}
+				ScavData.CollectFuncs["models/items/ammopack_medium.mdl"] = function(self, ent)
+					return {{"models/weapons/shells/shell_shotgun.mdl", 4, 0},
+							{"models/weapons/w_models/w_pistol.mdl", 24, 0}}
 				end
 				ScavData.CollectFuncs["models/items/ammopack_medium_bday.mdl"] = ScavData.CollectFuncs["models/items/ammopack_medium.mdl"]
-				ScavData.CollectFuncs["models/items/ammopack_large.mdl"] = function(self,ent)
-					return {{"models/weapons/w_models/w_rocket.mdl",2,0},
-							{"models/weapons/w_models/w_minigun.mdl",50,0}}
+				ScavData.CollectFuncs["models/items/ammopack_large.mdl"] = function(self, ent)
+					return {{"models/weapons/w_models/w_rocket.mdl", 2, 0},
+							{"models/weapons/w_models/w_minigun.mdl", 50, 0}}
 				end
 				ScavData.CollectFuncs["models/items/ammopack_large_bday.mdl"] = ScavData.CollectFuncs["models/items/ammopack_large.mdl"]
-				ScavData.CollectFuncs["models/props_vehicles/car001b_hatchback.mdl"] = function(self,ent)
-					return {{"models/props_c17/trappropeller_engine.mdl",1,0},
-							{"models/props_vehicles/carparts_tire01a.mdl",1,0},
-							{"models/props_vehicles/carparts_axel01a.mdl",1,0},
-							{"models/props_vehicles/carparts_muffler01a.mdl",1,0},
-							{"models/props_vehicles/carparts_wheel01a.mdl",1,0},
-							{"models/props_vehicles/carparts_wheel01a.mdl",1,0},
-							{"models/props_vehicles/carparts_door01a.mdl",1,0},
-							{"models/props_vehicles/carparts_tire01a.mdl",1,0},
-							{"models/props_vehicles/carparts_axel01a.mdl",1,0},
-							{"models/items/car_battery01.mdl",20,0}}
+				ScavData.CollectFuncs["models/props_vehicles/car001b_hatchback.mdl"] = function(self, ent)
+					return {{"models/props_c17/trappropeller_engine.mdl", 1, 0},
+							{"models/props_vehicles/carparts_tire01a.mdl", 1, 0},
+							{"models/props_vehicles/carparts_axel01a.mdl", 1, 0},
+							{"models/props_vehicles/carparts_muffler01a.mdl", 1, 0},
+							{"models/props_vehicles/carparts_wheel01a.mdl", 1, 0},
+							{"models/props_vehicles/carparts_wheel01a.mdl", 1, 0},
+							{"models/props_vehicles/carparts_door01a.mdl", 1, 0},
+							{"models/props_vehicles/carparts_tire01a.mdl", 1, 0},
+							{"models/props_vehicles/carparts_axel01a.mdl", 1, 0},
+							{"models/items/car_battery01.mdl", 20, 0}}
 				end
 				ScavData.CollectFuncs["models/props_vehicles/car001a_hatchback.mdl"] = ScavData.CollectFuncs["models/props_vehicles/car001b_hatchback.mdl"]
 				ScavData.CollectFuncs["models/props_vehicles/car002a.mdl"] = ScavData.CollectFuncs["models/props_vehicles/car001b_hatchback.mdl"]
@@ -6508,480 +6489,477 @@ end
 				ScavData.CollectFuncs["models/props_vehicles/van001a_physics.mdl"] = ScavData.CollectFuncs["models/props_vehicles/car001b_hatchback.mdl"]
 				ScavData.CollectFuncs["models/props_vehicles/van001a_nodoor.mdl"] = ScavData.CollectFuncs["models/props_vehicles/car001b_hatchback.mdl"]
 				ScavData.CollectFuncs["models/props_vehicles/van001a_nodoor_physics.mdl"] = ScavData.CollectFuncs["models/props_vehicles/car001b_hatchback.mdl"]
-				--Ep2
-				ScavData.CollectFuncs["models/vehicle.mdl"] = function(self,ent)
-					return {{"models/vehicle/vehicle_engine_block.mdl",1,0},
-							{"models/props_vehicles/carparts_tire01a.mdl",1,0},
-							{"models/props_vehicles/carparts_axel01a.mdl",1,0},
-							{"models/props_vehicles/carparts_muffler01a.mdl",1,0},
-							{"models/props_vehicles/carparts_wheel01a.mdl",1,0},
-							{"models/props_vehicles/carparts_wheel01a.mdl",1,0},
-							{"models/props_vehicles/carparts_tire01a.mdl",1,0},
-							{"models/props_vehicles/carparts_axel01a.mdl",1,0},
-							{"models/items/car_battery01.mdl",20,0}}
+				ScavData.CollectFuncs["models/vehicle.mdl"] = function(self, ent)
+					return {{"models/vehicle/vehicle_engine_block.mdl", 1, 0},
+							{"models/props_vehicles/carparts_tire01a.mdl", 1, 0},
+							{"models/props_vehicles/carparts_axel01a.mdl", 1, 0},
+							{"models/props_vehicles/carparts_muffler01a.mdl", 1, 0},
+							{"models/props_vehicles/carparts_wheel01a.mdl", 1, 0},
+							{"models/props_vehicles/carparts_wheel01a.mdl", 1, 0},
+							{"models/props_vehicles/carparts_tire01a.mdl", 1, 0},
+							{"models/props_vehicles/carparts_axel01a.mdl", 1, 0},
+							{"models/items/car_battery01.mdl", 20, 0}}
 				end
 
 				--Breaking up big cluster props into smaller ones
 
 				--main reason for these zombie pickups is that we can't get the bodygroup in the gun, so we'll separate the headcrab if it's present
-				ScavData.CollectFuncs["models/zombie/classic_torso.mdl"] = function(self,ent)
-					local items = {{"models/zombie/classic_torso.mdl",1,0}}
+				ScavData.CollectFuncs["models/zombie/classic_torso.mdl"] = function(self, ent)
+					local items = {{"models/zombie/classic_torso.mdl", 1, 0}}
 					if tobool(ent:GetBodygroup(ent:FindBodygroupByName("headcrab1"))) then
-						table.insert(items,{"models/headcrabclassic.mdl",1,0})
+						table.insert(items, {"models/headcrabclassic.mdl", 1, 0})
 					end
 					return items
 				end
-				ScavData.CollectFuncs["models/zombie/classic.mdl"] = function(self,ent)
-					local items = ScavData.CollectFuncs["models/zombie/classic_torso.mdl"](self,ent)
-					table.insert(items,2,{"models/zombie/classic_legs.mdl",1,0})
+				ScavData.CollectFuncs["models/zombie/classic.mdl"] = function(self, ent)
+					local items = ScavData.CollectFuncs["models/zombie/classic_torso.mdl"](self, ent)
+					table.insert(items, 2, {"models/zombie/classic_legs.mdl", 1, 0})
 					return items
 				end
-				ScavData.CollectFuncs["models/zombie/fast_torso.mdl"] = function(self,ent)
-					local items = {{"models/gibs/fast_zombie_torso.mdl",1,0}}
+				ScavData.CollectFuncs["models/zombie/fast_torso.mdl"] = function(self, ent)
+					local items = {{"models/gibs/fast_zombie_torso.mdl", 1, 0}}
 					if tobool(ent:GetBodygroup(ent:FindBodygroupByName("headcrab1"))) then
-						table.insert(items,{"models/headcrab.mdl",1,0})
+						table.insert(items, {"models/headcrab.mdl", 1, 0})
 					end
 					return items
 				end
-				ScavData.CollectFuncs["models/zombie/fast.mdl"] = function(self,ent)
-					local items = ScavData.CollectFuncs["models/zombie/fast_torso.mdl"](self,ent)
-					table.insert(items,2,{"models/gibs/fast_zombie_legs.mdl",1,0})
+				ScavData.CollectFuncs["models/zombie/fast.mdl"] = function(self, ent)
+					local items = ScavData.CollectFuncs["models/zombie/fast_torso.mdl"](self, ent)
+					table.insert(items, 2, {"models/gibs/fast_zombie_legs.mdl", 1, 0})
 					return items
 				end
-				ScavData.CollectFuncs["models/props_junk/garbage128_composite001a.mdl"] = function(self,ent)
+				ScavData.CollectFuncs["models/props_junk/garbage128_composite001a.mdl"] = function(self, ent)
 					local items = {
-						{"models/props_junk/garbage_plasticbottle001a.mdl",50,0},
-						{"models/props_junk/garbage_milkcarton002a.mdl",1,0},
-						{"models/props_junk/garbage_metalcan001a.mdl",1,0},
-						{"models/props_junk/garbage_syringeneedle001a.mdl",1,0,3}
+						{"models/props_junk/garbage_plasticbottle001a.mdl", 50, 0},
+						{"models/props_junk/garbage_milkcarton002a.mdl", 1, 0},
+						{"models/props_junk/garbage_metalcan001a.mdl", 1, 0},
+						{"models/props_junk/garbage_syringeneedle001a.mdl", 1, 0, 3}
 					}
-					if IsMounted(550) or IsMounted(500) then --L4D/L4D2
-						table.insert(items,3,{"models/props_junk/garbage_coffeecup01a.mdl",1,0})
-						table.insert(items,3,{"models/props_junk/garbage_spraypaintcan01a.mdl",30,0})
-						table.insert(items,3,{"models/props_junk/garbage_fastfoodcontainer01a.mdl",1,0})
+					if L4D then
+						table.insert(items, 3, {"models/props_junk/garbage_coffeecup01a.mdl", 1, 0})
+						table.insert(items, 3, {"models/props_junk/garbage_spraypaintcan01a.mdl", 30, 0})
+						table.insert(items, 3, {"models/props_junk/garbage_fastfoodcontainer01a.mdl", 1, 0})
 					end
 					return items
 				end
-				ScavData.CollectFuncs["models/props_junk/garbage128_composite001b.mdl"] = function(self,ent)
+				ScavData.CollectFuncs["models/props_junk/garbage128_composite001b.mdl"] = function(self, ent)
 					local items = {
-						{"models/props_junk/garbage_metalcan002a.mdl",1,0},
-						{"models/props_canal/mattpipe.mdl",1,0,2},
-						{"models/props_junk/garbage_glassbottle003a.mdl",1,0},
-						{"models/props_junk/garbage_glassbottle002a.mdl",1,0},
-						{"models/props_junk/garbage_metalcan001a.mdl",1,0},
-						{"models/props_junk/garbage_syringeneedle001a.mdl",1,0}
+						{"models/props_junk/garbage_metalcan002a.mdl", 1, 0},
+						{"models/props_canal/mattpipe.mdl", 1, 0, 2},
+						{"models/props_junk/garbage_glassbottle003a.mdl", 1, 0},
+						{"models/props_junk/garbage_glassbottle002a.mdl", 1, 0},
+						{"models/props_junk/garbage_metalcan001a.mdl", 1, 0},
+						{"models/props_junk/garbage_syringeneedle001a.mdl", 1, 0}
 					}
-					if IsMounted(550) or IsMounted(500) then --L4D/L4D2
-						table.insert(items,5,{"models/props_junk/garbage_fastfoodcontainer01a.mdl",1,0})
+					if L4D then
+						table.insert(items, 5, {"models/props_junk/garbage_fastfoodcontainer01a.mdl", 1, 0})
 					end
 					return items
 				end
-				ScavData.CollectFuncs["models/props_junk/garbage128_composite001c.mdl"] = function(self,ent)
+				ScavData.CollectFuncs["models/props_junk/garbage128_composite001c.mdl"] = function(self, ent)
 					local items = {
-						{"models/props_junk/garbage_plasticbottle001a.mdl",50,0},
-						{"models/props_junk/garbage_plasticbottle002a.mdl",50,0,2},
-						{"models/props_junk/garbage_milkcarton001a.mdl",1,0},
-						{"models/props_junk/garbage_energydrinkcan001a.mdl",1,0,3},
-						{"models/props_junk/garbage_plasticbottle003a.mdl",1,0,3},
-						{"models/props_junk/garbage_metalcan002a.mdl",1,0},
-						{"models/props_junk/garbage_metalcan001a.mdl",1,0,2},
-						{"models/props_junk/garbage_glassbottle003a.mdl",1,0}
+						{"models/props_junk/garbage_plasticbottle001a.mdl", 50, 0},
+						{"models/props_junk/garbage_plasticbottle002a.mdl", 50, 0, 2},
+						{"models/props_junk/garbage_milkcarton001a.mdl", 1, 0},
+						{"models/props_junk/garbage_energydrinkcan001a.mdl", 1, 0, 3},
+						{"models/props_junk/garbage_plasticbottle003a.mdl", 1, 0, 3},
+						{"models/props_junk/garbage_metalcan002a.mdl", 1, 0},
+						{"models/props_junk/garbage_metalcan001a.mdl", 1, 0, 2},
+						{"models/props_junk/garbage_glassbottle003a.mdl", 1, 0}
 					}
-					if IsMounted(550) or IsMounted(500) then --L4D/L4D2
-						table.insert(items,5,{"models/props_junk/garbage_coffeecup01a.mdl",1,0,2})
+					if L4D then
+						table.insert(items, 5, {"models/props_junk/garbage_coffeecup01a.mdl", 1, 0, 2})
 					end
 					return items
 				end
-				ScavData.CollectFuncs["models/props_junk/garbage128_composite001d.mdl"] = function(self,ent)
+				ScavData.CollectFuncs["models/props_junk/garbage128_composite001d.mdl"] = function(self, ent)
 					local items = {
-						{"models/props_junk/garbage_plasticbottle001a.mdl",50,0,2},
-						{"models/props_junk/garbage_plasticbottle002a.mdl",50,0},
-						{"models/props_junk/garbage_milkcarton001a.mdl",1,0},
-						{"models/props_junk/garbage_energydrinkcan001a.mdl",1,0,3},
-						{"models/props_junk/garbage_plasticbottle003a.mdl",1,0,2}
+						{"models/props_junk/garbage_plasticbottle001a.mdl", 50, 0, 2},
+						{"models/props_junk/garbage_plasticbottle002a.mdl", 50, 0},
+						{"models/props_junk/garbage_milkcarton001a.mdl", 1, 0},
+						{"models/props_junk/garbage_energydrinkcan001a.mdl", 1, 0, 3},
+						{"models/props_junk/garbage_plasticbottle003a.mdl", 1, 0, 2}
 					}
-					if IsMounted(550) or IsMounted(500) then --L4D/L4D2
-						table.insert(items,5,{"models/props_junk/garbage_coffeecup01a.mdl",1,0})
-						table.insert(items,5,{"models/props_junk/garbage_spraypaintcan01a.mdl",30,0,2})
+					if L4D then
+						table.insert(items, 5, {"models/props_junk/garbage_coffeecup01a.mdl", 1, 0})
+						table.insert(items, 5, {"models/props_junk/garbage_spraypaintcan01a.mdl", 30, 0, 2})
 					end
 					return items
 				end
-				ScavData.CollectFuncs["models/props_junk/garbage256_composite001a.mdl"] = function(self,ent)
+				ScavData.CollectFuncs["models/props_junk/garbage256_composite001a.mdl"] = function(self, ent)
 					local items = {
-						{"models/props_junk/garbage_metalcan002a.mdl",1,0,3},
-						{"models/props_junk/garbage_glassbottle003a.mdl",1,0,2},
-						{"models/props_vehicles/carparts_muffler01a.mdl",1,0},
-						{"models/props_junk/garbage_syringeneedle001a.mdl",1,0},
-						{"models/props_junk/garbage_energydrinkcan001a.mdl",1,0},
-						{"models/props_junk/garbage_glassbottle002a.mdl",1,0}
+						{"models/props_junk/garbage_metalcan002a.mdl", 1, 0, 3},
+						{"models/props_junk/garbage_glassbottle003a.mdl", 1, 0, 2},
+						{"models/props_vehicles/carparts_muffler01a.mdl", 1, 0},
+						{"models/props_junk/garbage_syringeneedle001a.mdl", 1, 0},
+						{"models/props_junk/garbage_energydrinkcan001a.mdl", 1, 0},
+						{"models/props_junk/garbage_glassbottle002a.mdl", 1, 0}
 					}
-					if IsMounted(550) or IsMounted(500) then --L4D/L4D2
-						table.insert(items,6,{"models/props_junk/garbage_spraypaintcan01a.mdl",30,0})
+					if L4D then
+						table.insert(items, 6, {"models/props_junk/garbage_spraypaintcan01a.mdl", 30, 0})
 					end
 					return items
 				end
-				ScavData.CollectFuncs["models/props_junk/garbage256_composite001b.mdl"] = function(self,ent)
+				ScavData.CollectFuncs["models/props_junk/garbage256_composite001b.mdl"] = function(self, ent)
 					local items = {
-						{"models/props_junk/garbage_metalcan002a.mdl",1,0,3},
-						{"models/props_junk/garbage_plasticbottle002a.mdl",50,0},
-						{"models/props_junk/garbage_glassbottle003a.mdl",1,0,2},
-						{"models/props_junk/garbage_takeoutcarton001a.mdl",1,0},
-						{"models/props_junk/garbage_syringeneedle001a.mdl",1,0},
-						{"models/props_junk/garbage_plasticbottle003a.mdl",1,0},
-						{"models/props_junk/garbage_glassbottle002a.mdl",1,0},
-						{"models/props_junk/garbage_milkcarton002a.mdl",1,0}
+						{"models/props_junk/garbage_metalcan002a.mdl", 1, 0, 3},
+						{"models/props_junk/garbage_plasticbottle002a.mdl", 50, 0},
+						{"models/props_junk/garbage_glassbottle003a.mdl", 1, 0, 2},
+						{"models/props_junk/garbage_takeoutcarton001a.mdl", 1, 0},
+						{"models/props_junk/garbage_syringeneedle001a.mdl", 1, 0},
+						{"models/props_junk/garbage_plasticbottle003a.mdl", 1, 0},
+						{"models/props_junk/garbage_glassbottle002a.mdl", 1, 0},
+						{"models/props_junk/garbage_milkcarton002a.mdl", 1, 0}
 					}
-					if IsMounted(550) or IsMounted(500) then --L4D/L4D2
-						table.insert(items,7,{"models/props_junk/garbage_coffeecup01a.mdl",1,0})
-						table.insert(items,7,{"models/props_junk/garbage_fastfoodcontainer01a.mdl",1,0,2})
-						table.insert(items,7,{"models/props_junk/garbage_frenchfrycup01a.mdl",1,0})
+					if L4D then
+						table.insert(items, 7, {"models/props_junk/garbage_coffeecup01a.mdl", 1, 0})
+						table.insert(items, 7, {"models/props_junk/garbage_fastfoodcontainer01a.mdl", 1, 0, 2})
+						table.insert(items, 7, {"models/props_junk/garbage_frenchfrycup01a.mdl", 1, 0})
 					end
 					return items
 				end
-				ScavData.CollectFuncs["models/props_junk/garbage256_composite002a.mdl"] = function(self,ent)
+				ScavData.CollectFuncs["models/props_junk/garbage256_composite002a.mdl"] = function(self, ent)
 					local items = {}
-					for i=1,4 do
-						table.insert(models,{"models/props_junk/garbage_carboard00" .. tostring(math.Round(math.random(2))) .. "a.mdl",1,0})
+					for i=1, 4 do
+						table.insert(models, {"models/props_junk/garbage_carboard00" .. tostring(math.Round(math.random(2))) .. "a.mdl", 1, 0})
 					end
 					return items
 				end
 				ScavData.CollectFuncs["models/props_junk/garbage256_composite002b.mdl"] = ScavData.CollectFuncs["models/props_junk/garbage256_composite002a.mdl"]
-				ScavData.CollectFuncs["models/props_junk/ibeam01a_cluster01.mdl"] = function(self,ent) return {{"models/props_junk/ibeam01a.mdl",1,0,4}} end
-				ScavData.CollectFuncs["models/props_lab/securitybank.mdl"] = function(self,ent)
-					return {{ScavData.FormatModelname("models/props_c17/consolebox05a.mdl"),8,0,2},
-							{ScavData.FormatModelname("models/props_lab/powerbox02a.mdl"),8,0},
-							{ScavData.FormatModelname("models/props_lab/citizenradio.mdl"),10,0,2},
-							{ScavData.FormatModelname("models/props_lab/monitor01b.mdl"),1,0,4},
-							{ScavData.FormatModelname("models/props_lab/monitor02.mdl"),1,0,2},
-							{ScavData.FormatModelname("models/props_lab/clipboard.mdl"),1,0},
-							{ScavData.FormatModelname("models/props_c17/computer01_keyboard.mdl"),1,0},
-							{ScavData.FormatModelname("models/props_lab/harddrive02.mdl"),SCAV_SHORT_MAX,0}, -- only need one, they're infinite
-							{ScavData.FormatModelname("models/props_wasteland/controlroom_desk001a.mdl"),1,0}}
+				ScavData.CollectFuncs["models/props_junk/ibeam01a_cluster01.mdl"] = function(self, ent) return {{"models/props_junk/ibeam01a.mdl", 1, 0, 4}} end
+				ScavData.CollectFuncs["models/props_lab/securitybank.mdl"] = function(self, ent)
+					return {{ScavData.FormatModelname("models/props_c17/consolebox05a.mdl"), 8, 0, 2},
+							{ScavData.FormatModelname("models/props_lab/powerbox02a.mdl"), 8, 0},
+							{ScavData.FormatModelname("models/props_lab/citizenradio.mdl"), 10, 0, 2},
+							{ScavData.FormatModelname("models/props_lab/monitor01b.mdl"), 1, 0, 4},
+							{ScavData.FormatModelname("models/props_lab/monitor02.mdl"), 1, 0, 2},
+							{ScavData.FormatModelname("models/props_lab/clipboard.mdl"), 1, 0},
+							{ScavData.FormatModelname("models/props_c17/computer01_keyboard.mdl"), 1, 0},
+							{ScavData.FormatModelname("models/props_lab/harddrive02.mdl"), SCAV_SHORT_MAX, 0}, -- only need one, they're infinite
+							{ScavData.FormatModelname("models/props_wasteland/controlroom_desk001a.mdl"), 1, 0}}
 				end
-				ScavData.CollectFuncs["models/props_lab/servers.mdl"] = function(self,ent)
-					return {{ScavData.FormatModelname("models/props_c17/consolebox05a.mdl"),8,0,2},
-							{ScavData.FormatModelname("models/props_lab/citizenradio.mdl"),10,0,2},
-							{ScavData.FormatModelname("models/props_lab/monitor02.mdl"),1,0},
-							{ScavData.FormatModelname("models/props_lab/monitor01b.mdl"),1,0,4},
-							{ScavData.FormatModelname("models/props_lab/clipboard.mdl"),1,0},
-							{ScavData.FormatModelname("models/props_lab/harddrive02.mdl"),SCAV_SHORT_MAX,0}, -- only need one, they're infinite
-							{ScavData.FormatModelname("models/alyx_emptool_prop.mdl"),SCAV_SHORT_MAX,0},
-							{ScavData.FormatModelname("models/props_wasteland/kitchen_shelf001a.mdl"),1,0}}
+				ScavData.CollectFuncs["models/props_lab/servers.mdl"] = function(self, ent)
+					return {{ScavData.FormatModelname("models/props_c17/consolebox05a.mdl"), 8, 0, 2},
+							{ScavData.FormatModelname("models/props_lab/citizenradio.mdl"), 10, 0, 2},
+							{ScavData.FormatModelname("models/props_lab/monitor02.mdl"), 1, 0},
+							{ScavData.FormatModelname("models/props_lab/monitor01b.mdl"), 1, 0, 4},
+							{ScavData.FormatModelname("models/props_lab/clipboard.mdl"), 1, 0},
+							{ScavData.FormatModelname("models/props_lab/harddrive02.mdl"), SCAV_SHORT_MAX, 0}, -- only need one, they're infinite
+							{ScavData.FormatModelname("models/alyx_emptool_prop.mdl"), SCAV_SHORT_MAX, 0},
+							{ScavData.FormatModelname("models/props_wasteland/kitchen_shelf001a.mdl"), 1, 0}}
 				end
-				ScavData.CollectFuncs["models/props_lab/workspace001.mdl"] = function(self,ent)
-					return {{ScavData.FormatModelname("models/scav/rad_hl2.mdl"),10,0,2},
-							{ScavData.FormatModelname("models/props_c17/consolebox05a.mdl"),8,0,2},
-							{ScavData.FormatModelname("models/props_lab/monitor02.mdl"),1,0,3},
-							{ScavData.FormatModelname("models/props_junk/plasticcrate01a.mdl"),1,2},
-							{ScavData.FormatModelname("models/props_lab/harddrive02.mdl"),SCAV_SHORT_MAX,0}, -- only need one, they're infinite
-							{ScavData.FormatModelname("models/alyx_emptool_prop.mdl"),SCAV_SHORT_MAX,0},
-							{ScavData.FormatModelname("models/props_wasteland/cafeteria_table001a.mdl"),1,0}}
+				ScavData.CollectFuncs["models/props_lab/workspace001.mdl"] = function(self, ent)
+					return {{ScavData.FormatModelname("models/scav/rad_hl2.mdl"), 10, 0, 2},
+							{ScavData.FormatModelname("models/props_c17/consolebox05a.mdl"), 8, 0, 2},
+							{ScavData.FormatModelname("models/props_lab/monitor02.mdl"), 1, 0, 3},
+							{ScavData.FormatModelname("models/props_junk/plasticcrate01a.mdl"), 1, 2},
+							{ScavData.FormatModelname("models/props_lab/harddrive02.mdl"), SCAV_SHORT_MAX, 0}, -- only need one, they're infinite
+							{ScavData.FormatModelname("models/alyx_emptool_prop.mdl"), SCAV_SHORT_MAX, 0},
+							{ScavData.FormatModelname("models/props_wasteland/cafeteria_table001a.mdl"), 1, 0}}
 				end
-				ScavData.CollectFuncs["models/props_lab/workspace002.mdl"] = function(self,ent)
-					return {{ScavData.FormatModelname("models/props_c17/consolebox05a.mdl"),8,0,3},
-							{ScavData.FormatModelname("models/props_lab/citizenradio.mdl"),10,0,2},
-							{ScavData.FormatModelname("models/props_lab/monitor02.mdl"),1,0,2},
-							{ScavData.FormatModelname("models/props_lab/monitor01b.mdl"),1,0,2},
-							{ScavData.FormatModelname("models/props_lab/powerbox02b.mdl"),8,0},
-							{ScavData.FormatModelname("models/props_lab/harddrive02.mdl"),SCAV_SHORT_MAX,0}, -- only need one, they're infinite
-							{ScavData.FormatModelname("models/props_wasteland/cafeteria_table001a.mdl"),1,0}}
+				ScavData.CollectFuncs["models/props_lab/workspace002.mdl"] = function(self, ent)
+					return {{ScavData.FormatModelname("models/props_c17/consolebox05a.mdl"), 8, 0, 3},
+							{ScavData.FormatModelname("models/props_lab/citizenradio.mdl"), 10, 0, 2},
+							{ScavData.FormatModelname("models/props_lab/monitor02.mdl"), 1, 0, 2},
+							{ScavData.FormatModelname("models/props_lab/monitor01b.mdl"), 1, 0, 2},
+							{ScavData.FormatModelname("models/props_lab/powerbox02b.mdl"), 8, 0},
+							{ScavData.FormatModelname("models/props_lab/harddrive02.mdl"), SCAV_SHORT_MAX, 0}, -- only need one, they're infinite
+							{ScavData.FormatModelname("models/props_wasteland/cafeteria_table001a.mdl"), 1, 0}}
 				end
-				ScavData.CollectFuncs["models/props_lab/workspace003.mdl"] = function(self,ent)
-					return {{ScavData.FormatModelname("models/props_lab/monitor02.mdl"),1,0,4},
-							{ScavData.FormatModelname("models/props_lab/monitor01b.mdl"),1,0,3},
-							{ScavData.FormatModelname("models/props_lab/harddrive02.mdl"),SCAV_SHORT_MAX,0}, -- only need one, they're infinite
-							{ScavData.FormatModelname("models/props_wasteland/kitchen_shelf001a.mdl"),1,0,2}}
+				ScavData.CollectFuncs["models/props_lab/workspace003.mdl"] = function(self, ent)
+					return {{ScavData.FormatModelname("models/props_lab/monitor02.mdl"), 1, 0, 4},
+							{ScavData.FormatModelname("models/props_lab/monitor01b.mdl"), 1, 0, 3},
+							{ScavData.FormatModelname("models/props_lab/harddrive02.mdl"), SCAV_SHORT_MAX, 0}, -- only need one, they're infinite
+							{ScavData.FormatModelname("models/props_wasteland/kitchen_shelf001a.mdl"), 1, 0, 2}}
 				end
-				ScavData.CollectFuncs["models/props_lab/workspace004.mdl"] = function(self,ent)
-					return {{ScavData.FormatModelname("models/scav/rad_hl2.mdl"),10,0,3},
-							{ScavData.FormatModelname("models/props_lab/monitor02.mdl"),1,0,4},
-							{ScavData.FormatModelname("models/props_junk/plasticcrate01a.mdl"),1,2},
-							{ScavData.FormatModelname("models/props_c17/computer01_keyboard.mdl"),1,0},
-							{ScavData.FormatModelname("models/props_lab/harddrive02.mdl"),SCAV_SHORT_MAX,0}, -- only need one, they're infinite
-							{ScavData.FormatModelname("models/alyx_emptool_prop.mdl"),SCAV_SHORT_MAX,0},
-							{ScavData.FormatModelname("models/props_wasteland/cafeteria_table001a.mdl"),1,0}}
+				ScavData.CollectFuncs["models/props_lab/workspace004.mdl"] = function(self, ent)
+					return {{ScavData.FormatModelname("models/scav/rad_hl2.mdl"), 10, 0, 3},
+							{ScavData.FormatModelname("models/props_lab/monitor02.mdl"), 1, 0, 4},
+							{ScavData.FormatModelname("models/props_junk/plasticcrate01a.mdl"), 1, 2},
+							{ScavData.FormatModelname("models/props_c17/computer01_keyboard.mdl"), 1, 0},
+							{ScavData.FormatModelname("models/props_lab/harddrive02.mdl"), SCAV_SHORT_MAX, 0}, -- only need one, they're infinite
+							{ScavData.FormatModelname("models/alyx_emptool_prop.mdl"), SCAV_SHORT_MAX, 0},
+							{ScavData.FormatModelname("models/props_wasteland/cafeteria_table001a.mdl"), 1, 0}}
 				end
-				--Ep2
-				ScavData.CollectFuncs["models/props_silo/tirestack.mdl"] = function(self,ent)
-					return {{"models/props/de_prodigy/tire1.mdl",1,0,4},
-							{IsMounted(240) --[[CSS]] and "models/props/de_prodigy/wood_pallet_01.mdl" or "models/props_junk/wood_pallet001a.mdl",1,0}}
+				ScavData.CollectFuncs["models/props_silo/tirestack.mdl"] = function(self, ent)
+					return {{"models/props/de_prodigy/tire1.mdl", 1, 0, 4},
+							{CSS and "models/props/de_prodigy/wood_pallet_01.mdl" or "models/props_junk/wood_pallet001a.mdl", 1, 0}}
 				end
-				ScavData.CollectFuncs["models/props_silo/tirestack2.mdl"] = function(self,ent)
-					return {{"models/props_silo/tire2.mdl",1,0},
-							{"models/props_silo/tire1.mdl",1,0,3},
-							{IsMounted(240) --[[CSS]] and "models/props/de_prodigy/wood_pallet_01.mdl" or "models/props_junk/wood_pallet001a.mdl",1,0}}
+				ScavData.CollectFuncs["models/props_silo/tirestack2.mdl"] = function(self, ent)
+					return {{"models/props_silo/tire2.mdl", 1, 0},
+							{"models/props_silo/tire1.mdl", 1, 0, 3},
+							{CSS and "models/props/de_prodigy/wood_pallet_01.mdl" or "models/props_junk/wood_pallet001a.mdl", 1, 0}}
 				end
-				ScavData.CollectFuncs["models/props_silo/tirestack3.mdl"] = function(self,ent)
-					return {{"models/props_silo/tire1.mdl",1,0,2},
-							{IsMounted(240) --[[CSS]] and "models/props/de_prodigy/wood_pallet_01.mdl" or "models/props_junk/wood_pallet001a.mdl",1,0}}
+				ScavData.CollectFuncs["models/props_silo/tirestack3.mdl"] = function(self, ent)
+					return {{"models/props_silo/tire1.mdl", 1, 0, 2},
+							{CSS and "models/props/de_prodigy/wood_pallet_01.mdl" or "models/props_junk/wood_pallet001a.mdl", 1, 0}}
 				end
 				--CSS
-				ScavData.CollectFuncs["models/props/de_nuke/cinderblock_stack.mdl"] = function(self,ent) return {{"models/props_junk/CinderBlock01a.mdl",1,0,11}} end
-				ScavData.CollectFuncs["models/props/de_inferno/hay_bail_stack.mdl"] = function(self,ent) return {{"models/props/de_inferno/hay_bails.mdl",1,0,15}} end
-				ScavData.CollectFuncs["models/props/cs_militia/haybale_target.mdl"] = function(self,ent) return {{"models/props/de_inferno/hay_bails.mdl",1,0,5}} end
-				ScavData.CollectFuncs["models/props/cs_militia/haybale_target_02.mdl"] = function(self,ent) return {{"models/props/de_inferno/hay_bails.mdl",1,0,4}} end
-				ScavData.CollectFuncs["models/props/cs_militia/haybale_target_03.mdl"] = function(self,ent) return {{"models/props/de_inferno/hay_bails.mdl",1,0,3}} end
-				ScavData.CollectFuncs["models/props/de_prodigy/tirestack.mdl"] = function(self,ent)
-					return {{"models/props/de_prodigy/tire1.mdl",1,0,4},
-							{"models/props/de_prodigy/wood_pallet_01.mdl",1,0}}
+				ScavData.CollectFuncs["models/props/de_nuke/cinderblock_stack.mdl"] = function(self, ent) return {{"models/props_junk/CinderBlock01a.mdl", 1, 0, 11}} end
+				ScavData.CollectFuncs["models/props/de_inferno/hay_bail_stack.mdl"] = function(self, ent) return {{"models/props/de_inferno/hay_bails.mdl", 1, 0, 15}} end
+				ScavData.CollectFuncs["models/props/cs_militia/haybale_target.mdl"] = function(self, ent) return {{"models/props/de_inferno/hay_bails.mdl", 1, 0, 5}} end
+				ScavData.CollectFuncs["models/props/cs_militia/haybale_target_02.mdl"] = function(self, ent) return {{"models/props/de_inferno/hay_bails.mdl", 1, 0, 4}} end
+				ScavData.CollectFuncs["models/props/cs_militia/haybale_target_03.mdl"] = function(self, ent) return {{"models/props/de_inferno/hay_bails.mdl", 1, 0, 3}} end
+				ScavData.CollectFuncs["models/props/de_prodigy/tirestack.mdl"] = function(self, ent)
+					return {{"models/props/de_prodigy/tire1.mdl", 1, 0, 4},
+							{"models/props/de_prodigy/wood_pallet_01.mdl", 1, 0}}
 				end
-				ScavData.CollectFuncs["models/props/de_prodigy/tirestack2.mdl"] = function(self,ent)
-					return {{"models/props/de_prodigy/tire2.mdl",1,0},
-							{"models/props/de_prodigy/tire1.mdl",1,0,3},
-							{"models/props/de_prodigy/wood_pallet_01.mdl",1,0}}
+				ScavData.CollectFuncs["models/props/de_prodigy/tirestack2.mdl"] = function(self, ent)
+					return {{"models/props/de_prodigy/tire2.mdl", 1, 0},
+							{"models/props/de_prodigy/tire1.mdl", 1, 0, 3},
+							{"models/props/de_prodigy/wood_pallet_01.mdl", 1, 0}}
 				end
-				ScavData.CollectFuncs["models/props/de_prodigy/tirestack3.mdl"] = function(self,ent)
-					return {{"models/props/de_prodigy/tire1.mdl",1,0,2},
-							{"models/props/de_prodigy/wood_pallet_01.mdl",1,0}}
+				ScavData.CollectFuncs["models/props/de_prodigy/tirestack3.mdl"] = function(self, ent)
+					return {{"models/props/de_prodigy/tire1.mdl", 1, 0, 2},
+							{"models/props/de_prodigy/wood_pallet_01.mdl", 1, 0}}
 				end
-				ScavData.CollectFuncs["models/props/cs_assault/box_stack1.mdl"] = function(self,ent)
-					return {{"models/props/cs_assault/dryer_box.mdl",1,0,5},
-							{"models/props/cs_assault/washer_box2.mdl",1,0,7}}
+				ScavData.CollectFuncs["models/props/cs_assault/box_stack1.mdl"] = function(self, ent)
+					return {{"models/props/cs_assault/dryer_box.mdl", 1, 0, 5},
+							{"models/props/cs_assault/washer_box2.mdl", 1, 0, 7}}
 				end
-				ScavData.CollectFuncs["models/props/cs_assault/box_stack2.mdl"] = function(self,ent)
-					return {{"models/props/cs_assault/dryer_box.mdl",1,0,3},
-							{"models/props/cs_assault/washer_box.mdl",1,0},
-							{"models/props/cs_assault/dryer_box2.mdl",1,0},
-							{"models/props/cs_assault/washer_box2.mdl",1,0,4}}
+				ScavData.CollectFuncs["models/props/cs_assault/box_stack2.mdl"] = function(self, ent)
+					return {{"models/props/cs_assault/dryer_box.mdl", 1, 0, 3},
+							{"models/props/cs_assault/washer_box.mdl", 1, 0},
+							{"models/props/cs_assault/dryer_box2.mdl", 1, 0},
+							{"models/props/cs_assault/washer_box2.mdl", 1, 0, 4}}
 				end
-				ScavData.CollectFuncs["models/props/cs_assault/moneypallet_washerdryer.mdl"] = function(self,ent)
-					return {{"models/props/cs_assault/dryer_box.mdl",1,0},
-							{"models/props/cs_assault/washer_box2.mdl",1,0,2},
-							{"models/props/cs_militia/dryer.mdl",25,0,2},
-							{"models/props/cs_assault/money.mdl",1,0,5},
-							{"models/props/de_prodigy/wood_pallet_01.mdl",1,0,1}}
+				ScavData.CollectFuncs["models/props/cs_assault/moneypallet_washerdryer.mdl"] = function(self, ent)
+					return {{"models/props/cs_assault/dryer_box.mdl", 1, 0},
+							{"models/props/cs_assault/washer_box2.mdl", 1, 0, 2},
+							{"models/props/cs_militia/dryer.mdl", 25, 0, 2},
+							{"models/props/cs_assault/money.mdl", 1, 0, 5},
+							{"models/props/de_prodigy/wood_pallet_01.mdl", 1, 0, 1}}
 				end
 				--TF2
-				ScavData.CollectFuncs["models/props_2fort/tire002.mdl"] = function(self,ent) return {{"models/props_2fort/tire001.mdl",1,0,5}} end
-				ScavData.CollectFuncs["models/props_2fort/tire003.mdl"] = function(self,ent) return {{"models/props_2fort/tire001.mdl",1,0,3}} end
-				ScavData.CollectFuncs["models/props_2fort/trainwheel002.mdl"] = function(self,ent) return {{"models/props_2fort/trainwheel001.mdl",1,0,5}} end
-				ScavData.CollectFuncs["models/props_2fort/trainwheel003.mdl"] = function(self,ent) return {{"models/props_2fort/trainwheel001.mdl",1,0,8}} end
+				ScavData.CollectFuncs["models/props_2fort/tire002.mdl"] = function(self, ent) return {{"models/props_2fort/tire001.mdl", 1, 0, 5}} end
+				ScavData.CollectFuncs["models/props_2fort/tire003.mdl"] = function(self, ent) return {{"models/props_2fort/tire001.mdl", 1, 0, 3}} end
+				ScavData.CollectFuncs["models/props_2fort/trainwheel002.mdl"] = function(self, ent) return {{"models/props_2fort/trainwheel001.mdl", 1, 0, 5}} end
+				ScavData.CollectFuncs["models/props_2fort/trainwheel003.mdl"] = function(self, ent) return {{"models/props_2fort/trainwheel001.mdl", 1, 0, 8}} end
 				--L4D/2
-				ScavData.CollectFuncs["models/props_unique/haybails_farmhouse.mdl"] = function(self,ent) return {{"models/props_unique/haybails_single.mdl",1,0,20}} end
-				ScavData.CollectFuncs["models/props_interiors/medicalcabinet02.mdl"] = function(self,ent) 
-					local choice = math.Rand(0,2)
-					local num = math.Rand(1,2)
+				ScavData.CollectFuncs["models/props_unique/haybails_farmhouse.mdl"] = function(self, ent) return {{"models/props_unique/haybails_single.mdl", 1, 0, 20}} end
+				ScavData.CollectFuncs["models/props_interiors/medicalcabinet02.mdl"] = function(self, ent) 
+					local choice = math.Rand(0, 2)
+					local num = math.Rand(1, 2)
 					if choice < 1 then
-						return {{"models/w_models/weapons/w_eq_medkit.mdl",math.Round(num),0}}
+						return {{"models/w_models/weapons/w_eq_medkit.mdl", math.Round(num), 0}}
 					else
-						return {{"models/w_models/weapons/w_eq_painpills.mdl",math.Round(num),0}}
+						return {{"models/w_models/weapons/w_eq_painpills.mdl", math.Round(num), 0}}
 					end
 				end
 				--CRATES
-				ScavData.CollectFuncs["models/items/item_item_crate.mdl"] = function(self,ent) --some random HL2 supplies
+				ScavData.CollectFuncs["models/items/item_item_crate.mdl"] = function(self, ent) --some random HL2 supplies
 					local supplies = {
-						{"models/healthvial.mdl",1,0},
-						{"models/items/battery.mdl",1,0},
-						{"models/scav/nail.mdl",15,0},
-						{"models/props_junk/metalgascan.mdl",25,0},
-						{"models/props_junk/popcan01a.mdl",1,0},
-						{"models/props_junk/shoe001a.mdl",1,0},
-						{"models/props_junk/watermelon01.mdl",1,0},
-						{"models/props_junk/glassjug01.mdl",1,0},
-						{"models/props_junk/plasticbucket001a.mdl",200,0},
-						{"models/props_lab/jar01a.mdl",1,0},
-						{"models/props_lab/huladoll.mdl",1,0},
-						{"models/props_combine/breenbust.mdl",1,0},
-						{"models/props_c17/doll01.mdl",1,0},
-						{"models/props_lab/tpplug.mdl",100,0},
-						{"models/props_junk/metalbucket01a.mdl",10,0},
-						{"models/scav/rad_hl2.mdl",10,0},
-						{"models/props_junk/metal_paintcan001b.mdl",30,0},
-						{"models/items/car_battery01.mdl",25,0},
-						{"models/props_junk/garbage_coffeemug001a.mdl",1,0},
-						{"models/weapons/w_stunbaton.mdl",8,0},
-						{"models/weapons/w_pistol.mdl",18,0},
-						{"models/weapons/w_357.mdl",6,0},
-						{"models/weapons/w_smg1.mdl",45,0},
-						{"models/items/ar2_grenade.mdl",1,0},
-						{"models/weapons/w_irifle.mdl",30,0},
-						{"models/items/combine_rifle_ammo01.mdl",1,0},
-						{"models/weapons/shotgun_shell.mdl",6,0},
-						{"models/props_trainstation/payphone_reciever001a.mdl",6,0},
-						{"models/crossbow_bolt.mdl",1,0},
-						{"models/weapons/w_grenade.mdl",1,0},
-						{"models/weapons/rifleshell.mdl",5,0},
+						{"models/healthvial.mdl", 1, 0},
+						{"models/items/battery.mdl", 1, 0},
+						{"models/scav/nail.mdl", 15, 0},
+						{"models/props_junk/metalgascan.mdl", 25, 0},
+						{"models/props_junk/popcan01a.mdl", 1, 0},
+						{"models/props_junk/shoe001a.mdl", 1, 0},
+						{"models/props_junk/watermelon01.mdl", 1, 0},
+						{"models/props_junk/glassjug01.mdl", 1, 0},
+						{"models/props_junk/plasticbucket001a.mdl", 200, 0},
+						{"models/props_lab/jar01a.mdl", 1, 0},
+						{"models/props_lab/huladoll.mdl", 1, 0},
+						{"models/props_combine/breenbust.mdl", 1, 0},
+						{"models/props_c17/doll01.mdl", 1, 0},
+						{"models/props_lab/tpplug.mdl", 100, 0},
+						{"models/props_junk/metalbucket01a.mdl", 10, 0},
+						{"models/scav/rad_hl2.mdl", 10, 0},
+						{"models/props_junk/metal_paintcan001b.mdl", 30, 0},
+						{"models/items/car_battery01.mdl", 25, 0},
+						{"models/props_junk/garbage_coffeemug001a.mdl", 1, 0},
+						{"models/weapons/w_stunbaton.mdl", 8, 0},
+						{"models/weapons/w_pistol.mdl", 18, 0},
+						{"models/weapons/w_357.mdl", 6, 0},
+						{"models/weapons/w_smg1.mdl", 45, 0},
+						{"models/items/ar2_grenade.mdl", 1, 0},
+						{"models/weapons/w_irifle.mdl", 30, 0},
+						{"models/items/combine_rifle_ammo01.mdl", 1, 0},
+						{"models/weapons/shotgun_shell.mdl", 6, 0},
+						{"models/props_trainstation/payphone_reciever001a.mdl", 6, 0},
+						{"models/crossbow_bolt.mdl", 1, 0},
+						{"models/weapons/w_grenade.mdl", 1, 0},
+						{"models/weapons/rifleshell.mdl", 5, 0},
 					}
 					local items = {}
 					if ScavData.FormatModelname(ent:GetModel()) == "models/items/item_item_crate.mdl" then
 						if (self.Owner:Health() + self:PotentialHealing()) * 1.3 <= self.Owner:GetMaxHealth() then -- about 76% health or lower
-							table.insert(items,{"models/items/healthkit.mdl",1,0})
+							table.insert(items, {"models/items/healthkit.mdl", 1, 0})
 						end
 						if (self.Owner:Armor() + self:PotentialArmor()) * 3 <= self.Owner:GetMaxArmor() then
-							table.insert(items,{"models/items/battery.mdl",1,0})
+							table.insert(items, {"models/items/battery.mdl", 1, 0})
 						end
-						for i=1,math.random(3) do
-							table.insert(items,supplies[math.random(#supplies)])
+						for i=1, math.random(3) do
+							table.insert(items, supplies[math.random(#supplies)])
 						end
 					else --Pot of Greed allows you to draw two cards
-						for i=1,2 do
-							table.insert(items,supplies[math.random(#supplies)])
+						for i=1, 2 do
+							table.insert(items, supplies[math.random(#supplies)])
 						end
 					end
 					return items
 				end
-				ScavData.CollectFX["models/items/item_item_crate.mdl"] = function(self,ent)
+				ScavData.CollectFX["models/items/item_item_crate.mdl"] = function(self, ent)
 					if ScavData.FormatModelname(ent:GetModel()) == "models/items/item_item_crate.mdl" then
-						self.Owner:EmitSound("physics/wood/wood_box_break1.wav",75,math.Rand(90,120),.5)
+						self.Owner:EmitSound("physics/wood/wood_box_break1.wav", 75, math.Rand(90, 120), 0.5)
 					else --Pot of Greed allows you to draw two cards
-						self.Owner:EmitSound("weapons/scav_gun/drawtwocards.wav",75)
+						self.Owner:EmitSound("weapons/scav_gun/drawtwocards.wav", 75)
 					end
 				end
-				ScavDataCollectCopy("models/props_c17/pottery01a.mdl","models/items/item_item_crate.mdl")
-				ScavDataCollectCopy("models/props_c17/pottery02a.mdl","models/items/item_item_crate.mdl")
-				ScavDataCollectCopy("models/props_c17/pottery03a.mdl","models/items/item_item_crate.mdl")
-				ScavDataCollectCopy("models/props_c17/pottery04a.mdl","models/items/item_item_crate.mdl")
-				ScavDataCollectCopy("models/props_c17/pottery05a.mdl","models/items/item_item_crate.mdl")
-				ScavDataCollectCopy("models/props_c17/pottery06a.mdl","models/items/item_item_crate.mdl")
-				ScavDataCollectCopy("models/props_c17/pottery07a.mdl","models/items/item_item_crate.mdl")
-				ScavDataCollectCopy("models/props_c17/pottery08a.mdl","models/items/item_item_crate.mdl")
-				ScavDataCollectCopy("models/props_c17/pottery09a.mdl","models/items/item_item_crate.mdl")
-				ScavDataCollectCopy("models/props_c17/pottery_large01a.mdl","models/items/item_item_crate.mdl")
-				--Ep2
-				ScavData.CollectFuncs["models/items/item_beacon_crate.mdl"] = function(self,ent) --some random Episodic supplies
+				ScavDataCollectCopy("models/props_c17/pottery01a.mdl", "models/items/item_item_crate.mdl")
+				ScavDataCollectCopy("models/props_c17/pottery02a.mdl", "models/items/item_item_crate.mdl")
+				ScavDataCollectCopy("models/props_c17/pottery03a.mdl", "models/items/item_item_crate.mdl")
+				ScavDataCollectCopy("models/props_c17/pottery04a.mdl", "models/items/item_item_crate.mdl")
+				ScavDataCollectCopy("models/props_c17/pottery05a.mdl", "models/items/item_item_crate.mdl")
+				ScavDataCollectCopy("models/props_c17/pottery06a.mdl", "models/items/item_item_crate.mdl")
+				ScavDataCollectCopy("models/props_c17/pottery07a.mdl", "models/items/item_item_crate.mdl")
+				ScavDataCollectCopy("models/props_c17/pottery08a.mdl", "models/items/item_item_crate.mdl")
+				ScavDataCollectCopy("models/props_c17/pottery09a.mdl", "models/items/item_item_crate.mdl")
+				ScavDataCollectCopy("models/props_c17/pottery_large01a.mdl", "models/items/item_item_crate.mdl")
+				ScavData.CollectFuncs["models/items/item_beacon_crate.mdl"] = function(self, ent) --some random Episodic supplies
 					local supplies = {
-						--{"models/healthvial.mdl",1,0},
-						{"models/items/battery.mdl",1,0},
-						{"models/scav/nail.mdl",15,0},
-						{"models/props_junk/metalgascan.mdl",25,0},
-						--{"models/props_junk/popcan01a.mdl",1,0},
-						{"models/props_junk/shoe001a.mdl",1,0},
-						{"models/props_junk/watermelon01.mdl",1,0},
-						{"models/props_junk/glassjug01.mdl",1,0},
-						{"models/props_junk/plasticbucket001a.mdl",200,0},
-						--{"models/props_lab/jar01a.mdl",1,0},
-						--{"models/props_lab/huladoll.mdl",1,0},
-						{"models/props_combine/breenbust.mdl",1,0},
-						--{"models/props_c17/doll01.mdl",1,0},
-						{"models/props_lab/tpplug.mdl",100,0},
-						{"models/props_junk/metalbucket01a.mdl",10,0},
-						{"models/scav/rad_hl2.mdl",10,0},
-						{"models/props_junk/metal_paintcan001b.mdl",30,0},
-						--{"models/items/car_battery01.mdl",25,0},
-						{"models/props_junk/garbage_coffeemug001a.mdl",1,0},
-						--{"models/weapons/w_stunbaton.mdl",8,0},
-						{"models/weapons/w_pistol.mdl",18,0},
-						{"models/weapons/w_357.mdl",6,0},
-						{"models/weapons/w_smg1.mdl",45,0},
-						{"models/items/ar2_grenade.mdl",1,0},
-						{"models/weapons/w_irifle.mdl",30,0},
-						{"models/items/combine_rifle_ammo01.mdl",1,0},
-						{"models/weapons/shotgun_shell.mdl",6,0},
-						{"models/props_trainstation/payphone_reciever001a.mdl",6,0},
-						{"models/crossbow_bolt.mdl",1,0},
-						{"models/weapons/w_grenade.mdl",1,0},
-						{"models/weapons/w_combine_sniper.mdl",5,0},
+						--{"models/healthvial.mdl", 1, 0},
+						{"models/items/battery.mdl", 1, 0},
+						{"models/scav/nail.mdl", 15, 0},
+						{"models/props_junk/metalgascan.mdl", 25, 0},
+						--{"models/props_junk/popcan01a.mdl", 1, 0},
+						{"models/props_junk/shoe001a.mdl", 1, 0},
+						{"models/props_junk/watermelon01.mdl", 1, 0},
+						{"models/props_junk/glassjug01.mdl", 1, 0},
+						{"models/props_junk/plasticbucket001a.mdl", 200, 0},
+						--{"models/props_lab/jar01a.mdl", 1, 0},
+						--{"models/props_lab/huladoll.mdl", 1, 0},
+						{"models/props_combine/breenbust.mdl", 1, 0},
+						--{"models/props_c17/doll01.mdl", 1, 0},
+						{"models/props_lab/tpplug.mdl", 100, 0},
+						{"models/props_junk/metalbucket01a.mdl", 10, 0},
+						{"models/scav/rad_hl2.mdl", 10, 0},
+						{"models/props_junk/metal_paintcan001b.mdl", 30, 0},
+						--{"models/items/car_battery01.mdl", 25, 0},
+						{"models/props_junk/garbage_coffeemug001a.mdl", 1, 0},
+						--{"models/weapons/w_stunbaton.mdl", 8, 0},
+						{"models/weapons/w_pistol.mdl", 18, 0},
+						{"models/weapons/w_357.mdl", 6, 0},
+						{"models/weapons/w_smg1.mdl", 45, 0},
+						{"models/items/ar2_grenade.mdl", 1, 0},
+						{"models/weapons/w_irifle.mdl", 30, 0},
+						{"models/items/combine_rifle_ammo01.mdl", 1, 0},
+						{"models/weapons/shotgun_shell.mdl", 6, 0},
+						{"models/props_trainstation/payphone_reciever001a.mdl", 6, 0},
+						{"models/crossbow_bolt.mdl", 1, 0},
+						{"models/weapons/w_grenade.mdl", 1, 0},
+						{"models/weapons/w_combine_sniper.mdl", 5, 0},
 						--Ep2 stuff
-						{"models/magnusson_device.mdl",1,0},
-						{"models/props_junk/flare.mdl",1,0},
-						{"models/props_mining/railroad_spike01.mdl",1,0},
-						{"models/weapons/hunter_flechette.mdl",25,0},
-						{"models/props_silo/acunit02.mdl",50,0},
-						{"models/grub_nugget_large.mdl",1,0},
-						{"models/props_forest/stove01.mdl",20,0},
+						{"models/magnusson_device.mdl", 1, 0},
+						{"models/props_junk/flare.mdl", 1, 0},
+						{"models/props_mining/railroad_spike01.mdl", 1, 0},
+						{"models/weapons/hunter_flechette.mdl", 25, 0},
+						{"models/props_silo/acunit02.mdl", 50, 0},
+						{"models/grub_nugget_large.mdl", 1, 0},
+						{"models/props_forest/stove01.mdl", 20, 0},
 					}
 					local items = {}
 					if (self.Owner:Health() + self:PotentialHealing()) * 1.3 <= self.Owner:GetMaxHealth() then -- about 76% health or lower
-						table.insert(items,{"models/items/healthkit.mdl",1,0})
+						table.insert(items, {"models/items/healthkit.mdl", 1, 0})
 					end
 					if (self.Owner:Armor() + self:PotentialArmor()) * 3 <= self.Owner:GetMaxArmor() then
-						table.insert(items,{"models/items/battery.mdl",1,0})
+						table.insert(items, {"models/items/battery.mdl", 1, 0})
 					end
-					for i=1,math.random(3) do
-						table.insert(items,supplies[math.random(#supplies)])
+					for i=1, math.random(3) do
+						table.insert(items, supplies[math.random(#supplies)])
 					end
 					return items
 				end
-				ScavData.CollectFX["models/items/item_beacon_crate.mdl"] = function(self,ent)
-					self.Owner:EmitSound("vehicles/junker/radar_ping_friendly1.wav",75,100,.5)
+				ScavData.CollectFX["models/items/item_beacon_crate.mdl"] = function(self, ent)
+					self.Owner:EmitSound("vehicles/junker/radar_ping_friendly1.wav", 75, 100, 0.5)
 				end
-				ScavData.CollectFuncs["models/props_halloween/halloween_gift.mdl"] = function(self,ent) --some random TF2 supplies
+				ScavData.CollectFuncs["models/props_halloween/halloween_gift.mdl"] = function(self, ent) --some random TF2 supplies
 					local supplies = {
-						{"models/items/medkit_small.mdl",1,0},
-						{"models/weapons/c_models/c_sandwich/c_sandwich.mdl",1,0},
-						{"models/scav/nail.mdl",25,0},
-						{"models/props_farm/oilcan01.mdl",25,0},
-						{"models/weapons/w_models/w_grenade_grenadelauncher.mdl",4,math.Round(math.random())},
-						{"models/weapons/w_models/w_flaregun_shell.mdl",3,math.Round(math.random())},
-						{"models/props_gameplay/pill_bottle01.mdl",1,0},
-						{"models/weapons/c_models/c_flameball/c_flameball.mdl",20,math.Round(math.random())},
-						{"models/weapons/w_models/w_rocket.mdl",4,0},
-						{"models/weapons/c_models/urinejar.mdl",1,0},
-						{"models/weapons/w_models/w_repair_claw.mdl",4,0},
-						{"models/buildables/sentry1.mdl",100,math.Round(math.random())},
-						{"models/weapons/w_models/w_stickybomb.mdl",3,math.Round(math.random())},
-						{"models/props_2fort/fire_extinguisher.mdl",100,0},
-						{"models/props_2fort/sink001.mdl",25,0},
-						{"models/props_badlands/barrel03.mdl",10,0},
-						{"models/weapons/c_models/c_spy_watch.mdl",30,0},
-						{"models/flag/briefcase.mdl",1,math.Round(math.random())},
-						{"models/weapons/c_models/c_energy_drink/c_energy_drink.mdl",1,math.Round(math.random())},
-						{"models/weapons/c_models/c_sapper/c_sapper.mdl",8,0},
-						{"models/weapons/c_models/c_pistol/c_pistol.mdl",12,0},
-						{"models/weapons/c_models/c_revolver/c_revolver.mdl",6,0},
-						{"models/weapons/c_models/c_smg/c_smg.mdl",25,0},
-						{"models/weapons/c_models/c_claymore/c_claymore.mdl",1,0},
-						{"models/weapons/c_models/c_minigun/c_minigun.mdl",200,0},
-						{"models/props_trainyard/cart_bomb_separate.mdl",1,0},
-						{"models/weapons/shells/shell_shotgun.mdl",6,0},
-						{"models/props_2fort/telephone001.mdl",6,0},
-						{"models/weapons/w_models/w_arrow.mdl",3,0},
-						{"models/weapons/c_models/c_flamethrower/c_flamethrower.mdl",200,math.Round(math.random())},
-						{"models/weapons/c_models/c_sniperrifle/c_sniperrifle.mdl",25,0},
+						{"models/items/medkit_small.mdl", 1, 0},
+						{"models/weapons/c_models/c_sandwich/c_sandwich.mdl", 1, 0},
+						{"models/scav/nail.mdl", 25, 0},
+						{"models/props_farm/oilcan01.mdl", 25, 0},
+						{"models/weapons/w_models/w_grenade_grenadelauncher.mdl", 4, math.Round(math.random())},
+						{"models/weapons/w_models/w_flaregun_shell.mdl", 3, math.Round(math.random())},
+						{"models/props_gameplay/pill_bottle01.mdl", 1, 0},
+						{"models/weapons/c_models/c_flameball/c_flameball.mdl", 20, math.Round(math.random())},
+						{"models/weapons/w_models/w_rocket.mdl", 4, 0},
+						{"models/weapons/c_models/urinejar.mdl", 1, 0},
+						{"models/weapons/w_models/w_repair_claw.mdl", 4, 0},
+						{"models/buildables/sentry1.mdl", 100, math.Round(math.random())},
+						{"models/weapons/w_models/w_stickybomb.mdl", 3, math.Round(math.random())},
+						{"models/props_2fort/fire_extinguisher.mdl", 100, 0},
+						{"models/props_2fort/sink001.mdl", 25, 0},
+						{"models/props_badlands/barrel03.mdl", 10, 0},
+						{"models/weapons/c_models/c_spy_watch.mdl", 30, 0},
+						{"models/flag/briefcase.mdl", 1, math.Round(math.random())},
+						{"models/weapons/c_models/c_energy_drink/c_energy_drink.mdl", 1, math.Round(math.random())},
+						{"models/weapons/c_models/c_sapper/c_sapper.mdl", 8, 0},
+						{"models/weapons/c_models/c_pistol/c_pistol.mdl", 12, 0},
+						{"models/weapons/c_models/c_revolver/c_revolver.mdl", 6, 0},
+						{"models/weapons/c_models/c_smg/c_smg.mdl", 25, 0},
+						{"models/weapons/c_models/c_claymore/c_claymore.mdl", 1, 0},
+						{"models/weapons/c_models/c_minigun/c_minigun.mdl", 200, 0},
+						{"models/props_trainyard/cart_bomb_separate.mdl", 1, 0},
+						{"models/weapons/shells/shell_shotgun.mdl", 6, 0},
+						{"models/props_2fort/telephone001.mdl", 6, 0},
+						{"models/weapons/w_models/w_arrow.mdl", 3, 0},
+						{"models/weapons/c_models/c_flamethrower/c_flamethrower.mdl", 200, math.Round(math.random())},
+						{"models/weapons/c_models/c_sniperrifle/c_sniperrifle.mdl", 25, 0},
 					}
 					local items = {}
 					if ScavData.FormatModelname(ent:GetModel()) ~= "models/props_manor/vase_01.mdl" then
 						if (self.Owner:Health() + self:PotentialHealing()) * 1.3 <= self.Owner:GetMaxHealth() then -- about 76% health or lower
-							table.insert(items,{"models/items/medkit_small.mdl",1,0})
+							table.insert(items, {"models/items/medkit_small.mdl", 1, 0})
 						end
-						if (self.Owner:Armor()+ self:PotentialArmor()) * 3  <= self.Owner:GetMaxArmor() then
-							table.insert(items,{"models/pickups/pickup_powerup_defense.mdl",1,0})
+						if (self.Owner:Armor() +  self:PotentialArmor()) * 3  <= self.Owner:GetMaxArmor() then
+							table.insert(items, {"models/pickups/pickup_powerup_defense.mdl", 1, 0})
 						end
-						for i=0,math.random(3) do
-							table.insert(items,supplies[math.random(#supplies)])
+						for i=0, math.random(3) do
+							table.insert(items, supplies[math.random(#supplies)])
 						end
 					else
-						for i=1,2 do
-							table.insert(items,supplies[math.random(#supplies)])
+						for i=1, 2 do
+							table.insert(items, supplies[math.random(#supplies)])
 						end
 					end
 					return items
 				end
-				ScavData.CollectFX["models/props_halloween/halloween_gift.mdl"] = function(self,ent) --some random TF2 supplies
+				ScavData.CollectFX["models/props_halloween/halloween_gift.mdl"] = function(self, ent) --some random TF2 supplies
 					if ScavData.FormatModelname(ent:GetModel()) ~= "models/props_manor/vase_01.mdl" then
 						if ent:GetModel() == "models/props_halloween/halloween_gift.mdl" or
 							ent:GetModel() == "models/items/tf_gift.mdl" then
-							self.Owner:EmitSound("items/gift_drop.wav",75,100,.5)
+							self.Owner:EmitSound("items/gift_drop.wav", 75, 100, 0.5)
 						else
-							self.Owner:EmitSound("items/regenerate.wav",75,100,.5)
+							self.Owner:EmitSound("items/regenerate.wav", 75, 100, 0.5)
 						end
 					else
-						self.Owner:EmitSound("weapons/scav_gun/drawtwocards.wav",75)
+						self.Owner:EmitSound("weapons/scav_gun/drawtwocards.wav", 75)
 					end
 				end
-				ScavDataCollectCopy("models/props_gameplay/resupply_locker.mdl","models/props_halloween/halloween_gift.mdl")
-				ScavDataCollectCopy("models/props_medieval/medieval_resupply.mdl","models/props_halloween/halloween_gift.mdl")
-				ScavDataCollectCopy("models/items/tf_gift.mdl","models/props_halloween/halloween_gift.mdl")
-				ScavDataCollectCopy("models/props_manor/vase_01.mdl","models/props_halloween/halloween_gift.mdl")
+				ScavDataCollectCopy("models/props_gameplay/resupply_locker.mdl", "models/props_halloween/halloween_gift.mdl")
+				ScavDataCollectCopy("models/props_medieval/medieval_resupply.mdl", "models/props_halloween/halloween_gift.mdl")
+				ScavDataCollectCopy("models/items/tf_gift.mdl", "models/props_halloween/halloween_gift.mdl")
+				ScavDataCollectCopy("models/props_manor/vase_01.mdl", "models/props_halloween/halloween_gift.mdl")
 				--L4D2 Gift
 				--Portal Cake (isn't solid :c)
 				--CSS Laundry Box maybe?
 				--Make HL2 Oil Drums sometimes provide Radioactive/BioHazard Barrel Firemodes?
 				
 				--Give a random TF2 barrel from barrel crates
-				ScavData.CollectFuncs["models/props_mvm/barrel_crate.mdl"] = function(self,ent)
+				ScavData.CollectFuncs["models/props_mvm/barrel_crate.mdl"] = function(self, ent)
 					local choice = math.random(10)
 					if choice == 1 then
-						return {{"models/props_badlands/barrel01.mdl",2,0}}
+						return {{"models/props_badlands/barrel01.mdl", 2, 0}}
 					elseif choice == 2 then
-						return {{"models/props_badlands/barrel03.mdl",10,math.random(0,1)}}
+						return {{"models/props_badlands/barrel03.mdl", 10, math.random(0, 1)}}
 					else
-						return {{"models/props_hydro/water_barrel.mdl",1,0}}
+						return {{"models/props_hydro/water_barrel.mdl", 1, 0}}
 					end
 				end
 				
 				--Uniform Locker (give us three random classes' stuff)
-				ScavData.CollectFuncs["models/props_gameplay/uniform_locker.mdl"] = function(self,ent)
+				ScavData.CollectFuncs["models/props_gameplay/uniform_locker.mdl"] = function(self, ent)
 					local classpick = {
 						"models/player/scout.mdl",
 						"models/player/soldier.mdl",
@@ -6994,26 +6972,26 @@ end
 						"models/player/spy.mdl"
 					}
 					local items = {}
-					for i=1,3 do
+					for i=1, 3 do
 						class = classpick[math.random(#classpick)]
-						classitems = ScavData.CollectFuncs[class](self,ent)
-						for i=1,#classitems do
-							table.insert(items,classitems[i])
+						classitems = ScavData.CollectFuncs[class](self, ent)
+						for i=1, #classitems do
+							table.insert(items, classitems[i])
 						end
 					end
 					return items
 				end
 				
 				--Poopy Joe's Locker
-				ScavData.CollectFuncs["models/props_gameplay/uniform_locker_pj.mdl"] = function(self,ent)
-					return {{"models/weapons/c_models/c_bugle/c_bugle.mdl",10,0},
-							{"models/weapons/c_models/c_claymore/c_claymore.mdl",1,0},
-							{"models/weapons/c_models/c_pickaxe/c_pickaxe.mdl",1,0},
-							{IsMounted(265630) --[[FoF]] and "models/elpaso/horse_poo.mdl" or "models/weapons/c_models/urinejar.mdl",1,0}}
+				ScavData.CollectFuncs["models/props_gameplay/uniform_locker_pj.mdl"] = function(self, ent)
+					return {{"models/weapons/c_models/c_bugle/c_bugle.mdl", 10, 0},
+							{"models/weapons/c_models/c_claymore/c_claymore.mdl", 1, 0},
+							{"models/weapons/c_models/c_pickaxe/c_pickaxe.mdl", 1, 0},
+							{FOF and "models/elpaso/horse_poo.mdl" or "models/weapons/c_models/urinejar.mdl", 1, 0}}
 				end
 
 				--precache helps with the hiccup of initially sucking the mercs/locker up
-				if IsMounted(440) then --TF2
+				if TF2 then
 					util.PrecacheModel("models/weapons/c_models/c_scattergun.mdl")
 					util.PrecacheModel("models/weapons/c_models/c_shotgun/c_shotgun.mdl")
 					util.PrecacheModel("models/weapons/w_models/w_pistol.mdl")
@@ -7043,205 +7021,205 @@ end
 				end
 
 				--Scout
-				ScavData.CollectFuncs["models/player/scout.mdl"] = function(self,ent)
-					return {{"models/weapons/c_models/c_scattergun.mdl",6,0},
-							{"models/weapons/w_models/w_pistol.mdl",12,0},
-							{"models/weapons/c_models/c_energy_drink/c_energy_drink.mdl",1,math.fmod(ent:GetSkin(),2)}}
+				ScavData.CollectFuncs["models/player/scout.mdl"] = function(self, ent)
+					return {{"models/weapons/c_models/c_scattergun.mdl", 6, 0},
+							{"models/weapons/w_models/w_pistol.mdl", 12, 0},
+							{"models/weapons/c_models/c_energy_drink/c_energy_drink.mdl", 1, math.fmod(ent:GetSkin(), 2)}}
 				end
 				ScavData.CollectFuncs["models/bots/scout/bot_scout.mdl"] = ScavData.CollectFuncs["models/player/scout.mdl"]
 				ScavData.CollectFuncs["models/bots/scout_boss/bot_scout_boss.mdl"] = ScavData.CollectFuncs["models/player/scout.mdl"]
 
-				ScavData.CollectFX["models/player/scout.mdl"] = function(self,ent)
-					self.Owner:EmitSound("vo/scout_battlecry0"..math.random(5)..".mp3",75,100,1,CHAN_VOICE)
+				ScavData.CollectFX["models/player/scout.mdl"] = function(self, ent)
+					self.Owner:EmitSound("vo/scout_battlecry0" .. math.random(5) .. ".mp3", 75, 100, 1, CHAN_VOICE)
 				end
-				ScavData.CollectFX["models/bots/scout/bot_scout.mdl"] = function(self,ent)
-					self.Owner:EmitSound("vo/mvm/norm/scout_mvm_battlecry0"..math.random(5)..".mp3",75,100,1,CHAN_VOICE)
+				ScavData.CollectFX["models/bots/scout/bot_scout.mdl"] = function(self, ent)
+					self.Owner:EmitSound("vo/mvm/norm/scout_mvm_battlecry0" .. math.random(5) .. ".mp3", 75, 100, 1, CHAN_VOICE)
 				end
-				ScavData.CollectFX["models/bots/scout_boss/bot_scout_boss.mdl"] = function(self,ent)
-					self.Owner:EmitSound("vo/mvm/mght/scout_mvm_m_battlecry0"..math.random(5)..".mp3",75,100,1,CHAN_VOICE)
+				ScavData.CollectFX["models/bots/scout_boss/bot_scout_boss.mdl"] = function(self, ent)
+					self.Owner:EmitSound("vo/mvm/mght/scout_mvm_m_battlecry0" .. math.random(5) .. ".mp3", 75, 100, 1, CHAN_VOICE)
 				end
-				ScavDataCollectCopy("models/player/hwm/scout.mdl","models/player/scout.mdl")
+				ScavDataCollectCopy("models/player/hwm/scout.mdl", "models/player/scout.mdl")
 				
 				--Soldier
-				ScavData.CollectFuncs["models/player/soldier.mdl"] = function(self,ent)
-					local items =  {{"models/weapons/c_models/c_shotgun/c_shotgun.mdl",6,0},
-									{"models/weapons/c_models/c_buffpack/c_buffpack.mdl",1,0},
-									{"models/weapons/c_models/c_bugle/c_bugle.mdl",10,0}}
-					table.remove(items,math.random(#items))	
-					table.insert(items,1,{"models/weapons/w_models/w_rocket.mdl",4,0})
+				ScavData.CollectFuncs["models/player/soldier.mdl"] = function(self, ent)
+					local items =  {{"models/weapons/c_models/c_shotgun/c_shotgun.mdl", 6, 0},
+									{"models/weapons/c_models/c_buffpack/c_buffpack.mdl", 1, 0},
+									{"models/weapons/c_models/c_bugle/c_bugle.mdl", 10, 0}}
+					table.remove(items, math.random(#items))	
+					table.insert(items, 1, {"models/weapons/w_models/w_rocket.mdl", 4, 0})
 					return items
 				end
 				ScavData.CollectFuncs["models/bots/soldier/bot_soldier.mdl"] = ScavData.CollectFuncs["models/player/soldier.mdl"]
 				ScavData.CollectFuncs["models/bots/soldier_boss/bot_soldier_boss.mdl"] = ScavData.CollectFuncs["models/player/soldier.mdl"]
 
-				ScavData.CollectFX["models/player/soldier.mdl"] = function(self,ent)
-					self.Owner:EmitSound("vo/soldier_battlecry0"..math.random(6)..".mp3",75,100,1,CHAN_VOICE)
+				ScavData.CollectFX["models/player/soldier.mdl"] = function(self, ent)
+					self.Owner:EmitSound("vo/soldier_battlecry0" .. math.random(6) .. ".mp3", 75, 100, 1, CHAN_VOICE)
 				end
-				ScavData.CollectFX["models/bots/soldier/bot_soldier.mdl"] = function(self,ent)
-					self.Owner:EmitSound("vo/mvm/norm/soldier_mvm_battlecry0"..math.random(6)..".mp3",75,100,1,CHAN_VOICE)
+				ScavData.CollectFX["models/bots/soldier/bot_soldier.mdl"] = function(self, ent)
+					self.Owner:EmitSound("vo/mvm/norm/soldier_mvm_battlecry0" .. math.random(6) .. ".mp3", 75, 100, 1, CHAN_VOICE)
 				end
-				ScavData.CollectFX["models/bots/soldier_boss/bot_soldier_boss.mdl"] = function(self,ent)
-					self.Owner:EmitSound("vo/mvm/mght/soldier_mvm_m_battlecry0"..math.random(6)..".mp3",75,100,1,CHAN_VOICE)
+				ScavData.CollectFX["models/bots/soldier_boss/bot_soldier_boss.mdl"] = function(self, ent)
+					self.Owner:EmitSound("vo/mvm/mght/soldier_mvm_m_battlecry0" .. math.random(6) .. ".mp3", 75, 100, 1, CHAN_VOICE)
 				end
-				ScavDataCollectCopy("models/player/hwm/soldier.mdl","models/player/soldier.mdl")
+				ScavDataCollectCopy("models/player/hwm/soldier.mdl", "models/player/soldier.mdl")
 				
 				--Pyro
-				ScavData.CollectFuncs["models/player/pyro.mdl"] = function(self,ent)
-					local items = {{"models/weapons/c_models/c_shotgun/c_shotgun.mdl",6,0},
-								{"models/weapons/w_models/w_flaregun_shell.mdl",5,ent:GetSkin() % 2}}
+				ScavData.CollectFuncs["models/player/pyro.mdl"] = function(self, ent)
+					local items = {{"models/weapons/c_models/c_shotgun/c_shotgun.mdl", 6, 0},
+								{"models/weapons/w_models/w_flaregun_shell.mdl", 5, ent:GetSkin() % 2}}
 					if math.random(2) == 1 then
-						table.insert(items,1,{"models/weapons/c_models/c_flamethrower/c_flamethrower.mdl",200,ent:GetSkin() % 2})
+						table.insert(items, 1, {"models/weapons/c_models/c_flamethrower/c_flamethrower.mdl", 200, ent:GetSkin() % 2})
 					else
-						table.insert(items,1,{"models/weapons/c_models/c_flameball/c_flameball.mdl",40,ent:GetSkin() % 2})
+						table.insert(items, 1, {"models/weapons/c_models/c_flameball/c_flameball.mdl", 40, ent:GetSkin() % 2})
 					end
 					return items
 				end
 				ScavData.CollectFuncs["models/bots/pyro/bot_pyro.mdl"] = ScavData.CollectFuncs["models/player/pyro.mdl"]
 				ScavData.CollectFuncs["models/bots/pyro_boss/bot_pyro_boss.mdl"] = ScavData.CollectFuncs["models/player/pyro.mdl"]
 
-				ScavData.CollectFX["models/player/pyro.mdl"] = function(self,ent)
-					self.Owner:EmitSound("vo/pyro_battlecry0"..math.random(2)..".mp3",75,100,1,CHAN_VOICE)
+				ScavData.CollectFX["models/player/pyro.mdl"] = function(self, ent)
+					self.Owner:EmitSound("vo/pyro_battlecry0" .. math.random(2) .. ".mp3", 75, 100, 1, CHAN_VOICE)
 				end
-				ScavData.CollectFX["models/bots/pyro/bot_pyro.mdl"] = function(self,ent)
-					self.Owner:EmitSound("vo/mvm/norm/pyro_mvm_battlecry0"..math.random(2)..".mp3",75,100,1,CHAN_VOICE)
+				ScavData.CollectFX["models/bots/pyro/bot_pyro.mdl"] = function(self, ent)
+					self.Owner:EmitSound("vo/mvm/norm/pyro_mvm_battlecry0" .. math.random(2) .. ".mp3", 75, 100, 1, CHAN_VOICE)
 				end
-				ScavData.CollectFX["models/bots/pyro_boss/bot_pyro_boss.mdl"] = function(self,ent)
-					self.Owner:EmitSound("vo/mvm/mght/pyro_mvm_m_battlecry0"..math.random(2)..".mp3",75,100,1,CHAN_VOICE)
+				ScavData.CollectFX["models/bots/pyro_boss/bot_pyro_boss.mdl"] = function(self, ent)
+					self.Owner:EmitSound("vo/mvm/mght/pyro_mvm_m_battlecry0" .. math.random(2) .. ".mp3", 75, 100, 1, CHAN_VOICE)
 				end
-				ScavDataCollectCopy("models/player/hwm/pyro.mdl","models/player/pyro.mdl")
+				ScavDataCollectCopy("models/player/hwm/pyro.mdl", "models/player/pyro.mdl")
 				
 				--Demoman
-				ScavData.CollectFuncs["models/player/demo.mdl"] = function(self,ent)
-					return {{"models/weapons/w_models/w_grenade_grenadelauncher.mdl",4,ent:GetSkin() % 2},
-							{"models/weapons/w_models/w_stickybomb.mdl",6,ent:GetSkin() % 2},
-							{math.random(2) == 1 and "models/weapons/c_models/c_bottle/c_bottle.mdl" or "models/weapons/c_models/c_claymore/c_claymore.mdl",1,0}}
+				ScavData.CollectFuncs["models/player/demo.mdl"] = function(self, ent)
+					return {{"models/weapons/w_models/w_grenade_grenadelauncher.mdl", 4, ent:GetSkin() % 2},
+							{"models/weapons/w_models/w_stickybomb.mdl", 6, ent:GetSkin() % 2},
+							{math.random(2) == 1 and "models/weapons/c_models/c_bottle/c_bottle.mdl" or "models/weapons/c_models/c_claymore/c_claymore.mdl", 1, 0}}
 				end
 				ScavData.CollectFuncs["models/bots/demo/bot_demo.mdl"] = ScavData.CollectFuncs["models/player/demo.mdl"]
 				ScavData.CollectFuncs["models/bots/demo_boss/bot_demo_boss.mdl"] = ScavData.CollectFuncs["models/player/demo.mdl"]
 
-				ScavData.CollectFX["models/player/demo.mdl"] = function(self,ent)
-					self.Owner:EmitSound("vo/demoman_battlecry0"..math.random(7)..".mp3",75,100,1,CHAN_VOICE)
+				ScavData.CollectFX["models/player/demo.mdl"] = function(self, ent)
+					self.Owner:EmitSound("vo/demoman_battlecry0" .. math.random(7) .. ".mp3", 75, 100, 1, CHAN_VOICE)
 				end
-				ScavData.CollectFX["models/bots/demo/bot_demo.mdl"] = function(self,ent)
-					self.Owner:EmitSound("vo/mvm/norm/demoman_mvm_battlecry0"..math.random(7)..".mp3",75,100,1,CHAN_VOICE)
+				ScavData.CollectFX["models/bots/demo/bot_demo.mdl"] = function(self, ent)
+					self.Owner:EmitSound("vo/mvm/norm/demoman_mvm_battlecry0" .. math.random(7) .. ".mp3", 75, 100, 1, CHAN_VOICE)
 				end
-				ScavData.CollectFX["models/bots/demo_boss/bot_demo_boss.mdl"] = function(self,ent)
-					self.Owner:EmitSound("vo/mvm/mght/demoman_mvm_m_battlecry0"..math.random(7)..".mp3",75,100,1,CHAN_VOICE)
+				ScavData.CollectFX["models/bots/demo_boss/bot_demo_boss.mdl"] = function(self, ent)
+					self.Owner:EmitSound("vo/mvm/mght/demoman_mvm_m_battlecry0" .. math.random(7) .. ".mp3", 75, 100, 1, CHAN_VOICE)
 				end
-				ScavDataCollectCopy("models/player/hwm/demo.mdl","models/player/demo.mdl")
+				ScavDataCollectCopy("models/player/hwm/demo.mdl", "models/player/demo.mdl")
 				
 				--Heavy
-				ScavData.CollectFuncs["models/player/heavy.mdl"] = function(self,ent)
-					return {{"models/weapons/w_models/w_minigun.mdl",200,0},
-							{"models/weapons/c_models/c_shotgun/c_shotgun.mdl",6,0},
-							{"models/weapons/c_models/c_sandwich/c_sandwich.mdl",1,0}}
+				ScavData.CollectFuncs["models/player/heavy.mdl"] = function(self, ent)
+					return {{"models/weapons/w_models/w_minigun.mdl", 200, 0},
+							{"models/weapons/c_models/c_shotgun/c_shotgun.mdl", 6, 0},
+							{"models/weapons/c_models/c_sandwich/c_sandwich.mdl", 1, 0}}
 				end
 				ScavData.CollectFuncs["models/bots/heavy/bot_heavy.mdl"] = ScavData.CollectFuncs["models/player/heavy.mdl"]
 				ScavData.CollectFuncs["models/bots/heavy_boss/bot_heavy_boss.mdl"] = ScavData.CollectFuncs["models/player/heavy.mdl"]
 
-				ScavData.CollectFX["models/player/heavy.mdl"] = function(self,ent)
-					self.Owner:EmitSound("vo/heavy_battlecry0"..math.random(6)..".mp3",75,100,1,CHAN_VOICE)
+				ScavData.CollectFX["models/player/heavy.mdl"] = function(self, ent)
+					self.Owner:EmitSound("vo/heavy_battlecry0" .. math.random(6) .. ".mp3", 75, 100, 1, CHAN_VOICE)
 				end
-				ScavData.CollectFX["models/bots/heavy/bot_heavy.mdl"] = function(self,ent)
-					self.Owner:EmitSound("vo/mvm/norm/heavy_mvm_battlecry0"..math.random(6)..".mp3",75,100,1,CHAN_VOICE)
+				ScavData.CollectFX["models/bots/heavy/bot_heavy.mdl"] = function(self, ent)
+					self.Owner:EmitSound("vo/mvm/norm/heavy_mvm_battlecry0" .. math.random(6) .. ".mp3", 75, 100, 1, CHAN_VOICE)
 				end
-				ScavData.CollectFX["models/bots/heavy_boss/bot_heavy_boss.mdl"] = function(self,ent)
-					self.Owner:EmitSound("vo/mvm/mght/heavy_mvm_m_battlecry0"..math.random(6)..".mp3",75,100,1,CHAN_VOICE)
+				ScavData.CollectFX["models/bots/heavy_boss/bot_heavy_boss.mdl"] = function(self, ent)
+					self.Owner:EmitSound("vo/mvm/mght/heavy_mvm_m_battlecry0" .. math.random(6) .. ".mp3", 75, 100, 1, CHAN_VOICE)
 				end
-				ScavDataCollectCopy("models/player/hwm/heavy.mdl","models/player/heavy.mdl")
+				ScavDataCollectCopy("models/player/hwm/heavy.mdl", "models/player/heavy.mdl")
 				
 				--Engineer
-				ScavData.CollectFuncs["models/player/engineer.mdl"] = function(self,ent)
-					return {{"models/weapons/c_models/c_shotgun/c_shotgun.mdl",6,0},
-							{"models/weapons/w_models/w_pistol.mdl",12,0},
-							{"models/weapons/w_models/w_wrangler.mdl", SCAV_SHORT_MAX, math.fmod(ent:GetSkin(),2)}}
+				ScavData.CollectFuncs["models/player/engineer.mdl"] = function(self, ent)
+					return {{"models/weapons/c_models/c_shotgun/c_shotgun.mdl", 6, 0},
+							{"models/weapons/w_models/w_pistol.mdl", 12, 0},
+							{"models/weapons/w_models/w_wrangler.mdl", SCAV_SHORT_MAX, math.fmod(ent:GetSkin(), 2)}}
 				end
 				ScavData.CollectFuncs["models/bots/engineer/bot_engineer.mdl"] = ScavData.CollectFuncs["models/player/engineer.mdl"]
 
-				ScavData.CollectFX["models/player/engineer.mdl"] = function(self,ent)
+				ScavData.CollectFX["models/player/engineer.mdl"] = function(self, ent)
 					local voiceclipnum = math.random(6)
 					if voiceclipnum > 1 then voiceclipnum = voiceclipnum + 1 end --no engineer_battlecry02.mp3
-					self.Owner:EmitSound("vo/engineer_battlecry0"..voiceclipnum..".mp3",75,100,1,CHAN_VOICE)
+					self.Owner:EmitSound("vo/engineer_battlecry0" .. voiceclipnum .. ".mp3", 75, 100, 1, CHAN_VOICE)
 				end
-				ScavData.CollectFX["models/bots/engineer/bot_engineer.mdl"] = function(self,ent)
+				ScavData.CollectFX["models/bots/engineer/bot_engineer.mdl"] = function(self, ent)
 					local voiceclipnum = math.random(6)
 					if voiceclipnum > 1 then voiceclipnum = voiceclipnum + 1 end --no engineer_battlecry02.mp3
-					self.Owner:EmitSound("vo/mvm/norm/engineer_mvm_battlecry0"..voiceclipnum..".mp3",75,100,1,CHAN_VOICE)
+					self.Owner:EmitSound("vo/mvm/norm/engineer_mvm_battlecry0" .. voiceclipnum .. ".mp3", 75, 100, 1, CHAN_VOICE)
 				end
-				ScavDataCollectCopy("models/player/hwm/engineer.mdl","models/player/engineer.mdl")
+				ScavDataCollectCopy("models/player/hwm/engineer.mdl", "models/player/engineer.mdl")
 				
 				--Medic
-				ScavData.CollectFuncs["models/player/medic.mdl"] = function(self,ent)
-					return {{"models/weapons/w_models/w_syringegun.mdl",40,ent:GetSkin()},
-							{"models/weapons/c_models/c_medigun/c_medigun.mdl", SCAV_SHORT_MAX, math.fmod(ent:GetSkin(),2)},
-							{"models/items/medkit_medium.mdl",1,0}}
+				ScavData.CollectFuncs["models/player/medic.mdl"] = function(self, ent)
+					return {{"models/weapons/w_models/w_syringegun.mdl", 40, ent:GetSkin()},
+							{"models/weapons/c_models/c_medigun/c_medigun.mdl", SCAV_SHORT_MAX, math.fmod(ent:GetSkin(), 2)},
+							{"models/items/medkit_medium.mdl", 1, 0}}
 				end
 				ScavData.CollectFuncs["models/bots/medic/bot_medic.mdl"] = ScavData.CollectFuncs["models/player/medic.mdl"]
 
-				ScavData.CollectFX["models/player/medic.mdl"] = function(self,ent)
-					self.Owner:EmitSound("vo/medic_battlecry0"..math.random(6)..".mp3",75,100,1,CHAN_VOICE)
+				ScavData.CollectFX["models/player/medic.mdl"] = function(self, ent)
+					self.Owner:EmitSound("vo/medic_battlecry0" .. math.random(6) .. ".mp3", 75, 100, 1, CHAN_VOICE)
 				end
-				ScavData.CollectFX["models/bots/medic/bot_medic.mdl"] = function(self,ent)
-					self.Owner:EmitSound("vo/mvm/norm/medic_mvm_battlecry0"..math.random(6)..".mp3",75,100,1,CHAN_VOICE)
+				ScavData.CollectFX["models/bots/medic/bot_medic.mdl"] = function(self, ent)
+					self.Owner:EmitSound("vo/mvm/norm/medic_mvm_battlecry0" .. math.random(6) .. ".mp3", 75, 100, 1, CHAN_VOICE)
 				end
-				ScavDataCollectCopy("models/player/hwm/medic.mdl","models/player/medic.mdl")
+				ScavDataCollectCopy("models/player/hwm/medic.mdl", "models/player/medic.mdl")
 				
 				--Sniper
-				ScavData.CollectFuncs["models/player/sniper.mdl"] = function(self,ent)
-					local items = {{"models/weapons/c_models/c_machete/c_machete.mdl",1,0}}
+				ScavData.CollectFuncs["models/player/sniper.mdl"] = function(self, ent)
+					local items = {{"models/weapons/c_models/c_machete/c_machete.mdl", 1, 0}}
 					local pickone = math.random(2)
 					if pickone == 1 then
-						table.insert(items,1,{"models/weapons/w_models/w_sniperrifle.mdl",25,0})
+						table.insert(items, 1, {"models/weapons/w_models/w_sniperrifle.mdl", 25, 0})
 					else
-						table.insert(items,1,{"models/weapons/w_models/w_arrow.mdl",3,0})
+						table.insert(items, 1, {"models/weapons/w_models/w_arrow.mdl", 3, 0})
 					end
 					pickone = math.random(2)
 					if pickone == 1 then
-						table.insert(items,2,{"models/weapons/w_models/w_smg.mdl",25,0})
+						table.insert(items, 2, {"models/weapons/w_models/w_smg.mdl", 25, 0})
 					else
-						table.insert(items,2,{"models/weapons/c_models/urinejar.mdl",1,0})
+						table.insert(items, 2, {"models/weapons/c_models/urinejar.mdl", 1, 0})
 					end
 					return items
 				end
 				ScavData.CollectFuncs["models/bots/sniper/bot_sniper.mdl"] = ScavData.CollectFuncs["models/player/sniper.mdl"]
 
-				ScavData.CollectFX["models/player/sniper.mdl"] = function(self,ent)
-					self.Owner:EmitSound("vo/sniper_battlecry0"..math.random(6)..".mp3",75,100,1,CHAN_VOICE)
+				ScavData.CollectFX["models/player/sniper.mdl"] = function(self, ent)
+					self.Owner:EmitSound("vo/sniper_battlecry0" .. math.random(6) .. ".mp3", 75, 100, 1, CHAN_VOICE)
 				end
-				ScavData.CollectFX["models/bots/sniper/bot_sniper.mdl"] = function(self,ent)
-					self.Owner:EmitSound("vo/mvm/norm/sniper_mvm_battlecry0"..math.random(6)..".mp3",75,100,1,CHAN_VOICE)
+				ScavData.CollectFX["models/bots/sniper/bot_sniper.mdl"] = function(self, ent)
+					self.Owner:EmitSound("vo/mvm/norm/sniper_mvm_battlecry0" .. math.random(6) .. ".mp3", 75, 100, 1, CHAN_VOICE)
 				end
-				ScavDataCollectCopy("models/player/hwm/sniper.mdl","models/player/sniper.mdl")
+				ScavDataCollectCopy("models/player/hwm/sniper.mdl", "models/player/sniper.mdl")
 				
 				--Spy
-				ScavData.CollectFuncs["models/player/spy.mdl"] = function(self,ent)
-					return {{"models/weapons/c_models/c_revolver/c_revolver.mdl",6,0},
-							{"models/weapons/w_models/w_sapper.mdl",8,0},
-							{"models/weapons/w_models/w_knife.mdl",1,0},
-							{"models/weapons/c_models/c_spy_watch.mdl",30,0}}
+				ScavData.CollectFuncs["models/player/spy.mdl"] = function(self, ent)
+					return {{"models/weapons/c_models/c_revolver/c_revolver.mdl", 6, 0},
+							{"models/weapons/w_models/w_sapper.mdl", 8, 0},
+							{"models/weapons/w_models/w_knife.mdl", 1, 0},
+							{"models/weapons/c_models/c_spy_watch.mdl", 30, 0}}
 				end
 				ScavData.CollectFuncs["models/bots/spy/bot_spy.mdl"] = ScavData.CollectFuncs["models/player/spy.mdl"]
 
-				ScavData.CollectFX["models/player/spy.mdl"] = function(self,ent)
-					self.Owner:EmitSound("vo/spy_battlecry0"..math.random(4)..".mp3",75,100,1,CHAN_VOICE)
+				ScavData.CollectFX["models/player/spy.mdl"] = function(self, ent)
+					self.Owner:EmitSound("vo/spy_battlecry0" .. math.random(4) .. ".mp3", 75, 100, 1, CHAN_VOICE)
 				end
-				ScavData.CollectFX["models/bots/spy/bot_spy.mdl"] = function(self,ent)
-					self.Owner:EmitSound("vo/mvm/norm/spy_mvm_battlecry0"..math.random(4)..".mp3",75,100,1,CHAN_VOICE)
+				ScavData.CollectFX["models/bots/spy/bot_spy.mdl"] = function(self, ent)
+					self.Owner:EmitSound("vo/mvm/norm/spy_mvm_battlecry0" .. math.random(4) .. ".mp3", 75, 100, 1, CHAN_VOICE)
 				end
 				ScavData.CollectFuncs["models/player/hwm/spy.mdl"] = ScavData.CollectFuncs["models/player/spy.mdl"]
 				
 				--Human Grunt
-				ScavData.CollectFuncs["models/hgrunt.mdl"] = function(self,ent)
+				ScavData.CollectFuncs["models/hgrunt.mdl"] = function(self, ent)
 					if ent:GetBodygroup(2) == 0 then
-						return {{"models/w_9mmar.mdl",25,0}}
+						return {{"models/w_9mmar.mdl", 25, 0}}
 					elseif ent:GetBodygroup(2) == 1 then
-						return {{"models/shotgunshell.mdl",8,0}}
+						return {{"models/shotgunshell.mdl", 8, 0}}
 					else
-						return {{"models/w_grenade.mdl",1,0}}
+						return {{"models/w_grenade.mdl", 1, 0}}
 					end
 				end
-				ScavData.CollectFX["models/hgrunt.mdl"] = function(self,ent)
-					self.Owner:EmitSound("hgrunt/bastard!.wav",75,100,.125,CHAN_VOICE)
+				ScavData.CollectFX["models/hgrunt.mdl"] = function(self, ent)
+					self.Owner:EmitSound("hgrunt/bastard!.wav", 75, 100, 0.125, CHAN_VOICE)
 				end
 
 			end
