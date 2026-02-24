@@ -5536,7 +5536,7 @@ local medigunscreen = function(self, item)
 
 	--Draw patient name
 	draw.DrawText(tab.targetname, fontsize, 128, vpos, col, TEXT_ALIGN_CENTER)
-	
+
 	--Draw info for a valid, living target
 	if living then
 		--Draw bar outline
@@ -5611,7 +5611,6 @@ end
 				function tab.FireFunc(self, item)
 					if SERVER then
 						self.ef_medigun = self:CreateToggleEffect("scav_stream_medigun")
-						self.ef_medigun:SetBlue((item.data % 2 == 1))
 						self:SetNWFiremodeEnt(NULL)
 					else
 						tab.targetname = nil

@@ -8,11 +8,7 @@ ENT.PosOffset = Vector(12, 0, 0)
 
 function ENT:OnInit()
 	if CLIENT then
-		if self:GetBlue() then
-			self.ParticleName = "medicgun_beam_blue"
-		else
-			self.ParticleName = "medicgun_beam_red"
-		end
+		self.ParticleName = "scav_medigun_beam"
 	else
 		self.LastHeal = CurTime()
 		self.LastBeep = self.LastHeal
@@ -21,7 +17,6 @@ end
 
 function ENT:OnSetupDataTables()
 	self:NetworkVar("Entity", "EndEnt")
-	self:NetworkVar("Bool", "Blue")
 end
 
 function ENT:OnKill()
@@ -31,8 +26,7 @@ function ENT:OnKill()
 end
 
 if SERVER then
-	PrecacheParticleSystem("medicgun_beam_red")
-	PrecacheParticleSystem("medicgun_beam_blue")
+	PrecacheParticleSystem("scav_medigun_beam")
 
 	function ENT:BeginSound()
 		if not self.sound then
@@ -160,8 +154,25 @@ if CLIENT then
 		local cpoint1 = {}
 			cpoint1.entity = cmodel
 			cpoint1.attachtype = PATTACH_ABSORIGIN_FOLLOW
+		--PATTACH_WORLDORIGIN doesn't wanna work, so whatever
+		local cmodel2 = ClientsideModel("models/props_junk/popcan01a.mdl")
+			cmodel2:AddEffects(bit.bor(EF_NODRAW, EF_NOSHADOW))
+			--figure out the color we want
+			local colorpos, ownteam = vector_origin, self:GetOwner().Owner:Team()
+			--we're on a team, use that color
+			if ownteam ~= TEAM_UNASSIGNED then
+				colorpos = Vector(team.GetColor(ownteam):Unpack())
+			--no team, player color instead
+			else
+				colorpos = self:GetOwner().Owner:GetPlayerColor() * 255
+			end
+			cmodel2:SetPos(colorpos)
+		local cpoint2 = {}
+			cpoint2.entity = cmodel2
+			cpoint2.attachtype = PATTACH_ABSORIGIN
 			--print(self, ent, cmodel);
-		self:CreateParticleEffect(self.ParticleName, {cpoint0, cpoint1})
+		self:CreateParticleEffect(self.ParticleName, {cpoint0, cpoint1, cpoint2})
+		timer.Simple(0, function() if IsValid(cmodel2) then cmodel2:Remove() end end)
 	end
 	
 	function ENT:StopBeam()

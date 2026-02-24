@@ -215,7 +215,7 @@ game.AddParticles("particles/scav_particles94.pcf")
 game.AddParticles("particles/scav_weather.pcf")
 game.AddParticles("particles/water_impacts.pcf") --blast shower
 if TF2 then
-	game.AddParticles("particles/medicgun_beam.pcf") --medigun
+	game.AddParticles("particles/scav_medigun_beam.pcf") --medigun
 	game.AddParticles("particles/cinefx.pcf") --payload
 	game.AddParticles("particles/flamethrower.pcf") --fireball
 --	game.AddParticles("particles/teleport_status.pcf")
