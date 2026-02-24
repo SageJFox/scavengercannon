@@ -1108,6 +1108,7 @@ if CLIENT then
 	surface.CreateFont("ScavScreenFont", {font = "Trebuchet MS", size = 40, weight = 900, antialiasing = true, additive = false, outlined = false, blur = false})
 	surface.CreateFont("ScavScreenFontSm", {font = "Trebuchet MS", size = 32, weight = 900, antialiasing = true, additive = false, outlined = false, blur = false})
 	surface.CreateFont("ScavScreenFontSmX", {font = "Trebuchet MS", size = 24, weight = 900, antialiasing = true, additive = false, outlined = false, blur = false})
+	surface.CreateFont("ScavScreenFontSmXX", {font = "Trebuchet MS", size = 20, weight = 900, antialiasing = true, additive = false, outlined = false, blur = false})
 
 	alpha = 12
 	greenscr = Color(108, 172, 24, alpha)
@@ -1268,10 +1269,6 @@ if CLIENT then
 		--render.ClearRenderTarget(SCAV_RTSCREEN, col_renderclear)
 		render.SetViewPort(0, 0, 256, 256)
 		cam.Start2D()
-			local item = nil
-			if IsValid(self.inv.items[1]) then
-				item = ScavData.models[self.inv.items[1].ammo]
-			end
 			--Locked screen
 			if self:IsLocked() then
 				self:DrawLocked()
@@ -1293,7 +1290,12 @@ if CLIENT then
 				self:DrawNice()
 			--Charge Attack Firing screen
 			elseif self.ChargeAttack then
-				self:DrawFiring()
+				--Screen Draw item function
+				if self.inv.items[1]:GetFiremodeTable().ScreenFiring then
+					self.inv.items[1]:GetFiremodeTable().ScreenFiring(self, self:GetCurrentItem())
+				else
+					self:DrawFiring()
+				end
 			--Screen Draw Override Idle Hook
 			elseif hook.Run("ScavScreenDrawOverrideIdle", self, true) and (self.nextfire <= CurTime() or idle) then
 				hook.Run("ScavScreenDrawOverrideIdle", self)

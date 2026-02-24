@@ -5421,6 +5421,169 @@ PrecacheParticleSystem("scav_exp_plasma")
 	--TF2 Medigun
 ==============================================================================================]]--
 
+local green = GetConVar("cl_scav_colorblindmode"):GetBool() and table.Copy(greenscr_colorblind) or table.Copy(greenscr)
+local statusicons = {}
+
+if SERVER then
+	util.AddNetworkString("ScavFetchNPCName")
+
+	--Get NPC menu names off the server
+	net.Receive("ScavFetchNPCName", function(len, ply)
+		local target = net.ReadEntity()
+		if not IsValid(target) or not (target:IsNPC() or target:IsNextBot()) then return end
+
+		local npcTable = list.GetEntry("NPC", target.NPCName)
+		if not npcTable or not npcTable.Name then
+			return
+		end
+
+		net.Start("ScavFetchNPCName")
+			net.WriteEntity(target)
+			net.WriteString(npcTable.Name)
+		net.Send(ply)
+	end)
+else
+	net.Receive("ScavFetchNPCName", function(len)
+		local target = net.ReadEntity()
+		if not IsValid(target) or not (target:IsNPC() or target:IsNextBot()) then return end
+		target.NPCName = string.upper(language.GetPhrase(net.ReadString()))
+	end)
+
+	--bring screen green's alpha up to snuff
+	green.a = 128
+
+	--create screen-compatible versions of our status icons
+	for k, _ in pairs(Status2.AllEffects) do
+		statusicons[k] = CreateMaterial("ScavScreenStatus_" .. k, "UnlitGeneric", {
+			["$basetexture"] = "hud/status/" .. k,
+			--["$alphatest"] = 1,
+			--["$alphatestreference"] = 0.4,
+			["$translucent"] = 1,
+			["$vertexcolor"] = 1,
+			["$vertexalpha"] = 1,
+			["$ignorez"] = 1,
+		})
+	end
+end
+
+--Status screen for our patient. Continues working even if the beam is broken.
+local medigunscreen = function(self, item)
+	if not IsValid(self) or not item then return end
+
+	local tab = item.GetFiremodeTable and item:GetFiremodeTable() or nil
+
+	if not tab or self:ScreenCooldown() then
+		self:DrawCooldown()
+		return
+	end
+
+	local target = self:GetNWFiremodeEnt()
+	local validtarget = IsValid(target)
+
+
+	if not GetConVar("cl_scav_colorblindmode"):GetBool() then
+		DrawScreenBKG(validtarget and greenscr or redscr)
+	else
+		DrawScreenBKG(validtarget and greenscr_colorblind or redscr_colorblind)
+	end
+
+	--Get patient's name
+	if not tab.targetname or (validtarget and tab.targetent ~= target) then
+		--Storing name/ent on the table lets us cache the results, both for not constantly pulling them and also for showing the dead screen for NPCs
+		tab.targetname = language.GetPhrase("scav.scavcan.unknown")
+		tab.targetent = target
+		if validtarget then
+			if target:IsPlayer() then
+				tab.targetname = string.upper(target:Nick())
+			else
+				if target.NPCName == nil then
+					net.Start("ScavFetchNPCName")
+						net.WriteEntity(target)
+					net.SendToServer()
+				end
+				tab.targetname = string.upper(language.GetPhrase(target:GetClass()))
+			end
+		end
+		--try to get NPC name
+		timer.Simple(0, function()
+			if not IsValid(self) or not IsValid(target) or target:IsPlayer() then return end
+			if target.NPCName == nil then return end
+			tab.targetname = target.NPCName
+		end)
+	end
+
+	local living = (validtarget and (not target:IsPlayer() or target:Alive()))
+
+	--Determine flash
+	local col = color_black
+	local _, flashtime = math.modf(CurTime())
+	if not living and flashtime < 0.5 then
+		col = color_white
+	end
+	surface.SetDrawColor(col:Unpack())
+
+	--Adjust size of name label
+	local vpos = 12
+	local fontsize = "ScavScreenFontSm"
+	if #tab.targetname > 10 then
+		fontsize = "ScavScreenFontSmX"
+		vpos = vpos + 4
+	end
+	if #tab.targetname > 14 then
+		fontsize = "ScavScreenFontSmXX"
+		vpos = vpos + 2
+	end
+
+	--Draw patient name
+	draw.DrawText(tab.targetname, fontsize, 128, vpos, col, TEXT_ALIGN_CENTER)
+	
+	--Draw info for a valid, living target
+	if living then
+		--Draw bar outline
+		draw.DrawText(language.GetPhrase("scav.scavcan.health"), "ScavScreenFontSm", 46, 40, col, TEXT_ALIGN_CENTER)
+		surface.DrawOutlinedRect(64, 44, 128, 24, 2)
+		--Health bar
+		local health = target:Health() / math.max(1, target:GetMaxHealth())
+		local low = health < 0.2
+		surface.DrawRect(68, 48, 120 * math.min(1, health), 16)
+		--HP low warning
+		if low and flashtime > 0.5 then
+			surface.DrawRect(68, 48, 23, 16)
+			draw.DrawText("!!!", "ScavScreenFontSmX", 69, 44, green, TEXT_ALIGN_LEFT)
+		end
+		--Armor (border)
+		if target:IsPlayer() then
+			local armor, maxarmor = target:Armor(), math.max(1, target:GetMaxArmor())
+			local armorratio = math.min(1, armor / maxarmor)
+			if armor > 0 then
+				--near end
+				surface.DrawRect(62, 42, 4, 28)
+				--middle
+				surface.DrawRect(62, 41, 132 * armorratio, 4)
+				surface.DrawRect(62, 67, 132 * armorratio, 4)
+				--full end
+				if armor >= maxarmor then
+					surface.DrawRect(190, 42, 4, 28)
+				end
+			end
+		end
+		--Max health
+		local bigmax = target:GetMaxHealth() >= 100
+		draw.DrawText(math.max(1, target:GetMaxHealth()), bigmax and "ScavScreenFontSmX" or "ScavScreenFontSm", 194, bigmax and 44 or 40, col, TEXT_ALIGN_LEFT)
+		--Statuses (left black)
+		if target.StatusTable then
+			for k, v in ipairs(target.StatusTable) do
+				surface.SetMaterial(statusicons[v.Name])
+				surface.DrawTexturedRect(26 + 22 * k, 70, 20, 20)
+			end
+			draw.NoTexture()
+		end
+	--Inform that we sucked as a medic, or switched to no target (not exclusive or)
+	else
+		draw.DrawText(tab.targetname == language.GetPhrase("scav.scavcan.unknown") and language.GetPhrase("scav.scavcan.notarget") or language.GetPhrase("scav.scavcan.death"), "ScavScreenFont", 128, 20 + vpos, col, TEXT_ALIGN_CENTER)
+	end
+end
+
 		do
 			local tab = {}
 				tab.Name = "#scav.scavcan.medigun"
@@ -5448,10 +5611,18 @@ PrecacheParticleSystem("scav_exp_plasma")
 				function tab.FireFunc(self, item)
 					if SERVER then
 						self.ef_medigun = self:CreateToggleEffect("scav_stream_medigun")
-						self.ef_medigun:Setblue((item.data % 2 == 1))
+						self.ef_medigun:SetBlue((item.data % 2 == 1))
+						self:SetNWFiremodeEnt(NULL)
+					else
+						tab.targetname = nil
+						tab.targetent = nil
 					end
 					self:SetChargeAttack(tab.ChargeAttack, item)
 					return false
+				end
+				if CLIENT then
+					tab.Screen = medigunscreen
+					tab.ScreenFiring = medigunscreen
 				end
 				--TF2
 				ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_medigun/c_medigun.mdl", SCAV_SHORT_MAX)
