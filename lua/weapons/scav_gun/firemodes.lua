@@ -1257,6 +1257,131 @@ if SERVER then
 	util.AddNetworkString("scav_hackdone")
 end
 
+local wheatleytime = 2
+
+local hackfail = {
+	[SCAV_HACK_KB] = {"hl1/fvox/fuzz.wav"},
+}
+--Portal 2 lines are kinda weak picks compared to the TF2 ones specifically made for "hacking"
+--(plus TF2's free to play, people are probably gonna have it mounted over Portal 2)
+if TF2 then
+	hackfail[SCAV_HACK_WHEATLEY] = {
+		"vo/items/wheatley_sapper/wheatley_sapper_putback01.mp3",
+		"vo/items/wheatley_sapper/wheatley_sapper_putback02.mp3",
+		"vo/items/wheatley_sapper/wheatley_sapper_putback08.mp3",
+		"vo/items/wheatley_sapper/wheatley_sapper_putback12.mp3",
+		"vo/items/wheatley_sapper/wheatley_sapper_putback17.mp3",
+		"vo/items/wheatley_sapper/wheatley_sapper_putback26.mp3",
+		"vo/items/wheatley_sapper/wheatley_sapper_putback27.mp3",
+		"vo/items/wheatley_sapper/wheatley_sapper_putback44.mp3",
+		"vo/items/wheatley_sapper/wheatley_sapper_putback47.mp3",
+		"vo/items/wheatley_sapper/wheatley_sapper_putback48.mp3",
+		"vo/items/wheatley_sapper/wheatley_sapper_putback49.mp3"
+	}
+elseif PORTAL2 then
+	hackfail[SCAV_HACK_WHEATLEY] = {
+		"vo/wheatley/bw_a4_2nd_first_test_solve05.wav",
+		"vo/wheatley/bw_a4_finale01_killyou01.wav",
+		"vo/wheatley/bw_a4_finale01_smash02.wav",
+		"vo/wheatley/bw_a4_finale02_beamtrap_earlyexita01.wav",
+		"vo/wheatley/bw_a4_finale02_beamtrap_escape01.wav",
+		"vo/wheatley/bw_a4_paradox02.wav",
+		"vo/wheatley/bw_finale04_through_portal01.wav",
+		"vo/wheatley/bw_sp_a2_core_pitpunch03.wav",
+		"vo/wheatley/bw_sp_a4_jump_polarity_intro01.wav",
+		"vo/wheatley/bw_sp_a4_tb_wall_button_intro01.wav",
+		"vo/wheatley/bw_sp_a4_tb_wall_button_not_solve01.wav",
+		"vo/wheatley/bw_sp_a4_tb_wall_button_not_solve05.wav",
+		"vo/wheatley/bw_sp_a4_tb_wall_button_solve06.wav",
+		"vo/wheatley/bw_sp_a4_tb_wall_button_solve08.wav",
+		"vo/wheatley/bw_sp_a4_tb_wall_button_solve09.wav",
+		"vo/wheatley/demospherebreakerlift02.wav",
+		"vo/wheatley/demospherebreakerlift19.wav",
+		"vo/wheatley/demospherethud03.wav",
+		"vo/wheatley/demospherethud04.wav",
+		"vo/wheatley/fgb_plugin_nags05.wav",
+		"vo/wheatley/fgb_plugin_nags06.wav",
+		"vo/wheatley/fgb_plugin_nags07.wav",
+		"vo/wheatley/fgb_plugin_nags08.wav",
+		"vo/wheatley/fgb_plugin_nags09.wav",
+		"vo/wheatley/fgb_plugin_nags11.wav",
+	}
+end
+hackfail = setmetatable(hackfail, {__index = function() return {"buttons/combine_button_locked.wav"} end})
+
+local hacksuccess = {
+	[SCAV_HACK_KB] = {"ambient/machines/keyboard7_clicks_enter.wav"},
+}
+if TF2 then
+	hacksuccess[SCAV_HACK_WHEATLEY] = {
+		--thanks valve
+		"vo/items/wheatley_sapper/wheatley_sapper_hacked01.mp3",
+		"vo/items/wheatley_sapper/wheatley_sapper_hacked02.mp3",
+		"vo/items/wheatley_sapper/wheatley_sapper_hacked03.mp3",
+		"vo/items/wheatley_sapper/wheatley_sapper_hacked04.mp3",
+		"vo/items/wheatley_sapper/wheatley_sapper_hacked05.mp3",
+		"vo/items/wheatley_sapper/wheatley_sapper_hacked06.mp3",
+		"vo/items/wheatley_sapper/wheatley_sapper_hacked07.mp3",
+		"vo/items/wheatley_sapper/wheatley_sapper_hacked08.mp3",
+		"vo/items/wheatley_sapper/wheatley_sapper_hacked09.mp3",
+		"vo/items/wheatley_sapper/wheatley_sapper_hacked10.mp3",
+		"vo/items/wheatley_sapper/wheatley_sapper_hacked11.mp3",
+		"vo/items/wheatley_sapper/wheatley_sapper_hacked13.mp3",
+		"vo/items/wheatley_sapper/wheatley_sapper_hacked14.mp3",
+		"vo/items/wheatley_sapper/wheatley_sapper_hacked15.mp3",
+		"vo/items/wheatley_sapper/wheatley_sapper_hacked16.mp3",
+		"vo/items/wheatley_sapper/wheatley_sapper_hacked17.mp3",
+		"vo/items/wheatley_sapper/wheatley_sapper_hacked18.mp3",
+		"vo/items/wheatley_sapper/wheatley_sapper_hacked19.mp3",
+		"vo/items/wheatley_sapper/wheatley_sapper_hacked20.mp3",
+		"vo/items/wheatley_sapper/wheatley_sapper_hacked21.mp3",
+		"vo/items/wheatley_sapper/wheatley_sapper_hacked22.mp3",
+		"vo/items/wheatley_sapper/wheatley_sapper_hacked23.mp3",
+		"vo/items/wheatley_sapper/wheatley_sapper_hacked24.mp3",
+		"vo/items/wheatley_sapper/wheatley_sapper_hacked25.mp3",
+		"vo/items/wheatley_sapper/wheatley_sapper_hacked26.mp3",
+		"vo/items/wheatley_sapper/wheatley_sapper_hacked27.mp3",
+		"vo/items/wheatley_sapper/wheatley_sapper_hacked28.mp3",
+		"vo/items/wheatley_sapper/wheatley_sapper_hacked29.mp3",
+		"vo/items/wheatley_sapper/wheatley_sapper_hacked32.mp3",
+		"vo/items/wheatley_sapper/wheatley_sapper_hacked33.mp3",
+		"vo/items/wheatley_sapper/wheatley_sapper_hacked34.mp3",
+		"vo/items/wheatley_sapper/wheatley_sapper_hacked35.mp3",
+		"vo/items/wheatley_sapper/wheatley_sapper_hacked37.mp3",
+		"vo/items/wheatley_sapper/wheatley_sapper_hacked38.mp3",
+		"vo/items/wheatley_sapper/wheatley_sapper_hacked40.mp3",
+		"vo/items/wheatley_sapper/wheatley_sapper_hacked41.mp3",
+		"vo/items/wheatley_sapper/wheatley_sapper_hacked42.mp3",
+		"vo/items/wheatley_sapper/wheatley_sapper_hacked43.mp3",
+		"vo/items/wheatley_sapper/wheatley_sapper_hacked44.mp3",
+		"vo/items/wheatley_sapper/wheatley_sapper_hacked47.mp3",
+		"vo/items/wheatley_sapper/wheatley_sapper_hacked48.mp3"
+	}
+elseif PORTAL2 then
+	hacksuccess[SCAV_HACK_WHEATLEY] = {
+		"vo/wheatley/bw_a4_2nd_first_test_solve03.wav",
+		"vo/wheatley/bw_a4_big_idea01.wav",
+		"vo/wheatley/bw_a4_finale02_trapintro02.wav",
+		"vo/wheatley/bw_a4_finale03_playerdies01.wav",
+		"vo/wheatley/bw_a4_finale03_speech02.wav",
+		"vo/wheatley/bw_a4_paradox05.wav",
+		"vo/wheatley/bw_a4_paradox09.wav",
+		"vo/wheatley/bw_a4_paradox11.wav",
+		"vo/wheatley/bw_a4_test_solve_reacs_happy05.wav",
+		"vo/wheatley/bw_fgb_heel_turn10.wav",
+		"vo/wheatley/bw_finale4_hackworked01.wav",
+		"vo/wheatley/bw_fire_lift02.wav",
+		"vo/wheatley/bw_fire_lift03.wav",
+		"vo/wheatley/bw_sp_a2_core_actually06.wav",
+		"vo/wheatley/bw_sp_a2_core_heelturn06.wav",
+		"vo/wheatley/bw_sp_a2_core_potato01.wav",
+		"vo/wheatley/bw_sp_a2_core_potato04.wav",
+		"vo/wheatley/bw_sp_a4_jump_polarity_intro04.wav",
+		"vo/wheatley/bw_sp_a4_speed_tb_catch_intro04.wav",
+		"vo/wheatley/bw_sp_a4_tb_wall_button_intro07.wav",
+	}
+end
+setmetatable(hacksuccess, {__index = function() return {"buttons/combine_button1.wav"} end})
 	do
 		local tab = {}
 			tab.Name = "#scav.scavcan.remote"
@@ -1268,6 +1393,9 @@ end
 				--[[keyboard]]["models/props_c17/computer01_keyboard.mdl"] = 1,
 				["models/props/cs_office/computer_keyboard.mdl"] = 1,
 				["models/props/kb_mouse/keyboard.mdl"] = 1,
+				--[[wheatley]]["models/weapons/c_models/c_p2rec/c_p2rec.mdl"] = 2,
+				["models/npcs/personality_sphere/personality_sphere.mdl"] = 2,
+				["models/npcs/personality_sphere/personality_sphere_skins.mdl"] = 2,
 			}
 			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			local tracep = {}
@@ -1355,15 +1483,17 @@ end
 			interactions["prop_vehicle_jeep_old"] = interactions["prop_vehicle_jeep"]
 			interactions["prop_vehicle_airboat"] = interactions["prop_vehicle_jeep"]
 			function tab.ChargeAttack(self, item)
+				local ident = tab.Identify[item.ammo]
 				self.HackingProgress = (self.HackingProgress or 0) + 0.05
 				self.BarrelRotation = self.BarrelRotation + math.random(-17, 17)
 				if SERVER then
+					local wheatleyslow = ident == SCAV_HACK_WHEATLEY and wheatleytime or 1
 					local dist = 9999999
 					if IsValid(self.HackTarget) then
 						dist = self.Owner:GetShootPos():DistToSqr(self.HackTarget:GetPos())
 					end
-					if not self.Owner:KeyDown(IN_ATTACK) or (self.HackingProgress > self.HackTime) or not IsValid(self.HackTarget) or dist > 1000000 then
-						local success = false
+					if not self.Owner:KeyDown(IN_ATTACK) or (self.HackingProgress > self.HackTime * wheatleyslow) or not IsValid(self.HackTarget) or dist > 1000000 then
+						self.HackSuccess = false
 						if IsValid(self.ef_radio) then
 							self.ef_radio:Kill()
 						end
@@ -1371,10 +1501,10 @@ end
 						--	self.ef_wires:Kill()
 						--end
 						if dist > 1000000 then
-							self:EmitSound(tab.Identify[item.ammo] == 0 and "buttons/combine_button_locked.wav" or "hl1/fvox/fuzz.wav")
-						elseif IsValid(self.HackTarget) and (self.HackingProgress > self.HackTime) then
-							self:EmitSound(tab.Identify[item.ammo] == 0 and "buttons/combine_button1.wav" or "ambient/machines/keyboard7_clicks_enter.wav")
-							success = true
+							self:EmitSound(hackfail[ident][math.random(#hackfail[ident])])
+						elseif IsValid(self.HackTarget) and (self.HackingProgress > self.HackTime * wheatleyslow) then
+							self:EmitSound(hacksuccess[ident][math.random(#hacksuccess[ident])])
+							self.HackSuccess = true
 							local interaction = interactions[string.lower(self.HackTarget:GetClass())]
 							if interaction then
 								interaction.Action(self, self.HackTarget)
@@ -1382,24 +1512,24 @@ end
 								self.HackTarget:Fire("Use", nil, 0)
 							end
 						else
-							self:EmitSound(tab.Identify[item.ammo] == 0 and "buttons/combine_button_locked.wav" or "hl1/fvox/fuzz.wav")
+							self:EmitSound(hackfail[ident][math.random(#hackfail[ident])])
 						end
 						self:SetChargeAttack()
 						self.HackingProgress = 0
 						net.Start("scav_hackdone")
 							net.WriteEntity(self)
-							net.WriteBool(success)
+							net.WriteBool(self.HackSuccess)
 						net.Send(self.Owner)
 						return 1
 					end
 				else
 					net.Receive("scav_hackdone", function()
 						local wep = net.ReadEntity()
-						local success = net.ReadBool()
+						self.HackSuccess = net.ReadBool()
 						if IsValid(wep) then
 							wep:SetChargeAttack()
 							wep.HackingProgress = 0
-							wep:EmitSound(success and (tab.Identify[item.ammo] == 0 and "buttons/combine_button1.wav" or "ambient/machines/keyboard7_clicks_enter.wav") or (tab.Identify[item.ammo] == 0 and "buttons/combine_button_locked.wav" or "hl1/fvox/fuzz.wav"))
+							wep:EmitSound(self.HackSuccess and (hacksuccess[ident][math.random(#hacksuccess[ident])]) or hackfail[ident][math.random(#hackfail[ident])])
 							wep.nextfire = CurTime() + 1 * wep:GetCooldownScale()
 						end
 					end)
@@ -1407,23 +1537,25 @@ end
 				return 0.05
 			end
 			function tab.FireFunc(self, item)
+				local ident = tab.Identify[item.ammo]
 				tracep.start = self.Owner:GetShootPos()
 				tracep.endpos = tracep.start + self.Owner:GetAimVector() * 1000
 				tracep.filter = self.Owner
 				local tr = util.TraceHull(tracep)
 				if IsValid(tr.Entity) then
+					local wheatleyslow = ident == SCAV_HACK_WHEATLEY and wheatleytime or 1
 					self.HackTarget = tr.Entity
 					local interaction = interactions[string.lower(self.HackTarget:GetClass())]
-					self.HackTime = interaction and interaction.HackTime or 5
+					self.HackTime = (interaction and interaction.HackTime or 5) * wheatleyslow
 					self:SendWeaponAnim(ACT_VM_FIDGET)
 					tab.Cooldown = 0.05
 				else
-					self:EmitSound(tab.Identify[item.ammo] == 0 and "buttons/combine_button_locked.wav" or "hl1/fvox/fuzz.wav")
+					self:EmitSound(hackfail[ident][math.random(#hackfail[ident])])
 					tab.Cooldown = 1
 					return false
 				end
 				if SERVER then
-					self.ef_radio = self:CreateToggleEffect(tab.Identify[item.ammo] == 0 and "scav_stream_radio" or "scav_stream_keyboard")
+					self.ef_radio = self:CreateToggleEffect("scav_stream_radio", ident)
 					--self.ef_wires = self:CreateToggleEffect("scav_stream_cord")
 					--if IsValid(self.ef_wires) and IsValid(self.HackTarget) then
 					--	self.ef_wires:Setendent(self.HackTarget)
@@ -1476,11 +1608,14 @@ end
 		ScavData.RegisterFiremode(tab, "models/weapons/w_models/w_pda_engineer.mdl", SCAV_SHORT_MAX)
 		ScavData.RegisterFiremode(tab, "models/props_spytech/satellite_dish001.mdl", SCAV_SHORT_MAX)
 		ScavData.RegisterFiremode(tab, "models/props_powerhouse/emergency_launch_button.mdl", SCAV_SHORT_MAX)
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_p2rec/c_p2rec.mdl", SCAV_SHORT_MAX)
 		--L4D/2
 		ScavData.RegisterFiremode(tab, "models/props_junk/garbage_remotecontrol01a.mdl", SCAV_SHORT_MAX)
 		ScavData.RegisterFiremode(tab, "models/props_rooftop/satellitedish_large01.mdl", SCAV_SHORT_MAX)
 		--Portal/2
 		ScavData.RegisterFiremode(tab, "models/props/kb_mouse/keyboard.mdl", SCAV_SHORT_MAX)
+		ScavData.RegisterFiremode(tab, "models/npcs/personality_sphere/personality_sphere.mdl", SCAV_SHORT_MAX)
+		ScavData.RegisterFiremode(tab, "models/npcs/personality_sphere/personality_sphere_skins.mdl", SCAV_SHORT_MAX)
 		--ASW
 		ScavData.RegisterFiremode(tab, "models/props/utilities/satellite_dish001a.mdl", SCAV_SHORT_MAX)
 		ScavData.RegisterFiremode(tab, "models/props/utilities/satellite_dish002a.mdl", SCAV_SHORT_MAX)
@@ -1853,7 +1988,6 @@ end
 		ScavData.RegisterFiremode(tab, "models/workshop_partner/weapons/c_models/c_sd_sapper/c_sd_sapper.mdl", 8)
 		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_sapper/c_sapper.mdl")
 		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_sapper/c_sapper_xmas.mdl", 8)
-		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_p2rec/c_p2rec.mdl", 8)
 		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_dex_arm/c_dex_arm.mdl", 8)
 		ScavData.RegisterFiremode(tab, "models/workshop_partner/weapons/c_models/c_dex_arm/c_dex_arm.mdl", 8)
 		ScavData.RegisterFiremode(tab, "models/workshop_partner/weapons/c_models/c_sd_neonsign/c_sd_neonsign.mdl", 8)

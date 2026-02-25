@@ -12,6 +12,7 @@ PORTAL	= IsMounted(400)
 TF2		= IsMounted(440)
 L4D		= IsMounted(500) or IsMounted(550) --L4D2 includes all of L4D's assets
 L4D2	= IsMounted(550)
+PORTAL2	= IsMounted(620)
 FOF		= IsMounted(265630)
 
 --Identify enums
@@ -21,6 +22,10 @@ FOF		= IsMounted(265630)
 	SCAV_BUZZSAW_TF2		= 2
 	SCAV_BUZZSAW_L4D		= 3
 	SCAV_BUZZSAW_ASW		= 4
+	--Hacking
+	SCAV_HACK_DEFAULT	= 0
+	SCAV_HACK_KB		= 1
+	SCAV_HACK_WHEATLEY	= 2
 	--Teleporter
 	SCAV_TELE_DEFAULT	= 0
 	SCAV_TELE_COMBINE	= 1
