@@ -2853,8 +2853,10 @@ setmetatable(hacksuccess, {__index = function() return {"buttons/combine_button1
 				ScavData.CollectFuncs["models/player/corpse1.mdl"] = function(self, ent) return {{"models/humans/corpse1.mdl", 1, 0}} end --playermodel conversion
 				--TF2
 				ScavData.CollectFuncs["models/props_hydro/water_barrel_cluster2.mdl"] = function(self, ent)
-					return {{"models/props_badlands/barrel01.mdl", 10, 0},
-							{"models/props_badlands/barrel01.mdl", 6, 0}}
+					return {{"models/props_badlands/barrel01.mdl", 8, 0},
+							{"models/props_mvm/sack_stack_pallet.mdl", 1, 0},
+							{"models/props_badlands/barrel01.mdl", 8, 0},
+							{"models/props_mvm/sack_stack_pallet.mdl", 1, 0}}
 				end --eight barrels (x2 ea) from clusters
 				ScavData.CollectFuncs["models/props_hydro/water_barrel_cluster3.mdl"] = ScavData.CollectFuncs["models/props_hydro/water_barrel_cluster2.mdl"]
 				ScavData.CollectFuncs["models/weapons/c_models/urinejar.mdl"] = function(self, ent) return {{self.christmas and "models/weapons/c_models/c_xms_urinejar.mdl" or ScavData.FormatModelname(ent:GetModel()), 1, math.random(0, 1)}} end
@@ -4066,7 +4068,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 						local randvec = VectorRand(-0.1, 0.1)
 						local proj = self:CreateEnt("prop_physics")
 						proj:SetModel(data.mdl .. chunkspawn[i] .. ".mdl")
-						proj:SetPos(data.pos + self:GetAimVector() * 30 + (randvec))
+						proj:SetPos(data.pos + self:GetAimVector() * 30 + randvec)
 						proj:SetAngles(data.ang)
 						proj:SetPhysicsAttacker(self.Owner)
 						proj:SetCollisionGroup(COLLISION_GROUP_PROJECTILE)
@@ -4089,7 +4091,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 					self.Owner:SetVelocity(self.Owner:GetVelocity() - self:GetAimVector() * 200)
 					self.Owner:SetAnimation(PLAYER_ATTACK1)
 					self.Owner:ViewPunch(Angle(math.Rand(-9, -8), math.Rand(-0.1, 0.1), 0))
-					self.Owner:EmitSound("weapons/shotgun/shotgun_dbl_fire.wav")
+					self.Owner:EmitSound("weapons/shotgun/shotgun_dbl_fire.wav", 140, 90, 0.5)
 					timer.Simple(0.5, function() if IsValid(self) then self:SendWeaponAnim(ACT_VM_HOLSTER) end end)
 					timer.Simple(0.75, function() if IsValid(self) then self.Owner:EmitSound("weapons/shotgun/shotgun_reload3.wav", 100, 65) end end)
 					timer.Simple(1.75, function() if IsValid(self) then self.Owner:EmitSound("weapons/shotgun/shotgun_cock.wav", 100, 120) end end)
@@ -4298,7 +4300,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 					end
 			
 					self.Owner:ViewPunch(Angle(math.Rand(-9, -8), math.Rand(-0.1, 0.1), 0))
-					self.Owner:EmitSound("weapons/shotgun/shotgun_dbl_fire.wav")
+					self.Owner:EmitSound("weapons/shotgun/shotgun_dbl_fire.wav", 140, 120, 0.375)
 					timer.Simple(0.25, function() if IsValid(self) then self:SendWeaponAnim(ACT_VM_HOLSTER) end end)
 					timer.Simple(0.5, function() if IsValid(self) then self.Owner:EmitSound("weapons/shotgun/shotgun_reload3.wav", 100, 65) end end)
 					timer.Simple(1, function() if IsValid(self) then self.Owner:EmitSound("weapons/shotgun/shotgun_cock.wav", 100, 120) end end)
