@@ -1283,7 +1283,15 @@ if CLIENT then
 					self.inv.items[1]:GetFiremodeTable().Screen(self, self:GetCurrentItem())
 			--Cooldown screen
 			elseif self:ScreenCooldown() then
-				self:DrawCooldown()
+				--Screen Draw item function
+				if #self.inv.items > 0 and 
+					IsValid(self.inv.items[1]) and 
+					self.inv.items[1]:GetFiremodeTable() and
+					self.inv.items[1]:GetFiremodeTable().ScreenCooldown then
+						self.inv.items[1]:GetFiremodeTable().ScreenCooldown(self, self:GetCurrentItem())
+				else
+					self:DrawCooldown()
+				end
 				idle = false
 			--Nice screen
 			elseif IsValid(self.inv.items[1]) and self.inv.items[1].subammo == 69 then
@@ -1305,7 +1313,15 @@ if CLIENT then
 				idle = true
 			--Cooldown Screen ending catch
 			else
-				self:DrawCooldown()
+				--Screen Draw item function
+				if #self.inv.items > 0 and 
+					IsValid(self.inv.items[1]) and 
+					self.inv.items[1]:GetFiremodeTable() and
+					self.inv.items[1]:GetFiremodeTable().ScreenCooldown then
+						self.inv.items[1]:GetFiremodeTable().ScreenCooldown(self, self:GetCurrentItem())
+				else
+					self:DrawCooldown()
+				end
 			end
 			--Screen Post Draw Hook
 			if hook.Run("ScavScreenDrawOverridePost", self, true) then
