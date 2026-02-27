@@ -1515,6 +1515,7 @@ setmetatable(hacksuccess, {__index = function() return {"buttons/combine_button1
 				["HackTime"] = 2,
 				["Action"] = function(self, ent)
 					local hacked = not ent:GetInternalVariable("m_bHackedByAlyx")
+					ent:SetSquad()
 					ent:SetSaveValue("m_bHackedByAlyx", hacked)
 					ent:Fire("Skin", hacked and 1 or 0, 0) --for whatever reason GMod doesn't have a rollermine model with skins in it (and the hack status doesn't automatically apply it) but in case the player has a fixed model, make it appear correctly
 					ent:Fire("InteractivePowerDown", nil, 15, self.Owner, self)
@@ -1554,7 +1555,8 @@ setmetatable(hacksuccess, {__index = function() return {"buttons/combine_button1
 					--clear us as potential divebomb target
 					ent:ClearEnemyMemory(self.Owner)
 					ent:AddEntityRelationship(self.Owner, D_LI, 1000)
-
+					
+					ent:SetSquad()
 					local target = nil
 					local targetdist = 17179869184 -- 131072HU (a bit far away!)
 					local entpos = ent:GetPos()
