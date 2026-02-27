@@ -1480,6 +1480,7 @@ setmetatable(hacksuccess, {__index = function() return {"buttons/combine_button1
 			interactions["scav_tripmine"] = {
 				["HackTime"] = 5,
 				["Action"] = function(self, ent)
+					ent.ScavHacker = self.Owner
 					ent:SetArmed(not ent:IsArmed())
 				end
 				}
@@ -1499,6 +1500,7 @@ setmetatable(hacksuccess, {__index = function() return {"buttons/combine_button1
 			interactions["gmod_dynamite"] = {
 				["HackTime"] = 7,
 				["Action"] = function(self, ent)
+					ent.ScavHacker = self.Owner
 					ent:Explode()
 				end
 				}
@@ -1522,6 +1524,7 @@ setmetatable(hacksuccess, {__index = function() return {"buttons/combine_button1
 			interactions["npc_turret_floor"] = {
 				["HackTime"] = 2,
 				["Action"] = function(self, ent)
+					ent.ScavHacker = self.Owner
 					ent:Fire("SelfDestruct", nil, 0)
 				end,
 				["Icon"] = Material("hud/hack/turret.vmt")
@@ -1542,6 +1545,54 @@ setmetatable(hacksuccess, {__index = function() return {"buttons/combine_button1
 				}
 			interactions["prop_vehicle_jeep_old"] = interactions["prop_vehicle_jeep"]
 			interactions["prop_vehicle_airboat"] = interactions["prop_vehicle_jeep"]
+			interactions["npc_cscanner"] = {
+				["HackTime"] = 1,
+				--attempt to initiate a divebomb onto one of our enemies
+				--(no current way to force divebomb behavior, just gotta attempt to find the conditions for it)
+				["Action"] = function(self, ent)
+					--clear us as potential divebomb target
+					ent:ClearEnemyMemory(self.Owner)
+					ent:AddEntityRelationship(self.Owner, D_LI, 1000)
+
+					local target = nil
+					local targetdist = 17179869184 -- 131072HU (a bit far away!)
+					local entpos = ent:GetPos()
+					--find a victim, if we can
+					for _, v in ents.Iterator() do
+						if not IsValid(v) or not (v:IsNPC() or v:IsPlayer() or v:IsNextBot()) or v == self.Owner then continue end
+						--Make sure target isn't friendly
+						if v.Disposition and v:Disposition(self.Owner) ~= D_HT then continue end
+						if v.Team and v:Team() == self.Owner:Team() and v:Team() ~= TEAM_UNASSIGNED then continue end
+						--Scanner won't divebomb if it's less than 120 units above or 360 units away
+						local vpos = v:GetPos()
+						if entpos.z - vpos.z <= 120 then continue end
+						local dist = vpos:DistToSqr(entpos)
+						if dist <= 129600 then continue end
+						--Get closest enemy (who's still far enough away)
+						if dist > targetdist then continue end
+						--Should probably have a chance to actually hit them
+						local tracep = {}
+							tracep.start = entpos
+							tracep.endpos = vpos + v:OBBCenter()
+							tracep.filter = {ent}
+							tracep.mask = MASK_SOLID
+						local tr = util.TraceHull(tracep)
+						if tr.HitWorld then continue end
+						if tr.Entity ~= v then continue end
+						target = v
+						targetdist = dist
+					end
+					if IsValid(target) then
+						ent:AddEntityRelationship(target, D_HT, 1000)
+						ent:SetEnemy(target, true)
+					end
+					ent.ScavHacker = self.Owner
+					timer.Simple(0.5, function()
+						if not IsValid(ent) or not IsValid(self) then return end
+						ent:SetHealth(0)
+					end)
+				end
+				}
 
 			function tab.ChargeAttack(self, item)
 				local ident = tab.Identify[item.ammo]
