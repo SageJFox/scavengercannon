@@ -1463,13 +1463,14 @@ setmetatable(hacksuccess, {__index = function() return {"buttons/combine_button1
 				["HackTime"] = 2,
 				["Action"] = function(self, ent)
 					if not ent.oldstrength then
-						ent.oldstrength = ent.strength
-						ent.strength = 0
+						ent.oldstrength = ent.Strength
+						ent:SetStrength(0)
 					else
-						ent.strength = ent.oldstrength
+						ent:SetStrength(ent.oldstrength)
 						ent.oldstrength = nil
 					end
-				end
+				end,
+				["Icon"] = Material("hud/hack/hoverball.vmt")
 				}
 			interactions["scav_c4"] = {
 				["HackTime"] = 5,
