@@ -1501,9 +1501,9 @@ setmetatable(hacksuccess, {__index = function() return {"buttons/combine_button1
 			interactions["gmod_dynamite"] = {
 				["HackTime"] = 7,
 				["Action"] = function(self, ent)
-					ent.ScavHacker = self.Owner
-					ent:Explode()
-				end
+					ent:Explode(0, self.Owner)
+				end,
+				["Icon"] = Material("hud/hack/dynamite.vmt")
 				}
 			interactions["gmod_wheel"] = {
 				["HackTime"] = 3,
@@ -1720,7 +1720,7 @@ setmetatable(hacksuccess, {__index = function() return {"buttons/combine_button1
 					surface.DrawRect(42, 28, 172, 2)
 					--Progress bar
 					surface.SetMaterial(bars)
-					local x, y, w, h, res = 82, 50, 94, 12, 512
+					local x, y, w, h, res = 82, 50, 108, 12, 512
 					local barmove = math.floor(use * 10) / 10
 					local progress = math.max(0, math.min(1, (self.HackingProgress or 0) / (self.HackTime * wheatleyslow)))
 					surface.DrawTexturedRectUV(x, y, w * progress, h, x / res - barmove, y / res, (x + w * progress) / res  - barmove, (y + h * 3) / res)
