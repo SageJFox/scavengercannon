@@ -1255,16 +1255,54 @@ end
 		
 if SERVER then
 	util.AddNetworkString("scav_hackdone")
+
+--Give player credit for any kills their hacking gets
+	local hackkill = function(victim, attacker, inflictor)
+		if IsValid(attacker.ScavHacker) then
+			hook.Run("SendDeathNotice", attacker.ScavHacker, attacker, victim, 0)
+			return false
+		end
+		--suicide
+		if IsValid(victim.ScavHacker) and attacker:IsWorld() then
+			--Some NPCs will be invalid by the time the death notice is called, grab the victim's name now
+			local victimname = ""
+			if not victim:IsPlayer() then
+				local menuname = list.GetEntry("NPC", victim.NPCName)
+				if not menuname or not menuname.Name then
+					victimname = victim:GetClass()
+				else
+					victimname = menuname.Name
+				end
+			else
+				victimname = victim:Nick()
+			end
+			hook.Run("SendDeathNotice", victim.ScavHacker, victim.ScavHacker:GetWeapon("scav_gun"), victimname, 0)
+			return false
+		end
+	end
+	hook.Add("OnNPCKilled", "ScavHackKill", hackkill)
+	hook.Add("PlayerDeath", "ScavHackKill", hackkill)
 end
 
+--Multiplier for total time required to hack for Wheatley-based Universal Remotes
 local wheatleytime = 2
+--Cooldown time after a successful or failed hacking attempt
+local hackcooldown = 1
+--Hacking Think interval (cooldown while the gun is working on the hack)
+local hackthinktime = 0.05
+--How far we can reach when trying to hack something
+local hackrange = 1000
 
+local bars = Material("hud/scav_caution_tape.vmt")
+local scavicon = Material("hud/hack/scav.vmt")
+
+--Hacking attempt failed extremely loud incorrect buzzer
 local hackfail = {
 	[SCAV_HACK_KB] = {"hl1/fvox/fuzz.wav"},
 }
+if TF2 then
 --Portal 2 lines are kinda weak picks compared to the TF2 ones specifically made for "hacking"
 --(plus TF2's free to play, people are probably gonna have it mounted over Portal 2)
-if TF2 then
 	hackfail[SCAV_HACK_WHEATLEY] = {
 		"vo/items/wheatley_sapper/wheatley_sapper_putback01.mp3",
 		"vo/items/wheatley_sapper/wheatley_sapper_putback02.mp3",
@@ -1307,8 +1345,9 @@ elseif PORTAL2 then
 		"vo/wheatley/fgb_plugin_nags11.wav",
 	}
 end
-hackfail = setmetatable(hackfail, {__index = function() return {"buttons/combine_button_locked.wav"} end})
+setmetatable(hackfail, {__index = function() return {"buttons/combine_button_locked.wav"} end})
 
+--Hacking attempt successful jingle
 local hacksuccess = {
 	[SCAV_HACK_KB] = {"ambient/machines/keyboard7_clicks_enter.wav"},
 }
@@ -1382,6 +1421,7 @@ elseif PORTAL2 then
 	}
 end
 setmetatable(hacksuccess, {__index = function() return {"buttons/combine_button1.wav"} end})
+
 	do
 		local tab = {}
 			tab.Name = "#scav.scavcan.remote"
@@ -1402,6 +1442,23 @@ setmetatable(hacksuccess, {__index = function() return {"buttons/combine_button1
 			tracep.mins = Vector(-2, -2, -2)
 			tracep.maxs = Vector(2, 2, 2)
 			local interactions = {}
+			local interactdefault = {
+				["HackTime"] = 5,
+				["Action"] = function(self, ent)
+					ent:Fire("Use", nil, 0)
+				end,
+				["Icon"] = Material("hud/hack/unknown.vmt")
+			}
+			setmetatable(interactions, {
+				__index = function() return interactdefault end,
+				__newindex = function(t, k, v)
+					if type(v) == "table" then
+						table.Inherit(v, interactdefault)
+					end
+					rawset(t, k, v)
+				end
+			})
+
 			interactions["gmod_hoverball"] = {
 				["HackTime"] = 2,
 				["Action"] = function(self, ent)
@@ -1458,17 +1515,21 @@ setmetatable(hacksuccess, {__index = function() return {"buttons/combine_button1
 					ent:SetSaveValue("m_bHackedByAlyx", hacked)
 					ent:Fire("Skin", hacked and 1 or 0, 0) --for whatever reason GMod doesn't have a rollermine model with skins in it (and the hack status doesn't automatically apply it) but in case the player has a fixed model, make it appear correctly
 					ent:Fire("InteractivePowerDown", nil, 15, self.Owner, self)
-				end
+					ent.ScavHacker = self.Owner
+				end,
+				["Icon"] = Material("hud/hack/roller.vmt")
 				}
 			interactions["npc_turret_floor"] = {
 				["HackTime"] = 2,
 				["Action"] = function(self, ent)
 					ent:Fire("SelfDestruct", nil, 0)
-				end
+				end,
+				["Icon"] = Material("hud/hack/turret.vmt")
 				}
 			interactions["npc_manhack"] = {
 				["HackTime"] = 1,
 				["Action"] = function(self, ent)
+					ent.ScavHacker = self.Owner
 					ent:Fire("InteractivePowerDown", nil, 0)
 				end
 				}
@@ -1479,86 +1540,100 @@ setmetatable(hacksuccess, {__index = function() return {"buttons/combine_button1
 					ent.HackedOff = not ent.HackedOff
 				end
 				}
-			
 			interactions["prop_vehicle_jeep_old"] = interactions["prop_vehicle_jeep"]
 			interactions["prop_vehicle_airboat"] = interactions["prop_vehicle_jeep"]
+
 			function tab.ChargeAttack(self, item)
 				local ident = tab.Identify[item.ammo]
 				self.HackingProgress = (self.HackingProgress or 0) + 0.05
 				self.BarrelRotation = self.BarrelRotation + math.random(-17, 17)
+				--status codes
+				local STATUS_NONE = 0
+				local STATUS_INVALID = 1
+				local STATUS_CANCELED = 2
+				local STATUS_OUTOFRANGE = 3
+				local STATUS_SUCCESS = 4
+				local STATUS_SIZE = 3 --total bits to send status codes
 				if SERVER then
-					local wheatleyslow = ident == SCAV_HACK_WHEATLEY and wheatleytime or 1
-					local dist = 9999999
-					if IsValid(self.HackTarget) then
-						dist = self.Owner:GetShootPos():DistToSqr(self.HackTarget:GetPos())
-					end
-					if not self.Owner:KeyDown(IN_ATTACK) or (self.HackingProgress > self.HackTime * wheatleyslow) or not IsValid(self.HackTarget) or dist > 1000000 then
-						self.HackSuccess = false
+					--end the hack, with an optional status code (tell client why we beefed it)
+					local endhack = function(status, success)
+						local success = success or false
+						self:SetChargeAttack()
+						self:SetNWFiremodeEnt(nil)
+						self.HackingProgress = 0
 						if IsValid(self.ef_radio) then
 							self.ef_radio:Kill()
 						end
 						--if IsValid(self.ef_wires) then
 						--	self.ef_wires:Kill()
 						--end
-						if dist > 1000000 then
-							self:EmitSound(hackfail[ident][math.random(#hackfail[ident])])
-						elseif IsValid(self.HackTarget) and (self.HackingProgress > self.HackTime * wheatleyslow) then
-							self:EmitSound(hacksuccess[ident][math.random(#hacksuccess[ident])])
-							self.HackSuccess = true
-							local interaction = interactions[string.lower(self.HackTarget:GetClass())]
-							if interaction then
-								interaction.Action(self, self.HackTarget)
-							else
-								self.HackTarget:Fire("Use", nil, 0)
-							end
-						else
-							self:EmitSound(hackfail[ident][math.random(#hackfail[ident])])
-						end
-						self:SetChargeAttack()
-						self.HackingProgress = 0
 						net.Start("scav_hackdone")
 							net.WriteEntity(self)
-							net.WriteBool(self.HackSuccess)
+							net.WriteBool(success)
+							net.WriteUInt(status or STATUS_NONE, STATUS_SIZE)
 						net.Send(self.Owner)
-						return 1
+						return hackcooldown * self:GetCooldownScale()
+					end
+					--Invalid Target
+					if not IsValid(self:GetNWFiremodeEnt()) then
+						self:EmitSound(hackfail[ident][math.random(#hackfail[ident])]) --todo: unique fail sounds too?
+						return endhack(STATUS_INVALID)
+					end
+					--User Canceled
+					if not self.Owner:KeyDown(IN_ATTACK) then
+						self:EmitSound(hackfail[ident][math.random(#hackfail[ident])])
+						return endhack(STATUS_CANCELED)
+					end
+					--Out of Range
+					if self.Owner:GetShootPos():DistToSqr(self:GetNWFiremodeEnt():GetPos()) > hackrange^2 then
+						self:EmitSound(hackfail[ident][math.random(#hackfail[ident])])
+						return endhack(STATUS_OUTOFRANGE)
+					end
+					--Hack Successful
+					local wheatleyslow = ident == SCAV_HACK_WHEATLEY and wheatleytime or 1
+					if self.HackingProgress > self.HackTime * wheatleyslow then
+						self:EmitSound(hacksuccess[ident][math.random(#hacksuccess[ident])])
+						interactions[string.lower(self:GetNWFiremodeEnt():GetClass())].Action(self, self:GetNWFiremodeEnt())
+						return endhack(STATUS_SUCCESS, true)
 					end
 				else
 					net.Receive("scav_hackdone", function()
 						local wep = net.ReadEntity()
-						self.HackSuccess = net.ReadBool()
 						if IsValid(wep) then
+							wep.HackSuccess = net.ReadBool()
 							wep:SetChargeAttack()
 							wep.HackingProgress = 0
-							wep:EmitSound(self.HackSuccess and (hacksuccess[ident][math.random(#hacksuccess[ident])]) or hackfail[ident][math.random(#hackfail[ident])])
-							wep.nextfire = CurTime() + 1 * wep:GetCooldownScale()
+							wep:EmitSound(wep.HackSuccess and (hacksuccess[ident][math.random(#hacksuccess[ident])]) or hackfail[ident][math.random(#hackfail[ident])])
+							wep.nextfire = CurTime() + hackcooldown * wep:GetCooldownScale()
+							net.ReadUInt(STATUS_SIZE)
 						end
 					end)
 				end
-				return 0.05
+				return hackthinktime * self:GetCooldownScale()
 			end
 			function tab.FireFunc(self, item)
 				local ident = tab.Identify[item.ammo]
 				tracep.start = self.Owner:GetShootPos()
-				tracep.endpos = tracep.start + self.Owner:GetAimVector() * 1000
+				tracep.endpos = tracep.start + self.Owner:GetAimVector() * hackrange
 				tracep.filter = self.Owner
 				local tr = util.TraceHull(tracep)
-				if IsValid(tr.Entity) then
+				if SERVER then self:SetNWFiremodeEnt(tr.Entity) end
+				if IsValid(self:GetNWFiremodeEnt()) then
 					local wheatleyslow = ident == SCAV_HACK_WHEATLEY and wheatleytime or 1
-					self.HackTarget = tr.Entity
-					local interaction = interactions[string.lower(self.HackTarget:GetClass())]
-					self.HackTime = (interaction and interaction.HackTime or 5) * wheatleyslow
+					self.HackTime = interactions[string.lower(self:GetNWFiremodeEnt():GetClass())].HackTime * wheatleyslow
 					self:SendWeaponAnim(ACT_VM_FIDGET)
-					tab.Cooldown = 0.05
+					tab.Cooldown = hackthinktime * self:GetCooldownScale()
 				else
 					self:EmitSound(hackfail[ident][math.random(#hackfail[ident])])
-					tab.Cooldown = 1
+					tab.Cooldown = hackcooldown * self:GetCooldownScale()
+					self.HackSuccess = nil
 					return false
 				end
 				if SERVER then
 					self.ef_radio = self:CreateToggleEffect("scav_stream_radio", ident)
 					--self.ef_wires = self:CreateToggleEffect("scav_stream_cord")
-					--if IsValid(self.ef_wires) and IsValid(self.HackTarget) then
-					--	self.ef_wires:Setendent(self.HackTarget)
+					--if IsValid(self.ef_wires) and IsValid(tr.Entity) then
+					--	self.ef_wires:Setendent(tr.Entity)
 					--end
 				end
 				self:SetChargeAttack(tab.ChargeAttack, item)
@@ -1577,18 +1652,37 @@ setmetatable(hacksuccess, {__index = function() return {"buttons/combine_button1
 				ScavData.CollectFuncs["models/weapons/c_models/c_wrangler.mdl"] = ScavData.CollectFuncs["models/weapons/w_models/w_wrangler.mdl"]
 			else
 				function tab.ScreenCooldown(self, item)
-					--net.Receive("scav_hackdone", function()
-					--if IsValid(self) then
-						print("something", self.HackSuccess)
-						if not self.HackSuccess then self:DrawCooldown(true) return end
-						if not GetConVar("cl_scav_colorblindmode"):GetBool() then
-							DrawScreenBKG(greenscr)
-						else
-							DrawScreenBKG(greenscr_colorblind)
-						end
-						draw.DrawText(ScavLocalize("scav.scavcan.hacksuccess", "\0"), "ScavScreenFont", 128, 12, color_black, TEXT_ALIGN_CENTER)
-					--end
-					--end)
+					if not self.HackSuccess then self:DrawCooldown() return end
+					DrawScreenBKG(GetConVar("cl_scav_colorblindmode"):GetBool() and greenscr_colorblind or greenscr)
+					draw.DrawText(ScavLocalize("scav.scavcan.hacksuccess", "\0"), "ScavScreenFont", 128, 32, color_black, TEXT_ALIGN_CENTER)
+				end
+				function tab.ScreenFiring(self, item)
+					DrawScreenBKG(GetConVar("cl_scav_colorblindmode"):GetBool() and yellowscr_colorblind or yellowscr)
+					local wheatleyslow = tab.Identify[item.ammo] == SCAV_HACK_WHEATLEY and wheatleytime or 1
+					local _, use = math.modf(CurTime())
+					local progressdots = math.floor(use * 4)
+					--Hacking text
+					draw.DrawText(ScavLocalize("scav.scavcan.hacking") .. ScavLocalize("scav.scavcan.progress" .. tostring(progressdots)), "ScavScreenFontSmX", 44, 6, color_black, TEXT_ALIGN_LEFT)
+					surface.SetDrawColor(color_black:Unpack())
+					--Separator bars
+					surface.DrawRect(42, 28, 172, 2)
+					--Progress bar
+					surface.SetMaterial(bars)
+					local x, y, w, h, res = 82, 50, 94, 12, 512
+					local barmove = math.floor(use * 10) / 10
+					local progress = math.max(0, math.min(1, (self.HackingProgress or 0) / (self.HackTime * wheatleyslow)))
+					surface.DrawTexturedRectUV(x, y, w * progress, h, x / res - barmove, y / res, (x + w * progress) / res  - barmove, (y + h * 3) / res)
+					--Scav Icon
+					surface.SetMaterial(scavicon)
+					surface.DrawTexturedRect(32, 34, 48, 48)
+					--Other Icon
+					local icon = scavicon
+					if IsValid(self:GetNWFiremodeEnt()) then
+						icon = interactions[string.lower(self:GetNWFiremodeEnt():GetClass())].Icon
+					end
+					surface.SetMaterial(icon)
+					surface.DrawTexturedRect(176, 34, 48, 48)
+					draw.NoTexture()
 				end
 			end
 		ScavData.RegisterFiremode(tab, "models/props_c17/computer01_keyboard.mdl", SCAV_SHORT_MAX)
