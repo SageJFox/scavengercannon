@@ -1111,12 +1111,29 @@ if CLIENT then
 	surface.CreateFont("ScavScreenFontSmXX", {font = "Trebuchet MS", size = 20, weight = 900, antialiasing = true, additive = false, outlined = false, blur = false})
 
 	alpha = 12
-	greenscr = Color(108, 172, 24, alpha)
+	greenscr_base = Color(108, 172, 24, alpha)
 	greenscr_colorblind = Color(124, 218, 255, alpha)
-	yellowscr = Color(172, 172, 24, alpha)
+	greenscr = greenscr_base
+
+	yellowscr_base = Color(172, 172, 24, alpha)
 	yellowscr_colorblind = Color(172, 172, 24, alpha)
-	redscr = Color(172, 24, 24, alpha)
+	yellowscr = yellowscr_base
+
+	redscr_base = Color(172, 24, 24, alpha)
 	redscr_colorblind = Color(190, 76, 0, alpha)
+	redscr = redscr_base
+
+	cvars.AddChangeCallback("cl_scav_colorblindmode", function(convar, oldVal, newVal)
+		if tobool(newVal) then
+			greenscr = greenscr_colorblind
+			yellowscr = yellowscr_colorblind
+			redscr = redscr_colorblind
+		else
+			greenscr = greenscr_base
+			yellowscr = yellowscr_base
+			redscr = redscr_base
+		end
+	end)
 
 	function DrawScreenBKG(col)
 		--edge fade
@@ -1177,7 +1194,7 @@ if CLIENT then
 	end)
 
 	function SWEP:DrawIdle()
-		DrawScreenBKG(GetConVar("cl_scav_colorblindmode"):GetBool() and greenscr_colorblind or greenscr)
+		DrawScreenBKG(greenscr)
 
 		local vpos = 32
 		if string.find(language.GetPhrase("scav.scavcan.ok"), "\n") then
@@ -1192,7 +1209,7 @@ if CLIENT then
 	end
 
 	function SWEP:DrawNice()
-		DrawScreenBKG(GetConVar("cl_scav_colorblindmode"):GetBool() and greenscr_colorblind or greenscr)
+		DrawScreenBKG(greenscr)
 
 		local vpos = 32
 		if string.find(language.GetPhrase("scav.scavcan.nice"), "\n") then
@@ -1207,7 +1224,7 @@ if CLIENT then
 	end
 
 	function SWEP:DrawLocked()
-		DrawScreenBKG(GetConVar("cl_scav_colorblindmode"):GetBool() and redscr_colorblind or redscr)
+		DrawScreenBKG(redscr)
 
 		local vpos = 32
 		if string.find(language.GetPhrase("scav.scavcan.locked"), "\n") then
@@ -1231,7 +1248,7 @@ if CLIENT then
 				self.inv.items[1]:GetFiremodeTable().ScreenCooldown(self, self:GetCurrentItem())
 				return
 		end
-		DrawScreenBKG(GetConVar("cl_scav_colorblindmode"):GetBool() and yellowscr_colorblind or yellowscr)
+		DrawScreenBKG(yellowscr)
 		draw.DrawText(ScavLocalize("scav.scavcan.status", "\0"), "ScavScreenFont", 128, 12, color_black, TEXT_ALIGN_CENTER)
 		local _, use = math.modf((CurTime() - self.nextfire))
 		use = math.floor(use * 4) % 4
@@ -1239,7 +1256,7 @@ if CLIENT then
 	end
 
 	function SWEP:DrawFiring()
-		DrawScreenBKG(GetConVar("cl_scav_colorblindmode"):GetBool() and greenscr_colorblind or greenscr)
+		DrawScreenBKG(greenscr)
 
 		local vpos = 12
 		local fontsize = "ScavScreenFont"
@@ -1369,11 +1386,11 @@ if CLIENT then
 		local angoffset = -math.deg(c_hairrotation * 5)
 
 		if self:GetCanScav() and IsValid(tr.Entity) then
-			surface.SetDrawColor(GetConVar("cl_scav_colorblindmode"):GetBool()and color_green_colorblind or color_green)
+			surface.SetDrawColor(color_green)
 
 			c_hairrotation = c_hairrotation + FrameTime()
 		elseif IsValid(tr.Entity) then
-			surface.SetDrawColor(GetConVar("cl_scav_colorblindmode"):GetBool() and color_red_colorblind or color_red)
+			surface.SetDrawColor(color_red)
 			-- X on the crosshair if we're trying to suck the unsuckable
 			if self.Owner:KeyDown(IN_ATTACK2) then
 				local halfsize = size / 2

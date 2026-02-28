@@ -89,11 +89,7 @@ local puterscreen = function(self, item)
 
 	local on = tab.On and tab.On or tab.Seeking
 	
-	if not GetConVar("cl_scav_colorblindmode"):GetBool() then
-		DrawScreenBKG(on and greenscr or redscr)
-	else
-		DrawScreenBKG(on and greenscr_colorblind or redscr_colorblind)
-	end
+	DrawScreenBKG(on and greenscr or redscr)
 	local vpos = 12
 	local fontsize = "ScavScreenFontSm"
 	if #language.GetPhrase("scav.scavcan.autotarget") > 14 then
@@ -1707,11 +1703,11 @@ setmetatable(hacksuccess, {__index = function() return {"buttons/combine_button1
 			else
 				function tab.ScreenCooldown(self, item)
 					if not self.HackSuccess then self:DrawCooldown() return end
-					DrawScreenBKG(GetConVar("cl_scav_colorblindmode"):GetBool() and greenscr_colorblind or greenscr)
+					DrawScreenBKG(greenscr)
 					draw.DrawText(ScavLocalize("scav.scavcan.hacksuccess", "\0"), "ScavScreenFont", 128, 32, color_black, TEXT_ALIGN_CENTER)
 				end
 				function tab.ScreenFiring(self, item)
-					DrawScreenBKG(GetConVar("cl_scav_colorblindmode"):GetBool() and yellowscr_colorblind or yellowscr)
+					DrawScreenBKG(yellowscr)
 					local wheatleyslow = tab.Identify[item.ammo] == SCAV_HACK_WHEATLEY and wheatleytime or 1
 					local _, use = math.modf(CurTime())
 					local progressdots = math.floor(use * 4)
@@ -5705,7 +5701,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 	--TF2 Medigun
 ==============================================================================================]]--
 
-local green = GetConVar("cl_scav_colorblindmode"):GetBool() and table.Copy(greenscr_colorblind) or table.Copy(greenscr)
+local green = table.Copy(greenscr)
 local statusicons = {}
 
 if SERVER then
@@ -5764,12 +5760,7 @@ local medigunscreen = function(self, item)
 	local target = self:GetNWFiremodeEnt()
 	local validtarget = IsValid(target)
 
-
-	if not GetConVar("cl_scav_colorblindmode"):GetBool() then
-		DrawScreenBKG(validtarget and greenscr or redscr)
-	else
-		DrawScreenBKG(validtarget and greenscr_colorblind or redscr_colorblind)
-	end
+	DrawScreenBKG(validtarget and greenscr or redscr)
 
 	--Get patient's name
 	if not tab.targetname or (validtarget and tab.targetent ~= target) then
@@ -6277,11 +6268,7 @@ local recyclescreen = function(self, item)
 
 	local on = tab.On
 	
-	if not GetConVar("cl_scav_colorblindmode"):GetBool() then
-		DrawScreenBKG(on and greenscr or redscr)
-	else
-		DrawScreenBKG(on and greenscr_colorblind or redscr_colorblind)
-	end
+	DrawScreenBKG(on and greenscr or redscr)
 
 	local vpos = 12
 	local fontsize = "ScavScreenFontSm"

@@ -32,8 +32,10 @@ FOF		= IsMounted(265630)
 	SCAV_TELE_PORTAL	= 2
 	SCAV_TELE_TF2		= 3
 
-CreateClientConVar("cl_scav_high", 0, true, false, "Enable/disable Backup Pistol shot dynamic lighting", 0, 1)
-CreateClientConVar("cl_scav_colorblindmode", 0, true, true, "Enable/disable colorblindness assistance", 0, 1)
+if CLIENT then
+	CreateClientConVar("cl_scav_high", 0, true, false, "Enable/disable Backup Pistol shot dynamic lighting", 0, 1)
+	CreateClientConVar("cl_scav_colorblindmode", 0, true, true, "Enable/disable colorblindness assistance", 0, 1)
+end
 
 Scav_DisableTouchPickup = {
 	["weapon_crowbar"] = true,
