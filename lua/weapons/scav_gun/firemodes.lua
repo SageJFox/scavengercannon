@@ -1291,6 +1291,27 @@ local hackrange = 1000
 
 local bars = Material("hud/scav_caution_tape.vmt")
 local scavicon = Material("hud/hack/scav.vmt")
+local signal = Material("hud/hack/signal.vmt")
+
+--Find Signal Strength (convert distance to frames on signal strength indicator texture)
+local signalstrength = function(scavgun, target)
+	if not IsValid(scavgun) or not IsValid(target) then return 4 end
+	--[[Note: This range isn't 100% accurate. The gun uses the hitpos of its trace,
+		so we should be up to the target's hullsize closer than we think we are here.
+		That's a *probably* minor difference though, not worth the extra cost of drawing
+		a trace on top of a distance check (every frame, mind you)
+		But, it's why we don't let our check here naturally get to the "no connection" image (frame 4),
+		as that's not our call to make]]
+	local dist = scavgun.Owner:GetShootPos():Distance(target:GetPos()) / hackrange
+	local frame = 0
+	--having equidistant chunks feels bad, this makes it about 45% range for max bars, 70% for three, 83% for two, and 89% for one
+	--(also makes this check being off less likely to be noticed, especially for larger entities)
+	for i = 1, 3 do
+		if dist + 0.05 < 1 - 2 ^ -i then break end
+		frame = frame + 1
+	end
+	return frame
+end
 
 --Hacking attempt failed extremely loud incorrect buzzer
 local hackfail = {
@@ -1423,7 +1444,7 @@ setmetatable(hacksuccess, {__index = function() return {"buttons/combine_button1
 			tab.Name = "#scav.scavcan.remote"
 			tab.anim = ACT_VM_IDLE
 			tab.Level = 7
-			tab.Cooldown = 0.05
+			tab.Cooldown = hackthinktime
 			local identify = {
 				--[Remote] = 0,
 				--[[keyboard]]["models/props_c17/computer01_keyboard.mdl"] = 1,
@@ -1455,7 +1476,7 @@ setmetatable(hacksuccess, {__index = function() return {"buttons/combine_button1
 				end
 			})
 
-			interactions["gmod_hoverball"] = {
+			interactions.gmod_hoverball = {
 				["HackTime"] = 2,
 				["Action"] = function(self, ent)
 					if not ent.oldstrength then
@@ -1468,46 +1489,66 @@ setmetatable(hacksuccess, {__index = function() return {"buttons/combine_button1
 				end,
 				["Icon"] = Material("hud/hack/hoverball.vmt")
 				}
-			interactions["scav_c4"] = {
+			interactions.scav_c4 = {
 				["HackTime"] = 5,
 				["Action"] = function(self, ent)
 					ent:Disarm()
-				end
+				end,
+				["Icon"] = Material("hud/hack/c4.vmt")
 				}
-			interactions["scav_tripmine"] = {
+			interactions.scav_tripmine = {
 				["HackTime"] = 5,
 				["Action"] = function(self, ent)
-					ent.ScavHacker = self.Owner
+					ent.Owner = self.Owner
 					ent:SetArmed(not ent:IsArmed())
-				end
+				end,
+				["Icon"] = Material("hud/hack/tripmine.vmt")
 				}
-			interactions["gmod_thruster"] = {
+			interactions.gmod_thruster = {
 				["HackTime"] = 6,
 				["Action"] = function(self, ent)
 					ent:Switch(not ent:IsOn())
-				end
+				end,
+				["Icon"] = Material("hud/hack/thruster.vmt")
 				}
-			interactions["gmod_turret"] = {
+			interactions.gmod_turret = {
 				["HackTime"] = 6,
 				["Action"] = function(self, ent)
 					ent:SetOn(not ent:GetOn())
-				end
+				end,
+				["Icon"] = Material("hud/hack/turret.vmt")
 				}
-			interactions["gmod_emitter"] = interactions["gmod_turret"]
-			interactions["gmod_dynamite"] = {
+			interactions.gmod_emitter = {
+				["HackTime"] = 2,
+				["Action"] = interactions.gmod_turret.Action,
+				["Icon"] = Material("hud/hack/emitter.vmt")
+				}
+			interactions.gmod_light = {
+				["HackTime"] = 2,
+				["Action"] = interactions.gmod_turret.Action,
+				["Icon"] = Material("hud/hack/light.vmt")
+				}
+			interactions.gmod_dynamite = {
 				["HackTime"] = 7,
 				["Action"] = function(self, ent)
 					ent:Explode(0, self.Owner)
 				end,
 				["Icon"] = Material("hud/hack/dynamite.vmt")
 				}
-			interactions["gmod_wheel"] = {
+			interactions.gmod_wheel = {
 				["HackTime"] = 3,
 				["Action"] = function(self, ent)
-					ent:Reverse()
-				end
+					local Motor = ent:GetMotor()
+					if IsValid(Motor) then
+						Motor.direction = -Motor.direction
+						Motor:Fire("Scale", Motor.direction * Motor.forcescale * ent.TorqueScale)
+						ent:SetDirection(Motor.direction)
+						ent:DoDirectionEffect()
+					end
+				end,
+				["Icon"] = Material("hud/hack/wheel.vmt")
 				}
-			interactions["npc_rollermine"] = {
+			interactions.npc_rollermine = {
 				["HackTime"] = 2,
 				["Action"] = function(self, ent)
 					local hacked = not ent:GetInternalVariable("m_bHackedByAlyx")
@@ -1519,7 +1560,7 @@ setmetatable(hacksuccess, {__index = function() return {"buttons/combine_button1
 				end,
 				["Icon"] = Material("hud/hack/roller.vmt")
 				}
-			interactions["npc_turret_floor"] = {
+			interactions.npc_turret_floor = {
 				["HackTime"] = 2,
 				["Action"] = function(self, ent)
 					ent.ScavHacker = self.Owner
@@ -1527,23 +1568,25 @@ setmetatable(hacksuccess, {__index = function() return {"buttons/combine_button1
 				end,
 				["Icon"] = Material("hud/hack/turret.vmt")
 				}
-			interactions["npc_manhack"] = {
+			interactions.npc_manhack = {
 				["HackTime"] = 1,
 				["Action"] = function(self, ent)
 					ent.ScavHacker = self.Owner
 					ent:Fire("InteractivePowerDown", nil, 0)
-				end
+				end,
+				["Icon"] = Material("hud/hack/manhack.vmt")
 				}
-			interactions["prop_vehicle_jeep"] = {
+			interactions.prop_vehicle_jeep = {
 				["HackTime"] = 2,
 				["Action"] = function(self, ent)
 					ent:Fire(ent.HackedOff and "TurnOn" or "TurnOff", nil, 0)
 					ent.HackedOff = not ent.HackedOff
-				end
+				end,
+				["Icon"] = Material("hud/hack/jeep.vmt")
 				}
-			interactions["prop_vehicle_jeep_old"] = interactions["prop_vehicle_jeep"]
-			interactions["prop_vehicle_airboat"] = interactions["prop_vehicle_jeep"]
-			interactions["npc_cscanner"] = {
+			interactions.prop_vehicle_jeep_old = interactions["prop_vehicle_jeep"]
+			interactions.prop_vehicle_airboat = interactions["prop_vehicle_jeep"]
+			interactions.npc_cscanner = {
 				["HackTime"] = 1,
 				--attempt to initiate a divebomb onto one of our enemies
 				--(no current way to force divebomb behavior, just gotta attempt to find the conditions for it)
@@ -1590,26 +1633,77 @@ setmetatable(hacksuccess, {__index = function() return {"buttons/combine_button1
 						if not IsValid(ent) or not IsValid(self) then return end
 						ent:SetHealth(0)
 					end)
-				end
+				end,
+				["Icon"] = Material("hud/hack/scanner.vmt")
 				}
-
+			interactions.prop_door_rotating = {
+				["HackTime"] = 1.5,
+				["Action"] = function(self, ent)
+					if ent:GetInternalVariable("m_angGoal") == ent:GetInternalVariable("m_angRotationOpenForward")  then
+						ent:Fire("Close", nil, 0, self.Owner)
+					else
+						ent:Fire("OpenAwayFrom", self.Owner, 0, self.Owner)
+					end
+				end,
+				["Icon"] = Material("hud/hack/door.vmt")
+			}
+			interactions.func_door_rotating = {
+				["HackTime"] = 1.5,
+				["Icon"] = Material("hud/hack/door.vmt")
+			}
+			interactions.func_door = interactions.func_door_rotating
+			interactions.func_button = {
+				["HackTime"] = 1.5,
+				["Icon"] = Material("hud/hack/button.vmt")
+			}
+			--fixes buttons on the client
+			interactions["class c_basetoggle"] = interactions.func_button
+			interactions.gmod_button = {
+				["HackTime"] = 1,
+				["Action"] = function(self, ent)
+					ent.LastUser = nil
+					ent:Use(self.Owner, self, USE_ON)
+				end,
+				["Icon"] = Material("hud/hack/button.vmt")
+			}
+			interactions.npc_turret_ceiling = {
+				["HackTime"] = 2,
+				["Action"] = function(self, ent)
+					ent:Fire("toggle", nil, 0)
+				end,
+				["Icon"] = Material("hud/hack/turret.vmt")
+			}
+			interactions.npc_combine_camera = interactions.npc_turret_ceiling
+			interactions.monster_miniturret = {
+				["HackTime"] = 2,
+				["Icon"] = Material("hud/hack/turret.vmt")
+			}
+			interactions.monster_turret = interactions.monster_miniturret
+			interactions.monster_sentry = {
+				["HackTime"] = 2,
+				["Action"] = function(self, ent)
+					ent.ScavHacker = self.Owner
+					ent:Fire("SetHealth", 0, 0)
+				end,
+				["Icon"] = Material("hud/hack/turret.vmt")
+			}
+			--status codes
+			local STATUS_NONE = 0
+			local STATUS_INVALID = 1
+			local STATUS_CANCELED = 2
+			local STATUS_OUTOFRANGE = 3
+			local STATUS_SUCCESS = 4
+			local STATUS_SIZE = 3 --total bits to send status codes
 			function tab.ChargeAttack(self, item)
 				local ident = tab.Identify[item.ammo]
-				self.HackingProgress = (self.HackingProgress or 0) + 0.05
+				self.HackingProgress = (self.HackingProgress or 0) + hackthinktime
 				self.BarrelRotation = self.BarrelRotation + math.random(-17, 17)
-				--status codes
-				local STATUS_NONE = 0
-				local STATUS_INVALID = 1
-				local STATUS_CANCELED = 2
-				local STATUS_OUTOFRANGE = 3
-				local STATUS_SUCCESS = 4
-				local STATUS_SIZE = 3 --total bits to send status codes
 				if SERVER then
 					--end the hack, with an optional status code (tell client why we beefed it)
 					local endhack = function(status, success)
 						local success = success or false
 						self:SetChargeAttack()
-						self:SetNWFiremodeEnt(nil)
+						self:SetNWFiremodeEnt(NULL)
 						self.HackingProgress = 0
 						if IsValid(self.ef_radio) then
 							self.ef_radio:Kill()
@@ -1655,7 +1749,11 @@ setmetatable(hacksuccess, {__index = function() return {"buttons/combine_button1
 							wep.HackingProgress = 0
 							wep:EmitSound(wep.HackSuccess and (hacksuccess[ident][math.random(#hacksuccess[ident])]) or hackfail[ident][math.random(#hackfail[ident])])
 							wep.nextfire = CurTime() + hackcooldown * wep:GetCooldownScale()
-							net.ReadUInt(STATUS_SIZE)
+							wep.HackStatus = net.ReadUInt(STATUS_SIZE)
+							timer.Simple(hackcooldown * wep:GetCooldownScale(), function()
+								if not IsValid(wep) then return end
+								wep.HackStatus = nil
+							end)
 						end
 					end)
 				end
@@ -1667,7 +1765,11 @@ setmetatable(hacksuccess, {__index = function() return {"buttons/combine_button1
 				tracep.endpos = tracep.start + self.Owner:GetAimVector() * hackrange
 				tracep.filter = self.Owner
 				local tr = util.TraceHull(tracep)
-				if SERVER then self:SetNWFiremodeEnt(tr.Entity) end
+				if SERVER then
+					self:SetNWFiremodeEnt(tr.Entity)
+				else
+					self.HackStatus = STATUS_INVALID
+				end
 				if IsValid(self:GetNWFiremodeEnt()) then
 					local wheatleyslow = ident == SCAV_HACK_WHEATLEY and wheatleytime or 1
 					self.HackTime = interactions[string.lower(self:GetNWFiremodeEnt():GetClass())].HackTime * wheatleyslow
@@ -1677,6 +1779,10 @@ setmetatable(hacksuccess, {__index = function() return {"buttons/combine_button1
 					self:EmitSound(hackfail[ident][math.random(#hackfail[ident])])
 					tab.Cooldown = hackcooldown * self:GetCooldownScale()
 					self.HackSuccess = nil
+					timer.Simple(hackcooldown * self:GetCooldownScale(), function()
+						if not IsValid(self) then return end
+						self.HackStatus = nil
+					end)
 					return false
 				end
 				if SERVER then
@@ -1701,10 +1807,41 @@ setmetatable(hacksuccess, {__index = function() return {"buttons/combine_button1
 				ScavData.CollectFuncs["models/weapons/w_models/w_wrangler.mdl"] = function(self, ent) return {{self.christmas and "models/weapons/c_models/c_wrangler_xmas.mdl" or ScavData.FormatModelname(ent:GetModel()), SCAV_SHORT_MAX, ent:GetSkin(), 1}} end
 				ScavData.CollectFuncs["models/weapons/c_models/c_wrangler.mdl"] = ScavData.CollectFuncs["models/weapons/w_models/w_wrangler.mdl"]
 			else
+				local headertext = function(text) draw.DrawText(text, "ScavScreenFontSmX", 44, 6, color_black, TEXT_ALIGN_LEFT) end
+				local signalstrengthicon = function(self, target)
+					signal:SetInt("$frame", isnumber(target) and target or signalstrength(self, target))
+					surface.SetDrawColor(color_black)
+					surface.SetMaterial(signal)
+					surface.DrawTexturedRect(196, 6, 16, 16)
+					draw.NoTexture()
+				end
+				local resultsscreens = {
+					[STATUS_INVALID] = function(self, item)
+						DrawScreenBKG(yellowscr)
+						--headertext("404")
+						draw.DrawText(ScavLocalize("scav.scavcan.hacknotarget"), "ScavScreenFontSm", 128, 18, color_black, TEXT_ALIGN_CENTER)
+					end,
+					[STATUS_CANCELED] = function(self, item)
+						DrawScreenBKG(yellowscr)
+						draw.DrawText(ScavLocalize("scav.scavcan.hackcanceled"), "ScavScreenFontSm", 128, 18, color_black, TEXT_ALIGN_CENTER)
+					end,
+					[STATUS_OUTOFRANGE] = function(self, item)
+						DrawScreenBKG(yellowscr)
+						signalstrengthicon(self, 4)
+						draw.DrawText(ScavLocalize("scav.scavcan.hackoutofrange"), "ScavScreenFontSm", 128, 18, color_black, TEXT_ALIGN_CENTER)
+					end,
+					[STATUS_SUCCESS] = function(self, item)
+						DrawScreenBKG(greenscr)
+						draw.DrawText(ScavLocalize("scav.scavcan.hacksuccess", "\0"), "ScavScreenFont", 128, 32, color_black, TEXT_ALIGN_CENTER)
+					end
+				}
+				setmetatable(resultsscreens, {__index = function() return function(self, item) self:DrawCooldown() end end})
+					--DrawScreenBKG(yellowscr)
+					--draw.DrawText(tostring(self.HackStatus), "ScavScreenFont", 128, 32, color_black, TEXT_ALIGN_CENTER)
+				--end end})
+
 				function tab.ScreenCooldown(self, item)
-					if not self.HackSuccess then self:DrawCooldown() return end
-					DrawScreenBKG(greenscr)
-					draw.DrawText(ScavLocalize("scav.scavcan.hacksuccess", "\0"), "ScavScreenFont", 128, 32, color_black, TEXT_ALIGN_CENTER)
+					resultsscreens[self.HackStatus](self, item)
 				end
 				function tab.ScreenFiring(self, item)
 					DrawScreenBKG(yellowscr)
@@ -1712,7 +1849,7 @@ setmetatable(hacksuccess, {__index = function() return {"buttons/combine_button1
 					local _, use = math.modf(CurTime())
 					local progressdots = math.floor(use * 4)
 					--Hacking text
-					draw.DrawText(ScavLocalize("scav.scavcan.hacking") .. ScavLocalize("scav.scavcan.progress" .. tostring(progressdots)), "ScavScreenFontSmX", 44, 6, color_black, TEXT_ALIGN_LEFT)
+					headertext(ScavLocalize("scav.scavcan.hacking") .. ScavLocalize("scav.scavcan.progress" .. tostring(progressdots)))
 					surface.SetDrawColor(color_black:Unpack())
 					--Separator bars
 					surface.DrawRect(42, 28, 172, 2)
@@ -1726,13 +1863,11 @@ setmetatable(hacksuccess, {__index = function() return {"buttons/combine_button1
 					surface.SetMaterial(scavicon)
 					surface.DrawTexturedRect(32, 34, 48, 48)
 					--Other Icon
-					local icon = scavicon
-					if IsValid(self:GetNWFiremodeEnt()) then
-						icon = interactions[string.lower(self:GetNWFiremodeEnt():GetClass())].Icon
-					end
-					surface.SetMaterial(icon)
+					local target = self:GetNWFiremodeEnt()
+					surface.SetMaterial(interactions[IsValid(target) and string.lower(target:GetClass()) or 0].Icon)
 					surface.DrawTexturedRect(176, 34, 48, 48)
-					draw.NoTexture()
+					--Signal Strength Indicator
+					signalstrengthicon(self, target)
 				end
 			end
 		ScavData.RegisterFiremode(tab, "models/props_c17/computer01_keyboard.mdl", SCAV_SHORT_MAX)
