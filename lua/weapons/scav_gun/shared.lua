@@ -1316,8 +1316,11 @@ if CLIENT then
 			--Charge Attack Firing screen
 			elseif self.ChargeAttack then
 				--Screen Draw item function
-				if self.inv.items[1]:GetFiremodeTable().ScreenFiring then
-					self.inv.items[1]:GetFiremodeTable().ScreenFiring(self, self:GetCurrentItem())
+				if #self.inv.items > 0 and 
+					IsValid(self.inv.items[1]) and 
+					self.inv.items[1]:GetFiremodeTable() and
+					self.inv.items[1]:GetFiremodeTable().ScreenFiring then
+						self.inv.items[1]:GetFiremodeTable().ScreenFiring(self, self:GetCurrentItem())
 				else
 					self:DrawFiring()
 				end
