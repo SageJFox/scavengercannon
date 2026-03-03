@@ -264,11 +264,12 @@ if SERVER then
             efdata:SetEntity(self)
             efdata:SetNormal(hitnormal)
             efdata:SetDamageType(self.ImpactDamageType or DMG_BULLET)
+			if ent:GetBloodColor() then efdata:SetColor(ent:GetBloodColor()) end
             util.Effect("ef_scav_impalerimpact", efdata)
 
             if (ent:IsNPC() or ent:IsPlayer() or ent:IsNextBot()) and ent.Health and (ent:Health() > 0 or ent:GetMaxHealth() == 0) then --ew
 
-				sound.Play("ambient/machines/slicer" .. math.random(2,3) .. ".wav", hitpos, 90, 100)
+				sound.Play("ambient/machines/slicer" .. math.random(2, 3) .. ".wav", hitpos, 90, 100)
 
                 local tracew = {}
                 tracew.start = hitpos
@@ -446,8 +447,9 @@ if CLIENT then
 		local trdata = {}
 		trdata.start = self.Pos
 		trdata.endpos = self.Pos + data:GetNormal() * -10
-		if IsValid(data:GetEntity()) then
-			trdata.filter = data:GetEntity()
+		local ent = data:GetEntity()
+		if IsValid(ent) then
+			trdata.filter = ent
 		end
 		local tr = util.TraceLine(trdata)
 
@@ -465,6 +467,12 @@ if CLIENT then
 
 		util.Effect("Impact", ef)
 
+		if not IsValid(ent) then return end
+
+		if data:GetColor() and data:GetColor() ~= 255 then
+			ef:SetColor(data:GetColor())
+			util.Effect("BloodImpact", ef)
+		end
 	end
 
 	function EFFECT:Think()
