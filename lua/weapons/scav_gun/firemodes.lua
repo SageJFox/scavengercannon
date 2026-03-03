@@ -2082,8 +2082,10 @@ PrecacheParticleSystem("scav_exp_plasma")
 			tab.Name = "#scav.scavcan.syringes"
 			tab.anim = ACT_VM_PRIMARYATTACK
 			tab.Level = 4
-			local identify = {} --all syringe guns are the same
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
+			local identify = {
+				["models/weapons/c_models/c_leechgun/c_leechgun.mdl"] = SCAV_SYRINGE_LEECH
+			}
+			tab.Identify = setmetatable(identify, {__index = function() return SCAV_SYRINGE_DEFAULT end})
 			tab.MaxAmmo = 190 --150 + 40
 			local callback = function(self, tr)
 				if IsValid(tr.Entity) then
@@ -2104,6 +2106,13 @@ PrecacheParticleSystem("scav_exp_plasma")
 					tr.Entity:TakeDamageInfo(dmg)
 				end 
 			end
+			local callback_leech = function(self, tr)
+				callback(self, tr)
+				if not (tr.Entity:IsPlayer() or tr.Entity:IsNPC() or tr.Entity:IsNextBot()) then return end
+				if not IsValid(self.Owner) or self.Owner:Health() >= self.Owner:GetMaxHealth() then return end
+
+				self.Owner:SetHealth(math.min(self.Owner:Health() + 1, self.Owner:GetMaxHealth()))
+			end
 			if SERVER then
 				tab.proj = GProjectile()
 					tab.proj:SetCallback(callback)
@@ -2119,6 +2128,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 					--local proj = s_proj.AddProjectile(self.Owner, self.Owner:GetShootPos() + (self:GetAimVector():Angle():Right() * 2 - self:GetAimVector():Angle():Up() * 2) * 1, vel, ScavData.models["models/weapons/w_models/w_syringegun.mdl"].Callback, false, false, Vector(0, 0, -96))
 					if SERVER then
 						local proj = tab.proj
+						if tab.Identify[item.ammo] == SCAV_SYRINGE_LEECH then proj:SetCallback(callback_leech) end
 						proj:SetOwner(self.Owner)
 						proj:SetInflictor(self)
 						proj:SetPos(pos)
@@ -2130,12 +2140,14 @@ PrecacheParticleSystem("scav_exp_plasma")
 							self.Owner:EmitSound("weapons/syringegun_reload_air1.wav")
 							timer.Simple(0.25, function() if IsValid(self) and IsValid(self.Owner) then self.Owner:EmitSound("weapons/syringegun_reload_air2.wav") end end)
 						end
-					else
+					end
+					if not game.SinglePlayer() or SERVER then
 						local ef = EffectData()
 							ef:SetOrigin(pos)
 							ef:SetStart(vel)
 							ef:SetEntity(self.Owner)
-							ef:SetScale(item.data)
+							ef:SetScale(item.data % 2)
+							ef:SetColor(tab.Identify[item.ammo])
 						util.Effect("ef_scav_syringe", ef)
 					end
 				end
