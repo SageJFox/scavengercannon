@@ -876,13 +876,15 @@ end
 					self.Owner:EmitSound("physics/metal/weapon_impact_hard3.wav", 75, 70, 1)
 					return self:TakeSubammo(item, 1)
 				end
-				ScavData.CollectFuncs["models/props_lab/cactus.mdl"] = function(self, ent) return {{"models/scav/nail.mdl", 15, ent:GetSkin()}} end
+				ScavData.CollectFuncs["models/weapons/w_nailgun.mdl"] = function(self, ent) return {{"models/scav/nailsmall.mdl", 50, 0}} end
+				ScavData.CollectFuncs["models/props_lab/cactus.mdl"] = function(self, ent) return {{"models/scav/nail.mdl", 15, 1}} end
 				--TF2
-				ScavData.CollectFuncs["models/props_2fort/nail001.mdl"] = function(self, ent) return {{"models/scav/nail.mdl", 1, ent:GetSkin()}} end
+				ScavData.CollectFuncs["models/props_2fort/nail001.mdl"] = function(self, ent) return {{"models/scav/nail.mdl", 1, 1}} end
 				ScavData.CollectFuncs["models/props_2fort/nail002.mdl"] = ScavData.CollectFuncs["models/props_2fort/nail001.mdl"]
-				ScavData.CollectFuncs["models/props_foliage/cactus01.mdl"] = function(self, ent) return {{"models/scav/nail.mdl", 30, ent:GetSkin()}} end
-				ScavData.CollectFuncs["models/weapons/w_models/w_nailgun.mdl"] = function(self, ent) return {{"models/scav/nail.mdl", 50, ent:GetSkin()}} end
-				ScavData.CollectFuncs["models/weapons/c_models/c_boston_basher/c_boston_basher.mdl"] = function(self, ent) return {{"models/scav/nail.mdl", 21, ent:GetSkin()}} end
+				ScavData.CollectFuncs["models/props_foliage/cactus01.mdl"] = function(self, ent) return {{"models/scav/nail.mdl", 30, 1}} end
+				ScavData.CollectFuncs["models/weapons/w_models/w_nailgun.mdl"] = function(self, ent) return {{"models/scav/nail.mdl", 50, 0}} end
+				ScavData.CollectFuncs["models/weapons/w_models/w_grenade_nail.mdl"] = function(self, ent) return {{"models/scav/nailsmall.mdl", 30, 0}} end
+				ScavData.CollectFuncs["models/weapons/c_models/c_boston_basher/c_boston_basher.mdl"] = function(self, ent) return {{"models/scav/nail.mdl", 21, 0}} end
 				ScavData.CollectFuncs["models/workshop/weapons/c_models/c_boston_basher/c_boston_basher.mdl"] = ScavData.CollectFuncs["models/weapons/c_models/c_boston_basher/c_boston_basher.mdl"]
 				--FoF
 				ScavData.CollectFuncs["models/elpaso/cactus1.mdl"] = ScavData.CollectFuncs["models/props_foliage/cactus01.mdl"]
@@ -1438,7 +1440,7 @@ end
 								bullet1.Dir = tracep.Normal:Angle():Right()
 							local bullet2 = table.Copy(bullet1)
 								bullet2.Dir = -tracep.Normal:Angle():Right()
-							timer.Simple(i/100, function() --gotta offset these calls slightly so they can all go through
+							timer.Simple(i / 100, function() --gotta offset these calls slightly so they can all go through
 								local ent = ents.Create("info_null") --this is really gross but if we just use the attacker the tracer draws from the muzzle of the gun instead of its spawn pos
 									if IsValid(ent) then
 										ent:SetPos(bullet1.Src)
