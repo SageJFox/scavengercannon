@@ -60,8 +60,8 @@ if SERVER then
 
 	function ENT:Initialize()
 
-        if not self:GetModel() then
-            self:SetModel("models/crossbow_bolt.mdl")
+		if not self:GetModel() then
+			self:SetModel("models/crossbow_bolt.mdl")
 		end
 
 		self:SetMoveType(MOVETYPE_NONE)
@@ -73,19 +73,19 @@ if SERVER then
 		self.LastTrace = CurTime()
 
 		if not self.Trail then
-            self.Trail = util.SpriteTrail(self, 0, color_blue, false, 7, 0, 1, 0.0625, "trails/laser.vmt")
-        end
+			self.Trail = util.SpriteTrail(self, 0, color_blue, false, 7, 0, 1, 0.0625, "trails/laser.vmt")
+		end
 
-        if not self.DmgAmt then
-            self.DmgAmt = 50
-        end
+		if not self.DmgAmt then
+			self.DmgAmt = 50
+		end
 
-        if not self.Drop then
-            self.Drop = Vector(0, 0, -200)
-        end
+		if not self.Drop then
+			self.Drop = Vector(0, 0, -200)
+		end
 
-        if not self.Vel then
-            self.Vel = self.Owner:GetAimVector() * 3000
+		if not self.Vel then
+			self.Vel = self.Owner:GetAimVector() * 3000
 		end
 
 		self:SetLength(math.floor(math.max(self:OBBMaxs().x - self:OBBMins().x, self:OBBMaxs().y - self:OBBMins().y, self:OBBMaxs().z - self:OBBMins().z)))
@@ -152,7 +152,7 @@ if SERVER then
 
 		if not self:GetHit() then
 
-            self.Vel = self.Vel + self.Drop * (CurTime() - self.LastTrace)
+			self.Vel = self.Vel + self.Drop * (CurTime() - self.LastTrace)
 
 			local vel = self.Vel * (CurTime() - self.LastTrace)
 
@@ -189,9 +189,9 @@ if SERVER then
 				end
 			end
 
-            if IsValid(self.Trail) then
-                self.Trail:Fire("Kill", 1, 1)
-            end
+			if IsValid(self.Trail) then
+				self.Trail:Fire("Kill", 1, 1)
+			end
 
 			if hitsky or (not self:IsInWorld() and not ent) then
 				self:SetNoDraw(true)
@@ -256,151 +256,151 @@ if SERVER then
 
 			dmg:SetDamagePosition(hitpos)
 			dmg:SetDamageForce(self.Vel * 10)
-            dmg:SetDamageType(self.ImpactDamageType or DMG_SLASH)
-            dmg:SetDamage(self.DmgAmt)
+			dmg:SetDamageType(self.ImpactDamageType or DMG_SLASH)
+			dmg:SetDamage(self.DmgAmt)
 
-            efdata = EffectData()
+			efdata = EffectData()
 			efdata:SetOrigin(hitpos)
-            efdata:SetEntity(self)
-            efdata:SetNormal(hitnormal)
-            efdata:SetDamageType(self.ImpactDamageType or DMG_BULLET)
-			if ent:GetBloodColor() then efdata:SetColor(ent:GetBloodColor()) end
-            util.Effect("ef_scav_impalerimpact", efdata)
+			efdata:SetEntity(self)
+			efdata:SetNormal(hitnormal)
+			efdata:SetDamageType(self.ImpactDamageType or DMG_BULLET)
+			efdata:SetColor(ent:GetBloodColor() and ent:GetBloodColor() or -1)
+			util.Effect("ef_scav_impalerimpact", efdata)
 
-            if (ent:IsNPC() or ent:IsPlayer() or ent:IsNextBot()) and ent.Health and (ent:Health() > 0 or ent:GetMaxHealth() == 0) then --ew
+			if (ent:IsNPC() or ent:IsPlayer() or ent:IsNextBot()) and ent.Health and (ent:Health() > 0 or ent:GetMaxHealth() == 0) then --ew
 
 				sound.Play("ambient/machines/slicer" .. math.random(2, 3) .. ".wav", hitpos, 90, 100)
 
-                local tracew = {}
-                tracew.start = hitpos
-                tracew.endpos = hitpos + (self.Vel * (self:GetLength() / 500 or 0.1))
-                tracew.mask = (not self.ImpactDamageType or bit.band(self.ImpactDamageType, DMG_BULLET)) and MASK_SHOT_PORTAL or MASK_SHOT_HULL
+				local tracew = {}
+				tracew.start = hitpos
+				tracew.endpos = hitpos + (self.Vel * (self:GetLength() / 500 or 0.1))
+				tracew.mask = (not self.ImpactDamageType or bit.band(self.ImpactDamageType, DMG_BULLET)) and MASK_SHOT_PORTAL or MASK_SHOT_HULL
 
-                tracew.filter = function(tr_ent)
-                    if tr_ent ~= ent then
-                        return true
-                    end
-                end
+				tracew.filter = function(tr_ent)
+					if tr_ent ~= ent then
+						return true
+					end
+				end
 
-                local trw = util.TraceLine(tracew)
+				local trw = util.TraceLine(tracew)
 
-                if self.DmgAmt >= ent:Health() and trw.Hit and not self.NoPin then
+				if self.DmgAmt >= ent:Health() and trw.Hit and not self.NoPin then
 
 					if ent:IsNPC() then
 						gamemode.Call("OnNPCKilled", ent, dmg:GetAttacker(), dmg:GetInflictor())
 					end
 
-                    local pos = hitpos
-                    local offpos = pos - (hitpos - trw.HitPos)
+					local pos = hitpos
+					local offpos = pos - (hitpos - trw.HitPos)
 
-                    if ent:IsPlayer() then
-                        ent:TakeDamageInfo(dmg)
-                    end
+					if ent:IsPlayer() then
+						ent:TakeDamageInfo(dmg)
+					end
 
-                    self.Pinned = true
-                    local rag = ent
+					self.Pinned = true
+					local rag = ent
 
-                    if IsValid(ent) and offpos and (not ent:IsPlayer() or (ent:IsPlayer() and not ent:Alive())) and not self.PerformPin then
+					if IsValid(ent) and offpos and (not ent:IsPlayer() or (ent:IsPlayer() and not ent:Alive())) and not self.PerformPin then
 
-                        self.PerformPin = true
+						self.PerformPin = true
 
-                        if ent:GetMoveType() == MOVETYPE_VPHYSICS then
-                            rag = ents.Create("prop_physics")
-                        else
-                            rag = ents.Create("prop_ragdoll")
-                        end
+						if ent:GetMoveType() == MOVETYPE_VPHYSICS then
+							rag = ents.Create("prop_physics")
+						else
+							rag = ents.Create("prop_ragdoll")
+						end
 
-                        rag:SetModel(ent:GetModel())
-                        rag:SetSkin(ent:GetSkin())
+						rag:SetModel(ent:GetModel())
+						rag:SetSkin(ent:GetSkin())
 						for i = 0, ent:GetNumBodyGroups() do
 							rag:SetBodygroup(i, ent:GetBodygroup(i))
 						end
-                        rag:SetPos(offpos)
-                        rag:SetAngles(ent:GetAngles())
-                        rag:SetColor(ent:GetColor())
-                        rag:SetMaterial(ent:GetMaterial())
-                        rag:Spawn()
-                        rag:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
-                        rag:Fire("Kill", 1, 300)
+						rag:SetPos(offpos)
+						rag:SetAngles(ent:GetAngles())
+						rag:SetColor(ent:GetColor())
+						rag:SetMaterial(ent:GetMaterial())
+						rag:Spawn()
+						rag:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
+						rag:Fire("Kill", 1, 300)
 
-                        for i = 0, rag:GetPhysicsObjectCount() - 1 do
+						for i = 0, rag:GetPhysicsObjectCount() - 1 do
 
-                            local bone = rag:TranslatePhysBoneToBone(i)
-                            local phys = rag:GetPhysicsObjectNum(i)
+							local bone = rag:TranslatePhysBoneToBone(i)
+							local phys = rag:GetPhysicsObjectNum(i)
 
-                            if phys then
+							if phys then
 
-                                local bpos, bang = ent:GetBonePosition(bone)
+								local bpos, bang = ent:GetBonePosition(bone)
 
-                                if bpos and bang then
-                                    phys:SetPos(bpos)
-                                    phys:SetAngles(bang)
-                                end
+								if bpos and bang then
+									phys:SetPos(bpos)
+									phys:SetAngles(bang)
+								end
 
-                                phys:Wake()
-                                phys:SetVelocity(ent:GetVelocity())
+								phys:Wake()
+								phys:SetVelocity(ent:GetVelocity())
 
-                            end
+							end
 
-                        end
+						end
 
-                        local bonetrace = {}
-                        bonetrace.start = hitpos
-                        bonetrace.endpos = hitpos + self.Vel / 25
-                        bonetrace.filter = {self, self.Owner, ClassName}
-                        bonetrace.mask = MASK_SHOT - CONTENTS_SOLID
-                        local bonetr = util.TraceLine(bonetrace)
+						local bonetrace = {}
+						bonetrace.start = hitpos
+						bonetrace.endpos = hitpos + self.Vel / 25
+						bonetrace.filter = {self, self.Owner, ClassName}
+						bonetrace.mask = MASK_SHOT - CONTENTS_SOLID
+						local bonetr = util.TraceLine(bonetrace)
 
-                        if IsValid(rag) then
+						if IsValid(rag) then
 
-                            local bone = rag:GetPhysicsObjectNum(bonetr.PhysicsBone)
+							local bone = rag:GetPhysicsObjectNum(bonetr.PhysicsBone)
 
-                            if bone then
+							if bone then
 
-                                bone:SetPos(offpos)
-                                self:SetPos(offpos)
+								bone:SetPos(offpos)
+								self:SetPos(offpos)
 
-                                local hitent = trw.Entity
+								local hitent = trw.Entity
 
-                                if IsValid(hitent) and (not hitent:IsPlayer() and not hitent:IsNPC() and not hitent:IsNextBot() and hitent:GetMoveType() == MOVETYPE_VPHYSICS) then
-                                    self:SetParent(hitent)
-                                    rag:SetOwner(hitent:GetOwner() or hitent)
-                                    constraint.Weld(rag, hitent, bonetr.PhysicsBone, 0, 0, false, true)
-                                elseif trw.HitWorld then
-                                    bone:EnableMotion(false)
-                                    timer.Simple(1, function()
-                                        constraint.Weld(rag, game.GetWorld(), bonetr.PhysicsBone, 0, 0, false, true)
-                                    end)
-                                end
+								if IsValid(hitent) and (not hitent:IsPlayer() and not hitent:IsNPC() and not hitent:IsNextBot() and hitent:GetMoveType() == MOVETYPE_VPHYSICS) then
+									self:SetParent(hitent)
+									rag:SetOwner(hitent:GetOwner() or hitent)
+									constraint.Weld(rag, hitent, bonetr.PhysicsBone, 0, 0, false, true)
+								elseif trw.HitWorld then
+									bone:EnableMotion(false)
+									timer.Simple(1, function()
+										constraint.Weld(rag, game.GetWorld(), bonetr.PhysicsBone, 0, 0, false, true)
+									end)
+								end
 
-                            end
+							end
 
-                            if ent:IsPlayer() then
-                                local oldrag = ent:GetRagdollEntity()
-                                if IsValid(oldrag) then
-                                    oldrag:Remove()
-                                end
-                            else
-                                ent:DropWeapon()
-                                ent:Remove()
-                            end
+							if ent:IsPlayer() then
+								local oldrag = ent:GetRagdollEntity()
+								if IsValid(oldrag) then
+									oldrag:Remove()
+								end
+							else
+								ent:DropWeapon()
+								ent:Remove()
+							end
 
-                            sound.Play("weapons/crossbow/bolt_skewer1.wav", rag:GetPos(), 90, 100)
+							sound.Play("weapons/crossbow/bolt_skewer1.wav", rag:GetPos(), 90, 100)
 
-                        end
+						end
 
-                    end
+					end
 
-                elseif self.DmgAmt >= ent:Health() and (not trw.Hit or not self.CanDoPin) then
-                    self:SetNoDraw(true)
-                    self:Remove()
-                end
+				elseif self.DmgAmt >= ent:Health() and (not trw.Hit or not self.CanDoPin) then
+					self:SetNoDraw(true)
+					self:Remove()
+				end
 
-            end
+			end
 
-            if not self.Pinned then
-                ent:TakeDamageInfo(dmg)
-            end
+			if not self.Pinned then
+				ent:TakeDamageInfo(dmg)
+			end
 
 			self:Fire("kill", 1, 60)
 			self:SetHit(true)
