@@ -519,7 +519,17 @@ local PRONE_SPEED = 800 --900 would be crouching with walk key held
 	--MG42
 ==============================================================================================]]--
 		
-		if SERVER then util.AddNetworkString("scv_setheat") end
+		if SERVER then
+			util.AddNetworkString("scv_setheat")
+		else
+			
+			net.Receive("scv_setheat", function()
+				local self = net.ReadEntity()
+				if not IsValid(self) then return end
+				self.Heat = net.ReadInt(8)
+				self.Overheated = net.ReadBool()
+			end)
+		end
 		--PrecacheParticleSystem("grenadetrail")
 
 		local tab = {}
@@ -530,106 +540,71 @@ local PRONE_SPEED = 800 --900 would be crouching with walk key held
 			local identify = {}
 			tab.Identify = setmetatable(identify, {__index = function() return 0 end} )
 			tab.MaxAmmo = 500
-			tab.Heat = 0
-			tab.Overheated = false
 			--tab.Particle = nil
-			local function mgcooloff(self,item)
-				if item then
-					local tbl = item:GetFiremodeTable()
-					if not (self:ProcessLinking(item) and self:StopChargeOnRelease()) then
-						if tbl.Heat > 0 then
-							if SERVER then
-								tbl.Heat = math.max(0,tbl.Heat - 1)
-								net.Start("scv_setheat")
-									net.WriteEntity(self)
-									net.WriteInt(tbl.Heat, 8)
-									net.WriteBool(tbl.Overheated)
-								net.Send(self.Owner)
-							elseif IsFirstTimePredicted() then
-								net.Receive("scv_setheat", function()
-									local self = net.ReadEntity()
-									--fuck you if you think we're getting an error here
-									if IsValid(self) and
-										self.inv and
-										self.inv.items and
-										#self.inv.items > 0 and
-										self.inv.items[1] and
-										ScavData.models[self.inv.items[1].ammo] and
-										ScavData.models[self.inv.items[1].ammo].Name == "#scav.scavcan.mg42" then
-											self.inv.items[1]:GetFiremodeTable().Heat = net.ReadInt(8)
-											--item.Heat = self.inv.items[1]:GetFiremodeTable().Heat
-											self.inv.items[1]:GetFiremodeTable().Overheated = net.ReadBool()
-											--item.Overheated = self.inv.items[1]:GetFiremodeTable().Overheated
-									end
-								end)
-							end
-							timer.Simple(0.05, function() mgcooloff(self,item) end)
-						else
-							tbl.Overheated = false
-							--[[if CLIENT and IsValid(tab.Particle) then
-								tab.Particle:StopEmission(true,false)
-							end]]
+			local function mgcooloff(self, item)
+				if not IsValid(self) or not item then return end
+				if not item:GetFiremodeTable() or item:GetFiremodeTable().Name ~= "#scav.scavcan.mg42" then return end
+
+				if not (self:StopChargeOnRelease() and self:ProcessLinking(item)) or self.Overheated then
+					if self.Heat and self.Heat > 0 then
+						if SERVER then
+							self.Heat = math.max(0, self.Heat - 1)
+							net.Start("scv_setheat")
+								net.WriteEntity(self)
+								net.WriteInt(self.Heat or 0, 8)
+								net.WriteBool(self.Overheated or false)
+							net.Send(self.Owner)
 						end
-						--print(tbl.Heat .. " " .. tostring(tbl.Overheated))
+						timer.Create(tostring(self) .. "ScavMGCooloff", 0.05, 1, function() mgcooloff(self, item) end)
+					else
+						self.Overheated = nil
+						self.Heat = nil
+						--[[if CLIENT and IsValid(tab.Particle) then
+							tab.Particle:StopEmission(true, false)
+						end]]
 					end
-					if SERVER then
-						self:SetBlockPoseInstant(tbl.Heat/100)
-					end
+					--print(self.Heat .. " " .. tostring(self.Overheated))
+				end
+				if SERVER then
+					self:SetBlockPoseInstant((self.Heat or 0) / 100)
 				end
 			end
-			tab.ChargeAttack = function(self,item)
+			tab.ChargeAttack = function(self, item)
 				if self.Owner:KeyDown(IN_ATTACK) then
-					local tbl = item:GetFiremodeTable()
 					if SERVER then
-						if tbl.Heat >= 100 then
-							tbl.Heat = 100
-							tbl.Overheated = true
+						if self.Heat and self.Heat >= 100 then
+							self.Heat = 100
+							self.Overheated = true
 						end
 						net.Start("scv_setheat")
 							net.WriteEntity(self)
-							net.WriteInt(tbl.Heat, 8)
-							net.WriteBool(tbl.Overheated)
+							net.WriteInt(self.Heat or 0, 8)
+							net.WriteBool(self.Overheated or false)
 						net.Send(self.Owner)
-					else
-						net.Receive("scv_setheat", function()
-							local self = net.ReadEntity()
-							--or here
-							if IsValid(self) and
-								self.inv and
-								self.inv.items and
-								#self.inv.items > 0 and
-								self.inv.items[1] and
-								ScavData.models[self.inv.items[1].ammo] and
-								ScavData.models[self.inv.items[1].ammo].Name == "#scav.scavcan.mg42" then 
-									self.inv.items[1]:GetFiremodeTable().Heat = net.ReadInt(8)
-									--item.Heat = self.inv.items[1]:GetFiremodeTable().Heat
-									self.inv.items[1]:GetFiremodeTable().Overheated = net.ReadBool()
-									--item.Overheated = self.inv.items[1]:GetFiremodeTable().Overheated
-							end
-						end)
-						--if tbl.Overheated == true then
+					--else
+						--if self.Overheated == true then
 							--if IsValid(tbl.Particle) then
 							--	tbl.Particle:Restart()
 							--else
-							--	tbl.Particle = CreateParticleSystem(self,"grenadetrail",PATTACH_POINT_FOLLOW,0,0)
+							--	tbl.Particle = CreateParticleSystem(self, "grenadetrail", PATTACH_POINT_FOLLOW, 0, 0)
 							--end
 						--end
 					end
-					if not tbl.Overheated then
-						tbl.Heat = math.min(100,tbl.Heat + 1)
+					if not self.Overheated then
+						self.Heat = math.min(100, (self.Heat or 0) + 1)
 						local bullet = {}
 							bullet.Num = 1
 							if self.Owner:GetVelocity():LengthSqr() < WALK_SPEED then
 								if self.Owner:Crouching() and self.Owner:GetVelocity():LengthSqr() < PRONE_SPEED then
-									bullet.Spread = Vector(0.1,0.1,0) --"true" spread for bipod is .025 in DoD, but this player has a lot more freedom of movement and can aim anywhere
-									if CLIENT then self.Owner:SetEyeAngles((vector_up*0.01+self:GetAimVector()):Angle()) end
+									bullet.Spread = Vector(0.1, 0.1, 0) --"true" spread for bipod is .025 in DoD, but this player has a lot more freedom of movement and can aim anywhere
+									if CLIENT then self.Owner:SetEyeAngles((vector_up * 0.01 + self:GetAimVector()):Angle()) end
 								else
-									bullet.Spread = Vector(0.2,0.2,0)
-									if CLIENT then self.Owner:SetEyeAngles((vector_up*0.05+self:GetAimVector()):Angle()) end
+									bullet.Spread = Vector(0.2, 0.2, 0)
+									if CLIENT then self.Owner:SetEyeAngles((vector_up * 0.05 + self:GetAimVector()):Angle()) end
 								end
 							else
-								bullet.Spread = Vector(0.3,0.3,0)
-								if CLIENT then self.Owner:SetEyeAngles((vector_up*0.05+self:GetAimVector()):Angle()) end
+								bullet.Spread = Vector(0.3, 0.3, 0)
+								if CLIENT then self.Owner:SetEyeAngles((vector_up * 0.05 + self:GetAimVector()):Angle()) end
 							end
 							bullet.Tracer = 1
 							bullet.Force = 5
@@ -637,8 +612,8 @@ local PRONE_SPEED = 800 --900 would be crouching with walk key held
 							bullet.TracerName = "ef_scav_tr_b"
 							bullet.Src = self.Owner:GetShootPos()
 							bullet.Dir = self:GetAimVector()
-						--self.Owner:ScavViewPunch(Angle(-5,math.Rand(-0.2,0.2),0),0.5,true) --TODO: DoD:S viewpunch
-						self.Owner:ScavViewPunch(Angle(-0.7,math.Rand(-0.4,0.4),0),0.2,true)
+						--self.Owner:ScavViewPunch(Angle(-5, math.Rand(-0.2, 0.2), 0), 0.5, true) --TODO: DoD:S viewpunch
+						self.Owner:ScavViewPunch(Angle(-0.7, math.Rand(-0.4, 0.4), 0), 0.2, true)
 						if SERVER or not game.SinglePlayer() then
 							self.Owner:FireBullets(bullet)
 						end
@@ -647,29 +622,32 @@ local PRONE_SPEED = 800 --900 would be crouching with walk key held
 						dodsshelleject(self)
 						if SERVER then
 							self.Owner:EmitSound("Weapon_Mg42.Shoot")
-							self:SetPanelPoseInstant(0.25,2)
-							self:TakeSubammo(item,1)
+							self:SetPanelPoseInstant(0.25, 2)
+							self:TakeSubammo(item, 1)
 						end
 					end
 					if SERVER then
-						self:SetBlockPoseInstant(tbl.Heat/100)
+						self:SetBlockPoseInstant((self.Heat or 0) / 100)
 					--elseif not IsValid(tab.Particle) then
-					--	tab.Particle = CreateParticleSystem(self,"grenadetrail",PATTACH_POINT_FOLLOW,0,0)
+					--	tab.Particle = CreateParticleSystem(self, "grenadetrail", PATTACH_POINT_FOLLOW, 0, 0)
 					--end
 					end
 				end
 				local continuefiring = self:ProcessLinking(item) and self:StopChargeOnRelease()
 				if not continuefiring then
-					timer.Simple(0.25, function() mgcooloff(self,item) end)
+					if not timer.Exists(tostring(self) .. "ScavMGCooloff") then
+						timer.Create(tostring(self) .. "ScavMGCooloff", 0.25, 1, function() mgcooloff(self, item) end)
+					end
 					if SERVER then
 						self:SetChargeAttack()
 						self:SetBarrelRestSpeed(0)
 					end
+					return 0.25
 				end
 				return 0.05
 			end
-			tab.FireFunc = function(self,item)
-				self:SetChargeAttack(tab.ChargeAttack,item)
+			tab.FireFunc = function(self, item)
+				self:SetChargeAttack(tab.ChargeAttack, item)
 				if SERVER then
 					self:SetBarrelRestSpeed(1000)
 				end
@@ -678,15 +656,19 @@ local PRONE_SPEED = 800 --900 would be crouching with walk key held
 			if CLIENT then
 				--Add cooldown bar to the existing status screen
 				tab.ScreenAdd = function(self, item)
-					local item2 = self.inv.items[1]:GetFiremodeInfo()
-					if item2 then
-						surface.SetDrawColor(0,0,0)
-						surface.DrawOutlinedRect(75,78,106,14,2)
-						surface.DrawRect(78,81,item2.Heat,8)
+					if not self.Heat or self.Heat <= 0 then return end
+
+					surface.SetDrawColor(0, 0, 0)
+					surface.DrawOutlinedRect(75, 78, 106, 14, 2)
+					surface.DrawRect(78, 81, self.Heat or 0, 8)
+
+					local _, flashtime = math.modf(CurTime())
+					if self.Overheated or (self.Heat > 65 and flashtime > 0.5) then
+						draw.DrawText("!", "ScavScreenFontSmX", 184, 72, color_black, TEXT_ALIGN_LEFT)
 					end
 				end
 			end
-			tab.Cooldown = 0
+			tab.Cooldown = 0.05
 		ScavData.RegisterFiremode(tab,"models/weapons/w_mg42bd.mdl", 250)
 		ScavData.RegisterFiremode(tab,"models/weapons/w_mg42bu.mdl", 250)
 		ScavData.RegisterFiremode(tab,"models/weapons/w_mg42pr.mdl", 250)
