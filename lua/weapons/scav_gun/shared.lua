@@ -231,6 +231,7 @@ function SWEP:SetSeqEndTime(endtime)
 end
 
 function SWEP:StopChargeOnRelease()
+	if not IsValid(self.Owner) then return true end
 	local keydown = self.Owner:KeyDown(IN_ATTACK)
 	if not keydown then
 		self.ChargeAttack = nil
@@ -239,101 +240,53 @@ function SWEP:StopChargeOnRelease()
 end
 
 function SWEP:ProcessLinking(item)
-
-	if SERVER then
-
-		if item.subammo <= 0 then
-
-			local newitem = self:GetNextItem()
-
-			if newitem then
-
-				local newinfo = ScavData.models[newitem.ammo]
-				local oldinfo = ScavData.models[item.ammo]
-
-				if not newinfo or not oldinfo then
-					item:Remove()
-					self.ChargeAttack = nil
-					self.chargeitem = nil
-					return false
-				end
-
-				local newname = newinfo.Name and newinfo.Name or "#scav.scavcan.unknown"
-				local oldname = oldinfo.Name and oldinfo.Name or "#scav.scavcan.unknown"
-
-				local newstyle = newinfo.Identify and newinfo.Identify[newitem.ammo] or -1
-				local oldstyle = oldinfo.Identify and oldinfo.Identify[item.ammo] or -1
-
-				if newstyle == oldstyle and newname == oldname then
-					self.chargeitem = newitem
-				else
-					self.ChargeAttack = nil
-					self.chargeitem = nil
-				end
-
-			else
-
-				self.ChargeAttack = nil
-				self.chargeitem = nil
-				
-			end
-
-			item:Remove()
-
-		end
-
-		if not self:GetCurrentItem() or (ScavData.GetFiremode(item.ammo) ~= ScavData.GetFiremode(self:GetCurrentItem().ammo) or (self:GetCurrentItem().subammo <= 0)) or not self.Owner:KeyDown(IN_ATTACK) then
-			self.ChargeAttack = nil
-			self.chargeitem = nil
-		end
-
-		return self.ChargeAttack ~= nil
-
-	else
-
-		if item.subammo <= 0 then
-
-			local predicteditem = self.inv.items[2]
-
-			if predicteditem then
-
-				self.predicteditem = 2
-
-				local newinfo = ScavData.models[predicteditem.ammo]
-				local oldinfo = ScavData.models[item.ammo]
-				local newname = "#scav.scavcan.unknown"
-				local oldname = "#scav.scavcan.unknown"
-
-				if not newinfo or not oldinfo then
-					self.ChargeAttack = nil
-					self.chargeitem = nil
-					return false
-				end
-
-				local newname = newinfo.Name and newinfo.Name or "#scav.scavcan.unknown"
-				local oldname = oldinfo.Name and oldinfo.Name or "#scav.scavcan.unknown"
-
-				local newstyle = newinfo.Identify and newinfo.Identify[predicteditem.ammo] or -1
-				local oldstyle = oldinfo.Identify and oldinfo.Identify[item.ammo] or -1
-
-				if newstyle == oldstyle and newname == oldname then
-					self.chargeitem = predicteditem
-				else
-					self.ChargeAttack = nil
-					self.chargeitem = nil
-				end
-
-			else
-				self.ChargeAttack = nil
-				self.chargeitem = nil
-			end
-
-		end
-
-		return self.ChargeAttack ~= nil
-
+	if not item then
+		self.ChargeAttack = nil
+		self.chargeitem = nil
+		return false
 	end
 
+	if item.subammo <= 0 then
+		local newitem = SERVER and self:GetNextItem() or self.inv.items[2]
+		if not newitem  then
+			self.ChargeAttack = nil
+			self.chargeitem = nil
+		else
+			if CLIENT then self.predicteditem = 2 end
+
+			local newinfo = ScavData.models[newitem.ammo]
+			local oldinfo = ScavData.models[item.ammo]
+
+			if not newinfo or not oldinfo then
+				if SERVER then item:Remove() end
+				self.ChargeAttack = nil
+				self.chargeitem = nil
+				return false
+			end
+
+			local newname = newinfo.Name or "#scav.scavcan.unknown"
+			local oldname = oldinfo.Name or "#scav.scavcan.unknown"
+			local newstyle = newinfo.Identify and newinfo.Identify[newitem.ammo] or -1
+			local oldstyle = oldinfo.Identify and oldinfo.Identify[item.ammo] or -1
+			if newstyle == oldstyle and newname == oldname then
+				self.chargeitem = newitem
+			else
+				self.ChargeAttack = nil
+				self.chargeitem = nil
+			end
+		end
+
+		if SERVER then item:Remove() end
+	end
+
+	if SERVER and (not self:GetCurrentItem() or 
+		(ScavData.GetFiremode(item.ammo) ~= ScavData.GetFiremode(self:GetCurrentItem().ammo) or
+		(self:GetCurrentItem().subammo <= 0)) or not self.Owner:KeyDown(IN_ATTACK)) then
+			self.ChargeAttack = nil
+			self.chargeitem = nil
+	end
+
+	return self.ChargeAttack ~= nil
 end
 
 function SWEP:PotentialHealing()
@@ -411,7 +364,7 @@ if SERVER then
 
 	function SWEP:TakeSubammo(item, amount)
 
-		if item.subammo ~= SCAV_SHORT_MAX and SERVER then
+		if item.subammo ~= SCAV_SHORT_MAX then
 			item.subammo = item.subammo - amount
 		end
 
