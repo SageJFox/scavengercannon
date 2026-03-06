@@ -3167,7 +3167,10 @@ PrecacheParticleSystem("scav_exp_plasma")
 				tracep.maxs = Vector(8, 8, 8)
 				function tab.ChargeAttack(self, item)
 					self.slicestage = self.slicestage + 1
-					if SERVER then --SERVER
+					if self.slicestage == 1 then
+						self.Owner:SetAnimation(PLAYER_ATTACK1)
+					end
+					if SERVER then
 						
 						local vm = self.Owner:GetViewModel()
 						local att = vm:GetAttachment(vm:LookupAttachment("muzzle"))
@@ -3225,7 +3228,6 @@ PrecacheParticleSystem("scav_exp_plasma")
 					end
 					self:SetChargeAttack(tab.ChargeAttack, item)
 					self:SetHoldType("melee")
-					self.Owner:SetAnimation(PLAYER_ATTACK1)
 					self.slicestage = 0
 					return false
 				end

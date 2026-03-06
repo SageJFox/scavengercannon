@@ -1033,14 +1033,6 @@ if CLIENT then
 		self.inv = inv
 	end)
 
-	net.Receive("scv_ht", function()
-		local self = net.ReadEntity()
-		local htype = net.ReadString()
-		if IsValid(self) and IsValid(self.Owner) and self.Owner ~= LocalPlayer() and self.SetHoldType then
-			self:SetHoldType(htype)
-		end
-	end)
-
 	net.Receive("scv_lock", function()
 		local self = net.ReadEntity()
 		local start = net.ReadFloat()
@@ -1949,18 +1941,6 @@ if SERVER then
 		if IsValid(self.Owner) then
 			return CreateSound(self.Owner, "npc/combine_gunship/engine_rotor_loop1.wav")
 		end
-	end
-
-	util.AddNetworkString("scv_ht")
-
-	function SWEP:SetHoldType(htype)
-		local rf = RecipientFilter()
-		rf:AddAllPlayers()
-		net.Start("scv_ht")
-			net.WriteEntity(self)
-			net.WriteString(htype)
-		net.Send(rf)
-		self.BaseClass.SetHoldType(self, htype)
 	end
 
 	util.AddNetworkString("scv_asgn")
