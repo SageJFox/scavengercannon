@@ -1714,6 +1714,7 @@ end
 			local toFloat = function(a_bool) return a_bool and 1 or 0 end
 			PrecacheParticleSystem("water_splash_01_droplets")
 				tab.ChargeAttack = function(self, item)
+					local drunk = self.Owner:GetStatusEffect("Drunk")
 					local totalStatuses =	toFloat(self.Owner:GetStatusEffect("Slow")) +
 											toFloat(self.Owner:GetStatusEffect("Frozen")) +
 											toFloat(self.Owner:GetStatusEffect("Disease")) +
@@ -1723,7 +1724,7 @@ end
 											toFloat(self.Owner:GetStatusEffect("Radiation")) +
 											toFloat(self.Owner:GetStatusEffect("Numb")) +
 											toFloat(self.Owner:GetStatusEffect("Deaf")) +
-											toFloat(self.Owner:GetStatusEffect("Drunk"))
+											toFloat(drunk and drunk.Value > 1)
 					--Currently it'll reduce more status effects than total ammo left if the player has more active statuses than ammo. Do we care?
 					if SERVER then
 						self.Owner:InflictStatusEffect("Slow", -1, 1)
@@ -1735,7 +1736,9 @@ end
 						self.Owner:InflictStatusEffect("Radiation", -1, 1)
 						self.Owner:InflictStatusEffect("Numb", -1, 1)
 						self.Owner:InflictStatusEffect("Deaf", -1, 1)
-						self.Owner:InflictStatusEffect("Drunk", -1, -0.125)
+						if drunk.Value > 1 then
+							self.Owner:InflictStatusEffect("Drunk", -1, -0.125)
+						end
 						self:TakeSubammo(item, totalStatuses)
 					end
 					local att = self:LookupAttachment("muzzle")
@@ -1848,25 +1851,32 @@ end
 			tab.Level = 1
 			local identify = {
 				--[Sandvich] = 0,
-				--[[Banana]]["models/weapons/c_models/c_banana/c_banana.mdl"] = 1,
-				["models/items/banana/banana.mdl"] = 1,
-				["models/items/banana/plate_banana.mdl"] = 1,
-				["models/props/cs_italy/bananna.mdl"] = 1,
-				--[[Junk Food]]["models/props_equipment/snack_machine.mdl"] = 2,
-				["models/props_equipment/snack_machine2.mdl"] = 2,
+				--[[Banana]]["models/weapons/c_models/c_banana/c_banana.mdl"] = SCAV_SANDWICH_BANANA,
+				["models/items/banana/banana.mdl"] = SCAV_SANDWICH_BANANA,
+				["models/items/banana/plate_banana.mdl"] = SCAV_SANDWICH_BANANA,
+				["models/props/cs_italy/bananna.mdl"] = SCAV_SANDWICH_BANANA,
+				--[[Junk Food]]["models/props_equipment/snack_machine.mdl"] = SCAV_SANDWICH_JUNK,
+				["models/props_equipment/snack_machine2.mdl"] = SCAV_SANDWICH_JUNK,
 			}
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
+			tab.Identify = setmetatable(identify, {__index = function() return SCAV_SANDWICH_DEFAULT end})
 			tab.MaxAmmo = 3
 			tab.FireFunc = function(self, item)
-				if self.Owner:Health() >= self.Owner:GetMaxHealth() then
+				local drunk = self.Owner:GetStatusEffect("Drunk")
+				if self.Owner:Health() >= self.Owner:GetMaxHealth() and not drunk then
 					if SERVER then
 						self.Owner:EmitSound(TF2 and "vo/heavy_no02.mp3" or "phx/eggcrack.wav", 75, 100, 1, CHAN_VOICE)
 					end
-					tab.Cooldown = .5
+					tab.Cooldown = 0.5
 					return false
 				else
-					tab.Cooldown = 2
+					tab.Cooldown = ScavData.models[item.ammo].Identify[item.ammo] == SCAV_SANDWICH_BANANA and 1 or 2
 					if SERVER then
+						if drunk then
+							self.Owner:InflictStatusEffect("Drunk", -(drunk.EndTime - CurTime()) * sandwichheal[ScavData.models[item.ammo].Identify[item.ammo]] / 100, -0.125 )
+						end
+						if ScavData.models[item.ammo].Identify[item.ammo] == SCAV_SANDWICH_BANANA then
+							self.Owner:InflictStatusEffect("Radiation", 0.25, 0.01)
+						end
 						self.Owner:SetHealth(math.min(self.Owner:GetMaxHealth(), self.Owner:Health() + sandwichheal[ScavData.models[item.ammo].Identify[item.ammo]]))
 						self.Owner:EmitSound(TF2 and "vo/SandwichEat09.mp3" or "physics/flesh/flesh_squishy_impact_hard" .. math.random(1, 4) .. ".wav", 75, 100, 1, CHAN_VOICE)
 						return self:TakeSubammo(item, 1)

@@ -1,6 +1,7 @@
 AddCSLuaFile("firemodes_hl2.lua")
 AddCSLuaFile("firemodes_css.lua")
 AddCSLuaFile("firemodes_dods.lua")
+AddCSLuaFile("firemodes_fof.lua")
 AddCSLuaFile("firemodes_utility.lua")
 AddCSLuaFile("firemodes_piles.lua")
 
@@ -3938,7 +3939,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 					self.soundloops.minigunspin = CreateSound(self.Owner, "weapons/minigun_spin.wav")
 					self.soundloops.minigunfire = CreateSound(self.Owner, "weapons/minigun_shoot.wav")
 					self:SetBarrelRestSpeed(900)
-				end								
+				end
 				return false
 			end
 			tab.Cooldown = 1
@@ -3970,5 +3971,6 @@ PrecacheParticleSystem("scav_exp_plasma")
 include("firemodes_hl2.lua")
 include("firemodes_css.lua")
 include("firemodes_dods.lua")
+include("firemodes_fof.lua")
 include("firemodes_utility.lua")
 include("firemodes_piles.lua")

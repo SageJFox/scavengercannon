@@ -1169,6 +1169,8 @@ if CLIENT then
 		if runcheck then return nil end
 	end)
 
+	local boxbounds = Vector(800, 800, 800)
+
 	hook.Add("ScavScreenDrawOverridePost", "RadStatic", function(self)
 		radthink = radthink or CurTime()
 		geiger = geiger or SCAV_SHORT_MAX
@@ -1178,9 +1180,13 @@ if CLIENT then
 			if geiger < 800 then
 				geiger = geiger + 50
 			end
-			for _, v in pairs(ents.FindInBox(self.Owner:GetPos() - Vector(800, 800, 800), self.Owner:GetPos() + Vector(800, 800, 800))) do
-				if v:GetStatusEffect("Radiation") then
-					geiger = math.min(geiger, self.Owner:GetPos():Distance(v:GetPos()))
+			for _, v in pairs(ents.FindInBox(self.Owner:GetPos() - boxbounds, self.Owner:GetPos() + boxbounds)) do
+				local radioactive = v:GetStatusEffect("Radiation")
+				if radioactive then
+					local dist = self.Owner:GetPos():Distance(v:GetPos())
+					--let our radiation value actually affect the effect
+					if self.Owner == v then dist = 7 / radioactive.Value end
+					geiger = math.min(geiger, dist)
 				end
 			end
 			radthink = CurTime() + 0.25

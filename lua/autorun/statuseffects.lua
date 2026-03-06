@@ -1419,6 +1419,17 @@ local STATUS = {}
 
 --Drunk
 
+--something something Vodka
+if SERVER then
+	hook.Add("EntityTakeDamage", "ScavDrunkRadiationReduce", function(target, dmg)
+		local drunk = target:GetStatusEffect("Drunk")
+		if not drunk then return end
+		if not bit.band(DMG_RADIATION, dmg:GetDamageType()) then return end
+		if dmg:GetDamage() - drunk.Value <= 0 then return true end
+		dmg:SetDamage(dmg:GetDamage() - drunk.Value)
+	end)
+end
+
 local STATUS = {}
 	
 	STATUS.Name = "Drunk"
@@ -1427,21 +1438,24 @@ local STATUS = {}
 
 	function STATUS:Initialize()
 		self.StartTime = CurTime()
-		self.Value = 1
+		self.Value = self.Value or 1
 	end
 	
 	function STATUS:Think()
-		if SERVER then
-			self.Owner:ViewPunch(Angle(math.Rand(-self.Value, self.Value), math.Rand(-self.Value, self.Value), 0))
-		else
-			hook.Add( "RenderScreenspaceEffects", "ScavDrunk", function()
-				DrawMaterialOverlay("effects/water_warp01", 0.02 * self.Value)
-				surface.SetDrawColor(0, 255, 0, 3 * (1 + self.Value))
-				surface.DrawRect(0, 0, ScrW(), ScrH())
-				local H = math.floor(ScrH() * 0.29 * (1 + self.Value))
+		if self.Value > 1 then
+			local adjustedvalue = self.Value - 1
+			if SERVER then
+				self.Owner:ViewPunch(Angle(math.Rand(-adjustedvalue, adjustedvalue), math.Rand(-adjustedvalue, adjustedvalue), 0))
+			else
+				hook.Add( "RenderScreenspaceEffects", "ScavDrunk", function()
+					DrawMaterialOverlay("effects/water_warp01", 0.02 * adjustedvalue)
+					surface.SetDrawColor(0, 255, 0, 3 * (1 + adjustedvalue))
+					surface.DrawRect(0, 0, ScrW(), ScrH())
+					local H = math.floor(ScrH() * 0.29 * (1 + adjustedvalue))
 
-				DrawToyTown(3, H)
-			end )
+					DrawToyTown(3, H)
+				end )
+			end
 		end
 		--lessen effects over time
 		self.Value = math.max(.5, self.Value - .125 / (self.EndTime - self.StartTime))

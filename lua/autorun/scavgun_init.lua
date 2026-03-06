@@ -26,6 +26,10 @@ FOF		= IsMounted(265630)
 	SCAV_HACK_DEFAULT	= 0
 	SCAV_HACK_KB		= 1
 	SCAV_HACK_WHEATLEY	= 2
+	--Sandwich?
+	SCAV_SANDWICH_DEFAULT	= 0
+	SCAV_SANDWICH_BANANA	= 1
+	SCAV_SANDWICH_JUNK		= 2
 	--Syringe Gun
 	SCAV_SYRINGE_DEFAULT	= 0
 	SCAV_SYRINGE_LEECH		= 1
@@ -34,6 +38,9 @@ FOF		= IsMounted(265630)
 	SCAV_TELE_COMBINE	= 1
 	SCAV_TELE_PORTAL	= 2
 	SCAV_TELE_TF2		= 3
+	--Whiskey
+	SCAV_WHISKEY_DEFAULT	= 0
+	SCAV_WHISKEY_FOF		= 1
 
 if CLIENT then
 	CreateClientConVar("cl_scav_high", 0, true, false, "Enable/disable Backup Pistol shot dynamic lighting", 0, 1)
