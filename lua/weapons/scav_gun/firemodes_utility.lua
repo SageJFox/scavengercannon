@@ -1736,7 +1736,7 @@ end
 						self.Owner:InflictStatusEffect("Radiation", -1, 1)
 						self.Owner:InflictStatusEffect("Numb", -1, 1)
 						self.Owner:InflictStatusEffect("Deaf", -1, 1)
-						if drunk.Value > 1 then
+						if drunk and drunk.Value > 1 then
 							self.Owner:InflictStatusEffect("Drunk", -1, -0.125)
 						end
 						self:TakeSubammo(item, totalStatuses)
