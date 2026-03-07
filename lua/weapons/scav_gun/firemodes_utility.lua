@@ -1840,9 +1840,9 @@ end
 	-- Sandwich
 ==============================================================================================]]--
 		local sandwichheal = {
-			[0] = 50,
-			[1] = 25,
-			[2] = 10
+			[SCAV_SANDWICH_DEFAULT] = 50,
+			[SCAV_SANDWICH_BANANA] = 25,
+			[SCAV_SANDWICH_JUNK] = 10
 		}
 		local tab = {}
 		
