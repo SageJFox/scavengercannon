@@ -441,6 +441,7 @@ local hackrange = 1000
 local bars = Material("hud/scav_caution_tape.vmt")
 local scavicon = Material("hud/hack/scav.vmt")
 local signal = Material("hud/hack/signal.vmt")
+local scavfirewall = Material("hud/hack/shield.vmt")
 
 --Find Signal Strength (convert distance to frames on signal strength indicator texture)
 local signalstrength = function(scavgun, target)
@@ -836,12 +837,14 @@ setmetatable(hacksuccess, {__index = function() return {"buttons/combine_button1
 				end,
 				["Icon"] = Material("hud/hack/turret.vmt")
 			}
+			interactions.virus = 2
 			--status codes
 			local STATUS_NONE = 0
 			local STATUS_INVALID = 1
 			local STATUS_CANCELED = 2
 			local STATUS_OUTOFRANGE = 3
 			local STATUS_SUCCESS = 4
+			local STATUS_FIREWALL = 5
 			local STATUS_SIZE = 3 --total bits to send status codes
 			function tab.ChargeAttack(self, item)
 				local ident = tab.Identify[item.ammo]
@@ -851,6 +854,7 @@ setmetatable(hacksuccess, {__index = function() return {"buttons/combine_button1
 					--end the hack, with an optional status code (tell client why we beefed it)
 					local endhack = function(status, success)
 						local success = success or false
+						local target = self:GetNWFiremodeEnt()
 						self:SetChargeAttack()
 						self:SetNWFiremodeEnt(NULL)
 						self.HackingProgress = 0
@@ -860,6 +864,14 @@ setmetatable(hacksuccess, {__index = function() return {"buttons/combine_button1
 						--if IsValid(self.ef_wires) then
 						--	self.ef_wires:Kill()
 						--end
+						--Successful hacks eliminate Punish Prop Virus
+						if success and IsValid(target) and target.ScavVirus then
+							status = STATUS_FIREWALL
+							target.ScavVirus = nil
+							net.Start("scav_hackdone")
+								net.WriteEntity(target)
+							net.Broadcast()
+						end
 						net.Start("scav_hackdone")
 							net.WriteEntity(self)
 							net.WriteBool(success)
@@ -892,18 +904,26 @@ setmetatable(hacksuccess, {__index = function() return {"buttons/combine_button1
 				else
 					net.Receive("scav_hackdone", function()
 						local wep = net.ReadEntity()
-						if IsValid(wep) then
-							wep.HackSuccess = net.ReadBool()
-							wep:SetChargeAttack()
-							wep.HackingProgress = 0
-							wep:EmitSound(wep.HackSuccess and (hacksuccess[ident][math.random(#hacksuccess[ident])]) or hackfail[ident][math.random(#hackfail[ident])])
-							wep.nextfire = CurTime() + hackcooldown * wep:GetCooldownScale()
-							wep.HackStatus = net.ReadUInt(STATUS_SIZE)
-							timer.Simple(hackcooldown * wep:GetCooldownScale(), function()
-								if not IsValid(wep) then return end
-								wep.HackStatus = nil
-							end)
+						if not IsValid(wep) then return end
+						--Not a Scav Cannon, we got a de-virus'd prop instead
+						if IsValid(wep.ScavVirusParticle) then
+							wep.ScavVirusParticle:StopEmission()
+							wep.ScavVirusParticle = nil
+							return
 						end
+						--if the particle system wasn't found, but we were *supposed* to find it, get out of here
+						if wep:GetClass() ~= "scav_gun" then return end
+
+						wep.HackSuccess = net.ReadBool()
+						wep:SetChargeAttack()
+						wep.HackingProgress = 0
+						wep:EmitSound(wep.HackSuccess and (hacksuccess[ident][math.random(#hacksuccess[ident])]) or hackfail[ident][math.random(#hackfail[ident])])
+						wep.nextfire = CurTime() + hackcooldown * wep:GetCooldownScale()
+						wep.HackStatus = net.ReadUInt(STATUS_SIZE)
+						timer.Simple(hackcooldown * wep:GetCooldownScale(), function()
+							if not IsValid(wep) then return end
+							wep.HackStatus = nil
+						end)
 					end)
 				end
 				return hackthinktime * self:GetCooldownScale()
@@ -919,9 +939,14 @@ setmetatable(hacksuccess, {__index = function() return {"buttons/combine_button1
 				else
 					self.HackStatus = STATUS_INVALID
 				end
-				if IsValid(self:GetNWFiremodeEnt()) then
+				local target = self:GetNWFiremodeEnt()
+				if IsValid(target) then
 					local wheatleyslow = ident == SCAV_HACK_WHEATLEY and wheatleytime or 1
-					self.HackTime = interactions[string.lower(self:GetNWFiremodeEnt():GetClass())].HackTime * wheatleyslow
+					self.HackTime = interactions[string.lower(target:GetClass())].HackTime * wheatleyslow
+					--speed us up if we found something with a virus
+					if target.ScavVirus or target.ScavVirusParticle then
+						self.HackTime = math.min(interactions.virus * wheatleyslow, self.HackTime)
+					end
 					self:SendWeaponAnim(ACT_VM_FIDGET)
 					tab.Cooldown = hackthinktime * self:GetCooldownScale()
 				else
@@ -982,6 +1007,13 @@ setmetatable(hacksuccess, {__index = function() return {"buttons/combine_button1
 					[STATUS_SUCCESS] = function(self, item)
 						DrawScreenBKG(greenscr)
 						draw.DrawText(ScavLocalize("scav.scavcan.hacksuccess", "\0"), "ScavScreenFont", 128, 32, color_black, TEXT_ALIGN_CENTER)
+					end,
+					[STATUS_FIREWALL] = function(self, item)
+						DrawScreenBKG(greenscr)
+						draw.DrawText(ScavLocalize("scav.scavcan.firewall", "\0"), "ScavScreenFontSmX", 128, 72, color_black, TEXT_ALIGN_CENTER)
+						surface.SetMaterial(scavfirewall)
+						surface.SetDrawColor(color_black)
+						surface.DrawTexturedRect(104, 12, 48, 48)
 					end
 				}
 				setmetatable(resultsscreens, {__index = function() return function(self, item) self:DrawCooldown() end end})
@@ -2530,6 +2562,7 @@ end
 				if not IsValid(part) then return end
 				part:SetControlPointEntity(0, ent)
 				part:SetControlPointEntity(1, ent)
+				ent.ScavVirusParticle = part
 			end)
 		end
 		
