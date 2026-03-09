@@ -195,15 +195,15 @@ end
 
 function INVENTORY:ClearOnClient(pl)
 	net.Start("scv_invclr")
-		net.WriteInt(self.inv:GetID(),INVREADSIZE)
+		net.WriteInt(self.ID, INVREADSIZE)
 	net.Send(pl or self:GetRecipientFilter())
 end
 	
 if CLIENT then
 	net.Receive("scv_invclr",function()
-		local inv = ScavInventories[net:ReadInt(INVREADSIZE)]
+		local inv = ScavInventories[net.ReadInt(INVREADSIZE)]
 		if inv then
-			for _,v in ipairs(inv:GetItemIDs()) do
+			for _, v in ipairs(inv:GetItemIDs()) do
 				v:Remove()
 			end
 		end
@@ -211,7 +211,7 @@ if CLIENT then
 end
 		
 function INVENTORY:AddAllToClient(pl)
-	for _,v in ipairs(self.items) do
+	for _, v in ipairs(self.items) do
 		v:AddOnClient(pl)
 	end
 end
@@ -361,26 +361,26 @@ end
 	
 function ITEM:AddOnClient(pl)
 
-	if not IsValid(pl) then return end
+	--if not IsValid(pl) then return end
 
 	net.Start("scv_itmadd")
 		net.WriteInt(self:GetParentID(),INVREADSIZE)
-		net.WriteInt(self.ID,IDREADSIZE)
+		net.WriteInt(self.ID, IDREADSIZE)
 		if self.pos ~= 1 then  --instead of sending the absolute position, which could get messy, we'll send the ID of the item we're above, 0 if we're not above anything
-			net.WriteInt(self.parent.items[self.pos-1]:GetID(),IDREADSIZE)
+			net.WriteInt(self.parent.items[self.pos - 1]:GetID(), IDREADSIZE)
 		else
-			net.WriteInt(0,IDREADSIZE)
+			net.WriteInt(0, IDREADSIZE)
 		end
 		net.WriteString(self.ammo)
-		net.WriteInt(self.subammo,16)
-		net.WriteInt(self.data,16)
+		net.WriteInt(self.subammo, 16)
+		net.WriteInt(self.data, 16)
 		net.WriteFloat(self.mass)
 	net.Send(pl or self.parent:GetRecipientFilter())
 	
 end
 
 function ReinitializeScavItem(item)
-	table.Inherit(item,ITEM)
+	table.Inherit(item, ITEM)
 end
 	
 if CLIENT then
