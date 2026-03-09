@@ -2510,12 +2510,26 @@ end
 ==============================================================================================]]--
 		if SERVER then
 			util.AddNetworkString("ScavVirusEffect")
+			PrecacheParticleSystem("scav_virus")
 		else
 			net.Receive("ScavVirusEffect", function()
 				local owner = net.ReadPlayer()
 				local ent = net.ReadEntity()
 				if not IsValid(ent) then return end
-				ent:SetColor(Color(128, 32, 64))
+				--Particle effect adjusts some based on prop's size
+				local mins, maxs = ent:GetModelRenderBounds()
+				local cpoint0 = {}
+					cpoint0.entity = ent
+					cpoint0.attachtype = PATTACH_ABSORIGIN_FOLLOW
+					cpoint0.position = mins
+				local cpoint1 = {}
+					cpoint1.entity = ent
+					cpoint1.attachtype = PATTACH_ABSORIGIN_FOLLOW
+					cpoint1.position = maxs
+				local part = ent:CreateParticleEffect("scav_virus", {cpoint0, cpoint1})
+				if not IsValid(part) then return end
+				part:SetControlPointEntity(0, ent)
+				part:SetControlPointEntity(1, ent)
 			end)
 		end
 		
@@ -2535,10 +2549,10 @@ end
 						tracep.start = self.Owner:GetShootPos()
 						tracep.endpos = self.Owner:GetShootPos() + self.Owner:GetAimVector() * 128
 						tracep.filter = self.Owner
-						tracep.mask = MASK_SOLID --MASK_SOLID_BRUSHONLY
+						tracep.mask = bit.bor(MASK_SOLID, CONTENTS_DEBRIS) --MASK_SOLID_BRUSHONLY
 					local tr = util.TraceLine(tracep)
 
-					if not IsValid(tr.Entity) or not self.Owner:CanScavPickup(tr.Entity) then tab.Cooldown = 2 return false end
+					if not IsValid(tr.Entity) or not self.Owner:CanScavPickup(tr.Entity) or tr.Entity.ScavVirus == self.Owner then tab.Cooldown = 2 return false end
 
 					tr.Entity.ScavVirus = self.Owner
 
@@ -2561,7 +2575,7 @@ end
 					return self:TakeSubammo(item, 1)
 				end
 				--TF2
-				ScavData.CollectFuncs["models/weapons/w_models/w_sapper.mdl"] = function(self, ent) return {{self.christmas and "models/weapons/c_models/c_sapper/c_sapper_xmas.mdl" or ScavData.FormatModelname(ent:GetModel()), 1, math.random(0, 1)}} end
+				ScavData.CollectFuncs["models/weapons/w_models/w_sapper.mdl"] = function(self, ent) return {{self.christmas and "models/weapons/c_models/c_sapper/c_sapper_xmas.mdl" or ScavData.FormatModelname(ent:GetModel()), 1, self.christmas and math.random(0, 1) or 0}} end
 				ScavData.CollectFuncs["models/weapons/c_models/c_sapper/c_sapper.mdl"] = ScavData.CollectFuncs["models/weapons/w_models/w_sapper.mdl"]
 				ScavData.CollectFuncs["models/buildables/sapper_dispenser.mdl"] = ScavData.CollectFuncs["models/weapons/w_models/w_sapper.mdl"]
 			end
@@ -2573,10 +2587,13 @@ end
 		ScavData.RegisterFiremode(tab, "models/workshop_partner/weapons/c_models/c_sd_sapper/c_sd_sapper.mdl")
 		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_sapper/c_sapper.mdl")
 		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_sapper/c_sapper_xmas.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_breadmonster_sapper/c_breadmonster_sapper.mdl")
 		ScavData.RegisterFiremode(tab, "models/buildables/gibs/sapper_gib001.mdl")
 		ScavData.RegisterFiremode(tab, "models/buildables/gibs/sapper_gib002.mdl")
 		ScavData.RegisterFiremode(tab, "models/buildables/gibs/sd_sapper_gib001.mdl")
 		ScavData.RegisterFiremode(tab, "models/buildables/gibs/sd_sapper_gib002.mdl")
+		ScavData.RegisterFiremode(tab, "models/workshop_partner/buildables/gibs/sd_sapper_gib001.mdl")
+		ScavData.RegisterFiremode(tab, "models/workshop_partner/buildables/gibs/sd_sapper_gib002.mdl")
 		ScavData.RegisterFiremode(tab, "models/buildables/sapper_dispenser.mdl")
 		ScavData.RegisterFiremode(tab, "models/weapons/w_models/w_grenade_emp.mdl")
 
