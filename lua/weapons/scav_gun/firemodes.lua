@@ -1047,11 +1047,6 @@ end
 					self.Owner:EmitSound("npc/scanner/scanner_electric1.wav")
 					return self:TakeSubammo(item, 1)
 				end
-				
-				--TF2
-				ScavData.CollectFuncs["models/weapons/w_models/w_sapper.mdl"] = function(self, ent) return {{self.christmas and "models/weapons/c_models/c_sapper/c_sapper_xmas.mdl" or ScavData.FormatModelname(ent:GetModel()), 8, math.random(0, 1)}} end
-				ScavData.CollectFuncs["models/weapons/c_models/c_sapper/c_sapper.mdl"] = ScavData.CollectFuncs["models/weapons/w_models/w_sapper.mdl"]
-				ScavData.CollectFuncs["models/buildables/sapper_dispenser.mdl"] = ScavData.CollectFuncs["models/weapons/w_models/w_sapper.mdl"]
 			end
 			tab.Cooldown = 0.5
 			
@@ -1079,20 +1074,9 @@ end
 		ScavData.RegisterFiremode(tab, "models/workshop/weapons/c_models/c_drg_pomson/c_drg_pomson.mdl", 4)
 		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_drg_righteousbison/c_drg_righteousbison.mdl", 4)
 		ScavData.RegisterFiremode(tab, "models/workshop/weapons/c_models/c_drg_righteousbison/c_drg_righteousbison.mdl", 4)
-		ScavData.RegisterFiremode(tab, "models/weapons/w_models/w_sapper.mdl")
-		ScavData.RegisterFiremode(tab, "models/weapons/w_models/w_sd_sapper.mdl", 8)
-		ScavData.RegisterFiremode(tab, "models/buildables/sd_sapper_dispenser.mdl", 8)
-		ScavData.RegisterFiremode(tab, "models/workshop_partner/weapons/c_models/c_sd_sapper/c_sd_sapper.mdl", 8)
-		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_sapper/c_sapper.mdl")
-		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_sapper/c_sapper_xmas.mdl", 8)
 		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_dex_arm/c_dex_arm.mdl", 8)
 		ScavData.RegisterFiremode(tab, "models/workshop_partner/weapons/c_models/c_dex_arm/c_dex_arm.mdl", 8)
 		ScavData.RegisterFiremode(tab, "models/workshop_partner/weapons/c_models/c_sd_neonsign/c_sd_neonsign.mdl", 8)
-		ScavData.RegisterFiremode(tab, "models/buildables/gibs/sapper_gib001.mdl", 3)
-		ScavData.RegisterFiremode(tab, "models/buildables/gibs/sapper_gib002.mdl", 3)
-		ScavData.RegisterFiremode(tab, "models/buildables/gibs/sd_sapper_gib001.mdl", 3)
-		ScavData.RegisterFiremode(tab, "models/buildables/gibs/sd_sapper_gib002.mdl", 3)
-		ScavData.RegisterFiremode(tab, "models/buildables/sapper_dispenser.mdl")
 		--ASW
 		ScavData.RegisterFiremode(tab, "models/swarmprops/machinery/generator1mesh.mdl", SCAV_SHORT_MAX)
 		ScavData.RegisterFiremode(tab, "models/props/machinery/generators/generator01.mdl", SCAV_SHORT_MAX)

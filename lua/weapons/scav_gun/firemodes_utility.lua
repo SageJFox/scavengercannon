@@ -2504,3 +2504,129 @@ end
 		--ASW
 		ScavData.RegisterFiremode(tab, "models/props/furniture/misc/bathroombin.mdl", SCAV_SHORT_MAX)
 		ScavData.RegisterFiremode(tab, "models/env/ryberg/outside/dumpster/dumpster.mdl", SCAV_SHORT_MAX)
+
+--[[==============================================================================================
+	-- Punish Prop Virus
+==============================================================================================]]--
+		if SERVER then
+			util.AddNetworkString("ScavVirusEffect")
+		else
+			net.Receive("ScavVirusEffect", function()
+				local owner = net.ReadPlayer()
+				local ent = net.ReadEntity()
+				if not IsValid(ent) then return end
+				ent:SetColor(Color(128, 32, 64))
+			end)
+		end
+		
+		local tab = {}
+			tab.Name = "#scav.scavcan.virus"
+			tab.anim = ACT_VM_IDLE
+			tab.Level = 7
+			local identify = {
+				--[Default] = 0,
+			}
+			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
+			if SERVER then
+				tab.FireFunc = function(self, item)
+					local tab = ScavData.models[self.inv.items[1].ammo]
+					if not IsValid(self.Owner) then return false end
+					local tracep = {}
+						tracep.start = self.Owner:GetShootPos()
+						tracep.endpos = self.Owner:GetShootPos() + self.Owner:GetAimVector() * 128
+						tracep.filter = self.Owner
+						tracep.mask = MASK_SOLID --MASK_SOLID_BRUSHONLY
+					local tr = util.TraceLine(tracep)
+
+					if not IsValid(tr.Entity) or not self.Owner:CanScavPickup(tr.Entity) then tab.Cooldown = 2 return false end
+
+					tr.Entity.ScavVirus = self.Owner
+
+					tab.Cooldown = 5
+					--Send our longer cooldown to the client
+					net.Start("scv_s_time")
+						net.WriteEntity(self)
+						local fulltime, decimaltime = math.modf(CurTime(), 1)
+						net.WriteInt(fulltime + tab.Cooldown, 32)
+						net.WriteFloat(decimaltime)
+					net.Send(self.Owner)
+
+					--Only show effect for us/allies
+					net.Start("ScavVirusEffect")
+						net.WritePlayer(self.Owner)
+						net.WriteEntity(tr.Entity)
+						local ownteam = self.Owner:Team()
+					net.Send(ownteam ~= TEAM_UNASSIGNED and team.GetPlayers(ownteam) or self.Owner)
+
+					return self:TakeSubammo(item, 1)
+				end
+				--TF2
+				ScavData.CollectFuncs["models/weapons/w_models/w_sapper.mdl"] = function(self, ent) return {{self.christmas and "models/weapons/c_models/c_sapper/c_sapper_xmas.mdl" or ScavData.FormatModelname(ent:GetModel()), 1, math.random(0, 1)}} end
+				ScavData.CollectFuncs["models/weapons/c_models/c_sapper/c_sapper.mdl"] = ScavData.CollectFuncs["models/weapons/w_models/w_sapper.mdl"]
+				ScavData.CollectFuncs["models/buildables/sapper_dispenser.mdl"] = ScavData.CollectFuncs["models/weapons/w_models/w_sapper.mdl"]
+			end
+			tab.Cooldown = 2
+		--TF2
+		ScavData.RegisterFiremode(tab, "models/weapons/w_models/w_sapper.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_models/w_sd_sapper.mdl")
+		ScavData.RegisterFiremode(tab, "models/buildables/sd_sapper_dispenser.mdl")
+		ScavData.RegisterFiremode(tab, "models/workshop_partner/weapons/c_models/c_sd_sapper/c_sd_sapper.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_sapper/c_sapper.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_sapper/c_sapper_xmas.mdl")
+		ScavData.RegisterFiremode(tab, "models/buildables/gibs/sapper_gib001.mdl")
+		ScavData.RegisterFiremode(tab, "models/buildables/gibs/sapper_gib002.mdl")
+		ScavData.RegisterFiremode(tab, "models/buildables/gibs/sd_sapper_gib001.mdl")
+		ScavData.RegisterFiremode(tab, "models/buildables/gibs/sd_sapper_gib002.mdl")
+		ScavData.RegisterFiremode(tab, "models/buildables/sapper_dispenser.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_models/w_grenade_emp.mdl")
+
+		--The Virus "item" (the scav gun is locked until these are removed)
+		local tab = {}
+			tab.Name = "#scav.scavcan.virus"
+			tab.anim = ACT_VM_IDLE
+			tab.Level = 1
+			local identify = {
+				--[Default] = 0,
+			}
+			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
+			tab.FireFunc = function(self, item)
+				return false
+			end
+			tab.Cooldown = 1
+		if SERVER then
+			tab.PostRemove = function(self, item)
+				for _, v in ipairs(self.inv.items) do
+					if v == item then continue end
+					local info = v:GetFiremodeInfo()
+					if not info or info.Name ~= "#scav.scavcan.virus" then continue end
+					self.Owner:EmitSound("buttons/button18.wav")
+					return
+				end
+				--All clear, unlock
+				self.Owner:EmitSound("buttons/button24.wav")
+				self:Lock(self.startlock, CurTime())
+			end
+			local giggle = "npc/moustachio/strengthattract09.wav"
+			if not L4D2 then
+				if TF2 then giggle = "items/halloween/gremlin03.wav"
+				else giggle = "vo/citadel/br_laugh01.wav" end
+			end
+			ScavData.CollectFuncs["models/leech.mdl"] = function(self, ent)
+				if not IsValid(self) or not self.inv then return end
+				local entmodel = "models/leech.mdl"
+				--replace any items with a firemode level above 3 with another copy of the virus
+				for k, v in ipairs(self.inv.items) do
+					local info = v:GetFiremodeInfo()
+					if not info or info.Level <= 3 then continue end
+					self:RemoveItemValue(v)
+					self:AddItem(entmodel, 1, 0, 1, k)
+				end
+				self:AddItem(entmodel, 1, 0)
+				--update inventory on client
+				self.inv:AddOnClient(self.Owner)
+				self.Owner:EmitSound(giggle)
+				self:Lock(CurTime() + 0.1, math.huge)
+				return {}
+			end
+		end
+		ScavData.RegisterFiremode(tab, "models/leech.mdl")
