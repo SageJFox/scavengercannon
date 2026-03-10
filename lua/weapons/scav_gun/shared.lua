@@ -2281,6 +2281,17 @@ if SERVER then
 		self.PanelSpeed = speed or self.PanelSpeed
 	end
 
+	local _lock_holster_delay = CreateConVar("scav_lock_holster_delay", 3, {FCVAR_NOTIFY, FCVAR_ARCHIVE}, "Number of seconds to prevent a locked Scavenger Cannon from being holstered. Negative values mean never allow holstering.", -1, math.huge)
+
+	local function should_allow_holster(self)
+		if self:IsLocked() then
+			local lock_holster_delay = _lock_holster_delay:GetFloat()
+			if CurTime() - self.startlock < lock_holster_delay or lock_holster_delay < 0 then return false end
+		end
+		if self.ChargeAttack or self.nextfire > CurTime() then return false end
+		return true
+	end
+
 	function SWEP:Think()
 
 		local tr = self.Owner:GetEyeTraceNoCursor()
@@ -2364,7 +2375,7 @@ if SERVER then
 
 		end
 
-		if self.shouldholster and self.nextfire < CurTime()then
+		if self.shouldholster and should_allow_holster(self) then
 			self.Owner:SelectWeapon(self.shouldholster)
 		end
 
@@ -2490,37 +2501,27 @@ if SERVER then
 	end
 
 	function SWEP:Holster(wep)
-		if not self.soundloops then self.soundloops = {} end
 
-		self:KillEffect()
-
-		if self:IsLocked() or self.ChargeAttack or self.nextfire > CurTime() then
-
-			if IsValid(wep) then
-				self.shouldholster = wep:GetClass()
+		if should_allow_holster(self) then
+			self:KillEffect()
+			if self.soundloops then 
+				for _, v in pairs(self.soundloops) do
+					v:Stop()
+				end
 			end
-
-			self:NextThink(CurTime() + 0.05)
-			return false
-
-		else
-
-			for _, v in pairs(self.soundloops) do
-				v:Stop()
-			end
-
-			if self.soundloops.barrelspin then
-				self.soundloops.barrelspin:Stop()
-			end
-
 			if game.SinglePlayer() then
 				self:CallOnClient("Holster")
 			end
 
 			return true
-
+		else
+			if IsValid(wep) then
+				self.shouldholster = self.shouldholster ~= wep:GetClass() and wep:GetClass() or false
+			end
+			self:NextThink(CurTime() + 0.05)
+			
+			return false
 		end
-
 	end
 
 	function SWEP:SecondaryAttack()
