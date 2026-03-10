@@ -2821,7 +2821,7 @@ if SERVER then
 
 		local modelname = ScavData.FormatModelname(ent:GetModel())
 
-		if ent.ScavVirus then modelname = "models/leech.mdl" end
+		if ent.ScavVirus then modelname = "models/scav/virus.mdl" end
 
 		if ScavData.CollectFuncs[modelname] then
 			local collect = ScavData.CollectFuncs[modelname](self, ent)

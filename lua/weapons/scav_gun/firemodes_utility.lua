@@ -2644,6 +2644,8 @@ end
 			end
 			tab.Cooldown = 1
 		if SERVER then
+			util.AddNetworkString("ScavVirusScreen")
+
 			tab.PostRemove = function(self, item)
 				for _, v in ipairs(self.inv.items) do
 					if v == item then continue end
@@ -2655,15 +2657,21 @@ end
 				--All clear, unlock
 				self.Owner:EmitSound("buttons/button24.wav")
 				self:Lock(self.startlock, CurTime())
+				net.Start("ScavVirusScreen")
+					net.WriteBool(false)
+				net.Send(self.Owner)
 			end
 			local giggle = "npc/moustachio/strengthattract09.wav"
 			if not L4D2 then
 				if TF2 then giggle = "items/halloween/gremlin03.wav"
 				else giggle = "vo/citadel/br_laugh01.wav" end
 			end
-			ScavData.CollectFuncs["models/leech.mdl"] = function(self, ent)
+			ScavData.CollectFuncs["models/scav/virus.mdl"] = function(self, ent)
+				net.Start("ScavVirusScreen")
+					net.WriteBool(true)
+				net.Send(self.Owner)
 				if not IsValid(self) or not self.inv then return end
-				local entmodel = "models/leech.mdl"
+				local entmodel = "models/scav/virus.mdl"
 				--replace any items with a firemode level above 3 with another copy of the virus
 				for k, v in ipairs(self.inv.items) do
 					local info = v:GetFiremodeInfo()
@@ -2678,5 +2686,28 @@ end
 				self:Lock(CurTime() + 0.1, math.huge)
 				return {}
 			end
+		else
+			local scavvirus = Material("hud/scav_virus.vmt")
+			net.Receive("ScavVirusScreen", function()
+				if net.ReadBool() then
+					hook.Add("ScavScreenDrawOverridePost", "ScavVirus", function(self)
+						surface.SetMaterial(scavvirus)
+						surface.SetDrawColor(255, 255, 255)
+						local timings = {}
+						setmetatable(timings, {__index = function(t, k)
+							if tonumber(k) == 0 then return CurTime() % 1 end
+							return CurTime() % (tonumber(k) or 1) / (tonumber(k) or 1)
+						end})
+						--put some virus spores on the screen
+						surface.DrawTexturedRectRotated(200, 12, 48, 48, 360 * timings[45] - 45)
+						surface.DrawTexturedRectRotated(230, 124, 256, 256, 360 * timings[75] + 15)
+						surface.DrawTexturedRectRotated(-32 + 372 * timings[5], 16 * (1 + timings[5]), 64 * (0.5 + timings[5]), 64 * (0.5 + timings[5]), 360 * timings[15] - 120)
+						surface.DrawTexturedRectRotated(0, 32, 200, 200, 360 * timings[50] + 30)
+						surface.DrawTexturedRectRotated(290 - 372 * timings[7], 16 + 72 * timings[7], 80 * (0.5 + timings[7]), 80 * (0.5 + timings[7]), 360 * timings[15])
+					end)
+				else
+					hook.Remove("ScavScreenDrawOverridePost", "ScavVirus")
+				end
+			end)
 		end
-		ScavData.RegisterFiremode(tab, "models/leech.mdl")
+		ScavData.RegisterFiremode(tab, "models/scav/virus.mdl")
