@@ -699,7 +699,7 @@ if CLIENT then
 		self:DestroyWModel()
 		if IsValid(self.Owner) and IsValid(self.Owner:GetViewModel()) then
 			self.Owner:GetViewModel():SetSubMaterial(0)
-			if self.Owner == LocalPlayer() then hook.Remove( "RenderScreenspaceEffects", "ScavDrips") end
+			if self.Owner == LocalPlayer() then hook.Remove("RenderScreenspaceEffects", "ScavDrips") end
 		end
 		return false
 	end
@@ -707,7 +707,7 @@ if CLIENT then
 	function SWEP:OnRemove()
 		if IsValid(self.Owner) and self.Owner == LocalPlayer() then
 			self.Owner:GetViewModel():SetSubMaterial(0)
-			hook.Remove( "RenderScreenspaceEffects", "ScavDrips")
+			hook.Remove("RenderScreenspaceEffects", "ScavDrips")
 		end
 	end
 
@@ -825,7 +825,7 @@ if CLIENT then
 
 	local PANEL 	= {}
 	PANEL.BGColor 	= Color(50, 50, 50, 255)
-	PANEL.TextColor = Color(255, 255, 255, 255)
+	PANEL.TextColor = color_white
 	PANEL.wep 		= NULL
 
 
@@ -839,9 +839,9 @@ if CLIENT then
 				self.BGColor = team.GetColor(LocalPlayer():Team())
 			end
 			if (self.BGColor.r + self.BGColor.g + self.BGColor.b) / 3 < 150 then
-				self.TextColor = Color(255, 255, 255, 255)
+				self.TextColor = color_white
 			else
-				self.TextColor = Color(0, 0, 0, 255)
+				self.TextColor = color_black
 			end
 		end
 
@@ -1054,7 +1054,7 @@ if CLIENT then
 	surface.CreateFont("ScavScreenFontSmX", {font = "Trebuchet MS", size = 24, weight = 900, antialiasing = true, additive = false, outlined = false, blur = false})
 	surface.CreateFont("ScavScreenFontSmXX", {font = "Trebuchet MS", size = 20, weight = 900, antialiasing = true, additive = false, outlined = false, blur = false})
 
-	alpha = 12
+	alpha = 255
 	greenscr_base = Color(108, 172, 24, alpha)
 	greenscr_colorblind = Color(124, 218, 255, alpha)
 	greenscr = greenscr_base
@@ -1079,23 +1079,14 @@ if CLIENT then
 		end
 	end)
 
+	local screenbkg = Material("hud/scav_screen_bkg_color.vmt")
+
 	function DrawScreenBKG(col)
-		--edge fade
 		surface.SetDrawColor(color_black)
 		surface.DrawRect(0, 0, 256, 256)
-		local i = 8
-		local j = 4
-		local u = 256 - i * 2
-		local v = 128 - j * 2
-		local a = alpha
-		while u > 0 and v > 0 and a < 255 do
-			draw.RoundedBox(32, i, j, math.max(1, u), math.max(1, v), col)
-			i = i + 1
-			j = j + 1
-			u = u - 2
-			v = v - 2
-			a = a + alpha
-		end
+		surface.SetDrawColor(col)
+		surface.SetMaterial(screenbkg)
+		surface.DrawTexturedRect(0, 0, 256, 256)
 	end
 
 	hook.Add("ScavScreenDrawOverride", "NoOverride", function(self, check)
