@@ -23,7 +23,7 @@ end)
 local function PlayerColor(self)
 	local bgcol = Vector(0,0,0)
 	if IsValid(LocalPlayer()) then
-		if LocalPlayer():Team() == 1001 then --unassigned
+		if LocalPlayer():Team() == TEAM_UNASSIGNED then
 			bgcol = LocalPlayer():GetPlayerColor()
 			self.BGColor = Color(bgcol.r * 255, bgcol.g * 255, bgcol.b * 255, 255)
 		else

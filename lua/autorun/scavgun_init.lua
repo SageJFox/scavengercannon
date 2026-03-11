@@ -401,8 +401,8 @@ function ScavData.RegisterFiremode(tab, model, count)
 end
 
 local teams = {}
-teams["unassigned"] = 1001
-teams["spectator"] = 1002
+teams["unassigned"] = TEAM_UNASSIGNED
+teams["spectator"] = TEAM_SPECTATOR
 teams["red"] = 1003
 teams["blue"] = 1004
 teams["green"] = 1005
@@ -411,7 +411,7 @@ teams["orange"] = 1007
 teams["purple"] = 1008
 teams["brown"] = 1009
 teams["teal"] = 1010
-	
+
 function ScavData.ColorNameToTeam(colorname)
 
 	if not colorname then

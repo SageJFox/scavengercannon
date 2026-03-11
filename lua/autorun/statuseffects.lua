@@ -1160,7 +1160,7 @@ local STATUS = {}
 				local _, _, _, a = self.Owner:GetViewModel():GetColor()
 				local _, _, _, a2 = self.Owner:GetHands():GetColor()
 				local col = color_white
-				if self.Owner:Team() == 1001 then --unassigned
+				if self.Owner:Team() == TEAM_UNASSIGNED then
 					col = Color(self.Owner:GetPlayerColor().x * 255, self.Owner:GetPlayerColor().y * 255, self.Owner:GetPlayerColor().z * 255, 255)
 				else
 					col = team.GetColor(self.Owner:Team())
@@ -1174,7 +1174,7 @@ local STATUS = {}
 		if self.Owner:IsPlayer() then
 			local _, _, _, a = self.Owner:GetColor()
 			local col = color_white
-			if self.Owner:Team() == 1001 then --unassigned
+			if self.Owner:Team() == TEAM_UNASSIGNED then
 				col = Color(self.Owner:GetPlayerColor().x * 255, self.Owner:GetPlayerColor().y * 255, self.Owner:GetPlayerColor().z * 255, 255)
 			else
 				col = team.GetColor(self.Owner:Team())
