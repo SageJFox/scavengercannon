@@ -2555,9 +2555,10 @@ if SERVER then
 		if not IsValid(ent) then return false end
 
 		local phys = ent:GetPhysicsObject()
-		if tr.StartPos:Distance(tr.HitPos) > 100 then
+		if tr.StartPos:DistToSqr(tr.HitPos) > 10000 then
 			if IsValid(phys) then
 				phys:ApplyForceOffset(tr.Normal * -500, tr.HitPos)
+				ent:SetPhysicsAttacker(self.Owner)
 			end
 		elseif self:CheckCanScav(ent) then
 			self:Scavenge(ent)
