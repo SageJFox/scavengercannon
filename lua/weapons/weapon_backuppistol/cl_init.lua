@@ -106,7 +106,9 @@ function PANEL:Think()
 	if not IsValid(LocalPlayer():GetActiveWeapon()) or (LocalPlayer():GetActiveWeapon() ~= self.Weapon) then
 		self:SetVisible(false)
 	else
-		self.AmmoLabel:SetText(self.Weapon:GetAmmo())
+		local ammo = self.Weapon:GetAmmo()
+		if ammo == SCAV_SHORT_MAX then ammo = language.GetPhrase("scav.scavcan.inf") end
+		self.AmmoLabel:SetText(ammo)
 		self:InvalidateLayout()
 	end
 end

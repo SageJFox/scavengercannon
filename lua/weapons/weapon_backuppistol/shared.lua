@@ -45,6 +45,7 @@ function SWEP:SetNextFire(time)
 end
 
 function SWEP:GetAmmo()
+	if self.ShotCost == 0 then return SCAV_SHORT_MAX end
 	return math.floor(self.Weapon.Owner:GetEnergy() / self.ShotCost)
 end
 
