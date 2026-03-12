@@ -311,9 +311,140 @@ function SWEP:PotentialArmor()
 	return potential
 end
 
+function SWEP:Think()
+	if game.SinglePlayer() then
+		self:CallOnClient("Think")
+	end
+
+	if SERVER then
+		local tr = self.Owner:GetEyeTraceNoCursor()
+
+		if not IsValid(tr.Entity) then
+			self:SetCanScav(false)
+		else
+			if tr.Entity ~= self.lastlookent then
+				self.lastlookentcanscav = self:CheckCanScav(tr.Entity)
+				self.lastlookent = tr.Entity
+			end
+			if IsValid(tr.Entity) then
+				self:SetCanScav(self.lastlookentcanscav)
+			else
+				self:SetCanScav(false)
+			end
+		end
+
+		self:SetBarrelSpinSpeed(math.Approach(self:GetBarrelSpinSpeed(), self.BarrelRestSpeed, 600 * FrameTime()))
+	end
+
+	if not self.Owner:KeyDown(IN_ATTACK) then
+		self.Inaccuracy = math.Max(1, self.Inaccuracy - 10 * FrameTime())
+	end
+
+	self.BarrelRotation = (self.BarrelRotation + self:GetBarrelSpinSpeed() * (SERVER and FrameTime() or (CurTime() - self.LastThink))) % 360
+
+	local vm = self.Owner:GetViewModel()
+	local vmexists = IsValid(vm)
+
+	if SERVER then 
+		if vmexists then
+			vm:SetPoseParameter("spin", self.BarrelRotation)
+		end
+
+		self:SetPoseParameter("spin", self.BarrelRotation)
+
+		if self.PanelPose ~= self.PanelTo then
+
+			self.PanelPose = math.Approach(self.PanelPose, self.PanelTo, self.PanelSpeed * FrameTime())
+
+			if vmexists then
+				vm:SetPoseParameter("panel", self.PanelPose)
+			end
+
+			self:SetPoseParameter("panel", self.PanelPose)
+
+		else
+			self.PanelSpeed = 1
+		end
+
+		if self.BlockPose ~= self.BlockTo then
+
+			self.BlockPose = math.Approach(self.BlockPose, self.BlockTo, self.BlockSpeed*FrameTime())
+
+			if vmexists then
+				vm:SetPoseParameter("block", self.BlockPose)
+			end
+
+			self:SetPoseParameter("block", self.BlockPose)
+
+		else
+			self.BlockSpeed = 1
+		end
+
+		if self.bsoundplay and not self.Owner:KeyDown(IN_ATTACK2) or self.nextfire > CurTime() or self.ChargeAttack then
+			if self.soundloops.barrelspin then
+				self.soundloops.barrelspin:FadeOut(0.5)
+			end
+			self.bsoundplay = false
+		end
+	end
+
+	if not self:IsLocked() and self.ChargeAttack and self.nextfire < CurTime() then
+
+		local item = self.chargeitem
+		if CLIENT and not item then item = self.inv.items[self.predicteditem] end
+		local cooldown = self:ChargeAttack(item) * self:GetCooldownScale()
+
+		self.nextfire = CurTime() + cooldown
+		if CLIENT then self.receivednextfire = UnPredictedCurTime() end
+
+		if item:GetFiremodeTable().chargeanim then
+			self:SetSeqEndTime(self.nextfire)
+			self:SendWeaponAnim(item:GetFiremodeTable().chargeanim)
+		end
+
+	end
+
+	if SERVER and self.shouldholster and should_allow_holster(self) then
+		self.Owner:SelectWeapon(self.shouldholster)
+	end
+
+	if self.seqendtime ~= 0 and self.seqendtime < CurTime() then
+		self:SendWeaponAnim(ACT_VM_IDLE)
+		self:SetSeqEndTime(0)
+	end
+
+	if CLIENT then
+		if LocalPlayer():KeyDown(IN_RELOAD) then
+			self:OpenMenu()
+		end
+
+		self.HUD:SetVisible(true)
+
+		if CL_SCAVGUN == self and CL_SCAVGUNTAB ~= self:GetTable() then --this should hopefully fix the problem that comes up when the client loses connection to the server for a little more than a second
+			self:SetTable(CL_SCAVGUNTAB)
+		elseif CL_SCAVGUN ~= self then
+			CL_SCAVGUNTAB = self:GetTable()
+			CL_SCAVGUN = self
+		end
+	end
+
+	if self:IsLocked() or not self.Owner:KeyDown(IN_ATTACK) then
+		if SERVER then self:KillEffect() end
+		self.mousepressed = false
+	end
+
+
+	self.LastThink = CurTime()
+	return true
+end
+
 if SERVER then util.AddNetworkString("scv_s_time") end
 
 function SWEP:PrimaryAttack()
+
+	if game.SinglePlayer() then
+		self:CallOnClient("PrimaryAttack")
+	end
 	--In a state that prevents primary attack
 	if self.ChargeAttack or self:IsLocked() then return end
 
@@ -459,10 +590,26 @@ function SWEP:PrimaryAttack()
 		self.mousepressed = CurTime()
 	end
 
-	if game.SinglePlayer() then
-		self:CallOnClient("PrimaryAttack")
-	end
+end
 
+function SWEP:OnRestore()
+	self.nextfire = 0
+	self.nextfireearly = 0
+	if CLIENT then return end
+	self.inv = self.inv or ScavInventory(self)
+
+	saverestore.AddRestoreHook("scavsave_" .. self.Owner:SteamID64(), function(save)
+		local savedinv = saverestore.ReadTable(save)
+		if savedinv then
+			self.inv = savedinv
+		end
+	end)
+
+	ReinitializeScavInventory(self.inv)
+
+	if IsValid(self.Owner) then
+		self.inv:AddOnClient(self.Owner)
+	end
 end
 
 if SERVER then
@@ -800,59 +947,6 @@ if CLIENT then
 		end
 	end
 
-	function SWEP:Think()
-
-		local delta = CurTime() - self.LastThink
-
-		self.BarrelRotation = (self.BarrelRotation + self:GetBarrelSpinSpeed() * delta) % 360
-
-		if not self.Owner:KeyDown(IN_ATTACK) then
-			self.Inaccuracy = math.Max(1, self.Inaccuracy - 10 * FrameTime())
-		end
-
-		if not self:IsLocked() and self.ChargeAttack and self.nextfire < CurTime() then
-
-			if not self.inv.items[1] then self.ChargeAttack = nil end
-			local shoottime = CurTime()
-			local item = self.chargeitem or self.inv.items[self.predicteditem]
-			local cooldown = (self.inv.items[1] and self:ChargeAttack(item) or 0) * self:GetCooldownScale()
-			self.nextfire = CurTime() + cooldown
-			self.receivednextfire = UnPredictedCurTime()
-
-			if ScavData.models[item.ammo].chargeanim then
-				self:SetSeqEndTime(shoottime + cooldown)
-				self:SendWeaponAnim(ScavData.models[item.ammo].chargeanim)
-			end
-
-		end
-
-		if LocalPlayer():KeyDown(IN_RELOAD) then
-			self:OpenMenu()
-		end
-
-		if self.seqendtime ~= 0 and self.seqendtime < CurTime() then
-			self:SendWeaponAnim(ACT_VM_IDLE)
-			self:SetSeqEndTime(0)
-		end
-
-		self.HUD:SetVisible(true)
-
-		if CL_SCAVGUN == self and CL_SCAVGUNTAB ~= self:GetTable() then --this should hopefully fix the problem that comes up when the client loses connection to the server for a little more than a second
-			self:SetTable(CL_SCAVGUNTAB)
-		elseif CL_SCAVGUN ~= self then
-			CL_SCAVGUNTAB = self:GetTable()
-			CL_SCAVGUN = self
-		end
-		
-		if self:IsLocked() or not self.Owner:KeyDown(IN_ATTACK) then
-			self.mousepressed = false
-		end
-
-		self.LastThink = CurTime()
-		return true
-
-	end
-
 	function SWEP:Holster()
 		self:DestroyWModel()
 		if IsValid(self.Owner) and IsValid(self.Owner:GetViewModel()) then
@@ -874,11 +968,6 @@ if CLIENT then
 			self:Reskin(self.Owner:AccountID())
 			self.HUD:PlayerColor()
 		end
-	end
-
-	function SWEP:OnRestore()
-		self.nextfire = 0
-		self.nextfireearly = 0
 	end
 
 	function SWEP:GetCurrentItem()
@@ -2311,8 +2400,6 @@ if SERVER then
 	end
 
 	function SWEP:AddBarrelSpin(speed)
-		--self:SetBarrelSpinSpeed(self:GetBarrelSpinSpeed() + speed)
-		--self:SetBarrelSpinSpeed(math.Clamp(self:GetBarrelSpinSpeed(), -1440, 1440))
 		self:SetBarrelSpinSpeed(math.Clamp(self:GetBarrelSpinSpeed() + speed, -1440, 1440))
 	end
 
@@ -2352,112 +2439,6 @@ if SERVER then
 		return true
 	end
 
-	function SWEP:Think()
-
-		local tr = self.Owner:GetEyeTraceNoCursor()
-
-		if not IsValid(tr.Entity) then
-			self:SetCanScav(false)
-		else
-			if tr.Entity ~= self.lastlookent then
-				self.lastlookentcanscav = self:CheckCanScav(tr.Entity)
-				self.lastlookent = tr.Entity
-			end
-			if IsValid(tr.Entity) then
-				self:SetCanScav(self.lastlookentcanscav)
-			else
-				self:SetCanScav(false)
-			end
-		end
-
-		if not self.Owner:KeyDown(IN_ATTACK) then
-			self.Inaccuracy = math.Max(1, self.Inaccuracy - 10 * FrameTime())
-		end
-
-		self:SetBarrelSpinSpeed(math.Approach(self:GetBarrelSpinSpeed(), self.BarrelRestSpeed, 600 * FrameTime()))
-		self.BarrelRotation = (self.BarrelRotation + self:GetBarrelSpinSpeed() * FrameTime()) % 360
-
-		local vm = self.Owner:GetViewModel()
-		local vmexists = IsValid(vm)
-
-		if vmexists then
-			vm:SetPoseParameter("spin", self.BarrelRotation)
-		end
-
-		self:SetPoseParameter("spin", self.BarrelRotation)
-
-		if self.PanelPose ~= self.PanelTo then
-
-			self.PanelPose = math.Approach(self.PanelPose, self.PanelTo, self.PanelSpeed * FrameTime())
-
-			if vmexists then
-				vm:SetPoseParameter("panel", self.PanelPose)
-			end
-
-			self:SetPoseParameter("panel", self.PanelPose)
-
-		else
-			self.PanelSpeed = 1
-		end
-
-		if self.BlockPose ~= self.BlockTo then
-
-			self.BlockPose = math.Approach(self.BlockPose, self.BlockTo, self.BlockSpeed*FrameTime())
-
-			if vmexists then
-				vm:SetPoseParameter("block", self.BlockPose)
-			end
-
-			self:SetPoseParameter("block", self.BlockPose)
-
-		else
-			self.BlockSpeed = 1
-		end
-
-		if self.bsoundplay and not self.Owner:KeyDown(IN_ATTACK2) or self.nextfire > CurTime() or self.ChargeAttack then
-			if self.soundloops.barrelspin then
-				self.soundloops.barrelspin:FadeOut(0.5)
-			end
-			self.bsoundplay = false
-		end
-
-		if not self:IsLocked() and self.ChargeAttack and self.nextfire < CurTime() then
-
-			local item = self.chargeitem
-			local cooldown = self:ChargeAttack(item) * self:GetCooldownScale()
-
-			self.nextfire = CurTime()+cooldown
-
-			if item:GetFiremodeTable().chargeanim then
-				self:SetSeqEndTime(self.nextfire)
-				self:SendWeaponAnim(item:GetFiremodeTable().chargeanim)
-			end
-
-		end
-
-		if self.shouldholster and should_allow_holster(self) then
-			self.Owner:SelectWeapon(self.shouldholster)
-		end
-
-		if self.seqendtime ~= 0 and self.seqendtime < CurTime() then
-			self:SendWeaponAnim(ACT_VM_IDLE)
-			self:SetSeqEndTime(0)
-		end
-
-		if self:IsLocked() or not self.Owner:KeyDown(IN_ATTACK) then
-			self:KillEffect()
-			self.mousepressed = false
-		end
-
-		if game.SinglePlayer() then
-			self:CallOnClient("Think")
-		end
-
-		self.LastThink = CurTime()
-		return true
-
-	end
-
 	function SWEP:SaveInventorySnapshot()
 		if self.inv and IsValid(self.Owner) then
 			saverestore.AddSaveHook("scavsave_" .. self.Owner:SteamID64(), function(save)
@@ -2465,25 +2446,6 @@ if SERVER then
 				saverestore.SaveEntity(self, save)
 				--print(save)
 			end)
-		end
-	end
-
-	function SWEP:OnRestore()
-		self.nextfire = 0
-		self.nextfireearly = 0
-		self.inv = self.inv or ScavInventory(self)
-
-		saverestore.AddRestoreHook("scavsave_" .. self.Owner:SteamID64(), function(save)
-			local savedinv = saverestore.ReadTable(save)
-			if savedinv then
-				self.inv = savedinv
-			end
-		end)
-
-		ReinitializeScavInventory(self.inv)
-
-		if IsValid(self.Owner) then
-			self.inv:AddOnClient(self.Owner)
 		end
 	end
 
