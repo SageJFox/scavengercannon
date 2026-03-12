@@ -187,6 +187,7 @@ if SERVER then
 	function ENT:Touch(hitent)
 		if not IsValid(hitent) then return end
 		if not self.hashit and (self.TouchTrigger and hitent:GetSolid() == SOLID_BSP) or hitent:GetSolid() ~= SOLID_BSP and hitent:GetSolid() ~= SOLID_NONE and hitent ~= self.Owner then
+			if string.find(hitent:GetClass(), "func_") then return end --todo: hitting brush models' bounds, might need to move this over to a physics check
 			self:OnTouch(hitent)
 			self.CollisionPos = self:GetPos()
 			self:ProcessImpact(hitent)
