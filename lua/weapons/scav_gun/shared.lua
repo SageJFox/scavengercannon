@@ -311,6 +311,160 @@ function SWEP:PotentialArmor()
 	return potential
 end
 
+if SERVER then util.AddNetworkString("scv_s_time") end
+
+function SWEP:PrimaryAttack()
+	--In a state that prevents primary attack
+	if self.ChargeAttack or self:IsLocked() then return end
+
+	local shoottime = CurTime()
+
+	local item = self:GetCurrentItem()
+	self.currentmodel = item and item.ammo or nil
+
+	--Empty
+	if not item then
+		if CLIENT then return end
+		if self.nextfire < CurTime() then
+			self.Owner:EmitSound("weapons/shotgun/shotgun_empty.wav")
+			self:SetNextPrimaryFire(CurTime() + 0.4)
+		end
+		return
+	end
+
+	--Called too soon
+	if CurTime() < self.nextfire and (self.nextfireearly == 0 or CurTime() < self.nextfireearly) then return end
+
+	local modeinfo = ScavData.models[item.ammo]
+
+	--Insufficient permissions for firemode
+	if modeinfo and modeinfo.Level > self:GetNWLevel() then
+		if SERVER then self.Owner:EmitSound("vehicles/APC/apc_shutdown.wav", 80) end
+		self:SendWeaponAnim(ACT_VM_FIDGET)
+		self:SetNextPrimaryFire(shoottime + 2)
+		self:SetSeqEndTime(shoottime + 1)
+		return
+	end
+
+	--Don't activate our next early fire if we were holding down the button
+	if self.mousepressed and self.nextfireearly ~= 0 and CurTime() < self.nextfire then return end
+	self.nextfireearly = 0
+
+	if not self:HasItemTypeSameAsLast() then
+		if SERVER then self:KillEffect() end
+		self.mousepressed = false
+	end
+
+	local cooldown = 0
+
+	--We have a fire mode to use
+	if modeinfo then
+		--FireFunc may change the other info, call it first
+		if modeinfo.FireFunc and modeinfo.FireFunc(self, item) and SERVER then
+			self:RemoveItem(1)
+		end
+
+		if SERVER then
+			self:AddBarrelSpin(modeinfo.BarrelSpeedAdd or 0)
+		else
+			ScavData.ProcessLocalPlayerItemKnowledge(self.currentmodel)
+		end
+
+		cooldown = (modeinfo.Cooldown or 0) * self:GetCooldownScale()
+
+		if modeinfo.anim then
+			self:SendWeaponAnim(modeinfo.anim)
+			self:SetSeqEndTime(shoottime + math.min(self.Owner:GetViewModel():SequenceDuration(), cooldown))
+		end
+	--Just fire prop out
+	else
+		local mass = CLIENT and item:GetMass() or 0
+
+		if SERVER then
+			local prop = nil
+
+			if util.IsValidRagdoll(item.ammo) then
+				prop = ents.Create("prop_ragdoll")
+				prop.thrownby = self.Owner
+			elseif util.IsValidProp(item.ammo) then
+				prop = ents.Create("prop_physics")
+			elseif string.find(item.ammo, "*%d", 0, false) then
+				prop = ents.Create("func_physbox")
+			end
+
+			if not prop then
+				self:RemoveItem(1)
+				return
+			end
+
+			local angoffset = ScavData.GetEntityFiringAngleOffset(prop)
+
+			prop:SetModel(item.ammo)
+			prop:SetSkin(item.data)
+			prop.Owner = self.Owner
+			prop:SetAngles(self.Owner:GetAimVector():Angle() + angoffset)
+			prop:SetPos(self.Owner:GetShootPos())
+			prop:SetOwner(self.Owner)
+			prop:SetMaterial("scv_leffect")
+			prop:Spawn()
+			prop:SetHealth(1)
+			prop:SetPhysicsAttacker(self.Owner)
+
+			for i = 0, prop:GetPhysicsObjectCount() - 1 do --setup bone positions
+				local phys = prop:GetPhysicsObjectNum(i)
+				if IsValid(phys) then
+					phys:SetVelocity(self:GetAimVector() * 2000 * self:GetForceScale())
+					phys:AddGameFlag(FVPHYSICS_WAS_THROWN)
+					mass = mass + phys:GetMass()
+				end
+			end
+			EntReaper.AddDyingEnt(prop, 10)
+			--instead of trying to copy the ragdoll's position to the death model, let's just use the ragdoll
+			if prop:IsRagdoll() then
+				timer.Simple(9.9, function()
+					if not IsValid(prop) then return end
+					ParticleEffectAttach("scav_propdeath", PATTACH_ABSORIGIN_FOLLOW, prop, 0)
+					prop:DrawShadow(false)
+					prop:SetMaterial("models/scavplasma.vmt")
+				end)
+			else
+				prop:CallOnRemove("scavdeath", deathshit)
+			end
+			self:RemoveItem(1)
+
+			net.Start("scv_s_time")
+				net.WriteEntity(self)
+				net.WriteInt(math.floor(self.nextfire), 32)
+				net.WriteFloat(self.nextfire - math.floor(self.nextfire))
+			net.Send(self.Owner)
+		end
+		
+		self:SendWeaponAnim(ACT_VM_SECONDARYATTACK)
+		self:SetSeqEndTime(self.nextfire - 0.1)
+
+		cooldown = (math.sqrt(mass) * 0.05) * self:GetCooldownScale()
+		if SERVER then self.Owner:EmitSound(self.shootsound, 100, math.Clamp(120 - cooldown * 50, 30, 255)) end
+	end
+	
+	if SERVER then
+		self:SaveInventorySnapshot()
+	else
+		self.LastAnim = (modeinfo and modeinfo.anim) and modeinfo.anim or ACT_VM_SECONDARYATTACK
+		self.receivednextfire = UnPredictedCurTime()
+	end
+
+	self.nextfire = cooldown + shoottime
+
+	if self:GetCurrentItem() and not self.mousepressed then
+		self.mousepressed = CurTime()
+	end
+
+	if game.SinglePlayer() then
+		self:CallOnClient("PrimaryAttack")
+	end
+
+end
+
 if SERVER then
 
 	ScavData.GiveOneOfItem = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), 1, ent:GetSkin()}} end
@@ -689,6 +843,10 @@ if CLIENT then
 			CL_SCAVGUNTAB = self:GetTable()
 			CL_SCAVGUN = self
 		end
+		
+		if self:IsLocked() or not self.Owner:KeyDown(IN_ATTACK) then
+			self.mousepressed = false
+		end
 
 		self.LastThink = CurTime()
 		return true
@@ -716,95 +874,6 @@ if CLIENT then
 			self:Reskin(self.Owner:AccountID())
 			self.HUD:PlayerColor()
 		end
-	end
-
-	function SWEP:PrimaryAttack()
-
-		if self:IsLocked() or self.ChargeAttack then
-			return
-		end
-
-		local shoottime = CurTime()
-
-		local item = self:GetCurrentItem() --the item we're going to use to fire
-
-		if item and ScavData.models[item.ammo] and ScavData.models[item.ammo].Level > self:GetNWLevel() then
-			self:SendWeaponAnim(ACT_VM_FIDGET)
-			self:SetNextPrimaryFire(shoottime + 2)
-			self:SetSeqEndTime(shoottime + 1)
-			return
-		end
-
-		if (self.inv:GetItemCount() ~= 0) and self.nextfire < CurTime() or (self.nextfireearly ~= 0 and self.nextfireearly < CurTime()) then
-			if self.Owner:KeyPressed(IN_ATTACK) then
-				self.mousepressed = false
-			else
-				if not self.mousepressed then
-					self.mousepressed = CurTime()
-				end
-			end
-		end
-
-		if self.inv:GetItemCount() ~= 0 and self.nextfire < CurTime() or (self.nextfireearly ~= 0 and self.nextfireearly < CurTime() and not self.mousepressed) then
-
-			self.nextfireearly = 0
-
-			if not self:HasItemTypeSameAsLast() then
-				self.mousepressed = false
-			end
-
-			if self:GetCurrentItem() then
-				self.currentmodel = self:GetCurrentItem().ammo
-			else
-				self.currentmodel = nil
-			end
-
-			if item and ScavData.models[item.ammo] then
-				ScavData.ProcessLocalPlayerItemKnowledge(item.ammo)
-			end
-
-			if item and ScavData.models[item.ammo] and ScavData.models[item.ammo].FireFunc then --check to make sure that this item is valid and has a firemode
-
-				ScavData.models[item.ammo].FireFunc(self, item)
-				
-				local cooldown = ScavData.models[self.currentmodel].Cooldown * self:GetCooldownScale()
-
-				if ScavData.models[self.currentmodel].anim then
-
-					self:SendWeaponAnim(ScavData.models[self.currentmodel].anim)
-					self.LastAnim = ScavData.models[self.currentmodel].anim
-
-					if not self.ChargeAttack then
-						self:SetSeqEndTime(shoottime + math.min(self.Owner:GetViewModel():SequenceDuration(), cooldown))
-					end
-
-				end
-
-				local nextfire = shoottime + cooldown
-				self.nextfire = nextfire
-				self.receivednextfire = UnPredictedCurTime()
-
-			elseif item and ScavData.models[item.ammo] and ScavData.models[item.ammo].anim then --just play an animation if there is an empty firemode
-				self:SendWeaponAnim(ScavData.models[self:GetCurrentItem().ammo].anim)
-				self.LastAnim = ScavData.models[self:GetCurrentItem().ammo].anim
-				self.nextfire = shoottime + ScavData.models[self:GetCurrentItem().ammo].Cooldown * self:GetCooldownScale()
-				self.receivednextfire = UnPredictedCurTime()
-				self:SetSeqEndTime(self.nextfire)
-			elseif item then --just play a generic animation if we have no idea what this item is
-				local mass = item:GetMass()
-				self.nextfire = shoottime + (math.sqrt(mass) * 0.05) * self:GetCooldownScale()
-				self:SendWeaponAnim(ACT_VM_SECONDARYATTACK)
-				self.LastAnim = ACT_VM_SECONDARYATTACK
-				self.receivednextfire = UnPredictedCurTime()
-				self:SetSeqEndTime(self.nextfire - 0.1)
-			end
-
-			if not self.mousepressed then
-				self.mousepressed = CurTime()
-			end
-
-		end
-
 	end
 
 	function SWEP:OnRestore()
@@ -2566,156 +2635,6 @@ if SERVER then
 			ef:Spawn()
 			ParticleEffectAttach("scav_propdeath", PATTACH_ABSORIGIN_FOLLOW, ef, 0)
 		end
-	end
-
-	util.AddNetworkString("scv_s_time")
-
-	function SWEP:PrimaryAttack()
-
-		local shoottime = CurTime()
-
-		if self.ChargeAttack or self:IsLocked() then
-			return
-		end
-
-		if self.inv:GetItemCount() == 0 and self.nextfire < CurTime() then
-			self.Owner:EmitSound("weapons/shotgun/shotgun_empty.wav")
-			self:SetNextPrimaryFire(CurTime() + 0.4)
-			return
-		end
-
-		if self.inv:GetItemCount() ~= 0 and (self.nextfire < CurTime() or (self.nextfireearly ~= 0 and self.nextfireearly < CurTime() and not self.mousepressed)) then
-
-			self.nextfireearly = 0
-
-			local item = self:GetCurrentItem()
-
-			if not item then return end
-
-			if ScavData.models[item.ammo] and ScavData.models[item.ammo].Level > self:GetNWLevel() then
-				self.Owner:EmitSound("vehicles/APC/apc_shutdown.wav", 80)
-				self:SendWeaponAnim(ACT_VM_FIDGET)
-				self:SetNextPrimaryFire(shoottime + 2)
-				self:SetSeqEndTime(shoottime + 1)
-				return
-			end
-
-			if not self:HasItemTypeSameAsLast() then
-				self:KillEffect()
-				self.mousepressed = false
-			end
-
-			local modeinfo = ScavData.models[item.ammo]
-
-			if modeinfo then
-
-				if modeinfo.FireFunc(self, item) then
-					self.currentmodel = item.ammo
-					self:RemoveItem(1)
-				else
-					self.currentmodel = item.ammo
-				end
-
-				self:AddBarrelSpin(modeinfo.BarrelSpeedAdd or 0)
-
-				local cooldown = ScavData.models[self.currentmodel].Cooldown * self:GetCooldownScale()
-
-				if ScavData.models[self.currentmodel].anim then
-					self:SendWeaponAnim(ScavData.models[self.currentmodel].anim)
-					if not self.ChargeAttack then
-						self:SetSeqEndTime(shoottime + math.min(self.Owner:GetViewModel():SequenceDuration(), cooldown))
-					end
-				end
-
-				self:SaveInventorySnapshot()
-				self.nextfire = shoottime + cooldown
-
-			else
-
-				local prop = nil
-
-				if util.IsValidRagdoll(item.ammo) then
-					prop = ents.Create("prop_ragdoll")
-					prop.thrownby = self.Owner
-				elseif util.IsValidProp(item.ammo) then
-					prop = ents.Create("prop_physics")
-				elseif string.find(item.ammo, "*%d", 0, false) then
-					prop = ents.Create("func_physbox")
-				end
-
-				if not prop then
-					self:RemoveItem(1)
-					return
-				end
-
-				local angoffset = ScavData.GetEntityFiringAngleOffset(prop)
-
-				prop:SetModel(item.ammo)
-				prop:SetSkin(item.data)
-				prop.Owner = self.Owner
-				prop:SetAngles(self.Owner:GetAimVector():Angle() + angoffset)
-				prop:SetPos(self.Owner:GetShootPos())
-				prop:SetOwner(self.Owner)
-				prop:SetMaterial("scv_leffect")
-				prop:Spawn()
-				prop:SetHealth(1)
-				prop:SetPhysicsAttacker(self.Owner)
-
-				local phys = prop:GetPhysicsObject()
-				local mass = 0
-
-				for i = 0, prop:GetPhysicsObjectCount() - 1 do --setup bone positions
-					local phys = prop:GetPhysicsObjectNum(i)
-					if IsValid(phys) then
-						phys:SetVelocity(self:GetAimVector() * 2000 * self:GetForceScale())
-						phys:AddGameFlag(FVPHYSICS_WAS_THROWN)
-						mass = mass + phys:GetMass()
-					end
-				end
-
-				self.nextfire = shoottime + (math.sqrt(mass) * 0.05) * self:GetCooldownScale()
-				self:SendWeaponAnim(ACT_VM_SECONDARYATTACK)
-				EntReaper.AddDyingEnt(prop, 10)
-				--instead of trying to copy the ragdoll's position to the death model, let's just use the ragdoll
-				if prop:IsRagdoll() then
-					timer.Simple(9.9, function()
-						if not IsValid(prop) then return end
-						ParticleEffectAttach("scav_propdeath", PATTACH_ABSORIGIN_FOLLOW, prop, 0)
-						prop:DrawShadow(false)
-						prop:SetMaterial("models/scavplasma.vmt")
-					end)
-				else
-					prop:CallOnRemove("scavdeath", deathshit)
-				end
-				self:SetSeqEndTime(self.nextfire - 0.1)
-				self:RemoveItem(1)
-				self.Owner:EmitSound(self.shootsound, 100, math.Clamp(120 - (self.nextfire - CurTime()) * 50, 30, 255))
-
-				self:SaveInventorySnapshot()
-
-				net.Start("scv_s_time")
-					net.WriteEntity(self)
-					net.WriteInt(math.floor(self.nextfire), 32)
-					net.WriteFloat(self.nextfire - math.floor(self.nextfire))
-				net.Send(self.Owner)
-
-			end
-
-		end
-
-		if self:GetCurrentItem() then
-			if not self.mousepressed then
-				self.mousepressed = CurTime()
-			end
-		else
-			self:KillEffect()
-			self.mousepressed = false
-		end
-
-		if game.SinglePlayer() then
-			self:CallOnClient("PrimaryAttack")
-		end
-
 	end
 
 	hook.Add("PropBreak", "ScavPropDeathEffectCheck", function(client, prp)

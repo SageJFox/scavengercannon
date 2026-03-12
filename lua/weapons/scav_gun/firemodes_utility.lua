@@ -1586,7 +1586,7 @@ setmetatable(hacksuccess, {__index = function() return {"buttons/combine_button1
 					return false
 				end
 				local starthealth = healent:Health()
-				tab.Cooldown = medkit[ScavData.models[self.inv.items[1].ammo].Identify[item.ammo]](healent)
+				tab.Cooldown = medkit[ScavData.models[item.ammo].Identify[item.ammo]](healent)
 				local ef = EffectData()
 				ef:SetRadius(math.max(2, healent:Health() - starthealth))
 				ef:SetOrigin(self.Owner:GetPos())

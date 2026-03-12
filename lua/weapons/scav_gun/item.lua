@@ -651,19 +651,17 @@ end
 function ITEM:SetSubammo(amount) --not networked
 
 	if type(amount) ~= "number" then
-		error("bad argument #2 to 'SetSubammo' (expected number, got "..type(amount)..")",2)
+		error("bad argument #2 to 'SetSubammo' (expected number, got " .. type(amount) .. ")", 2)
 	end
 	
 	self.subammo = amount
 	
 	if game.SinglePlayer() and SERVER then --in singleplayer, we send this to the client because the client doesn't run clientside firing code and can't predict it
 		net.Start("scv_setsub")
-			local rf = RecipientFilter()
-			rf:AddAllPlayers()
-			net.WriteInt(self.parent.ID,INVREADSIZE)
-			net.WriteInt(self.ID,IDREADSIZE)
-			net.WriteInt(self.subammo,16)
-		net.Send(rf)
+			net.WriteInt(self.parent.ID, INVREADSIZE)
+			net.WriteInt(self.ID, IDREADSIZE)
+			net.WriteInt(self.subammo, 16)
+		net.Broadcast()
 	end
 	
 end
