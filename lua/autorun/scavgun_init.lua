@@ -463,22 +463,30 @@ if SERVER then
 		end
 		
 	end
-		
-	function ScavData.GetEntityFiringAngleOffset(ent) --entity must not have modified angles! also this is a shitty function why don't I know the real way to do this
-	
-		local mins = ent:OBBMins()
-		local maxs = ent:OBBMaxs()
-		local x = maxs.x - mins.x
-		local y = maxs.y - mins.y
-		local z = maxs.z - mins.z
-		
-		if z > y and z > x then --if the OBB is taller than it is wide
-			return angoffset90_0_0
+
+	local offsets = {}
+
+	offsets["models/props_c17/statue_horse.mdl"] = function() return Angle(0, 180, 0) end
+
+	setmetatable(offsets, {__index = function()
+		return function(ent)
+			if ent:IsRagdoll() then return angle_zero end
+			local mins = ent:OBBMins()
+			local maxs = ent:OBBMaxs()
+			
+			local x = maxs.x - mins.x
+			local y = maxs.y - mins.y
+			local z = maxs.z - mins.z
+			
+			if z > y and z > x then --if the OBB is taller than it is wide
+				return angoffset90_0_0
+			end
+			
+			return angle_zero
 		end
-		
-		return angle_zero
-		
-	end
+	end})
+
+	function ScavData.GetEntityFiringAngleOffset(ent) return offsets[ent:GetModel()](ent) end
 		
 	function ScavData.DoBlastCalculation(position, radius, attacker, inflictor, callback) --callback should have: ent, position, radius, attacker, inflictor, fraction
 		for _, v in ipairs(ents.FindInSphere(position, radius)) do

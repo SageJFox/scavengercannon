@@ -528,9 +528,8 @@ function SWEP:PrimaryAttack()
 				return
 			end
 
-			local angoffset = ScavData.GetEntityFiringAngleOffset(prop)
-
 			prop:SetModel(item.ammo)
+			local angoffset = ScavData.GetEntityFiringAngleOffset(prop)
 			prop:SetSkin(item.data)
 			prop.Owner = self.Owner
 			prop:SetAngles(self.Owner:GetAimVector():Angle() + angoffset)
