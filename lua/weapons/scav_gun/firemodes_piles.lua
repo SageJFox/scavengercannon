@@ -857,7 +857,7 @@
 				ScavData.CollectFX["models/bots/spy/bot_spy.mdl"] = function(self, ent)
 					self.Owner:EmitSound("vo/mvm/norm/spy_mvm_battlecry0" .. math.random(4) .. ".mp3", 75, 100, 1, CHAN_VOICE)
 				end
-				ScavData.CollectFuncs["models/player/hwm/spy.mdl"] = ScavData.CollectFuncs["models/player/spy.mdl"]
+				ScavDataCollectCopy("models/player/hwm/spy.mdl", "models/player/spy.mdl")
 				
 				--Human Grunt
 				ScavData.CollectFuncs["models/hgrunt.mdl"] = function(self, ent)

@@ -169,12 +169,12 @@ local bullet = {}
 	end
 	
 	function SWEP:PrimaryAttack()
+		if not IsFirstTimePredicted() then return end
+
 		if self:CanFire(self.ShotCost) then
 			self:Shoot()
-			if IsFirstTimePredicted() then
-				self:TakeAmmo(self.ShotCost)
-			end
-		elseif IsFirstTimePredicted() then
+			self:TakeAmmo(self.ShotCost)
+		else
 			self:EmitSound(self.SoundEmpty)
 		end
 	end
