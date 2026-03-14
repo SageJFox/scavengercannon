@@ -251,14 +251,15 @@ local eject = "brass"
 			tab.anim = ACT_VM_SECONDARYATTACK
 			tab.Level = 6
 			local identify = {
-				--[HL2] = 0,
-				--[[DoD:S Garand]]["models/weapons/p_garand_rg_grenade.mdl"] = 1,
-				["models/weapons/w_garand_rg_grenade.mdl"] = 1,
-				--[[DoD:S Kar98]]["models/weapons/p_k98_rg_grenade.mdl"] = 2,
-				["models/weapons/w_k98_rg_grenade.mdl"] = 2,
-				--[[L4D2]]["models/w_models/weapons/w_grenade_launcher.mdl"] = 3,
+				--[HL2] = SCAV_SMGNADE_DEFAULT,
+				--[[DoD:S Garand]]["models/weapons/p_garand_rg_grenade.mdl"] = SCAV_SMGNADE_GARAND,
+				["models/weapons/w_garand_rg_grenade.mdl"] = SCAV_SMGNADE_GARAND,
+				--[[DoD:S Kar98]]["models/weapons/p_k98_rg_grenade.mdl"] = SCAV_SMGNADE_KAR98,
+				["models/weapons/w_k98_rg_grenade.mdl"] = SCAV_SMGNADE_KAR98,
+				--[[L4D2]]["models/w_models/weapons/w_grenade_launcher.mdl"] = SCAV_SMGNADE_L4D2,
+				--[[HL1]]["models/grenade.mdl"] = SCAV_SMGNADE_HL1,
 			}
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
+			tab.Identify = setmetatable(identify, {__index = function() return SCAV_SMGNADE_DEFAULT end})
 			tab.MaxAmmo = 10
 			if SERVER then
 				tab.FireFunc = function(self, item)
@@ -272,20 +273,24 @@ local eject = "brass"
 					proj:Spawn()		
 					proj:SetVelocity(self:GetAimVector() * 1000)
 					local modelfx = {
-						[0] = function(self, proj)
+						[SCAV_SMGNADE_DEFAULT] = function(self, proj)
 							self.Owner:EmitSound("weapons/ar2/ar2_altfire.wav")
 						end,
-						[1] = function(self, proj)
+						[SCAV_SMGNADE_GARAND] = function(self, proj)
 							proj:SetModel("models/weapons/w_garand_rg_grenade.mdl")
 							self.Owner:EmitSound("Weapon_Grenade.Shoot")
 						end,
-						[2] = function(self, proj)
+						[SCAV_SMGNADE_KAR98] = function(self, proj)
 							proj:SetModel("models/weapons/w_k98_rg_grenade.mdl")
 							self.Owner:EmitSound("Weapon_Grenade.Shoot")
 						end,
-						[3] = function(self, proj)
+						[SCAV_SMGNADE_L4D2] = function(self, proj)
 							proj:SetModel("models/w_models/weapons/w_he_grenade.mdl")
 							self.Owner:EmitSound("weapons/grenade_launcher/grenadefire/grenade_launcher_fire_1.wav")
+						end,
+						[SCAV_SMGNADE_HL1] = function(self, proj)
+							proj:SetModel("models/grenade.mdl")
+							self.Owner:EmitSound(math.random(2) == 1 and "weapons/glauncher.wav" or "weapons/glauncher2.wav")
 						end,
 					}
 					modelfx[tab.Identify[item.ammo]](self, proj)
@@ -302,6 +307,8 @@ local eject = "brass"
 					{ScavData.FormatModelname("models/weapons/w_k98_rg_grenade.mdl"), 1, 0},
 					{ScavData.FormatModelname("models/weapons/w_k98.mdl"), 5, 0}
 				} end
+				--HL:S
+				ScavData.CollectFuncs["models/w_argrenade.mdl"] = function(self, ent) return {{ScavData.FormatModelname("models/grenade.mdl"), 2, 0}} end
 			end
 			tab.Cooldown = 1
 		ScavData.RegisterFiremode(tab, "models/items/ar2_grenade.mdl")
@@ -314,6 +321,8 @@ local eject = "brass"
 		ScavData.RegisterFiremode(tab, "models/weapons/p_k98_rg_grenade.mdl")
 		ScavData.RegisterFiremode(tab, "models/weapons/w_garand_rg_grenade.mdl")
 		ScavData.RegisterFiremode(tab, "models/weapons/w_k98_rg_grenade.mdl")
+		--HL1
+		ScavData.RegisterFiremode(tab, "models/grenade.mdl")
 
 --[[==============================================================================================
 	--Strider Cannon
@@ -837,6 +846,8 @@ local eject = "brass"
 		--DoD:S
 		ScavData.RegisterFiremode(tab, "models/helmets/helmet_american.mdl")
 		ScavData.RegisterFiremode(tab, "models/helmets/helmet_german.mdl")
+		--HL:S
+		ScavData.RegisterFiremode(tab, "models/w_battery.mdl")
 		
 --[[==============================================================================================
 	--Shotgun
@@ -1003,33 +1014,10 @@ local eject = "brass"
 							self.Owner:EmitSound("weapons/sbarrel1.wav")
 						end
 						timer.Simple(0.4, function()
-							if IsValid(self) then
-								if SERVER then
-									self.Owner:EmitSound("weapons/scock1.wav")
-								end
-								if CLIENT ~= game.SinglePlayer() then
-									if not self.Owner:GetViewModel() then return end
-									local ef = EffectData()
-									local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
-									if attach == nil then
-										attach = self:GetAttachment(self:LookupAttachment(eject))
-									end
-									if attach then
-										ef:SetOrigin(attach.Pos)
-										ef:SetAngles(attach.Ang)
-										--lovingly borrowed from https://steamcommunity.com/sharedfiles/filedetails/?id=1360233031
-										local angShellAngles = self.Owner:EyeAngles()
-										local vecShellVelocity = self.Owner:GetAbsVelocity()
-										vecShellVelocity = vecShellVelocity + angShellAngles:Right() * math.Rand(50, 70);
-										vecShellVelocity = vecShellVelocity + angShellAngles:Up() * math.Rand(100, 150);
-										vecShellVelocity = vecShellVelocity + angShellAngles:Forward() * 25;
-										ef:SetStart(vecShellVelocity)
-										ef:SetEntity(self.Owner)
-										ef:SetFlags(1) --shotgun shell
-										util.Effect("HL1ShellEject", ef)
-									end
-								end
-							end
+							if not IsValid(self) then return end
+							hl1shelleject(self, true)
+							if CLIENT or not IsValid(self.Owner) then return end
+							self.Owner:EmitSound("weapons/scock1.wav")
 						end)
 					end,
 					[5] = function(self)
@@ -1183,7 +1171,7 @@ local eject = "brass"
 --[[==============================================================================================
 	--Pistol
 ==============================================================================================]]--
-		
+
 		local tab = {}
 			tab.Name = "#scav.scavcan.pistol"
 			--tab.anim = ACT_VM_RECOIL3
@@ -1250,28 +1238,8 @@ local eject = "brass"
 							self.Owner:EmitSound("weapons/pl_gun3.wav")
 						end
 						timer.Simple(.025, function()
-							if CLIENT ~= game.SinglePlayer() then
-								if not self.Owner:GetViewModel() then return end
-								local ef = EffectData()
-								local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
-								if attach == nil then
-									attach = self:GetAttachment(self:LookupAttachment(eject))
-								end
-								if attach then
-									ef:SetOrigin(attach.Pos)
-									ef:SetAngles(attach.Ang)
-									--lovingly borrowed from https://steamcommunity.com/sharedfiles/filedetails/?id=1360233031
-									local angShellAngles = self.Owner:EyeAngles()
-									local vecShellVelocity = self.Owner:GetAbsVelocity()
-									vecShellVelocity = vecShellVelocity + angShellAngles:Right() * math.Rand( 50, 70 );
-									vecShellVelocity = vecShellVelocity + angShellAngles:Up() * math.Rand( 100, 150 );
-									vecShellVelocity = vecShellVelocity + angShellAngles:Forward() * 25;
-									ef:SetStart(vecShellVelocity)
-									ef:SetEntity(self.Owner)
-									ef:SetFlags(0) --pistol shell
-									util.Effect("HL1ShellEject", ef)
-								end
-							end
+							if not IsValid(self) or not IsValid(self.Owner) then return end
+							hl1shelleject(self)
 						end)
 					end,
 				}
@@ -1915,18 +1883,81 @@ local eject = "brass"
 	-- .357 rounds
 ==============================================================================================]]--
 
+ --drop shells at end
+local function revolver_reload(self, item, reload, style, count)
+	if (item.subammo <= 1 and SERVER) or (item.subammo <= 0 and CLIENT) then
+		timer.Simple(0.5, function()
+			local count = count or 6
+			if not IsValid(self) or not IsValid(self.Owner) then return end
+
+			if SERVER then
+				local reload = type(reload) == "table" and reload or {reload, 75, 100, 1, CHAN_WEAPON}
+				self.Owner:EmitSound(unpack(reload))
+			end
+			if CLIENT == game.SinglePlayer() then return end
+
+			if style == SCAV_REVOLVER_DEFAULT then
+				local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
+				if not attach then return end
+
+				local ef = EffectData()
+				ef:SetOrigin(attach.Pos)
+				ef:SetAngles(attach.Ang)
+				ef:SetEntity(self)
+				for i = 1, count do
+					util.Effect("ShellEject", ef)
+				end
+			elseif style == SCAV_REVOLVER_HL1 then
+				for i = 1, count do
+					hl1shelleject(self)
+				end
+			else
+				for i = 1, count do
+					tf2shelleject(self)
+				end
+			end
+		end)
+	end
+end
+
 		local tab = {}
 			tab.Name = "#weapon_357"
 			tab.anim = ACT_VM_RECOIL2
 			tab.Level = 4
 			local identify = {
 				--[Revolver] = 0,
-				--[[Annabelle/Lever Action]]["models/weapons/w_annabelle.mdl"] = 1,
+				--[[Annabelle/Lever Action]]["models/weapons/w_annabelle.mdl"] = SCAV_REVOLVER_LEVER,
+				--[[TF2]]["models/weapons/w_models/w_revolver.mdl"] = SCAV_REVOLVER_TF2,
+				["models/weapons/c_models/c_revolver/c_revolver.mdl"] = SCAV_REVOLVER_TF2,
+				["models/weapons/c_models/c_revolver/c_revolver_xmas.mdl"] = SCAV_REVOLVER_TF2,
+				--[[TF2 Ambassador]]["models/weapons/c_models/c_ambassador/c_ambassador.mdl"] = SCAV_REVOLVER_AMBY,
+				["models/weapons/c_models/c_ambassador/c_ambassador_xmas.mdl"] = SCAV_REVOLVER_AMBY,
+				--[[TF2 Enforcer]]["models/weapons/c_models/c_snub_nose/c_snub_nose.mdl"] = SCAV_REVOLVER_ENFORCER,
+				["models/workshop/weapons/c_models/c_snub_nose/c_snub_nose.mdl"] = SCAV_REVOLVER_ENFORCER,
+				--[[TF2 Big Kill]]["models/weapons/c_models/c_ttg_sam_gun/c_ttg_sam_gun.mdl"] = SCAV_REVOLVER_BIGKILL,
+				["models/workshop/weapons/c_models/c_ttg_sam_gun/c_ttg_sam_gun.mdl"] = SCAV_REVOLVER_BIGKILL,
+				--[[TF2 L'etranger]]["models/weapons/c_models/c_letranger/c_letranger.mdl"] = SCAV_REVOLVER_LETRANGER,
+				["models/workshop/weapons/c_models/c_letranger/c_letranger.mdl"] = SCAV_REVOLVER_LETRANGER,
+				--[[TF2 Diamondback]]["models/weapons/c_models/c_dex_revolver/c_dex_revolver.mdl"] = SCAV_REVOLVER_DIAMONDBACK,
+				["models/workshop_partner/weapons/c_models/c_dex_revolver/c_dex_revolver.mdl"] = SCAV_REVOLVER_DIAMONDBACK,
+				--[[HL1]]["models/w_357.mdl"] = SCAV_REVOLVER_HL1,
 			}
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
+			tab.Identify = setmetatable(identify, {__index = function() return SCAV_REVOLVER_DEFAULT end})
 			tab.MaxAmmo = 42 -- 36 + 6
+			local firesounds357 = {
+				[SCAV_REVOLVER_DEFAULT] = function(self) self.Owner:EmitSound("Weapon_357.Single") end,
+				[SCAV_REVOLVER_LEVER] = function(self) self.Owner:EmitSound("Weapon_357.Single") end,
+				[SCAV_REVOLVER_ENFORCER] = function(self) self.Owner:EmitSound(self.Owner:GetStatusEffect("DamageX") and "weapons/tf_spy_enforcer_revolver_crit.wav" or ("weapons/tf_spy_enforcer_revolver_0" .. tostring(math.random(6)) .. ".wav")) end,
+				[SCAV_REVOLVER_LETRANGER] = function(self) self.Owner:EmitSound(self.Owner:GetStatusEffect("DamageX") and "weapons/letranger_shoot_crit.wav" or "weapons/letranger_shoot.wav") end,
+				[SCAV_REVOLVER_DIAMONDBACK] = function(self) self.Owner:EmitSound(self.Owner:GetStatusEffect("DamageX") and ("weapons/diamond_back_0".. tostring(math.random(3)) .. "_crit.wav") or ("weapons/diamond_back_0".. tostring(math.random(3)) .. ".wav")) end,
+				[SCAV_REVOLVER_HL1] = function(self) self.Owner:EmitSound("weapons/357_shot" .. tostring(math.random(2)) .. ".wav") end,
+			}
+			--set TF2 stock revolver sounds as default as a couple of them use it
+			setmetatable(firesounds357, {__index = function() return function(self) self.Owner:EmitSound(self.Owner:GetStatusEffect("DamageX") and "weapons/revolver_shoot_crit.wav" or "weapons/revolver_shoot.wav") end end})
+			
 			tab.FireFunc = function(self, item)
 				local tab = ScavData.models[self.inv.items[1].ammo]
+				local ident = tab.Identify[item.ammo]
 				local bullet = {}
 				bullet.Num = 1
 				bullet.Src = self.Owner:GetShootPos()
@@ -1941,34 +1972,14 @@ local eject = "brass"
 				end
 				self:MuzzleFlash2()
 				self.Owner:SetAnimation(PLAYER_ATTACK1)
-				self.Owner:EmitSound("Weapon_357.Single")
+				firesounds357[ident](self)
 				self.Owner:ScavViewPunch(Angle(-15, math.Rand(-0.1, 0.1), 0), 0.5)
 				if CLIENT then
 					self.Owner:SetEyeAngles((vector_up * 0.05 + self:GetAimVector()):Angle())
 				end
 				local itemfx = {
-					[0] = function(self, item)
-						if (item.subammo <= 1 and SERVER) or (item.subammo <= 0 and CLIENT) then --drop shells at end
-							timer.Simple(0.5, function()
-								if SERVER then
-									self.Owner:EmitSound("weapons/357/357_reload1.wav", 75, 100, 1, CHAN_WEAPON)
-								end
-								if CLIENT ~= game.SinglePlayer() then
-									local ef = EffectData()
-									local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
-									if attach then
-										ef:SetOrigin(attach.Pos)
-										ef:SetAngles(attach.Ang)
-										ef:SetEntity(self)
-										for i=1, 6 do
-											util.Effect("ShellEject", ef)
-										end
-									end
-								end
-							end)
-						end
-					end,
-					[1] = function(self, item)
+					[SCAV_REVOLVER_DEFAULT] = function(self, item) revolver_reload(self, item, "weapons/357/357_reload1.wav", SCAV_REVOLVER_DEFAULT) end,
+					[SCAV_REVOLVER_LEVER] = function(self, item)
 						timer.Simple(0.4, function() --lever action
 							if SERVER then
 								self.Owner:EmitSound("weapons/smg1/switch_burst.wav", 75, 85, 1, CHAN_WEAPON)
@@ -1985,8 +1996,15 @@ local eject = "brass"
 							end
 						end)
 					end,
+					[SCAV_REVOLVER_TF2] = function(self, item) revolver_reload(self, item, "weapons/revolver_worldreload.wav", SCAV_REVOLVER_TF2) end,
+					[SCAV_REVOLVER_AMBY] = function(self, item) revolver_reload(self, item, "weapons/revolver_worldreload.wav", SCAV_REVOLVER_TF2) end,
+					[SCAV_REVOLVER_ENFORCER] = function(self, item) revolver_reload(self, item, "weapons/revolver_worldreload.wav", SCAV_REVOLVER_TF2) end,
+					[SCAV_REVOLVER_BIGKILL] = function(self, item) revolver_reload(self, item, "weapons/revolver_worldreload.wav", SCAV_REVOLVER_TF2) end,
+					[SCAV_REVOLVER_LETRANGER] = function(self, item) revolver_reload(self, item, "weapons/revolver_worldreload.wav", SCAV_REVOLVER_TF2) end,
+					[SCAV_REVOLVER_DIAMONDBACK] = function(self, item) revolver_reload(self, item, "weapons/revolver_worldreload.wav", SCAV_REVOLVER_TF2) end,
+					[SCAV_REVOLVER_HL1] = function(self, item) revolver_reload(self, item, "weapons/357_reload1.wav", SCAV_REVOLVER_HL1) end,
 				}
-				itemfx[tab.Identify[item.ammo]](self, item)
+				itemfx[ident](self, item)
 				if SERVER then
 					return self:TakeSubammo(item, 1)
 				end
@@ -1995,12 +2013,11 @@ local eject = "brass"
 				tab.OnArmed = function(self, item, olditemname)
 					if olditemname == "" or not ScavData.models[olditemname] or ScavData.models[item.ammo].Name ~= ScavData.models[olditemname].Name then
 						local tab = ScavData.models[self.inv.items[1].ammo]
-						if tab.Identify[item.ammo] == 0 then
+						if tab.Identify[item.ammo] ~= SCAV_REVOLVER_LEVER then
 							self.Owner:EmitSound("weapons/357/357_spin1.wav")
 						end
 					end
 				end
-				--TODO: give these their own sounds where appropriate
 				--TF2
 				ScavData.CollectFuncs["models/weapons/w_models/w_revolver.mdl"] = function(self, ent) return {{self.christmas and "models/weapons/c_models/c_revolver/c_revolver_xmas.mdl" or ScavData.FormatModelname(ent:GetModel()), 6, self.christmas and ent:GetSkin() % 2 or ent:GetSkin()}} end
 				ScavData.CollectFuncs["models/weapons/c_models/c_revolver/c_revolver.mdl"] = ScavData.CollectFuncs["models/weapons/w_models/w_revolver.mdl"]
@@ -2054,6 +2071,8 @@ local eject = "brass"
 		ScavData.RegisterFiremode(tab, "models/workshop/weapons/c_models/c_letranger/c_letranger.mdl", 6)
 		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_dex_revolver/c_dex_revolver.mdl", 6) --Diamondback
 		ScavData.RegisterFiremode(tab, "models/workshop_partner/weapons/c_models/c_dex_revolver/c_dex_revolver.mdl", 6)
+		--HL:S
+		ScavData.RegisterFiremode(tab, "models/w_357.mdl", 6)
 		
 --[[==============================================================================================
 	--machinegun
@@ -2156,23 +2175,8 @@ local eject = "brass"
 							end
 							if CLIENT ~= game.SinglePlayer() then
 								timer.Simple(.025, function()
-									if not self.Owner:GetViewModel() then return end
-									local ef = EffectData()
-									local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
-									if attach then
-										ef:SetOrigin(attach.Pos)
-										ef:SetAngles(attach.Ang)
-										--lovingly borrowed from https://steamcommunity.com/sharedfiles/filedetails/?id=1360233031
-										local angShellAngles = self.Owner:EyeAngles()
-										local vecShellVelocity = self.Owner:GetAbsVelocity()
-										vecShellVelocity = vecShellVelocity + angShellAngles:Right() * math.Rand(50, 70);
-										vecShellVelocity = vecShellVelocity + angShellAngles:Up() * math.Rand(100, 150);
-										vecShellVelocity = vecShellVelocity + angShellAngles:Forward() * 25;
-										ef:SetStart(vecShellVelocity)
-										ef:SetEntity(self.Owner)
-										ef:SetFlags(0) --pistol shell
-										util.Effect("HL1ShellEject", ef)
-									end
+									if not IsValid(self) then return end
+									hl1shelleject(self)
 								end)
 							end
 						end,
@@ -2275,6 +2279,7 @@ local eject = "brass"
 			end
 			tab.Cooldown = 0.2
 		ScavData.RegisterFiremode(tab, "models/agrunt.mdl", 50)
+		ScavData.RegisterFiremode(tab, "models/w_hgun.mdl", 50)
 		--ASW
 		ScavData.RegisterFiremode(tab, "models/swarm/buzzer/buzzer.mdl", 50)
 		

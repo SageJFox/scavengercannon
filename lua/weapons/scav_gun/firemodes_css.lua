@@ -23,6 +23,10 @@ local eject = "brass"
 						proj:Spawn()
 						proj:Arm(30)
 						proj:SetSkin(item.data)
+						if not IsValid(proj:GetPhysicsObject()) then
+							local mins, maxs = proj:GetModelBounds()
+							proj:PhysicsInitBox(mins, maxs, "weapon")
+						end
 						proj:GetPhysicsObject():Wake()
 						proj:GetPhysicsObject():EnableDrag(true)
 						proj:GetPhysicsObject():SetDragCoefficient(-100)
@@ -71,6 +75,8 @@ local eject = "brass"
 		ScavData.RegisterFiremode(tab, "models/props_unique/airport/luggage3_floating.mdl")
 		ScavData.RegisterFiremode(tab, "models/props_unique/airport/luggage4.mdl")
 		ScavData.RegisterFiremode(tab, "models/props_unique/airport/luggage4_floating.mdl")
+		--HL:S
+		ScavData.RegisterFiremode(tab, "models/w_satchel.mdl")
 		--ASW
 		ScavData.RegisterFiremode(tab, "models/swarmprops/miscdeco/bridgeexplosivesmesh.mdl")
 		ScavData.RegisterFiremode(tab, "models/props/explosive/explosive.mdl")
@@ -1552,23 +1558,8 @@ local eject = "brass"
 					if CLIENT ~= game.SinglePlayer() then
 						if item.ammo == "models/w_silencer.mdl" then --HL:S
 							timer.Simple(.025, function()
-								if not self.Owner:GetViewModel() then return end
-								local ef = EffectData()
-								local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
-								if attach then
-									ef:SetOrigin(attach.Pos)
-									ef:SetAngles(attach.Ang)
-									--lovingly borrowed from https://steamcommunity.com/sharedfiles/filedetails/?id=1360233031
-									local angShellAngles = self.Owner:EyeAngles()
-									local vecShellVelocity = self.Owner:GetAbsVelocity()
-									vecShellVelocity = vecShellVelocity + angShellAngles:Right() * math.Rand(50, 70);
-									vecShellVelocity = vecShellVelocity + angShellAngles:Up() * math.Rand(100, 150);
-									vecShellVelocity = vecShellVelocity + angShellAngles:Forward() * 25;
-									ef:SetStart(vecShellVelocity)
-									ef:SetEntity(self.Owner)
-									ef:SetFlags(0) --pistol shell
-									util.Effect("HL1ShellEject", ef)
-								end
+								if not IsValid(self) then return end
+								hl1shelleject(self)
 							end)
 						else
 							timer.Simple(.025, function()

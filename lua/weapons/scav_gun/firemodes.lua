@@ -24,47 +24,72 @@ util.PrecacheModel("models/scav/shells/shell_minigun_tf2.mdl")
 tf2shelleject = function(self, shelltype)
 	if not IsValid(self) or not IsValid(self.Owner) then return end
 
-	if game.SinglePlayer() == SERVER then
-		local shell = shelltype or "pistol"
-		-- Get our ejection attachment
-		local attach = self.Owner:GetViewModel() and self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject)) or 
-			self:GetModel():GetAttachment(self:GetModel():LookupAttachment(eject))
-		if not attach then return end
-		-- Create/init casing prop
-		local brass = CLIENT and ents.CreateClientProp("models/scav/shells/shell_" .. shell .. "_tf2.mdl") or ents.Create("prop_physics")
-		if not IsValid(brass) then return end
+	if game.SinglePlayer() == CLIENT then return end
+
+	local shell = shelltype or "pistol"
+	-- Get our ejection attachment
+	local attach = (owner:GetViewModel() and owner == owner:GetViewEntity()) and self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject)) or 
+		self:GetModel():GetAttachment(self:GetModel():LookupAttachment(eject))
+	if not attach then return end
+
+	-- Create/init casing prop
+	local brass = CLIENT and ents.CreateClientProp("models/scav/shells/shell_" .. shell .. "_tf2.mdl") or ents.Create("prop_physics")
+	if not IsValid(brass) then return end
 		brass:SetPos(attach.Pos)
 		brass:SetAngles(attach.Ang)
 		brass:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
-		if SERVER then
-			brass:SetModel("models/scav/shells/shell_" .. shell .. "_tf2.mdl")
-			brass.NoScav = true
-		else
-			brass:SetupBones()
+	if SERVER then
+		brass:SetModel("models/scav/shells/shell_" .. shell .. "_tf2.mdl")
+		brass.NoScav = true
+	else
+		brass:SetupBones()
+	end
+	-- Physics sounds
+	brass:AddCallback("PhysicsCollide", function(ent, data)
+		if (data.Speed > 50) then
+			ent:EmitSound(Sound(shell == "shotgun" and "Bounce.ShotgunShell" or "Bounce.Shell"))
 		end
-		-- Physics sounds
-		brass:AddCallback("PhysicsCollide", function(ent, data)
-			if (data.Speed > 50) then
-				ent:EmitSound(Sound(shell == "shotgun" and "Bounce.ShotgunShell" or "Bounce.Shell"))
-			end
-		end)
-		brass:Spawn()
-		brass:DrawShadow(false)
-		-- Throw casing
-		local angShellAngles = self.Owner:EyeAngles()
-		--angShellAngles:RotateAroundAxis(Vector(0, 0, 1), 90)
-		local vecShellVelocity = self.Owner:GetAbsVelocity()
+	end)
+	brass:Spawn()
+	brass:DrawShadow(false)
+	-- Throw casing
+	local angShellAngles = self.Owner:EyeAngles()
+	--angShellAngles:RotateAroundAxis(Vector(0, 0, 1), 90)
+	local vecShellVelocity = self.Owner:GetAbsVelocity()
+	vecShellVelocity = vecShellVelocity + angShellAngles:Right() * math.Rand(50, 70)
+	vecShellVelocity = vecShellVelocity + angShellAngles:Up() * math.Rand(100, 150)
+	vecShellVelocity = vecShellVelocity + angShellAngles:Forward() * 25
+	local phys = brass:GetPhysicsObject()
+	if IsValid(phys) then
+		phys:SetVelocity(vecShellVelocity)
+		phys:SetAngleVelocity(angShellAngles:Forward() * 1000)
+	end
+	--Cleanup casing
+	timer.Simple(10, function() if IsValid(brass) then brass:Remove() end end)
+end
+
+hl1shelleject = function(self, shotgun)
+	if CLIENT == game.SinglePlayer() then return end
+	local owner = self.Owner
+	if not IsValid(owner) then return end
+
+	local attach = (owner:GetViewModel() and owner == owner:GetViewEntity()) and owner:GetViewModel():GetAttachment(owner:GetViewModel():LookupAttachment(eject)) or
+	self:GetAttachment(self:LookupAttachment(eject))
+	if not attach then return end
+
+	local ef = EffectData()
+		ef:SetOrigin(attach.Pos)
+		ef:SetAngles(attach.Ang)
+		--lovingly borrowed from https://steamcommunity.com/sharedfiles/filedetails/?id=1360233031
+		local angShellAngles = owner:EyeAngles()
+		local vecShellVelocity = owner:GetAbsVelocity()
 		vecShellVelocity = vecShellVelocity + angShellAngles:Right() * math.Rand(50, 70)
 		vecShellVelocity = vecShellVelocity + angShellAngles:Up() * math.Rand(100, 150)
 		vecShellVelocity = vecShellVelocity + angShellAngles:Forward() * 25
-		local phys = brass:GetPhysicsObject()
-		if IsValid(phys) then
-			phys:SetVelocity(vecShellVelocity)
-			phys:SetAngleVelocity(angShellAngles:Forward() * 1000)
-		end
-		--Cleanup casing
-		timer.Simple(10, function() if IsValid(brass) then brass:Remove() end end)
-	end
+		ef:SetStart(vecShellVelocity)
+		--ef:SetEntity(owner)
+		ef:SetFlags(shotgun and 1 or 0)
+	util.Effect("HL1ShellEject", ef)
 end
 
 ScavDataCollectCopy = function(copy, original)
@@ -124,14 +149,15 @@ end
 			tab.tracep.maxs = Vector(16, 16, 16)
 			local identify = {
 				--[HL2/Default] = 0,
-				--[[TF2]]["models/weapons/w_models/w_rocket.mdl"] = 1,
-				["models/props_halloween/eyeball_projectile.mdl"] = 1,
-				--[[TF2 Sentry]]["models/buildables/sentry3_rockets.mdl"] = 2,
-				--[[TF2 Air Strike]]["models/weapons/w_models/w_rocket_airstrike/w_rocket_airstrike.mdl"] = 3,
-				--[[DoD:S]]["models/weapons/w_bazooka_rocket.mdl"] = 4,
-				["models/weapons/w_panzerschreck_rocket.mdl"] = 4,
+				--[[TF2]]["models/weapons/w_models/w_rocket.mdl"] = SCAV_ROCKET_TF2,
+				["models/props_halloween/eyeball_projectile.mdl"] = SCAV_ROCKET_TF2,
+				--[[TF2 Sentry]]["models/buildables/sentry3_rockets.mdl"] = SCAV_ROCKET_SENTRY,
+				--[[TF2 Air Strike]]["models/weapons/w_models/w_rocket_airstrike/w_rocket_airstrike.mdl"] = SCAV_ROCKET_AIRSTRIKE,
+				--[[DoD:S]]["models/weapons/w_bazooka_rocket.mdl"] = SCAV_ROCKET_DODS,
+				["models/weapons/w_panzerschreck_rocket.mdl"] = SCAV_ROCKET_DODS,
+				--[[HL1]]["models/rpgrocket.mdl"] = SCAV_ROCKET_HL1,
 			}
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
+			tab.Identify = setmetatable(identify, {__index = function() return SCAV_ROCKET_DEFAULT end})
 			tab.OnArmed = function(self, item, olditemname)
 				--Look for seeking items
 				tab.Seeking = false
@@ -168,19 +194,19 @@ end
 						proj:Spawn()
 						self.Owner:SetAnimation(PLAYER_ATTACK1)
 						local soundtable = {
-							[0] = "weapons/stinger_fire1.wav",
-							[1] = "weapons/rocket_shoot.wav",
-							[2] = "weapons/sentry_rocket.wav",
-							[3] = "weapons/airstrike_fire_01.wav",
-							[4] = "^weapons/rocket1.wav",
+							[SCAV_ROCKET_DEFAULT] = "weapons/stinger_fire1.wav",
+							[SCAV_ROCKET_TF2] = "weapons/rocket_shoot.wav",
+							[SCAV_ROCKET_SENTRY] = "weapons/sentry_rocket.wav",
+							[SCAV_ROCKET_AIRSTRIKE] = "weapons/airstrike_fire_01.wav",
+							[SCAV_ROCKET_DODS] = "^weapons/rocket1.wav",
+							[SCAV_ROCKET_HL1] = "weapons/rocket1.wav", --oh Valve
 						}
 						local soundtablecrit = {
-							[0] = "weapons/stinger_fire1.wav",
-							[1] = "weapons/rocket_shoot_crit.wav",
-							[2] = "weapons/sentry_rocket.wav",
-							[3] = "weapons/airstrike_fire_crit.wav",
-							[4] = "^weapons/rocket1.wav",
+							[SCAV_ROCKET_TF2] = "weapons/rocket_shoot_crit.wav",
+							[SCAV_ROCKET_AIRSTRIKE] = "weapons/airstrike_fire_crit.wav",
 						}
+						table.Inherit(soundtablecrit, soundtable)
+
 						self.Owner:EmitSound(self.Owner:GetStatusEffect("DamageX") and soundtablecrit[tab.Identify[item.ammo]] or soundtable[tab.Identify[item.ammo]])
 						proj:GetPhysicsObject():Wake()
 						proj:GetPhysicsObject():EnableDrag(false)
@@ -242,6 +268,8 @@ end
 		--DoD:S
 		ScavData.RegisterFiremode(tab, "models/weapons/w_bazooka_rocket.mdl")
 		ScavData.RegisterFiremode(tab, "models/weapons/w_panzerschreck_rocket.mdl")
+		--HL:S
+		ScavData.RegisterFiremode(tab, "models/rpgrocket.mdl")
 		--ASW
 		ScavData.RegisterFiremode(tab, "models/swarm/minirocket/minirocket.mdl")
 
@@ -331,6 +359,10 @@ end
 						--"weapons/flaregun/burn"
 						self.Owner:SetAnimation(PLAYER_ATTACK1)
 						self.Owner:EmitSound(self.shootsound)
+						if not IsValid(proj:GetPhysicsObject()) then
+							local mins, maxs = proj:GetModelBounds()
+							proj:PhysicsInitBox(mins, maxs, "item")
+						end
 						proj:GetPhysicsObject():Wake()
 						proj:GetPhysicsObject():EnableDrag(false)
 						proj:GetPhysicsObject():SetVelocity(self:GetAimVector() * 4000)
@@ -364,6 +396,8 @@ end
 		--ASW
 		ScavData.RegisterFiremode(tab, "models/swarm/flare/flareweapon.mdl")
 		ScavData.RegisterFiremode(tab, "models/swarmprops/miscdeco/greenflare.mdl")
+		--HL:S
+		ScavData.RegisterFiremode(tab, "models/w_flare.mdl")
 
 --[[==============================================================================================
 	--Arrows and Bolts (Impaler)
@@ -790,6 +824,12 @@ end
 							proj:SetParent(tr.Entity)
 						end
 						proj:SetSkin(item.data)
+						if item.ammo == "models/w_tripmine.mdl" then
+							local mins, maxs = proj:GetModelBounds()
+							proj:PhysicsInitBox(mins, maxs, "weapon")
+							proj:SetPos(tr.HitPos + tr.HitNormal * 8)
+							proj:SetAngles(tr.HitNormal:Angle())
+						end
 						self.Owner:EmitSound("npc/roller/blade_cut.wav")
 						self.Owner:AddScavExplosive(proj)
 						return self:TakeSubammo(item, 1)
@@ -804,6 +844,8 @@ end
 		ScavData.RegisterFiremode(tab, "models/props_lab/huladoll.mdl")
 		--HL2:DM
 		ScavData.RegisterFiremode(tab, "models/weapons/w_slam.mdl")
+		--HL:S
+		ScavData.RegisterFiremode(tab, "models/w_tripmine.mdl")
 
 --[[==============================================================================================
 	--Proximity, Tripmine, and Hopper screen adjust
@@ -3750,6 +3792,8 @@ PrecacheParticleSystem("scav_exp_plasma")
 		ScavData.RegisterFiremode(tab, "models/props/de_nuke/nuclearcontainerboxclosed.mdl", 10)
 		--TF2
 		ScavData.RegisterFiremode(tab, "models/props_badlands/barrel03.mdl", 10)
+		--HL:S
+		ScavData.RegisterFiremode(tab, "models/w_gaussammo.mdl", 10)
 
 --[[==============================================================================================
 	--Phazon Beam
