@@ -174,8 +174,9 @@ end
 			else
 				tab.FireFunc = function(self, item)
 					if IsValid(self.Owner) then
-						local tab = ScavData.models[self.inv.items[1].ammo]
+						local tab = ScavData.models[item.ammo]
 						local proj = self:CreateEnt("scav_projectile_rocket")
+						if not IsValid(proj) then return false end
 						proj.Owner = self.Owner
 						proj:SetModel(item.ammo)
 						proj:SetPos(self:GetProjectileShootPos())
@@ -584,7 +585,7 @@ end
 			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			if SERVER then
 				tab.OnArmed = function(self, item, olditemname)
-					local tab = ScavData.models[self.inv.items[1].ammo]
+					local tab = ScavData.models[item.ammo]
 					if tab.Identify[item.ammo] == 0 then
 						self.Owner:EmitSound("player/pl_scout_dodge_can_open.wav")
 				    end
@@ -1184,7 +1185,7 @@ end
 				end
 			end
 			tab.ChargeAttack = function(self, item)
-				local tab = ScavData.models["models/props_vehicles/generatortrailer01.mdl"]
+				local tab = ScavData.models[item.ammo]
 				if SERVER then
 					self.soundloops.bfgcharge:PlayEx(100, 60 + math.min(self.WeaponCharge, 4) * 40)
 					self.soundloops.bfgcharge2:PlayEx(100, 60 + math.min(self.WeaponCharge, 4) * 40)
@@ -1266,7 +1267,7 @@ end
 				return 0.025
 			end
 			tab.FireFunc = function(self, item)
-				self:SetChargeAttack(ScavData.models[self.inv.items[1].ammo].ChargeAttack, item)
+				self:SetChargeAttack(ScavData.models[item.ammo].ChargeAttack, item)
 				if SERVER then
 					self.Owner:EmitSound("HL1/ambience/particle_suck1.wav", 100, 200)
 					if not self.soundloops.bfgcharge then
@@ -1303,7 +1304,7 @@ end
 			tab.RemoveOnCharge = false
 			tab.Level = 7
 			tab.ChargeAttack = function(self, item)
-				local tab = ScavData.models["models/props_phx/cannonball.mdl"]
+				local tab = ScavData.models[item.ammo]
 				if (not self.Owner:KeyDown(IN_ATTACK) and (self.WeaponCharge >= 0)) or (self.WeaponCharge >= 1) then
 					if SERVER then
 						local proj = self:CreateEnt("scav_projectile_cannonball")
@@ -1345,7 +1346,7 @@ end
 					end
 					self.soundloops.cannon:Play()
 				end
-				self:SetChargeAttack(ScavData.models[self.inv.items[1].ammo].ChargeAttack, item)
+				self:SetChargeAttack(ScavData.models[item.ammo].ChargeAttack, item)
 				return false
 			end
 			if SERVER then
@@ -1431,14 +1432,13 @@ end
 		end
 		if SERVER then
 			tab.OnArmed = function(self, item, olditemname)
-				if olditemname == "" or not ScavData.models[olditemname] or ScavData.models[item.ammo].Name ~= ScavData.models[olditemname].Name then
-					local tab = ScavData.models[self.inv.items[1].ammo]
-					if tab.Identify[item.ammo] == 1 then --TF2
-						self.Owner:EmitSound("weapons/shotgun_cock_back.wav")
-						timer.Simple(0.25, function() if IsValid(self) then self.Owner:EmitSound("weapons/shotgun_cock_forward.wav") end end)
-					else --HL2
-						self.Owner:EmitSound("weapons/shotgun/shotgun_cock.wav")
-					end
+				if olditemname ~= "" and ScavData.models[olditemname] and ScavData.models[item.ammo].Name == ScavData.models[olditemname].Name then return end
+				local tab = ScavData.models[item.ammo]
+				if tab.Identify[item.ammo] == 1 then --TF2
+					self.Owner:EmitSound("weapons/shotgun_cock_back.wav")
+					timer.Simple(0.25, function() if IsValid(self) and IsValid(self.Owner) then self.Owner:EmitSound("weapons/shotgun_cock_forward.wav") end end)
+				else --HL2
+					self.Owner:EmitSound("weapons/shotgun/shotgun_cock.wav")
 				end
 			end
 		end
@@ -1468,14 +1468,12 @@ end
 							local bullet2 = table.Copy(bullet1)
 								bullet2.Dir = -tracep.Normal:Angle():Right()
 							timer.Simple(i / 100, function() --gotta offset these calls slightly so they can all go through
+								if CLIENT and game.SinglePlayer() then return end
 								local ent = ents.Create("info_null") --this is really gross but if we just use the attacker the tracer draws from the muzzle of the gun instead of its spawn pos
-									if IsValid(ent) then
-										ent:SetPos(bullet1.Src)
-										ent:Spawn() --info_null removes itself, so no need for cleanup
-										if SERVER or not game.SinglePlayer() then
-											ent:FireBullets(bullet1)
-										end
-									end
+								if not IsValid(ent) then return end
+								ent:SetPos(bullet1.Src)
+								ent:Spawn() --info_null removes itself, so no need for cleanup
+								ent:FireBullets(bullet1)
 							end)
 							timer.Simple((i + .5) / 100, function()
 								local ent = ents.Create("info_null")
@@ -1496,7 +1494,7 @@ end
 			end
 			self:MuzzleFlash2()
 			self.Owner:SetAnimation(PLAYER_ATTACK1)
-			local tab = ScavData.models[self.inv.items[1].ammo]
+			local tab = ScavData.models[item.ammo]
 			if tab.Identify[item.ammo] == 1 then --TF2
 				if SERVER then
 					self.Owner:EmitSound("weapons/shotgun_shoot.wav")
@@ -1586,7 +1584,7 @@ end
 			tab.MaxAmmo = 10
 			if SERVER then
 				tab.FireFunc = function(self, item)
-					local tab = ScavData.models[self.inv.items[1].ammo]
+					local tab = ScavData.models[item.ammo]
 					local proj = self:CreateEnt("scav_projectile_shockwave")
 					proj.Owner = self.Owner
 					proj:SetPos(self:GetProjectileShootPos())
@@ -1698,7 +1696,7 @@ end
 			tab.MaxAmmo = 3
 			if SERVER then
 				tab.FireFunc = function(self, item)
-					local tab = ScavData.models[self.inv.items[1].ammo]
+					local tab = ScavData.models[item.ammo]
 					local proj = self:CreateEnt("scav_projectile_canister")
 						proj.Owner = self.Owner
 						local pos = self:GetProjectileShootPos()
@@ -1854,7 +1852,7 @@ end
 				if CurTime() - self.sniperzoomstart > 0.5 then
 					self:SetZoomed(true)
 					hook.Add("AdjustMouseSensitivity", "ScavZoomedIn", function()
-						return ScavData.models[self:GetCurrentItem().ammo].fov / GetConVar("fov_desired"):GetFloat()
+						return ScavData.models[item.ammo].fov / GetConVar("fov_desired"):GetFloat()
 					end)
 					if CLIENT then
 						hook.Add( "RenderScreenspaceEffects", "ScavScope", function()
@@ -1872,7 +1870,8 @@ end
 				end
 				if not self.Owner:KeyDown(IN_ATTACK) then
 					if CurTime() - self.sniperzoomstart <= 0.5 or not self.Owner:KeyDown(IN_ATTACK2) then
-						local tab = ScavData.models[self.inv.items[1].ammo]
+						local tab = ScavData.models[item.ammo]
+						local ident = tab.Identify[item.ammo]
 						bullet.Src = self.Owner:GetShootPos()
 						bullet.Dir = self:GetAimVector()
 						if SERVER or not game.SinglePlayer() then
@@ -1914,7 +1913,7 @@ end
 									self.Owner:EmitSound(self.Owner:GetStatusEffect("DamageX") and "weapons/sniper_shoot_crit.wav" or "weapons/sniper_shoot.wav")
 								end
 							}
-							if IsValid(self.Owner) then soundfx[tab.Identify[item.ammo]](self) end
+							if IsValid(self.Owner) then soundfx[ident](self) end
 						end
 						self:SetChargeAttack()
 					end
@@ -1951,7 +1950,7 @@ end
 			ScavData.RegisterFiremode(tab, "models/weapons/rifleshell.mdl")
 			ScavData.RegisterFiremode(tab, "models/weapons/w_combine_sniper.mdl", 5)
 			--TF2
-			ScavData.RegisterFiremode(tab, "models/weapons/shells/shell_sniperrifle.mdl", 25)
+			ScavData.RegisterFiremode(tab, "models/weapons/shells/shell_sniperrifle.mdl")
 			ScavData.RegisterFiremode(tab, "models/weapons/w_models/w_sniperrifle.mdl", 25)
 			ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_sniperrifle/c_sniperrifle.mdl", 25)
 			ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_bazaar_sniper/c_bazaar_sniper.mdl", 25)
@@ -2018,7 +2017,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 					local vel = self:GetAimVector() * 2000 * self:GetForceScale()
 					if SERVER then
 						local proj = tab.proj
-						--local proj = s_proj.AddProjectile(self.Owner, pos, self:GetAimVector() * 2000, ScavData.models[self.inv.items[1].ammo].Callback, false, false, vector_origin, self.Owner, Vector(-8, -8, -8), Vector(8, 8, 8))
+						--local proj = s_proj.AddProjectile(self.Owner, pos, self:GetAimVector() * 2000, ScavData.models[item.ammo].Callback, false, false, vector_origin, self.Owner, Vector(-8, -8, -8), Vector(8, 8, 8))
 						proj:SetOwner(self.Owner)
 						proj:SetInflictor(self)
 						proj:SetPos(pos)
@@ -2049,7 +2048,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 				return 0.1
 			end
 			tab.FireFunc = function(self, item)
-				self:SetChargeAttack(ScavData.models[self.inv.items[1].ammo].ChargeAttack, item)
+				self:SetChargeAttack(ScavData.models[item.ammo].ChargeAttack, item)
 				return false
 			end
 			tab.Cooldown = 0
@@ -2088,7 +2087,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 				end
 			end
 			tab.FireFunc = function(self, item)
-				local tab = ScavData.models[self.inv.items[1].ammo]
+				local tab = ScavData.models[item.ammo]
 				tab.bullet.Src = self.Owner:GetShootPos()
 				tab.bullet.Dir = self:GetAimVector()
 				if SERVER or not game.SinglePlayer() then
@@ -2190,7 +2189,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 				return 0.1
 			end
 			tab.FireFunc = function(self, item)
-				self:SetChargeAttack(ScavData.models[self.inv.items[1].ammo].ChargeAttack, item)
+				self:SetChargeAttack(ScavData.models[item.ammo].ChargeAttack, item)
 				return false
 			end
 			tab.Cooldown = 0
@@ -2312,7 +2311,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 							data.mass = 25
 						end,
 					}
-					local tab = ScavData.models[self.inv.items[1].ammo]
+					local tab = ScavData.models[item.ammo]
 					propdetails[tab.Identify[item.ammo]](data)
 					local chunkspawn = table.Copy(data.chunks)
 					while #chunkspawn > 7 do table.remove(chunkspawn, math.random(#chunkspawn)) end --only have a max of 7 chunks
@@ -2521,7 +2520,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 							data.ang:Add(Angle(0, 90, 0))
 						end,
 					}
-					local tab = ScavData.models[self.inv.items[1].ammo]
+					local tab = ScavData.models[item.ammo]
 					propdetails[tab.Identify[item.ammo]](data)
 					for i=1, #data.chunks, 1 do
 						math.randomseed(CurTime() + i)
@@ -2678,7 +2677,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 			tab.Cooldown = 0.1
 			function tab.ChargeAttack(self, item)
 				if SERVER then --SERVER
-					local tab = ScavData.models[self.inv.items[1].ammo]
+					local tab = ScavData.models[item.ammo]
 					local proj = tab.proj
 					local extpos = self.Owner:GetShootPos() + self:GetAimVector() * 75
 					for _, v in ipairs(ents.FindByClass("env_fire")) do
@@ -2867,7 +2866,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 				--local proj = tab.proj
 
 				function tab.FireFunc(self, item)
-					local tab = ScavData.models[self.inv.items[1].ammo]
+					local tab = ScavData.models[item.ammo]
 					local proj = tab.proj
 					local extpos = self.Owner:GetShootPos() + self:GetAimVector() * 75
 					for k, v in ipairs(ents.FindByClass("env_fire")) do
@@ -2875,7 +2874,6 @@ PrecacheParticleSystem("scav_exp_plasma")
 							v:Fire("StartFire", 1, 0)
 						end
 					end
-					local tab = ScavData.models[item.ammo]
 					proj:SetOwner(self.Owner)
 					proj:SetInflictor(self)
 					proj:SetFilter(self.Owner)
@@ -3369,7 +3367,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 				tracep.mins = Vector(-12, -12, -12)
 				tracep.maxs = Vector(12, 12, 12)
 				function tab.ChargeAttack(self, item)
-					local tab = ScavData.models[self.inv.items[1].ammo]
+					local tab = ScavData.models[item.ammo]
 					if IsValid(self.ef_pblade) then
 						if self.Owner:WaterLevel() > 1 then
 							self.ef_pblade:SetSkin(0) --Clear the bloodied skin from the model
@@ -3467,7 +3465,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 				end
 				function tab.FireFunc(self, item)
 					if SERVER then
-						local tab = ScavData.models[self.inv.items[1].ammo]
+						local tab = ScavData.models[item.ammo]
 						self.ef_pblade = self:CreateToggleEffect("scav_stream_saw", tab.Identify[item.ammo])
 					end
 					self:SetChargeAttack(tab.ChargeAttack, item)
@@ -3868,7 +3866,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 					return 0.025		
 				end
 			tab.FireFunc = function(self, item)
-				self:SetChargeAttack(ScavData.models[self.inv.items[1].ammo].ChargeAttack, item)
+				self:SetChargeAttack(ScavData.models[item.ammo].ChargeAttack, item)
 				self.Owner:EmitSound("ambient/fire/gascan_ignite1.wav", 100, 90)
 				return false
 			end
@@ -3896,7 +3894,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 			tab.BarrelRestSpeed = 1000
 			tab.ChargeAttack = function(self, item)
 				if self.Owner:KeyDown(IN_ATTACK) then
-					local tab = ScavData.models[self.inv.items[1].ammo]
+					local tab = ScavData.models[item.ammo]
 					local bullet = {}
 						bullet.Num = 2
 						bullet.Src = self.Owner:GetShootPos()
@@ -3963,7 +3961,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 				end
 			end
 			tab.FireFunc = function(self, item)
-				self:SetChargeAttack(ScavData.models[self.inv.items[1].ammo].ChargeAttack, item)
+				self:SetChargeAttack(ScavData.models[item.ammo].ChargeAttack, item)
 				if SERVER then
 					self.Owner:EmitSound("weapons/minigun_wind_up.wav")
 					self.soundloops.minigunspin = CreateSound(self.Owner, "weapons/minigun_spin.wav")

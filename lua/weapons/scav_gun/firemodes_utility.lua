@@ -124,7 +124,7 @@
 			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			if SERVER then
 				tab.FireFunc = function(self, item)
-					local tab = ScavData.models[self.inv.items[1].ammo]
+					local tab = ScavData.models[item.ammo]
 					local statfunction = {
 						[0] = function(self)
 							self.Owner:InflictStatusEffect("Shock", 30, 40)
@@ -1171,7 +1171,7 @@ setmetatable(hacksuccess, {__index = function() return {"buttons/combine_button1
 					local pos = self.Owner:GetShootPos() + self:GetAimVector() * 24 + self:GetAimVector():Angle():Right() * 4 - self:GetAimVector():Angle():Up() * 4
 					local tab = ScavData.models[item.ammo]
 					local shootz = self.Owner:GetShootPos().z - self.Owner:GetPos().z
-					--s_proj.AddProjectile(self.Owner, self.Owner:GetShootPos(), self:GetAimVector() * 5000, ScavData.models[self.inv.items[1].ammo].Callback, false, false, vector_origin, self.Owner, Vector(-8, -8, -8), Vector(8, 8, 8))
+					--s_proj.AddProjectile(self.Owner, self.Owner:GetShootPos(), self:GetAimVector() * 5000, ScavData.models[item.ammo].Callback, false, false, vector_origin, self.Owner, Vector(-8, -8, -8), Vector(8, 8, 8))
 					--					(Owner,     pos,                     velocity,                      callback,                                  ignoreworld, pierce, gravity, tablefilter, mins, maxs) --what the FUCK was I doing here?
 					proj:SetOwner(self.Owner)
 					proj:SetFilter(self.Owner)
@@ -1222,7 +1222,7 @@ setmetatable(hacksuccess, {__index = function() return {"buttons/combine_button1
 			if SERVER then
 				hook.Add("PlayerDeath", "scv_cleargrapple", function(pl) if pl.GrappleAssist and IsValid(pl.GrappleAssist) then pl.GrappleAssist:Remove() end end)
 				tab.ChargeAttack = function(self, item)
-					local tab = ScavData.models["models/props_wasteland/cranemagnet01a.mdl"]
+					local tab = ScavData.models[item.ammo]
 					if self.grapplenohit then
 						self.grapplenohit = nil
 						if IsValid(self.ef_grapplebeam) then
@@ -1299,7 +1299,7 @@ setmetatable(hacksuccess, {__index = function() return {"buttons/combine_button1
 						tracep.endpos = self.Owner:GetShootPos() + self:GetAimVector() * 1024
 						tracep.filter = self.Owner
 						local tr = util.TraceHull(tracep)
-					self:SetChargeAttack(ScavData.models[self.inv.items[1].ammo].ChargeAttack, item)
+					self:SetChargeAttack(ScavData.models[item.ammo].ChargeAttack, item)
 					if tr.Hit and ((tr.MatType == MAT_METAL) or (tr.MatType == MAT_GRATE)) then
 						if not IsValid(tr.Entity) then
 							tr.Entity = game.GetWorld()
@@ -1350,7 +1350,7 @@ setmetatable(hacksuccess, {__index = function() return {"buttons/combine_button1
 				end
 			else
 				tab.ChargeAttack = function(self, item)
-				local tab = ScavData.models["models/props_wasteland/cranemagnet01a.mdl"]
+				local tab = ScavData.models[item.ammo]
 					local par = self:GetNWFiremodeEnt()
 					if not self.Owner:KeyDown(IN_ATTACK) then
 						self.Owner:SetAnimation(PLAYER_ATTACK1)
@@ -1373,7 +1373,7 @@ setmetatable(hacksuccess, {__index = function() return {"buttons/combine_button1
 					return 0.01
 				end
 				tab.FireFunc = function(self, item)
-					self:SetChargeAttack(ScavData.models[self.inv.items[1].ammo].ChargeAttack, item)
+					self:SetChargeAttack(ScavData.models[item.ammo].ChargeAttack, item)
 					return false
 				end
 			end
@@ -1804,7 +1804,7 @@ end
 					end
 				end
 				tab.FireFunc = function(self, item)
-					self:SetChargeAttack(ScavData.models[self.inv.items[1].ammo].ChargeAttack, item)
+					self:SetChargeAttack(ScavData.models[item.ammo].ChargeAttack, item)
 					if SERVER then
 						self.Owner:EmitSound("buttons/lever2.wav")
 						self.soundloops.showerrun = CreateSound(self.Owner, "ambient/water/water_run1.wav")
@@ -2008,7 +2008,7 @@ end
 			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			if SERVER then
 				tab.FireFunc = function(self, item)
-					local tab = ScavData.models[self.inv.items[1].ammo]
+					local tab = ScavData.models[item.ammo]
 					local itemfx = { --TODO: add sounds, etc. for ones where appropriate
 						[0] = function(self)
 							self.Owner:InflictStatusEffect("DamageX", 7, 1.5)
@@ -2072,7 +2072,7 @@ end
 			if SERVER then
 				tab.FireFunc = function(self, item)
 					if not IsValid(self.Owner) then return end
-					local tab = ScavData.models[self.inv.items[1].ammo]
+					local tab = ScavData.models[item.ammo]
 					local itemfx = { --TODO: Sounds, etc. where appropriate
 						[0] = function(self)
 							self.Owner:InflictStatusEffect("Invuln", 10, 1)
@@ -2576,7 +2576,7 @@ end
 			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			if SERVER then
 				tab.FireFunc = function(self, item)
-					local tab = ScavData.models[self.inv.items[1].ammo]
+					local tab = ScavData.models[item.ammo]
 					if not IsValid(self.Owner) then return false end
 					local tracep = {}
 						tracep.start = self.Owner:GetShootPos()

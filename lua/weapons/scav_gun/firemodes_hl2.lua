@@ -30,7 +30,7 @@ local eject = "brass"
 			tab.tracep.maxs = Vector(32, 32, 32)
 			tab.ChargeAttack = function(self, item)
 				if self.Owner:KeyDown(IN_ATTACK) then
-					local tab = ScavData.models[self.inv.items[1].ammo]
+					local tab = ScavData.models[item.ammo]
 					tab.tracep.start = self.Owner:GetShootPos() + self:GetAimVector() * 48
 					tab.tracep.endpos = self.Owner:GetShootPos() + self:GetAimVector() * 20000
 					tab.tracep.filter = self.Owner
@@ -92,13 +92,13 @@ local eject = "brass"
 				return tab.Identify[item.ammo] == 1 and 0.25 or tab.Identify[item.ammo] == 5 and 0.083333 or 0.1
 			end
 			tab.FireFunc = function(self, item)
-				self:SetChargeAttack(ScavData.models[self.inv.items[1].ammo].ChargeAttack, item)						
+				self:SetChargeAttack(ScavData.models[item.ammo].ChargeAttack, item)						
 				return false
 			end
 			if SERVER then
 			tab.OnArmed = function(self, item, olditemname)
 				if item.ammo ~= olditemname then
-					local tab = ScavData.models[self.inv.items[1].ammo]
+					local tab = ScavData.models[item.ammo]
 					local beepfx = {
 						[0] = function(self)
 							self.Owner:EmitSound("npc/turret_floor/active.wav")
@@ -263,7 +263,7 @@ local eject = "brass"
 			tab.MaxAmmo = 10
 			if SERVER then
 				tab.FireFunc = function(self, item)
-					local tab = ScavData.models[self.inv.items[1].ammo]
+					local tab = ScavData.models[item.ammo]
 					self.Owner:ViewPunch(Angle(-5, math.Rand(-0.1, 0.1), 0))
 					local proj = self:CreateEnt("grenade_ar2")
 					proj.Owner = self.Owner
@@ -420,7 +420,7 @@ local eject = "brass"
 					return 1
 				end
 				tab.FireFunc = function(self, item)
-					self:SetChargeAttack(ScavData.models[self.inv.items[1].ammo].ChargeAttack, item)
+					self:SetChargeAttack(ScavData.models[item.ammo].ChargeAttack, item)
 					self.Owner:EmitSound("npc/strider/charging.wav")
 					local ef = EffectData()
 					ef:SetEntity(self)
@@ -443,7 +443,7 @@ local eject = "brass"
 					return 1
 				end
 				tab.FireFunc = function(self, item)
-					self:SetChargeAttack(ScavData.models[self.inv.items[1].ammo].ChargeAttack, item)
+					self:SetChargeAttack(ScavData.models[item.ammo].ChargeAttack, item)
 					return true
 				end
 			end
@@ -659,7 +659,7 @@ local eject = "brass"
 			tab.MaxAmmo = 10
 			if SERVER then
 				tab.FireFunc = function(self, item)
-					local tab = ScavData.models[self.inv.items[1].ammo]
+					local tab = ScavData.models[item.ammo]
 					self.Owner:ViewPunch(Angle(-5, math.Rand(-0.1, 0.1), 0))
 					local proj = self:CreateEnt("npc_grenade_frag")
 					proj.Owner = self.Owner
@@ -798,7 +798,7 @@ local eject = "brass"
 			end
 			if SERVER then
 				tab.FireFunc = function(self, item)
-					t = ScavData.models[self.inv.items[1].ammo]
+					local t = ScavData.models[item.ammo]
 					if self.Owner:Armor() >= self.Owner:GetMaxArmor() then
 						self.Owner:EmitSound("buttons/button11.wav")
 						return false
@@ -902,66 +902,65 @@ local eject = "brass"
 				bullet.TracerName = "ef_scav_tr_b"
 			function tab.OnArmed(self, item, olditemname)
 				if SERVER then
-					local tab = ScavData.models[self.inv.items[1].ammo]
-					if olditemname == "" or not ScavData.models[olditemname] or ScavData.models[item.ammo].Name ~= ScavData.models[olditemname].Name then
-						local soundfx = {
-							[0] = function(self)
-								self.Owner:EmitSound("weapons/shotgun/shotgun_cock.wav")
-							end,
-							[1] = function(self)
-								self.Owner:EmitSound("weapons/shotgun_cock_back.wav")
-								timer.Simple(.25, function() if IsValid(self) then self.Owner:EmitSound("weapons/shotgun_cock_forward.wav") end end)
-							end,
-							[2] = function(self)
-								self.Owner:EmitSound("weapons/widow_maker_pump_action_back.wav") --not used in TF2, but works here.
-								timer.Simple(.25, function() if IsValid(self) then self.Owner:EmitSound("weapons/widow_maker_pump_action_forward.wav") end end)
-							end,
-							[3] = function(self)
-								self.Owner:EmitSound("weapons/scock1.wav")
-							end,
-							[5] = function(self)
-								self.Owner:EmitSound("weapons/scatter_gun_reload.wav")
-							end,
-							[6] = function(self)
-								self.Owner:EmitSound("weapons/scatter_gun_double_tube_close.wav")
-							end,
-							[7] = function(self)
-								self.Owner:EmitSound("weapons/scatter_gun_double_tube_close.wav")
-							end,
-							[8] = function(self)
-								self.Owner:EmitSound("weapons/shotgun_cock_back.wav")
-								timer.Simple(.25, function() if IsValid(self) then self.Owner:EmitSound("weapons/shotgun_cock_forward.wav") end end)
-							end,
-							[9] = function(self)
-								self.Owner:EmitSound("weapons/shotgun_cock_back.wav")
-								timer.Simple(.25, function() if IsValid(self) then self.Owner:EmitSound("weapons/shotgun_cock_forward.wav") end end)
-							end,
-							[10] = function(self)
-								self.Owner:EmitSound("weapons/shotgun_cock_back.wav")
-								timer.Simple(.25, function() if IsValid(self) then self.Owner:EmitSound("weapons/shotgun_cock_forward.wav") end end)
-							end,
-							[11] = function(self)
-								self.Owner:EmitSound("weapons/short_stop_reload.wav")
-							end,
-							[12] = function(self)
-								self.Owner:EmitSound("weapons/scatter_gun_reload.wav")
-							end,
-							[13] = function(self)
-								self.Owner:EmitSound("weapons/scatter_gun_reload.wav")
-							end,
-							[14] = function(self)
-								self.Owner:EmitSound("weapons/3d/reloads/shotgun_c.wav")
-							end,
-							[15] = function(self)
-								self.Owner:EmitSound("weapons/3d/reloads/vindicator_c.wav")
-							end,
-						}
-						soundfx[tab.Identify[item.ammo]](self)
-					end
+					if olditemname ~= "" and ScavData.models[olditemname] and ScavData.models[item.ammo].Name == ScavData.models[olditemname].Name then return end
+					local soundfx = {
+						[0] = function(self)
+							self.Owner:EmitSound("weapons/shotgun/shotgun_cock.wav")
+						end,
+						[1] = function(self)
+							self.Owner:EmitSound("weapons/shotgun_cock_back.wav")
+							timer.Simple(0.25, function() if IsValid(self) and IsValid(self.Owner) then self.Owner:EmitSound("weapons/shotgun_cock_forward.wav") end end)
+						end,
+						[2] = function(self)
+							self.Owner:EmitSound("weapons/widow_maker_pump_action_back.wav") --not used in TF2, but works here.
+							timer.Simple(0.25, function() if IsValid(self) and IsValid(self.Owner) then self.Owner:EmitSound("weapons/widow_maker_pump_action_forward.wav") end end)
+						end,
+						[3] = function(self)
+							self.Owner:EmitSound("weapons/scock1.wav")
+						end,
+						[5] = function(self)
+							self.Owner:EmitSound("weapons/scatter_gun_reload.wav")
+						end,
+						[6] = function(self)
+							self.Owner:EmitSound("weapons/scatter_gun_double_tube_close.wav")
+						end,
+						[7] = function(self)
+							self.Owner:EmitSound("weapons/scatter_gun_double_tube_close.wav")
+						end,
+						[8] = function(self)
+							self.Owner:EmitSound("weapons/shotgun_cock_back.wav")
+							timer.Simple(0.25, function() if IsValid(self) and IsValid(self.Owner) then self.Owner:EmitSound("weapons/shotgun_cock_forward.wav") end end)
+						end,
+						[9] = function(self)
+							self.Owner:EmitSound("weapons/shotgun_cock_back.wav")
+							timer.Simple(0.25, function() if IsValid(self) and IsValid(self.Owner) then self.Owner:EmitSound("weapons/shotgun_cock_forward.wav") end end)
+						end,
+						[10] = function(self)
+							self.Owner:EmitSound("weapons/shotgun_cock_back.wav")
+							timer.Simple(0.25, function() if IsValid(self) and IsValid(self.Owner) then self.Owner:EmitSound("weapons/shotgun_cock_forward.wav") end end)
+						end,
+						[11] = function(self)
+							self.Owner:EmitSound("weapons/short_stop_reload.wav")
+						end,
+						[12] = function(self)
+							self.Owner:EmitSound("weapons/scatter_gun_reload.wav")
+						end,
+						[13] = function(self)
+							self.Owner:EmitSound("weapons/scatter_gun_reload.wav")
+						end,
+						[14] = function(self)
+							self.Owner:EmitSound("weapons/3d/reloads/shotgun_c.wav")
+						end,
+						[15] = function(self)
+							self.Owner:EmitSound("weapons/3d/reloads/vindicator_c.wav")
+						end,
+					}
+					local tab = ScavData.models[item.ammo]
+					soundfx[tab.Identify[item.ammo]](self)
 				end
 			end
 			tab.FireFunc = function(self, item)
-				local tab = ScavData.models[self.inv.items[1].ammo]
+				local tab = ScavData.models[item.ammo]
 				self.Owner:ScavViewPunch(Angle(-10, math.Rand(-0.1, 0.1), 0), 0.3)
 				bullet.Src = self.Owner:GetShootPos()
 				bullet.Dir = self:GetAimVector()
@@ -1190,7 +1189,7 @@ local eject = "brass"
 			tab.Identify = setmetatable(identify, {__index = function() return 1 end})
 			tab.MaxAmmo = 250
 			tab.FireFunc = function(self, item)
-				local tab = ScavData.models[self.inv.items[1].ammo]
+				local tab = ScavData.models[item.ammo]
 				local bullet = {}
 					bullet.Num = 1
 					bullet.Spread = Vector(0.01, 0.01, 0)
@@ -1324,7 +1323,7 @@ local eject = "brass"
 					if SERVER then
 						self.Owner:EmitSound("Weapon_AR2.Single")
 						self:AddBarrelSpin(500)
-						self:SetPanelPose(math.Min(.5, math.Max(0, scale1 - 1.5)), scale1 / 2)
+						self:SetPanelPose(math.Min(0.5, math.Max(0, scale1 - 1.5)), scale1 / 2)
 						timer.Simple(tab.Cooldown, function() self:SetPanelPose(0, scale1 / 4) end)
 						self:TakeSubammo(item, 1)
 					end
@@ -1338,7 +1337,7 @@ local eject = "brass"
 				return 0.1
 			end
 			tab.FireFunc = function(self, item)
-				self:SetChargeAttack(ScavData.models[self.inv.items[1].ammo].ChargeAttack, item)							
+				self:SetChargeAttack(ScavData.models[item.ammo].ChargeAttack, item)							
 				return false
 			end
 			function tab.OnArmed(self, item, olditemname)
@@ -1418,7 +1417,7 @@ local eject = "brass"
 				return 0.2
 			end
 			tab.FireFunc = function(self, item)
-				self:SetChargeAttack(ScavData.models[self.inv.items[1].ammo].ChargeAttack, item	)						
+				self:SetChargeAttack(ScavData.models[item.ammo].ChargeAttack, item	)						
 				return false
 			end
 			tab.Cooldown = 0
@@ -1509,7 +1508,7 @@ local eject = "brass"
 						self.soundloops.airboatgunfire = CreateSound(self.Owner, "weapons/airboat/airboat_gun_loop2.wav")
 						self.soundloops.airboatgunfire:Play()
 					end
-					self:SetChargeAttack(ScavData.models[self.inv.items[1].ammo].ChargeAttack, item)
+					self:SetChargeAttack(ScavData.models[item.ammo].ChargeAttack, item)
 				end
 				return false
 			end
@@ -1553,7 +1552,7 @@ local eject = "brass"
 					return 0.5
 				end
 				tab.FireFunc = function(self, item)
-					self:SetChargeAttack(ScavData.models[self.inv.items[1].ammo].ChargeAttack, item)
+					self:SetChargeAttack(ScavData.models[item.ammo].ChargeAttack, item)
 					self.soundloops.cballcharge = CreateSound(self.Owner, "weapons/cguard/charging.wav")
 					self.soundloops.cballcharge:Play()
 					self:SetPanelPose(1, 1.5)
@@ -1569,7 +1568,7 @@ local eject = "brass"
 					return 0.5
 				end
 				tab.FireFunc = function(self, item)
-					self:SetChargeAttack(ScavData.models[self.inv.items[1].ammo].ChargeAttack, item)
+					self:SetChargeAttack(ScavData.models[item.ammo].ChargeAttack, item)
 					return true
 				end
 			end
@@ -1628,7 +1627,7 @@ local eject = "brass"
 				return 0.1
 			end
 			tab.FireFunc = function(self, item)
-				self:SetChargeAttack(ScavData.models[self.inv.items[1].ammo].ChargeAttack, item)
+				self:SetChargeAttack(ScavData.models[item.ammo].ChargeAttack, item)
 				if SERVER then
 					self.Owner:EmitSound("npc/attack_helicopter/aheli_charge_up.wav")
 					self.Owner.scav_helisound = CreateSound(self.Owner, "npc/attack_helicopter/aheli_weapon_fire_loop3.wav")
@@ -1736,7 +1735,7 @@ local eject = "brass"
 				end
 			end
 			tab.FireFunc = function(self, item)
-				self:SetChargeAttack(ScavData.models[self.inv.items[1].ammo].ChargeAttack, item)
+				self:SetChargeAttack(ScavData.models[item.ammo].ChargeAttack, item)
 				if SERVER then
 					self.Owner:EmitSound("player/suit_denydevice.wav")
 					if not IsValid(self.soundloops.healthCharger) then self.soundloops.healthCharger = CreateSound(self.Owner, "items/medcharge4.wav") end
@@ -1851,7 +1850,7 @@ local eject = "brass"
 				end
 			end
 			tab.FireFunc = function(self, item)
-				self:SetChargeAttack(ScavData.models[self.inv.items[1].ammo].ChargeAttack, item)
+				self:SetChargeAttack(ScavData.models[item.ammo].ChargeAttack, item)
 				if SERVER then
 					self.Owner:EmitSound("player/suit_denydevice.wav")
 					if not IsValid(self.soundloops.suitCharger) then self.soundloops.suitCharger = CreateSound(self.Owner, "items/suitcharge1.wav") end
@@ -2095,7 +2094,7 @@ end
 			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			tab.MaxAmmo = 270 --225 + 45
 			tab.ChargeAttack = function(self, item)
-				local tab = ScavData.models[self.inv.items[1].ammo]
+				local tab = ScavData.models[item.ammo]
 				if self.Owner:KeyDown(IN_ATTACK) then
 					self.Owner:ScavViewPunch(Angle(math.Rand(-0.2, 0.2), math.Rand(-0.2, 0.2), 0), 0.1)
 					local bullet = {}
@@ -2196,7 +2195,7 @@ end
 				end
 			end
 			tab.FireFunc = function(self, item)
-				self:SetChargeAttack(ScavData.models[self.inv.items[1].ammo].ChargeAttack, item)
+				self:SetChargeAttack(ScavData.models[item.ammo].ChargeAttack, item)
 				return false
 			end
 			function tab.OnArmed(self, item, olditemname)
@@ -2363,7 +2362,7 @@ end
 				local ef = EffectData()
 			end
 			tab.ChargeAttack = function(self, item)
-				local tab = ScavData.models[self.inv.items[1].ammo]
+				local tab = ScavData.models[item.ammo]
 				local shootpos = self.Owner:GetShootPos()
 				tracep.start = shootpos
 				tracep.endpos = shootpos + self:GetAimVector() * 2000
@@ -2430,8 +2429,8 @@ end
 				return 0.5
 			end
 			tab.FireFunc = function(self, item)
-				local tab = ScavData.models[self.inv.items[1].ammo]
-				self:SetChargeAttack(ScavData.models[self.inv.items[1].ammo].ChargeAttack, item)
+				local tab = ScavData.models[item.ammo]
+				self:SetChargeAttack(tab.ChargeAttack, item)
 				if SERVER then
 					if self.Owner.snd_scavvort then
 						self.Owner.snd_scavvort:Stop()
@@ -2440,7 +2439,7 @@ end
 						self.soundloops.scavvort = CreateSound(self.Owner, tab.Identify[item.ammo] == 0 and "npc/vort/attack_charge.wav" or "debris/zap4.wav")
 					end
 					if self.soundloops.scavvort then
-						self.soundloops.scavvort:PlayEx(.5, 100)
+						self.soundloops.scavvort:PlayEx(0.5, 100)
 						if tab.Identify[item.ammo] == 1 then
 							self.soundloops.scavvort:ChangePitch(140, 1.5)
 						end
