@@ -78,6 +78,19 @@ cvars.AddChangeCallback("scav_force_holiday", function(convar, oldValue, newValu
 end)
 
 
+if SERVER then CreateConVar("scav_lock_holster_delay", 3, {FCVAR_NOTIFY, FCVAR_ARCHIVE}, "Number of seconds to prevent a locked Scavenger Cannon from being holstered. Negative values mean never allow holstering.", -1, math.huge) end
+
+local function should_allow_holster(self)
+	if CLIENT then return end
+	if self:IsLocked() then
+		local lock_holster_delay = GetConVar("scav_lock_holster_delay"):GetFloat()
+		if CurTime() - self.startlock < lock_holster_delay or lock_holster_delay < 0 then return false end
+	end
+	if self.ChargeAttack or self.nextfire > CurTime() then return false end
+	return true
+end
+
+
 local ENTITY 	= FindMetaTable("Entity")
 local PLAYER 	= FindMetaTable("Player")
 local SWEP 		= SWEP
@@ -2576,17 +2589,6 @@ if SERVER then
 	function SWEP:SetBlockPoseInstant(pose, speed)
 		self.BlockPose = pose
 		self.PanelSpeed = speed or self.PanelSpeed
-	end
-
-	local _lock_holster_delay = CreateConVar("scav_lock_holster_delay", 3, {FCVAR_NOTIFY, FCVAR_ARCHIVE}, "Number of seconds to prevent a locked Scavenger Cannon from being holstered. Negative values mean never allow holstering.", -1, math.huge)
-
-	local function should_allow_holster(self)
-		if self:IsLocked() then
-			local lock_holster_delay = _lock_holster_delay:GetFloat()
-			if CurTime() - self.startlock < lock_holster_delay or lock_holster_delay < 0 then return false end
-		end
-		if self.ChargeAttack or self.nextfire > CurTime() then return false end
-		return true
 	end
 
 	function SWEP:SaveInventorySnapshot()
