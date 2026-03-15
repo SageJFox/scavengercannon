@@ -14,84 +14,6 @@ local ScavData = ScavData
 DMG_FREEZE = 16
 DMG_CHEMICAL = 1048576
 
-local eject = "brass"
-
-util.PrecacheModel("models/scav/shells/shell_pistol_tf2.mdl")
-util.PrecacheModel("models/scav/shells/shell_shotgun_tf2.mdl")
-util.PrecacheModel("models/scav/shells/shell_sniperrifle_tf2.mdl")
-util.PrecacheModel("models/scav/shells/shell_minigun_tf2.mdl")
-
-tf2shelleject = function(self, shelltype)
-	if not IsValid(self) or not IsValid(self.Owner) then return end
-
-	if game.SinglePlayer() == CLIENT then return end
-
-	local shell = shelltype or "pistol"
-	-- Get our ejection attachment
-	local attach = (owner:GetViewModel() and owner == owner:GetViewEntity()) and self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject)) or 
-		self:GetModel():GetAttachment(self:GetModel():LookupAttachment(eject))
-	if not attach then return end
-
-	-- Create/init casing prop
-	local brass = CLIENT and ents.CreateClientProp("models/scav/shells/shell_" .. shell .. "_tf2.mdl") or ents.Create("prop_physics")
-	if not IsValid(brass) then return end
-		brass:SetPos(attach.Pos)
-		brass:SetAngles(attach.Ang)
-		brass:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
-	if SERVER then
-		brass:SetModel("models/scav/shells/shell_" .. shell .. "_tf2.mdl")
-		brass.NoScav = true
-	else
-		brass:SetupBones()
-	end
-	-- Physics sounds
-	brass:AddCallback("PhysicsCollide", function(ent, data)
-		if (data.Speed > 50) then
-			ent:EmitSound(Sound(shell == "shotgun" and "Bounce.ShotgunShell" or "Bounce.Shell"))
-		end
-	end)
-	brass:Spawn()
-	brass:DrawShadow(false)
-	-- Throw casing
-	local angShellAngles = self.Owner:EyeAngles()
-	--angShellAngles:RotateAroundAxis(Vector(0, 0, 1), 90)
-	local vecShellVelocity = self.Owner:GetAbsVelocity()
-	vecShellVelocity = vecShellVelocity + angShellAngles:Right() * math.Rand(50, 70)
-	vecShellVelocity = vecShellVelocity + angShellAngles:Up() * math.Rand(100, 150)
-	vecShellVelocity = vecShellVelocity + angShellAngles:Forward() * 25
-	local phys = brass:GetPhysicsObject()
-	if IsValid(phys) then
-		phys:SetVelocity(vecShellVelocity)
-		phys:SetAngleVelocity(angShellAngles:Forward() * 1000)
-	end
-	--Cleanup casing
-	timer.Simple(10, function() if IsValid(brass) then brass:Remove() end end)
-end
-
-hl1shelleject = function(self, shotgun)
-	if CLIENT == game.SinglePlayer() then return end
-	local owner = self.Owner
-	if not IsValid(owner) then return end
-
-	local attach = (owner:GetViewModel() and owner == owner:GetViewEntity()) and owner:GetViewModel():GetAttachment(owner:GetViewModel():LookupAttachment(eject)) or
-	self:GetAttachment(self:LookupAttachment(eject))
-	if not attach then return end
-
-	local ef = EffectData()
-		ef:SetOrigin(attach.Pos)
-		ef:SetAngles(attach.Ang)
-		--lovingly borrowed from https://steamcommunity.com/sharedfiles/filedetails/?id=1360233031
-		local angShellAngles = owner:EyeAngles()
-		local vecShellVelocity = owner:GetAbsVelocity()
-		vecShellVelocity = vecShellVelocity + angShellAngles:Right() * math.Rand(50, 70)
-		vecShellVelocity = vecShellVelocity + angShellAngles:Up() * math.Rand(100, 150)
-		vecShellVelocity = vecShellVelocity + angShellAngles:Forward() * 25
-		ef:SetStart(vecShellVelocity)
-		--ef:SetEntity(owner)
-		ef:SetFlags(shotgun and 1 or 0)
-	util.Effect("HL1ShellEject", ef)
-end
-
 ScavDataCollectCopy = function(copy, original)
 	ScavData.CollectFuncs[copy] = ScavData.CollectFuncs[original]
 	ScavData.CollectFX[copy] = ScavData.CollectFX[original]
@@ -1504,24 +1426,17 @@ end
 						self.Owner:EmitSound("weapons/shotgun_cock_back.wav")
 						timer.Simple(0.25, function() if IsValid(self) then self.Owner:EmitSound("weapons/shotgun_cock_forward.wav") end end)
 					end
-					tf2shelleject(self, "shotgun")
+					self:EjectShellTF2("shotgun")
 				end)
 			else --HL2
 				if SERVER then
 					self.Owner:EmitSound("weapons/shotgun/shotgun_fire6.wav")
 				end
 				timer.Simple(0.4, function()
-					if CLIENT ~= game.SinglePlayer() then
-						self.Owner:EmitSound("weapons/shotgun/shotgun_cock.wav")
-						local ef = EffectData()
-						local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
-						if attach then
-							ef:SetOrigin(attach.Pos)
-							ef:SetAngles(attach.Ang)
-							ef:SetEntity(self)
-							util.Effect("ShotgunShellEject", ef)
-						end
-					end
+					if not IsValid(self) then return end
+					self:EjectShell("ShotgunShellEject", false)
+					if CLIENT or not IsValid(self.Owner) then return end
+					self.Owner:EmitSound("weapons/shotgun/shotgun_cock.wav")
 				end)
 			end
 			if SERVER then return self:TakeSubammo(item, 1) end
@@ -1877,31 +1792,23 @@ end
 						if SERVER or not game.SinglePlayer() then
 							self.Owner:FireBullets(bullet)
 						end
-						timer.Simple(0.45, function()
-							if not IsValid(self) then return end
-							local brass = {
+						local brass = {
 							[0] = function(self)
-								local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
-								if not attach then return end
-								if SERVER then
-									self:EmitSound("weapons/smg1/switch_burst.wav", 75, 100, 1)
-								else
-									local ef = EffectData()
-									ef:SetOrigin(attach.Pos)
-									ef:SetAngles(attach.Ang)
-									ef:SetEntity(self)
-									util.Effect("RifleShellEject", ef)
-								end
+								self:EjectShell("RifleShellEject", false)
+								if CLIENT or not IsValid(self.Owner) then return end
+								self.Owner:EmitSound("weapons/smg1/switch_burst.wav", 75, 100, 1)
 							end;
 							[1] = function(self)
 								if SERVER then
 									self:EmitSound("weapons/sniper_bolt_back.wav", 75, 100, 1)
 									timer.Simple(0.25, function() if IsValid(self) and IsValid(self.Owner) then self.Owner:EmitSound("weapons/sniper_bolt_forward.wav") end end)
 								end
-								tf2shelleject(self, "sniperrifle")
+								self:EjectShellTF2("sniperrifle")
 							end
-							}
-							brass[tab.Identify[item.ammo]](self)
+						}
+						timer.Simple(0.45, function()
+							if not IsValid(self) then return end
+							brass[ident](self)
 						end)
 						if SERVER then
 							self:TakeSubammo(item, 1)
@@ -3918,25 +3825,16 @@ PrecacheParticleSystem("scav_exp_plasma")
 					end
 					self.Owner:SetAnimation(PLAYER_ATTACK1)
 					timer.Simple(0.025, function()
-						if not self.Owner:GetViewModel() then return end
-						local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
-						if attach then
-							local brass = {
-								[0] = function(attach)
-									if SERVER then
-										local ef = EffectData()
-											ef:SetOrigin(attach.Pos)
-											ef:SetAngles(attach.Ang)
-											ef:SetEntity(self)
-										util.Effect("RifleShellEject", ef)
-									end
-								end,
-								[1] = function(attach)
-									tf2shelleject(self, "minigun")
-								end,
-							}
-							brass[tab.Identify[item.ammo]](attach)
-						end
+						if not IsValid(self) then return end
+						local brass = {
+							[0] = function(attach)
+								self:EjectShell("RifleShellEject", false)
+							end,
+							[1] = function(attach)
+								self:EjectShellTF2("minigun")
+							end,
+						}
+						brass[tab.Identify[item.ammo]](attach)
 					end)
 					if SERVER then 
 						self:TakeSubammo(item, 1)

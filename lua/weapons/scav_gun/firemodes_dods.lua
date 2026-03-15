@@ -1,53 +1,5 @@
 --Firemodes largely related to the Day of Defeat series. Can have other games' props defined!
 
-local eject = "brass"
-util.PrecacheModel("models/scav/shells/shell_large.mdl")
-util.PrecacheModel("models/scav/shells/shell_medium.mdl")
-util.PrecacheModel("models/scav/shells/shell_small.mdl")
-
-local dodsshelleject = function(self, shellsize)
-	if game.SinglePlayer() == CLIENT then return end
-	local attach = false
-	if self.Owner:GetViewModel() then
-		attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
-	end
-	if not attach then
-		attach = self:GetAttachment(self:LookupAttachment(eject))
-	end
-
-	local size = shellsize or "large"
-	local brass = SERVER and ents.Create("prop_physics") or ents.CreateClientProp("models/scav/shells/shell_" .. size .. ".mdl")
-	if not IsValid(brass) then print("brassless!") return end
-
-	if SERVER then
-		brass:SetModel("models/scav/shells/shell_" .. size .. ".mdl")
-		brass.NoScav = true
-	end
-	brass:SetPos(attach.Pos)
-	brass:SetAngles(attach.Ang)
-	brass:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
-	brass:AddCallback("PhysicsCollide", function(ent, data)
-		if data.Speed > 50 then ent:EmitSound(Sound("Weapon.Shell")) end
-	end)
-	brass:Spawn()
-	brass:DrawShadow(false)
-	local angShellAngles = self.Owner:EyeAngles()
-	--angShellAngles:RotateAroundAxis(Vector(0, 0, 1), 90)
-	local vecShellVelocity = self.Owner:GetAbsVelocity()
-	vecShellVelocity = vecShellVelocity + angShellAngles:Right() * math.Rand(50, 70)
-	vecShellVelocity = vecShellVelocity + angShellAngles:Up() * math.Rand(100, 150)
-	vecShellVelocity = vecShellVelocity + angShellAngles:Forward() * 25
-	local phys = brass:GetPhysicsObject()
-	if IsValid(phys) then
-		phys:SetVelocity(vecShellVelocity)
-		phys:SetAngleVelocity(angShellAngles:Forward() * 1000)
-	else
-		brass:Remove()
-		return
-	end
-	timer.Simple(10, function() if IsValid(brass) then brass:Remove() end end)
-end
-
 local WALK_SPEED = 20000
 local PRONE_SPEED = 800 --900 would be crouching with walk key held
 
@@ -97,7 +49,7 @@ end
 					self:MuzzleFlash2()
 					self.Owner:SetAnimation(PLAYER_ATTACK1)
 					self.Owner:EmitSound("Weapon_30cal.Shoot")
-					dodsshelleject(self)
+					self:EjectShellDoDS()
 					if SERVER then
 						--self:SetBlockPoseInstant(1, 4)
 						self:SetPanelPoseInstant(0.25, 2)
@@ -162,7 +114,7 @@ end
 					self:MuzzleFlash2()
 					self.Owner:SetAnimation(PLAYER_ATTACK1)
 					self.Owner:EmitSound("Weapon_Bar.Shoot")
-					dodsshelleject(self)
+					self:EjectShellDoDS()
 					if SERVER then
 						self:SetPanelPoseInstant(0.125, 2)
 						self:TakeSubammo(item, 1)
@@ -216,7 +168,7 @@ end
 					self:MuzzleFlash2()
 					self.Owner:SetAnimation(PLAYER_ATTACK1)
 					self.Owner:EmitSound("Weapon_C96.Shoot")
-					dodsshelleject(self, "small")
+					self:EjectShellDoDS("small")
 					if SERVER then
 						self:TakeSubammo(item, 1)
 					end
@@ -275,7 +227,7 @@ end
 						timer.Simple(.2, function() self.Owner:EmitSound("Weapon_K98.BoltBack2") end)
 						timer.Simple(.6, function() self.Owner:EmitSound("Weapon_K98.BoltForward2") end)
 					end
-					dodsshelleject(self)
+					self:EjectShellDoDS()
 				end)
 				if SERVER then
 					return self:TakeSubammo(item, 1)
@@ -313,7 +265,7 @@ end
 				self.Owner:SetAnimation(PLAYER_ATTACK1)
 				self.Owner:EmitSound("Weapon_Carbine.Shoot")
 				self.nextfireearly = CurTime()+0.1
-				dodsshelleject(self, "medium")
+				self:EjectShellDoDS("medium")
 				if SERVER then
 					return self:TakeSubammo(item, 1)
 				end
@@ -350,56 +302,42 @@ end
 					self.Owner:SetAnimation(PLAYER_ATTACK1)
 					self.Owner:EmitSound("Weapon_Garand.Shoot")
 					self.nextfireearly = CurTime()+0.37
-					dodsshelleject(self)
+					self:EjectShellDoDS()
 					if (item.subammo <= 1 and SERVER) or (item.subammo <= 0 and CLIENT) then --garand ping
 						timer.Simple(0.025, function()
+							if not IsValid(self) or not IsValid(self.Owner) then return end
+
 							self.Owner:EmitSound("Weapon_Garand.ClipDing")
-							if not game.SinglePlayer() and CLIENT then
-								local ping = ents.CreateClientProp("models/scav/shells/garand_clip.mdl")
-								local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
-								if attach then
-									ping:SetPos(attach.Pos)
-									ping:SetAngles(attach.Ang)
-									ping:Spawn()
-									local angShellAngles = self.Owner:EyeAngles()
-									local vecShellVelocity = self.Owner:GetAbsVelocity()
-									vecShellVelocity = vecShellVelocity + angShellAngles:Right() * math.Rand(50, 70);
-									vecShellVelocity = vecShellVelocity + angShellAngles:Up() * math.Rand(200, 250);
-									vecShellVelocity = vecShellVelocity + angShellAngles:Forward() * 25;
-									local phys = ping:GetPhysicsObject()
-									if IsValid(phys) then
-										phys:SetVelocity(vecShellVelocity)
-										phys:SetAngleVelocity(angShellAngles:Forward() * 1000)
-									end
-									timer.Simple(10, function() if IsValid(ping) then ping:Remove() end end)
-								end
-							elseif game.SinglePlayer() and SERVER then
-								local ping = ents.Create("prop_physics")
-								local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
-								if attach then
-									ping:SetModel("models/scav/shells/garand_clip.mdl")
-									ping:PhysicsInit(SOLID_VPHYSICS)
-									ping:SetPos(attach.Pos)
-									ping:SetAngles(attach.Ang)
-									ping:Spawn()
-									ping:DrawShadow(false)
-									ping.NoScav = true
-									if CLIENT then
-										ping:SetupBones()
-									end
-									local angShellAngles = self.Owner:EyeAngles()
-									local vecShellVelocity = self.Owner:GetAbsVelocity()
-									vecShellVelocity = vecShellVelocity + angShellAngles:Right() * math.Rand(50, 70);
-									vecShellVelocity = vecShellVelocity + angShellAngles:Up() * math.Rand(200, 250);
-									vecShellVelocity = vecShellVelocity + angShellAngles:Forward() * 25;
-									local phys = ping:GetPhysicsObject()
-									if IsValid(phys) then
-										phys:SetVelocity(vecShellVelocity)
-										phys:SetAngleVelocity(angShellAngles:Forward()*1000)
-									end
-									timer.Simple(10, function() if IsValid(ping) then ping:Remove() end end)
-								end
+							local attach = self:GetShellEjectAttachment()
+							if not attach then return end
+
+							local ping = SERVER and ents.Create("prop_physics") or ents.CreateClientProp("models/scav/shells/garand_clip.mdl")
+							if not IsValid(ping) then return end
+
+							ping:SetPos(attach.Pos)
+							ping:SetAngles(attach.Ang)
+							if SERVER then
+								ping:SetModel("models/scav/shells/garand_clip.mdl")
+								ping:PhysicsInit(SOLID_VPHYSICS)
 							end
+							ping:Spawn()
+							if SERVER then
+								ping:DrawShadow(false)
+								ping.NoScav = true
+							else
+								ping:SetupBones()
+							end
+							local angShellAngles = self.Owner:EyeAngles()
+							local vecShellVelocity = self.Owner:GetAbsVelocity()
+							vecShellVelocity = vecShellVelocity + angShellAngles:Right() * math.Rand(50, 70);
+							vecShellVelocity = vecShellVelocity + angShellAngles:Up() * math.Rand(200, 250);
+							vecShellVelocity = vecShellVelocity + angShellAngles:Forward() * 25;
+							local phys = ping:GetPhysicsObject()
+							if IsValid(phys) then
+								phys:SetVelocity(vecShellVelocity)
+								phys:SetAngleVelocity(angShellAngles:Forward() * 1000)
+							end
+							timer.Simple(10, function() if IsValid(ping) then ping:Remove() end end)
 						end)
 					end
 					if SERVER then return self:TakeSubammo(item, 1) end
@@ -440,7 +378,7 @@ end
 						timer.Simple(.2, function() self.Owner:EmitSound("Weapon_K98.BoltBack2") end)
 						timer.Simple(.6, function() self.Owner:EmitSound("Weapon_K98.BoltForward2") end)
 					end
-					dodsshelleject(self)
+					self:EjectShellDoDS()
 				end)
 				if SERVER then
 					return self:TakeSubammo(item, 1)
@@ -479,7 +417,7 @@ end
 				self.Owner:SetAnimation(PLAYER_ATTACK1)
 				self.Owner:EmitSound("Weapon_Colt.Shoot")
 				self.nextfireearly = CurTime()+0.1
-				dodsshelleject(self, "small")
+				self:EjectShellDoDS("small")
 				if SERVER then
 					return self:TakeSubammo(item, 1)
 				end
@@ -592,7 +530,7 @@ end
 						end
 						self:MuzzleFlash2()
 						self.Owner:SetAnimation(PLAYER_ATTACK1)
-						dodsshelleject(self)
+						self:EjectShellDoDS()
 						if SERVER then
 							self.Owner:EmitSound("Weapon_Mg42.Shoot")
 							self:SetPanelPoseInstant(0.25, 2)
@@ -709,7 +647,7 @@ end
 					self:MuzzleFlash2()
 					self.Owner:SetAnimation(PLAYER_ATTACK1)
 					self.Owner:EmitSound("Weapon_MP40.Shoot")
-					dodsshelleject(self, "small")
+					self:EjectShellDoDS("small")
 					if SERVER then
 						self:TakeSubammo(item, 1)
 					end
@@ -762,7 +700,7 @@ end
 					self:MuzzleFlash2()
 					self.Owner:SetAnimation(PLAYER_ATTACK1)
 					self.Owner:EmitSound("Weapon_MP44.Shoot")
-					dodsshelleject(self, "medium")
+					self:EjectShellDoDS("medium")
 					if SERVER then
 						self:TakeSubammo(item, 1)
 					end
@@ -814,7 +752,7 @@ end
 				self.Owner:SetAnimation(PLAYER_ATTACK1)
 				self.Owner:EmitSound("Weapon_Luger.Shoot")
 				self.nextfireearly = CurTime()+0.1
-				dodsshelleject(self, "small")
+				self:EjectShellDoDS("small")
 				if SERVER then
 					return self:TakeSubammo(item, 1)
 				end
@@ -851,7 +789,7 @@ end
 					self:MuzzleFlash2()
 					self.Owner:SetAnimation(PLAYER_ATTACK1)
 					self.Owner:EmitSound("Weapon_Thompson.Shoot")
-					dodsshelleject(self, "small")
+					self:EjectShellDoDS("small")
 					if SERVER then
 						self:TakeSubammo(item, 1)
 					end

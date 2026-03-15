@@ -1,7 +1,5 @@
 --Firemodes largely related to the Half-Life series. Can have other games' props defined!
 
-local eject = "brass"
-
 --[[==============================================================================================
 	--Turret Gun
 ==============================================================================================]]--
@@ -982,21 +980,10 @@ local eject = "brass"
 							self.Owner:EmitSound("weapons/shotgun/shotgun_fire6.wav")
 						end
 						timer.Simple(0.4, function()
-							if IsValid(self) then
-								if SERVER then
-									self.Owner:EmitSound("weapons/shotgun/shotgun_cock.wav")
-								end
-								if CLIENT ~= game.SinglePlayer() then
-									local ef = EffectData()
-									local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
-									if attach then
-										ef:SetOrigin(attach.Pos)
-										ef:SetAngles(attach.Ang)
-										ef:SetEntity(self)
-										util.Effect("ShotgunShellEject", ef)
-									end
-								end
-							end
+							if not IsValid(self) then return end
+							self:EjectShell("ShotgunShellEject", false)
+							if CLIENT or not IsValid(self.Owner) then return end
+							self.Owner:EmitSound("weapons/shotgun/shotgun_cock.wav")
 						end)
 					end,
 					[1] = function(self)
@@ -1005,115 +992,104 @@ local eject = "brass"
 						end
 						timer.Simple(0.4, function()
 							if SERVER then
+								if not IsValid(self) or not IsValid(self.Owner) then return end
 								self.Owner:EmitSound("weapons/shotgun_cock_back.wav")
-								timer.Simple(.25, function() if IsValid(self) then self.Owner:EmitSound("weapons/shotgun_cock_forward.wav") end end)
+								timer.Simple(0.25, function() if IsValid(self) and IsValid(self.Owner) then self.Owner:EmitSound("weapons/shotgun_cock_forward.wav") end end)
 							end
-							tf2shelleject(self, "shotgun")
+							self:EjectShellTF2("shotgun")
 						end)
 					end,
 					[2] = function(self)
 						if SERVER then self.Owner:EmitSound(self.Owner:GetStatusEffect("DamageX") and "weapons/widow_maker_shot_crit_0" .. math.random(3) .. ".wav" or "weapons/widow_maker_shot_0" .. math.random(3) .. ".wav") end
 					end,
 					[3] = function(self)
-						if SERVER then
-							self.Owner:EmitSound("weapons/sbarrel1.wav")
-						end
 						timer.Simple(0.4, function()
 							if not IsValid(self) then return end
-							hl1shelleject(self, true)
+							self:EjectShellHL1(true)
 							if CLIENT or not IsValid(self.Owner) then return end
 							self.Owner:EmitSound("weapons/scock1.wav")
 						end)
+						if CLIENT then return end
+						self.Owner:EmitSound("weapons/sbarrel1.wav")
 					end,
 					[5] = function(self)
-						if SERVER then
-							self.Owner:EmitSound(self.Owner:GetStatusEffect("DamageX") and "weapons/scatter_gun_shoot_crit.wav" or "weapons/scatter_gun_shoot.wav")
-						end
 						timer.Simple(0.4, function()
 							if SERVER then self.Owner:EmitSound("weapons/scatter_gun_reload.wav") end
-							tf2shelleject(self, "shotgun")
+							self:EjectShellTF2("shotgun")
 						end)
+						if CLIENT then return end
+						self.Owner:EmitSound(self.Owner:GetStatusEffect("DamageX") and "weapons/scatter_gun_shoot_crit.wav" or "weapons/scatter_gun_shoot.wav")
 					end,
 					[6] = function(self)
-						if SERVER then
-							self.Owner:EmitSound(self.Owner:GetStatusEffect("DamageX") and "weapons/scatter_gun_double_shoot_crit.wav" or "weapons/scatter_gun_double_shoot.wav")
-						end
 						--TODO: double barrel eject/reload sounds every other shot
 						--[[timer.Simple(0.4, function()
 							if SERVER then self.Owner:EmitSound("weapons/scatter_gun_reload.wav") end
-							tf2shelleject(self, "shotgun")
+							self:EjectShellTF2("shotgun")
 						end)]]
+						if CLIENT then return end
+						self.Owner:EmitSound(self.Owner:GetStatusEffect("DamageX") and "weapons/scatter_gun_double_shoot_crit.wav" or "weapons/scatter_gun_double_shoot.wav")
 					end,
 					[7] = function(self)
-						if SERVER then
-							self.Owner:EmitSound(self.Owner:GetStatusEffect("DamageX") and "weapons/scatter_gun_double_bonk_shoot_crit.wav" or "weapons/scatter_gun_double_bonk_shoot.wav")
-						end
 						--TODO: double barrel eject/reload sounds every other shot
 						--[[timer.Simple(0.4, function()
 							if SERVER then self.Owner:EmitSound("weapons/scatter_gun_reload.wav") end
-							tf2shelleject(self, "shotgun")
+							self:EjectShellTF2("shotgun")
 						end)]]
+						if CLIENT then return end
+						self.Owner:EmitSound(self.Owner:GetStatusEffect("DamageX") and "weapons/scatter_gun_double_bonk_shoot_crit.wav" or "weapons/scatter_gun_double_bonk_shoot.wav")
 					end,
 					[8] = function(self)
-						if SERVER then
-							self.Owner:EmitSound(self.Owner:GetStatusEffect("DamageX") and "weapons/frontier_justice_shoot_crit.wav" or "weapons/frontier_justice_shoot.wav")
-						end
 						timer.Simple(0.4, function()
 							if SERVER then
 								self.Owner:EmitSound("weapons/shotgun_cock_back.wav")
-								timer.Simple(.25, function() if IsValid(self) then self.Owner:EmitSound("weapons/shotgun_cock_forward.wav") end end)
+								timer.Simple(0.25, function() if IsValid(self) and IsValid(self.Owner) then self.Owner:EmitSound("weapons/shotgun_cock_forward.wav") end end)
 							end
-							tf2shelleject(self, "shotgun")
+							self:EjectShellTF2("shotgun")
 						end)
+						if CLIENT then return end
+						self.Owner:EmitSound(self.Owner:GetStatusEffect("DamageX") and "weapons/frontier_justice_shoot_crit.wav" or "weapons/frontier_justice_shoot.wav")
 					end,
 					[9] = function(self)
-						if SERVER then
-							self.Owner:EmitSound(self.Owner:GetStatusEffect("DamageX") and "weapons/reserve_shooter_0" .. math.random(4) .. "_crit.wav" or "weapons/reserve_shooter_0" .. math.random(4) .. ".wav")
-						end
 						timer.Simple(0.4, function()
 							if SERVER then
 								self.Owner:EmitSound("weapons/shotgun_cock_back.wav")
-								timer.Simple(.25, function() if IsValid(self) then self.Owner:EmitSound("weapons/shotgun_cock_forward.wav") end end)
+								timer.Simple(0.25, function() if IsValid(self) and IsValid(self.Owner) then self.Owner:EmitSound("weapons/shotgun_cock_forward.wav") end end)
 							end
-							tf2shelleject(self, "shotgun")
+							self:EjectShellTF2("shotgun")
 						end)
+						if CLIENT then return end
+						self.Owner:EmitSound(self.Owner:GetStatusEffect("DamageX") and "weapons/reserve_shooter_0" .. math.random(4) .. "_crit.wav" or "weapons/reserve_shooter_0" .. math.random(4) .. ".wav")
 					end,
 					[10] = function(self)
-						if SERVER then
-							self.Owner:EmitSound(self.Owner:GetStatusEffect("DamageX") and "weapons/family_business_shoot_crit.wav" or "weapons/family_business_shoot.wav")
-						end
 						timer.Simple(0.4, function()
 							if SERVER then
 								self.Owner:EmitSound("weapons/shotgun_cock_back.wav")
-								timer.Simple(.25, function() if IsValid(self) then self.Owner:EmitSound("weapons/shotgun_cock_forward.wav") end end)
+								timer.Simple(0.25, function() if IsValid(self) and IsValid(self.Owner) then self.Owner:EmitSound("weapons/shotgun_cock_forward.wav") end end)
 							end
-							tf2shelleject(self, "shotgun")
+							self:EjectShellTF2("shotgun")
 						end)
+						if CLIENT then return end
+						self.Owner:EmitSound(self.Owner:GetStatusEffect("DamageX") and "weapons/family_business_shoot_crit.wav" or "weapons/family_business_shoot.wav")
 					end,
 					[11] = function(self)
-						if SERVER then
-							self.Owner:EmitSound(self.Owner:GetStatusEffect("DamageX") and "Weapon_Short_Stop.SingleCrit" or "Weapon_Short_Stop.Single")
-						end
+						if CLIENT then return end
+						self.Owner:EmitSound(self.Owner:GetStatusEffect("DamageX") and "Weapon_Short_Stop.SingleCrit" or "Weapon_Short_Stop.Single")
 					end,
 					[12] = function(self)
-						if SERVER then
-							self.Owner:EmitSound(self.Owner:GetStatusEffect("DamageX") and "Weapon_Brawler_Blaster.SingleCrit" or "Weapon_Brawler_Blaster.Single")
-						end
+						if CLIENT then return end
+						self.Owner:EmitSound(self.Owner:GetStatusEffect("DamageX") and "Weapon_Brawler_Blaster.SingleCrit" or "Weapon_Brawler_Blaster.Single")
 					end,
 					[13] = function(self)
-						if SERVER then
-							self.Owner:EmitSound(self.Owner:GetStatusEffect("DamageX") and "Weapon_Back_Scatter.SingleCrit" or "Weapon_Back_Scatter.Single")
-						end
+						if CLIENT then return end
+						self.Owner:EmitSound(self.Owner:GetStatusEffect("DamageX") and "Weapon_Back_Scatter.SingleCrit" or "Weapon_Back_Scatter.Single")
 					end,
 					[14] = function(self)
-						if SERVER then
-							self.Owner:EmitSound("weapons/2d/shotgun/fire_and_loadfp.wav")
-						end
+						if CLIENT then return end
+						self.Owner:EmitSound("weapons/2d/shotgun/fire_and_loadfp.wav")
 					end,
 					[15] = function(self)
-						if SERVER then
-							self.Owner:EmitSound("weapons/2d/vindicator/fire_and_loadfp.wav")
-						end
+						if CLIENT then return end
+						self.Owner:EmitSound("weapons/2d/vindicator/fire_and_loadfp.wav")
 					end,
 				}
 				shootfx[tab.Identify[item.ammo]](self)
@@ -1213,39 +1189,28 @@ local eject = "brass"
 				self:MuzzleFlash2()
 				local weaponfx = {
 					[0] = function(self)
-						if SERVER then
-							self.Owner:EmitSound("Weapon_Pistol.Single")
-						end
-						timer.Simple(.025, function()
-							if CLIENT ~= game.SinglePlayer() and IsValid(self) then
-								if not self.Owner:GetViewModel() then return end
-								local ef = EffectData()
-								local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
-								if attach then
-									ef:SetOrigin(attach.Pos)
-									ef:SetAngles(attach.Ang)
-									ef:SetEntity(self)
-									util.Effect("ShellEject", ef)
-								end
-							end
+						timer.Simple(0.025, function()
+							if not IsValid(self) then return end
+							self:EjectShell("ShellEject", false)
 						end)
+						if CLIENT then return end
+						self.Owner:EmitSound("Weapon_Pistol.Single")
 					end,
 					[1] = function(self)
-						if SERVER then
-							self.Owner:EmitSound(self.Owner:GetStatusEffect("DamageX") and "weapons/pistol_shoot_crit.wav" or "weapons/pistol_shoot.wav")
-						end
-						timer.Simple(.025, function()
-							tf2shelleject(self)
+						timer.Simple(0.025, function()
+							if not IsValid(self) then return end
+							self:EjectShellTF2()
 						end)
+						if CLIENT then return end
+						self.Owner:EmitSound(self.Owner:GetStatusEffect("DamageX") and "weapons/pistol_shoot_crit.wav" or "weapons/pistol_shoot.wav")
 					end,
 					[2] = function(self)
-						if SERVER then
-							self.Owner:EmitSound("weapons/pl_gun3.wav")
-						end
-						timer.Simple(.025, function()
-							if not IsValid(self) or not IsValid(self.Owner) then return end
-							hl1shelleject(self)
+						timer.Simple(0.025, function()
+							if not IsValid(self) then return end
+							self:EjectShellHL1()
 						end)
+						if CLIENT then return end
+						self.Owner:EmitSound("weapons/pl_gun3.wav")
 					end,
 				}
 				weaponfx[tab.Identify[item.ammo]](self)
@@ -1902,23 +1867,16 @@ local function revolver_reload(self, item, reload, style, count)
 			if CLIENT == game.SinglePlayer() then return end
 
 			if style == SCAV_REVOLVER_DEFAULT then
-				local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
-				if not attach then return end
-
-				local ef = EffectData()
-				ef:SetOrigin(attach.Pos)
-				ef:SetAngles(attach.Ang)
-				ef:SetEntity(self)
 				for i = 1, count do
-					util.Effect("ShellEject", ef)
+					self:EjectShell("ShellEject", false)
 				end
 			elseif style == SCAV_REVOLVER_HL1 then
 				for i = 1, count do
-					hl1shelleject(self)
+					self:EjectShellHL1()
 				end
 			else
 				for i = 1, count do
-					tf2shelleject(self)
+					self:EjectShellTF2()
 				end
 			end
 		end)
@@ -1986,19 +1944,10 @@ end
 					[SCAV_REVOLVER_DEFAULT] = function(self, item) revolver_reload(self, item, "weapons/357/357_reload1.wav", SCAV_REVOLVER_DEFAULT) end,
 					[SCAV_REVOLVER_LEVER] = function(self, item)
 						timer.Simple(0.4, function() --lever action
-							if SERVER then
-								self.Owner:EmitSound("weapons/smg1/switch_burst.wav", 75, 85, 1, CHAN_WEAPON)
-							end
-							if CLIENT ~= game.SinglePlayer() then
-								local ef = EffectData()
-								local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
-								if attach then
-									ef:SetOrigin(attach.Pos)
-									ef:SetAngles(attach.Ang)
-									ef:SetEntity(self)
-									util.Effect("ShellEject", ef)
-								end
-							end
+							if not IsValid(self) then return end
+							self:EjectShell("ShellEject", false)
+							if CLIENT or not IsValid(self.Owner) then return end
+							self.Owner:EmitSound("weapons/smg1/switch_burst.wav", 75, 85, 1, CHAN_WEAPON)
 						end)
 					end,
 					[SCAV_REVOLVER_TF2] = function(self, item) revolver_reload(self, item, "weapons/revolver_worldreload.wav", SCAV_REVOLVER_TF2) end,
@@ -2123,67 +2072,44 @@ end
 					end
 					local itemfx = {
 						[0] = function(self)
-							if SERVER then
-								self.Owner:EmitSound("Weapon_SMG1.Single")
-							end
-							if CLIENT ~= game.SinglePlayer() then
-								timer.Simple(.025, function()
-									if not self.Owner:GetViewModel() then return end
-									local ef = EffectData()
-									local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
-									if attach then
-										ef:SetOrigin(attach.Pos)
-										ef:SetAngles(attach.Ang)
-										ef:SetEntity(self)
-										util.Effect("ShellEject", ef)
-									end
-								end)
-							end
+							timer.Simple(0.025, function()
+								if not IsValid(self) then return end
+								self:EjectShell("ShellEject", false)
+							end)
+							if CLIENT or not IsValid(self.Owner) then return end
+							self.Owner:EmitSound("Weapon_SMG1.Single")
 						end,
 						[1] = function(self)
-							if SERVER then
-								self.Owner:EmitSound("Weapon_Alyx_Gun.Single")
-							end
-							if CLIENT ~= game.SinglePlayer() then
-								timer.Simple(.025, function()
-									if not self.Owner:GetViewModel() then return end
-									local ef = EffectData()
-									local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
-									if attach then
-										ef:SetOrigin(attach.Pos)
-										ef:SetAngles(attach.Ang)
-										ef:SetEntity(self)
-										util.Effect("ShellEject", ef)
-									end
-								end)
-							end
+							timer.Simple(0.025, function()
+								if not IsValid(self) then return end
+								self:EjectShell("ShellEject", false)
+							end)
+							if CLIENT or not IsValid(self.Owner) then return end
+							self.Owner:EmitSound("Weapon_Alyx_Gun.Single")
 						end,
 						[2] = function(self)
-							if SERVER then
-								self.Owner:EmitSound(self.Owner:GetStatusEffect("DamageX") and "weapons/smg_shoot_crit.wav" or "weapons/smg_shoot.wav")
-							end
-							timer.Simple(.025, function()
-								tf2shelleject(self)
+							timer.Simple(0.025, function()
+								if not IsValid(self) then return end
+								self:EjectShellTF2()
 							end)
+							if CLIENT or not IsValid(self.Owner) then return end
+							self.Owner:EmitSound(self.Owner:GetStatusEffect("DamageX") and "weapons/smg_shoot_crit.wav" or "weapons/smg_shoot.wav")
 						end,
 						[3] = function(self)
-							if SERVER then
-								self.Owner:EmitSound(self.Owner:GetStatusEffect("DamageX") and "weapons/doom_sniper_smg_crit.wav" or "weapons/doom_sniper_smg.wav")
-							end
-							timer.Simple(.025, function()
-								tf2shelleject(self)
+							timer.Simple(0.025, function()
+								if not IsValid(self) then return end
+								self:EjectShellTF2()
 							end)
+							if CLIENT or not IsValid(self.Owner) then return end
+							self.Owner:EmitSound(self.Owner:GetStatusEffect("DamageX") and "weapons/doom_sniper_smg_crit.wav" or "weapons/doom_sniper_smg.wav")
 						end,
 						[4] = function(self)
-							if SERVER then
-								self.Owner:EmitSound("weapons/hks" .. math.random(3) .. ".wav")
-							end
-							if CLIENT ~= game.SinglePlayer() then
-								timer.Simple(.025, function()
-									if not IsValid(self) then return end
-									hl1shelleject(self)
-								end)
-							end
+							timer.Simple(0.025, function()
+								if not IsValid(self) then return end
+								self:EjectShellHL1()
+							end)
+							if CLIENT or not IsValid(self.Owner) then return end
+							self.Owner:EmitSound("weapons/hks" .. math.random(3) .. ".wav")
 						end,
 					}
 					itemfx[tab.Identify[item.ammo]](self)

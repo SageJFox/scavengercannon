@@ -1,7 +1,5 @@
 --Firemodes largely related to the Counter-Strike series. Can have other games' props defined!
 
-local eject = "brass"
-
 --[[==============================================================================================
 	--C4
 ==============================================================================================]]--
@@ -164,19 +162,10 @@ local eject = "brass"
 						self:AddBarrelSpin(300)
 						self:TakeSubammo(item, 1)
 					end
-					if CLIENT ~= game.SinglePlayer() then
-						timer.Simple(.025, function()
-							if not self.Owner:GetViewModel() then return end
-							local ef = EffectData()
-							local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
-							if attach then
-								ef:SetOrigin(attach.Pos)
-								ef:SetAngles(attach.Ang)
-								ef:SetFlags(75) --velocity
-								util.Effect("EjectBrass_57", ef)
-							end
-						end)
-					end
+					timer.Simple(.025, function()
+						if not IsValid(self) then return end
+						self:EjectShell("EjectBrass_57")
+					end)
 				end
 				local continuefiring = self:ProcessLinking(item) and self:StopChargeOnRelease()
 				if not continuefiring then
@@ -229,19 +218,10 @@ local eject = "brass"
 						self:AddBarrelSpin(300)
 						self:TakeSubammo(item, 1)
 					end
-					if CLIENT ~= game.SinglePlayer() then
-						timer.Simple(.025, function()
-							if not self.Owner:GetViewModel() then return end
-							local ef = EffectData()
-							local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
-							if attach then
-								ef:SetOrigin(attach.Pos)
-								ef:SetAngles(attach.Ang)
-								ef:SetFlags(75) --velocity
-								util.Effect("EjectBrass_762Nato", ef)
-							end
-						end)
-					end
+					timer.Simple(.025, function()
+						if not IsValid(self) then return end
+						self:EjectShell("EjectBrass_762Nato")
+					end)
 				end
 				local continuefiring = self:ProcessLinking(item) and self:StopChargeOnRelease()
 				if not continuefiring then
@@ -294,19 +274,10 @@ local eject = "brass"
 						self:AddBarrelSpin(300)
 						self:TakeSubammo(item, 1)
 					end
-					if CLIENT ~= game.SinglePlayer() then
-						timer.Simple(.025, function()
-							if not self.Owner:GetViewModel() then return end
-							local ef = EffectData()
-							local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
-							if attach then
-								ef:SetOrigin(attach.Pos)
-								ef:SetAngles(attach.Ang)
-								ef:SetFlags(75) --velocity
-								util.Effect("EjectBrass_556", ef)
-							end
-						end)
-					end
+					timer.Simple(.025, function()
+						if not IsValid(self) then return end
+						self:EjectShell("EjectBrass_556")
+					end)
 				end
 				local continuefiring = self:ProcessLinking(item) and self:StopChargeOnRelease()
 				if not continuefiring then
@@ -356,19 +327,11 @@ local eject = "brass"
 							self.Owner:EmitSound("Weapon_AWP.Single")
 							self:AddBarrelSpin(300)
 						end
-						if CLIENT ~= game.SinglePlayer() then
-							timer.Simple(.4, function() 
-								self.Owner:EmitSound("weapons/awp/awp_bolt.wav", 75, 100, 1)
-								local ef = EffectData()
-								local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
-								if attach then
-									ef:SetOrigin(attach.Pos)
-									ef:SetAngles(attach.Ang)
-									ef:SetFlags(75) --velocity
-									util.Effect("EjectBrass_338Mag", ef)
-								end
-							end)
-						end
+						timer.Simple(.4, function()
+							if not IsValid(self) or not IsValid(self.Owner) then return end
+							self.Owner:EmitSound("weapons/awp/awp_bolt.wav", 75, 100, 1)
+							self:EjectShell("EjectBrass_338Mag")
+						end)
 						if SERVER then return self:TakeSubammo(item, 1) end
 					end
 			tab.Cooldown = 1.455
@@ -410,18 +373,10 @@ local eject = "brass"
 						self.Owner:EmitSound("Weapon_Deagle.Single")
 						self:AddBarrelSpin(300)
 					end
-					if CLIENT ~= game.SinglePlayer() then
-						timer.Simple(.025, function()
-							if not self.Owner:GetViewModel() then return end
-							local ef = EffectData()
-							local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
-							if attach then
-								ef:SetOrigin(attach.Pos)
-								ef:SetAngles(attach.Ang)
-								util.Effect("ShellEject", ef)
-							end
-						end)
-					end
+					timer.Simple(.025, function()
+						if not IsValid(self) then return end
+						self:EjectShell("ShellEject", false)
+					end)
 					self.nextfireearly = CurTime() + 0.225
 					self:AddInaccuracy(0.1, 0.2)
 					if SERVER then return self:TakeSubammo(item, 1) end
@@ -463,19 +418,10 @@ local eject = "brass"
 						self.Owner:EmitSound("Weapon_Elite.Single")
 						self:AddBarrelSpin(300)
 					end
-					if CLIENT ~= game.SinglePlayer() then
-						timer.Simple(.025, function()
-							if not self.Owner:GetViewModel() then return end
-							local ef = EffectData()
-							local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
-							if attach then
-								ef:SetOrigin(attach.Pos)
-								ef:SetAngles(attach.Ang)
-								ef:SetFlags(75) --velocity
-								util.Effect("EjectBrass_9mm", ef)
-							end
-						end)
-					end
+					timer.Simple(.025, function()
+						if not IsValid(self) then return end
+						self:EjectShell("EjectBrass_9mm")
+					end)
 					self.nextfireearly = CurTime() + 0.075
 					self:AddInaccuracy(0.1, 0.2)
 					if SERVER then return self:TakeSubammo(item, 1) end
@@ -531,19 +477,10 @@ local eject = "brass"
 						self:AddBarrelSpin(300)
 						self:TakeSubammo(item, 1)
 					end
-					if CLIENT ~= game.SinglePlayer() then
-						timer.Simple(.025, function()
-							if not self.Owner:GetViewModel() then return end
-							local ef = EffectData()
-							local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
-							if attach then
-								ef:SetOrigin(attach.Pos)
-								ef:SetAngles(attach.Ang)
-								ef:SetFlags(75) --velocity
-								util.Effect("EjectBrass_556", ef)
-							end
-						end)
-					end
+					timer.Simple(.025, function()
+						if not IsValid(self) then return end
+						self:EjectShell("EjectBrass_556")
+					end)
 				end
 				local continuefiring = self:ProcessLinking(item) and self:StopChargeOnRelease()
 				if not continuefiring then
@@ -593,15 +530,8 @@ local eject = "brass"
 					end
 					if CLIENT ~= game.SinglePlayer() then
 						timer.Simple(.025, function()
-							if not self.Owner:GetViewModel() then return end
-							local ef = EffectData()
-							local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
-							if attach then
-								ef:SetOrigin(attach.Pos)
-								ef:SetAngles(attach.Ang)
-								ef:SetFlags(75) --velocity
-								util.Effect("EjectBrass_57", ef)
-							end
+							if not IsValid(self) then return end
+							self:EjectShell("EjectBrass_57")
 						end)
 					end
 					self.nextfireearly = CurTime() + 0.15
@@ -644,19 +574,10 @@ local eject = "brass"
 						self:AddBarrelSpin(300)
 						self:TakeSubammo(item, 1)
 					end
-					if CLIENT ~= game.SinglePlayer() then
-						timer.Simple(.025, function()
-							if not self.Owner:GetViewModel() then return end
-							local ef = EffectData()
-							local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
-							if attach then
-								ef:SetOrigin(attach.Pos)
-								ef:SetAngles(attach.Ang)
-								ef:SetFlags(75) --velocity
-								util.Effect("EjectBrass_556", ef)
-							end
-						end)
-					end
+					timer.Simple(.025, function()
+						if not IsValid(self) then return end
+						self:EjectShell("EjectBrass_556")
+					end)
 				end
 				local continuefiring = self:ProcessLinking(item) and self:StopChargeOnRelease()
 				if not continuefiring then
@@ -704,19 +625,10 @@ local eject = "brass"
 						self.Owner:EmitSound("Weapon_Glock.Single")
 						self:AddBarrelSpin(300)
 					end
-					if CLIENT ~= game.SinglePlayer() then
-						timer.Simple(.025, function()
-							if not self.Owner:GetViewModel() then return end
-							local ef = EffectData()
-							local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
-							if attach then
-								ef:SetOrigin(attach.Pos)
-								ef:SetAngles(attach.Ang)
-								ef:SetFlags(75) --velocity
-								util.Effect("EjectBrass_9mm", ef)
-							end
-						end)
-					end
+					timer.Simple(.025, function()
+						if not IsValid(self) then return end
+						self:EjectShell("EjectBrass_9mm")
+					end)
 					self.nextfireearly = CurTime() + 0.15
 					self:AddInaccuracy(0.1, 0.2)
 					if SERVER then return self:TakeSubammo(item, 1) end
@@ -751,20 +663,10 @@ local eject = "brass"
 					end
 					self:MuzzleFlash2()
 					self.Owner:SetAnimation(PLAYER_ATTACK1)
-					if CLIENT ~= game.SinglePlayer() then
-						timer.Simple(.5, function() 
-							if IsValid(self) then
-								local ef = EffectData()
-								local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
-								if attach then
-									ef:SetOrigin(attach.Pos)
-									ef:SetAngles(attach.Ang)
-									ef:SetFlags(75) --velocity
-									util.Effect("EjectBrass_12Gauge", ef)
-								end
-							end
-						end)
-					end
+					timer.Simple(.5, function() 
+						if not IsValid(self) then return end
+						self:EjectShell("EjectBrass_12Gauge")
+					end)
 					if SERVER then
 						self.Owner:EmitSound("Weapon_M3.Single")
 						return self:TakeSubammo(item, 1)
@@ -808,19 +710,10 @@ local eject = "brass"
 						self:AddBarrelSpin(300)
 						self:TakeSubammo(item, 1)
 					end
-					if CLIENT ~= game.SinglePlayer() then
-						timer.Simple(.025, function()
-							if not self.Owner:GetViewModel() then return end
-							local ef = EffectData()
-							local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
-							if attach then
-								ef:SetOrigin(attach.Pos)
-								ef:SetAngles(attach.Ang)
-								ef:SetFlags(75) --velocity
-								util.Effect("EjectBrass_556", ef)
-							end
-						end)
-					end
+					timer.Simple(.025, function()
+						if not IsValid(self) then return end
+						self:EjectShell("EjectBrass_556")
+					end)
 				end
 				local continuefiring = self:ProcessLinking(item) and self:StopChargeOnRelease()
 				if not continuefiring then
@@ -873,19 +766,10 @@ local eject = "brass"
 						self:AddBarrelSpin(300)
 						self:TakeSubammo(item, 1)
 					end
-					if CLIENT ~= game.SinglePlayer() then
-						timer.Simple(.025, function()
-							if not self.Owner:GetViewModel() then return end
-							local ef = EffectData()
-							local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
-							if attach then
-								ef:SetOrigin(attach.Pos)
-								ef:SetAngles(attach.Ang)
-								ef:SetFlags(75) --velocity
-								util.Effect("EjectBrass_556", ef)
-							end
-						end)
-					end
+					timer.Simple(.025, function()
+						if not IsValid(self) then return end
+						self:EjectShell("EjectBrass_556")
+					end)
 				end
 				local continuefiring = self:ProcessLinking(item) and self:StopChargeOnRelease()
 				if not continuefiring then
@@ -940,19 +824,10 @@ local eject = "brass"
 						self:SetPanelPoseInstant(0.25, 2)
 						self:TakeSubammo(item, 1)
 					end
-					if CLIENT ~= game.SinglePlayer() then
-						timer.Simple(.025, function()
-							if not self.Owner:GetViewModel() then return end
-							local ef = EffectData()
-							local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
-							if attach then
-								ef:SetOrigin(attach.Pos)
-								ef:SetAngles(attach.Ang)
-								ef:SetFlags(85) --velocity
-								util.Effect("EjectBrass_556", ef)
-							end
-						end)
-					end
+					timer.Simple(.025, function()
+						if not IsValid(self) then return end
+						self:EjectShell("EjectBrass_556", 85)
+					end)
 				end
 				local continuefiring = self:ProcessLinking(item) and self:StopChargeOnRelease()
 				if not continuefiring then
@@ -1007,19 +882,10 @@ local eject = "brass"
 						self:AddBarrelSpin(300)
 						self:TakeSubammo(item, 1)
 					end
-					if CLIENT ~= game.SinglePlayer() then
-						timer.Simple(.025, function()
-							if not self.Owner:GetViewModel() then return end
-							local ef = EffectData()
-							local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
-							if attach then
-								ef:SetOrigin(attach.Pos)
-								ef:SetAngles(attach.Ang)
-								ef:SetFlags(75) --velocity
-								util.Effect("EjectBrass_9mm", ef)
-							end
-						end)
-					end
+					timer.Simple(.025, function()
+						if not IsValid(self) then return end
+						self:EjectShell("EjectBrass_9mm")
+					end)
 				end
 				local continuefiring = self:ProcessLinking(item) and self:StopChargeOnRelease()
 				if not continuefiring then
@@ -1074,19 +940,10 @@ local eject = "brass"
 						self:AddBarrelSpin(300)
 						self:TakeSubammo(item, 1)
 					end
-					if CLIENT ~= game.SinglePlayer() then
-						timer.Simple(.025, function()
-							if not self.Owner:GetViewModel() then return end
-							local ef = EffectData()
-							local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
-							if attach then
-								ef:SetOrigin(attach.Pos)
-								ef:SetAngles(attach.Ang)
-								ef:SetFlags(75) --velocity
-								util.Effect("EjectBrass_9mm", ef)
-							end
-						end)
-					end
+					timer.Simple(.025, function()
+						if not IsValid(self) then return end
+						self:EjectShell("EjectBrass_9mm")
+					end)
 				end
 				local continuefiring = self:ProcessLinking(item) and self:StopChargeOnRelease()
 				if not continuefiring then
@@ -1138,19 +995,10 @@ local eject = "brass"
 						self.Owner:EmitSound("Weapon_P228.Single")
 						self:AddBarrelSpin(300)
 					end
-					if CLIENT ~= game.SinglePlayer() then
-						timer.Simple(.025, function()
-							if not self.Owner:GetViewModel() then return end
-							local ef = EffectData()
-							local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
-							if attach then
-								ef:SetOrigin(attach.Pos)
-								ef:SetAngles(attach.Ang)
-								ef:SetFlags(75) --velocity
-								util.Effect("EjectBrass_9mm", ef)
-							end
-						end)
-					end
+					timer.Simple(.025, function()
+						if not IsValid(self) then return end
+						self:EjectShell("EjectBrass_9mm")
+					end)
 					self.nextfireearly = CurTime() + 0.15
 					self:AddInaccuracy(0.1, 0.2)
 					if SERVER then return self:TakeSubammo(item, 1) end
@@ -1192,19 +1040,12 @@ local eject = "brass"
 							self.Owner:EmitSound("Weapon_Scout.Single")
 							self:AddBarrelSpin(300)
 						end
-						if CLIENT ~= game.SinglePlayer() then
-							timer.Simple(.5, function()
-								self.Owner:EmitSound("weapons/scout/scout_bolt.wav", 75, 100, 1)
-								local ef = EffectData()
-								local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
-								if attach then
-									ef:SetOrigin(attach.Pos)
-									ef:SetAngles(attach.Ang)
-									ef:SetFlags(75) --velocity
-									util.Effect("EjectBrass_762Nato", ef)
-								end
-							end)
-						end
+						timer.Simple(.5, function()
+							if not IsValid(self) then return end
+							self:EjectShell("EjectBrass_762Nato")
+							if not IsValid(self.Owner) or CLIENT then return end
+							self.Owner:EmitSound("weapons/scout/scout_bolt.wav", 75, 100, 1)
+						end)
 						if SERVER then return self:TakeSubammo(item, 1) end
 					end
 			tab.Cooldown = 1.25
@@ -1247,19 +1088,10 @@ local eject = "brass"
 						self:AddBarrelSpin(300)
 						self:TakeSubammo(item, 1)
 					end
-					if CLIENT ~= game.SinglePlayer() then
-						timer.Simple(.025, function()
-							if not self.Owner:GetViewModel() then return end
-							local ef = EffectData()
-							local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
-							if attach then
-								ef:SetOrigin(attach.Pos)
-								ef:SetAngles(attach.Ang)
-								ef:SetFlags(75) --velocity
-								util.Effect("EjectBrass_556", ef)
-							end
-						end)
-					end
+					timer.Simple(.025, function()
+						if not IsValid(self) then return end
+						self:EjectShell("EjectBrass_556")
+					end)
 				end
 				local continuefiring = self:ProcessLinking(item) and self:StopChargeOnRelease()
 				if not continuefiring then
@@ -1315,19 +1147,10 @@ local eject = "brass"
 						self:AddBarrelSpin(300)
 						self:TakeSubammo(item, 1)
 					end
-					if CLIENT ~= game.SinglePlayer() then
-						timer.Simple(.025, function()
-							if not self.Owner:GetViewModel() then return end
-							local ef = EffectData()
-							local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
-							if attach then
-								ef:SetOrigin(attach.Pos)
-								ef:SetAngles(attach.Ang)
-								ef:SetFlags(75) --velocity
-								util.Effect("EjectBrass_556", ef)
-							end
-						end)
-					end
+					timer.Simple(.025, function()
+						if not IsValid(self) then return end
+						self:EjectShell("EjectBrass_556")
+					end)
 				end
 				local continuefiring = self:ProcessLinking(item) and self:StopChargeOnRelease()
 				if not continuefiring then
@@ -1380,19 +1203,10 @@ local eject = "brass"
 						self:AddBarrelSpin(300)
 						self:TakeSubammo(item, 1)
 					end
-					if CLIENT ~= game.SinglePlayer() then
-						timer.Simple(.025, function()
-							if not self.Owner:GetViewModel() then return end
-							local ef = EffectData()
-							local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
-							if attach then
-								ef:SetOrigin(attach.Pos)
-								ef:SetAngles(attach.Ang)
-								ef:SetFlags(75) --velocity
-								util.Effect("EjectBrass_9mm", ef)
-							end
-						end)
-					end
+					timer.Simple(.025, function()
+						if not IsValid(self) then return end
+						self:EjectShell("EjectBrass_9mm")
+					end)
 				end
 				local continuefiring = self:ProcessLinking(item) and self:StopChargeOnRelease()
 				if not continuefiring then
@@ -1445,19 +1259,10 @@ local eject = "brass"
 						self:AddBarrelSpin(300)
 						self:TakeSubammo(item, 1)
 					end
-					if CLIENT ~= game.SinglePlayer() then
-						timer.Simple(.025, function()
-							if not self.Owner:GetViewModel() then return end
-							local ef = EffectData()
-							local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
-							if attach then
-								ef:SetOrigin(attach.Pos)
-								ef:SetAngles(attach.Ang)
-								ef:SetFlags(75) --velocity
-								util.Effect("EjectBrass_9mm", ef)
-							end
-						end)
-					end
+					timer.Simple(.025, function()
+						if not IsValid(self) then return end
+						self:EjectShell("EjectBrass_9mm")
+					end)
 				end
 				local continuefiring = self:ProcessLinking(item) and self:StopChargeOnRelease()
 				if not continuefiring then
@@ -1505,19 +1310,10 @@ local eject = "brass"
 						self.Owner:EmitSound("Weapon_USP.Single")
 						self:AddBarrelSpin(300)
 					end
-					if CLIENT ~= game.SinglePlayer() then
-						timer.Simple(.025, function()
-							if not self.Owner:GetViewModel() then return end
-							local ef = EffectData()
-							local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
-							if attach then
-								ef:SetOrigin(attach.Pos)
-								ef:SetAngles(attach.Ang)
-								ef:SetFlags(75) --velocity
-								util.Effect("EjectBrass_9mm", ef)
-							end
-						end)
-					end
+					timer.Simple(.025, function()
+						if not IsValid(self) then return end
+						self:EjectShell("EjectBrass_9mm")
+					end)
 					self.nextfireearly = CurTime() + 0.15
 					self:AddInaccuracy(0.1, 0.2)
 					if SERVER then return self:TakeSubammo(item, 1) end
@@ -1555,25 +1351,16 @@ local eject = "brass"
 						self.Owner:EmitSound(item.ammo == "models/w_silencer.mdl" and "weapons/pl_gun2.wav" or "Weapon_USP.SilencedShot")
 						self:AddBarrelSpin(300)
 					end
-					if CLIENT ~= game.SinglePlayer() then
-						if item.ammo == "models/w_silencer.mdl" then --HL:S
-							timer.Simple(.025, function()
-								if not IsValid(self) then return end
-								hl1shelleject(self)
-							end)
-						else
-							timer.Simple(.025, function()
-								if not self.Owner:GetViewModel() then return end
-								local ef = EffectData()
-								local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
-								if attach then
-									ef:SetOrigin(attach.Pos)
-									ef:SetAngles(attach.Ang)
-									ef:SetFlags(75) --velocity
-									util.Effect("EjectBrass_9mm", ef)
-								end
-							end)
-						end
+					if item.ammo == "models/w_silencer.mdl" then --HL:S
+						timer.Simple(.025, function()
+							if not IsValid(self) then return end
+							self:EjectShellHL1()
+						end)
+					else
+						timer.Simple(.025, function()
+							if not IsValid(self) then return end
+							self:EjectShell("EjectBrass_9mm")
+						end)
 					end
 					self.nextfireearly = CurTime() + 0.15
 					self:AddInaccuracy(0.1, 0.2)
@@ -1604,6 +1391,7 @@ local eject = "brass"
 					bullet.Damage = 20
 					bullet.TracerName = "ef_scav_tr_b"
 			tab.FireFunc = function(self, item)
+					if not IsValid(self.Owner) then return end
 					self.Owner:ScavViewPunch(Angle(-5, math.Rand(-0.2, 0.2), 0), 0.5)
 					bullet.Src = self.Owner:GetShootPos()
 					bullet.Dir = self:GetAimVector()
@@ -1615,19 +1403,10 @@ local eject = "brass"
 					if SERVER then
 						self.Owner:EmitSound("Weapon_XM1014.Single")
 					end
-					if CLIENT ~= game.SinglePlayer() then
-						timer.Simple(.025, function()
-							if not self.Owner:GetViewModel() then return end
-							local ef = EffectData()
-							local attach = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment(eject))
-							if attach then
-								ef:SetOrigin(attach.Pos)
-								ef:SetAngles(attach.Ang)
-								ef:SetFlags(75) --velocity
-								util.Effect("EjectBrass_12Gauge", ef)
-							end
-						end)
-					end
+					timer.Simple(.025, function()
+						if not IsValid(self) then return end
+						self:EjectShell("EjectBrass_12Gauge")
+					end)
 					self.nextfireearly = CurTime() + 0.25
 					if SERVER then return self:TakeSubammo(item, 1) end
 				end
@@ -1681,7 +1460,7 @@ local eject = "brass"
 				end
 				tab.FireFunc = function(self, item)
 					item.shotsleft = 3
-					self:SetChargeAttack(ScavData.models[self.inv.items[1].ammo].ChargeAttack, item)
+					self:SetChargeAttack(ScavData.models[item.ammo].ChargeAttack, item)
 					return false
 				end
 			tab.Cooldown = 0
