@@ -53,25 +53,31 @@ local eject = "brass"
 					local shootfx = {
 						[0] = function(self)
 							if SERVER then self.Owner:EmitSound("npc/turret_floor/shoot" .. math.random(1, 3) .. ".wav") end
+							self:MuzzleFlash2(2)
 							bullet.TracerName = "AR2Tracer"
 						end,
 						[1] = function(self)
 							self.Owner:EmitSound("weapons/sentry_shoot.wav")
+							self:MuzzleFlash2()
 						end,
 						[2] = function(self)
 							self.Owner:EmitSound("weapons/sentry_shoot2.wav")
+							self:MuzzleFlash2()
 						end,
 						[3] = function(self)
 							if SERVER then self.Owner:EmitSound("npc/turret_floor/shoot" .. math.random(1, 3) .. ".wav") end
 							bullet.TracerName = "AR2Tracer"
+							self:MuzzleFlash2(2)
 						end,
 						[4] = function(self)
 							if SERVER then self.Owner:EmitSound("turret/tu_fire1.wav", 75, 160, 1) end
 							bullet.TracerName = "Tracer"
+							self:MuzzleFlash2()
 						end,
 						[5] = function(self)
 							if SERVER then self.Owner:EmitSound("weapons/3d/turret/mgsingle.wav", 75, 160, 1) end
 							bullet.TracerName = "Tracer"
+							self:MuzzleFlash2()
 						end,
 					}
 					shootfx[tab.Identify[item.ammo]](self)
