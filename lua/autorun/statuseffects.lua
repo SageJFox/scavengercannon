@@ -812,12 +812,12 @@ local STATUS = {}
 
 
 	function STATUS_ENT:Extinguish()
-		if self.StatusTable then
-			for k, v in ipairs(self.StatusTable) do
-				if v.Name == "Burning" then
-					self:InflictStatusEffect("Burning", CurTime() - v.EndTime, 0)
-				end
-			end
+		if not self.StatusTable then return SERVER and self:ExtinguishOld() end
+
+		for _, v in ipairs(self.StatusTable) do
+			if v.Name ~= "Burning" then continue end
+
+			self:InflictStatusEffect("Burning", CurTime() - v.EndTime, 0)
 		end
 	end
 		
