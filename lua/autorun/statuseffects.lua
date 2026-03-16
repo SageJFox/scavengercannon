@@ -64,10 +64,12 @@ hook.Add("Think","StatusThink", function()
 					local statpos = (j - (#k.Owner.StatusTable + 1) / 2) * size * 2
 					local part = emitter:Add("hud/status/" .. k.Name, emitter:GetPos() + Vector(vec.x * statpos, vec.y * statpos, k.Owner:OBBMaxs().z + size * 2))
 					if part then
-						part:SetDieTime(.01)
+						part:SetDieTime(0.025)
 						part:SetStartAlpha(25)
+						part:SetEndAlpha(25)
 						part:SetStartSize(size)
 						part:SetEndSize(size)
+						part:SetVelocity(v.Owner:GetVelocity())
 					end
 					emitter:Finish()
 				end
