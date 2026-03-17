@@ -1265,6 +1265,9 @@ local STATUS = {}
 			dmg:SetDamageType(DMG_RADIATION)
 			local nearby = ents.FindInSphere(self.Owner:GetPos(), 300)
 			for _, v in ipairs(nearby) do
+				if not IsValid(v) then continue end
+				--ting ting ting ting ting ting
+				if string.find(v:GetClass(), "func_") then continue end
 				if v ~= self.Owner then
 					local vpos = v:GetPos()
 					local radpos = self.Owner:GetPos()

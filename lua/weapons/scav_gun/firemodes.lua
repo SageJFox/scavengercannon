@@ -3615,7 +3615,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 							end
 						end
 						--make a spot on the world for us to make radioactive
-						if not isspot and (not IsValid(ent) or ent:IsWorld()) then
+						if not isspot and (not IsValid(ent) or ent:IsWorld()) and i == 1 then
 							ent = ents.Create("prop_physics")
 							if IsValid(ent) then
 								isspot = true
@@ -3630,12 +3630,22 @@ PrecacheParticleSystem("scav_exp_plasma")
 								timer.Simple(0, function()
 									if not IsValid(ent) then return end
 									ent:InflictStatusEffect("Radiation", 5, 3, self.Owner)
+									--prevent other statuses from affecting the spot
+									hook.Add("OnStatusInflicted", ent, function(_, t)
+										if t.ent ~= ent then return end
+										if t.Name ~= "Radiation" then return true end
+									end)
+									--don't let it get moved by physgun
+									hook.Add("PhysgunPickup", ent, function(_, ply, e)
+										if ent == e then return false end
+									end)
 								end)
 							end
 						end
+						--note that this explicitly could be our previously created world spot
 						if IsValid(ent) and not ent:IsWorld() then
 							if not ent:IsFriendlyToPlayer(self.Owner) then
-								ent:InflictStatusEffect("Radiation", 10, 3, self.Owner)
+								ent:InflictStatusEffect("Radiation", 10 / i, 3, self.Owner)
 								local dmg = tab.dmginfo
 								dmg:SetAttacker(self.Owner)
 								dmg:SetInflictor(self)
@@ -3645,7 +3655,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 								dmg:SetDamageType(DMG_RADIATION)
 								ent:TakeDamageInfo(dmg)
 							end
-							ParticleEffect("scav_exp_rad", tr.HitPos, Angle(0, 0, 0), Entity(0))
+							ParticleEffect("scav_exp_rad", tr.HitPos, angle_zero, Entity(0))
 							table.insert(tracep.filter, ent)
 							if not IsValid(tr.Entity) or (tr.Entity:GetClass() == "npc_strider") then
 								break
@@ -3660,7 +3670,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 						tr = util.TraceHull(tracep)
 						local ent = tr.Entity
 						if IsValid(ent) and not ent:IsWorld() then
-							ParticleEffect("scav_exp_rad", tr.HitPos, Angle(0, 0, 0), Entity(0))
+							ParticleEffect("scav_exp_rad", tr.HitPos, angle_zero, Entity(0))
 							table.insert(tracep.filter, ent)
 							if (tr.Entity:GetClass() == "npc_strider") then
 								break
