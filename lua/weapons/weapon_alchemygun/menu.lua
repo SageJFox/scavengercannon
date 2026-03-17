@@ -1,12 +1,16 @@
 AddCSLuaFile()
 
 local SWEP = SWEP or weapons.GetStored("weapon_alchemygun")
+
+
+local colorblind = GetConVar("cl_scav_colorblindmode"):GetBool()
+
 local color_red_base = Color(255,0,0,255)
 local color_red_colorblind = Color(190,76,0,255)
-local color_red = color_red_base
+local color_red = colorblind and color_red_colorblind or color_red_base
 local color_green_base = Color(0,255,0,255)
 local color_green_colorblind = Color(124,218,255,255)
-local color_green = color_green_base
+local color_green = colorblind and color_green_colorblind or color_green_base
 
 cvars.AddChangeCallback("cl_scav_colorblindmode", function(name, oldVal, newVal)
 	if tobool(newVal) then

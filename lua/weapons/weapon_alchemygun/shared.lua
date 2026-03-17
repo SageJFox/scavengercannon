@@ -82,7 +82,6 @@ function SWEP:Initialize()
 		self:CallOnClient("Initialize")
 	end
 	if self.Menu == nil and CLIENT then
-		print("no menu, creating!")
 		self.Menu = vgui.Create("alchmenu")
 		self.Menu:SetSkin("sg_menu")
 		self.Menu:SetVisible(false)

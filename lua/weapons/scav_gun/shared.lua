@@ -1375,18 +1375,20 @@ if CLIENT then
 	surface.CreateFont("ScavScreenFontSmX", {font = "Trebuchet MS", size = 24, weight = 900, antialiasing = true, additive = false, outlined = false, blur = false})
 	surface.CreateFont("ScavScreenFontSmXX", {font = "Trebuchet MS", size = 20, weight = 900, antialiasing = true, additive = false, outlined = false, blur = false})
 
+	local colorblind = GetConVar("cl_scav_colorblindmode"):GetBool()
+
 	alpha = 255
 	greenscr_base = Color(108, 172, 24, alpha)
 	greenscr_colorblind = Color(124, 218, 255, alpha)
-	greenscr = greenscr_base
+	greenscr = colorblind and greenscr_colorblind or greenscr_base
 
 	yellowscr_base = Color(172, 172, 24, alpha)
 	yellowscr_colorblind = Color(172, 172, 24, alpha)
-	yellowscr = yellowscr_base
+	yellowscr = colorblind and yellowscr_colorblind or yellowscr_base
 
 	redscr_base = Color(172, 24, 24, alpha)
 	redscr_colorblind = Color(190, 76, 0, alpha)
-	redscr = redscr_base
+	redscr = colorblind and redscr_colorblind or redscr_base
 
 	cvars.AddChangeCallback("cl_scav_colorblindmode", function(convar, oldVal, newVal)
 		if tobool(newVal) then
