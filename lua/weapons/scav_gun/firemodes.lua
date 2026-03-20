@@ -177,6 +177,13 @@ end
 				--DoD:S
 				ScavData.CollectFuncs["models/weapons/w_bazooka.mdl"] = function(self, ent) return {{"models/weapons/w_bazooka_rocket.mdl", 1, 0}} end --1 rocket from Bazooka
 				ScavData.CollectFuncs["models/weapons/w_pschreck.mdl"] = function(self, ent) return {{"models/weapons/w_panzerschreck_rocket.mdl", 1, 0}} end --1 rocket from Panzer
+				--BMS
+				ScavData.CollectFuncs["models/weapons/w_rpg.mdl"] = function(self, ent) return {{"models/weapons/w_rpg_projectile.mdl", 3, 0}} end
+				ScavData.CollectFuncs["models/weapons/w_rpg_mp.mdl"] = ScavData.CollectFuncs["models/weapons/w_rpg.mdl"]
+				ScavData.CollectFuncs["models/weapons/w_rpgammo.mdl"] = function(self, ent) return {{"models/weapons/w_rpg_projectile.mdl", 1, 0}} end
+				ScavData.CollectFuncs["models/weapons/w_rpgammo_mp.mdl"] = ScavData.CollectFuncs["models/weapons/w_rpgammo.mdl"]
+				ScavData.CollectFuncs["models/props_marines/tow_missile_system.mdl"] = ScavData.CollectFuncs["models/weapons/w_rpg.mdl"]
+				ScavData.CollectFuncs["models/props_marines/tow_missile_system_mp.mdl"] = ScavData.CollectFuncs["models/weapons/w_rpg.mdl"]
 			end
 			tab.Cooldown = 1
 		ScavData.RegisterFiremode(tab, "models/weapons/w_missile.mdl")
@@ -195,6 +202,8 @@ end
 		ScavData.RegisterFiremode(tab, "models/rpgrocket.mdl")
 		--ASW
 		ScavData.RegisterFiremode(tab, "models/swarm/minirocket/minirocket.mdl")
+		--BMS
+		ScavData.RegisterFiremode(tab, "models/weapons/w_rpg_projectile.mdl")
 
 --[[==============================================================================================
 	--Ice Beam
@@ -409,6 +418,10 @@ end
 				ScavData.CollectFuncs["models/weapons/w_bow_black.mdl"] = ScavData.CollectFuncs["models/weapons/w_bow.mdl"]
 				ScavData.CollectFuncs["models/weapons/w_xbow.mdl"] = ScavData.CollectFuncs["models/weapons/w_bow.mdl"]
 				ScavData.CollectFuncs["models/weapons/w_axe_proj.mdl"] = function(self, ent) return {{"models/weapons/w_axe.mdl", 1, 0}} end --1 unscuffed axe model
+				--BMS
+				ScavData.CollectFuncs["models/weapons/w_crossbow_mp.mdl"] = function(self, ent) return {{"models/weapons/crossbow_bolt.mdl", 1, 0}} end
+				ScavData.CollectFuncs["models/weapons/w_crossbow_clip.mdl"] = function(self, ent) return {{"models/weapons/crossbow_bolt.mdl", 5, 0}} end
+				ScavData.CollectFuncs["models/weapons/w_crossbow_clip_mp.mdl"] = ScavData.CollectFuncs["models/weapons/w_crossbow_clip.mdl"]
 			else
 				tab.fov = 10
 			end
@@ -480,6 +493,8 @@ end
 		ScavData.RegisterFiremode(tab, "models/weapons/w_axe.mdl")
 		ScavData.RegisterFiremode(tab, "models/weapons/w_knife.mdl")
 		ScavData.RegisterFiremode(tab, "models/weapons/w_machete.mdl")
+		--BMS
+		ScavData.RegisterFiremode(tab, "models/weapons/crossbow_bolt.mdl")
 
 --[[==============================================================================================
 	--Scav Grenade
@@ -555,6 +570,8 @@ end
 				--ASW
 				ScavData.CollectFuncs["models/swarm/grenades/grenadebox.mdl"] = function(self, ent) return {{"models/swarm/grenades/handgrenadeprojectile.mdl", 5, 0}} end
 				ScavData.CollectFuncs["models/weapons/grenadelauncher/grenadelauncher.mdl"] = function(self, ent) return {{"models/swarm/grenades/handgrenadeprojectile.mdl", 6, 0}} end
+				--BMS
+				ScavData.CollectFuncs["models/props_canteen/soda_machine.mdl"] = function(self, ent) return {{"models/props_junk/drinkcan01.mdl", 9, math.random(0, 8)}} end
 			end
 			tab.Cooldown = 0.75
 		ScavData.RegisterFiremode(tab, "models/props_junk/popcan01a.mdl")	
@@ -583,6 +600,9 @@ end
 		ScavData.RegisterFiremode(tab, "models/props_junk/garbage_beercan01a_fullsheet.mdl")
 		--ASW
 		ScavData.RegisterFiremode(tab, "models/swarm/grenades/handgrenadeprojectile.mdl")
+		--BMS
+		ScavData.RegisterFiremode(tab, "models/props_junk/drinkcan01.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/popcan_wormjuice.mdl")
 
 --[[==============================================================================================
 	--Payload Gun
@@ -636,6 +656,10 @@ end
 		ScavData.RegisterFiremode(tab, "models/props_trainyard/cart_bomb_separate.mdl")
 		--ASW
 		ScavData.RegisterFiremode(tab, "models/swarmprops/techdeco/rocketmesh/rocketmesh_new.mdl")
+		--BMS
+		ScavData.RegisterFiremode(tab, "models/props_am/crystal_cart.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_xen/xen_cart_w.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_xen/xen_cart_w_nohandle.mdl")
 
 --[[==============================================================================================
 	--Proximity Mine
@@ -725,6 +749,12 @@ end
 			tab.Level = 6
 			tab.MaxAmmo = 10
 			if SERVER then
+				local defaultOrientation = {	
+					["models/w_tripmine.mdl"] = true,
+					["models/weapons/w_tripmine.mdl"] = true,
+					["models/weapons/w_tripmine_mp.mdl"] = true,
+					["models/props_marines/triplaser.mdl"] = true,
+				}
 				tab.FireFunc = function(self, item)
 					local tr = self.Owner:GetEyeTraceNoCursor()
 						if ((tr.HitPos - tr.StartPos):Length() > 64) or tr.Entity:GetClass() == "scav_tripmine" or (not tr.HitWorld and IsValid(tr.Entity) and (tr.Entity:GetMoveType() ~= MOVETYPE_VPHYSICS and tr.Entity:GetMoveType() ~= MOVETYPE_NONE and tr.Entity:GetMoveType() ~= MOVETYPE_PUSH)) then
@@ -747,10 +777,12 @@ end
 							proj:SetParent(tr.Entity)
 						end
 						proj:SetSkin(item.data)
-						if item.ammo == "models/w_tripmine.mdl" then
-							local mins, maxs = proj:GetModelBounds()
-							proj:PhysicsInitBox(mins, maxs, "weapon")
-							proj:SetPos(tr.HitPos + tr.HitNormal * 8)
+						if defaultOrientation[item.ammo] then
+							if item.ammo == "models/w_tripmine.mdl" then
+								local mins, maxs = proj:GetModelBounds()
+								proj:PhysicsInitBox(mins, maxs, "weapon")
+								proj:SetPos(tr.HitPos + tr.HitNormal * 8)
+							end
 							proj:SetAngles(tr.HitNormal:Angle())
 						end
 						self.Owner:EmitSound("npc/roller/blade_cut.wav")
@@ -769,6 +801,10 @@ end
 		ScavData.RegisterFiremode(tab, "models/weapons/w_slam.mdl")
 		--HL:S
 		ScavData.RegisterFiremode(tab, "models/w_tripmine.mdl")
+		--BMS
+		ScavData.RegisterFiremode(tab, "models/weapons/w_tripmine.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_tripmine_mp.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_marines/triplaser.mdl")
 
 --[[==============================================================================================
 	--Proximity, Tripmine, and Hopper screen adjust
@@ -856,6 +892,10 @@ end
 				ScavData.CollectFuncs["models/elpaso/cactus1.mdl"] = ScavData.CollectFuncs["models/props_foliage/cactus01.mdl"]
 				ScavData.CollectFuncs["models/elpaso/cactus2.mdl"] = ScavData.CollectFuncs["models/props_foliage/cactus01.mdl"]
 				ScavData.CollectFuncs["models/elpaso/cactus3.mdl"] = ScavData.CollectFuncs["models/props_foliage/cactus01.mdl"]
+				--BMS
+				ScavData.CollectFuncs["models/props_desert/desert_cactus01.mdl"] = ScavData.CollectFuncs["models/props_foliage/cactus01.mdl"]
+				ScavData.CollectFuncs["models/props_desert/desert_cactus01_large.mdl"] = ScavData.CollectFuncs["models/props_foliage/cactus01.mdl"]
+				ScavData.CollectFuncs["models/props_desert/desert_cactus01_small.mdl"] = ScavData.CollectFuncs["models/props_foliage/cactus01.mdl"]
 			end
 			tab.Cooldown = 0.075
 		ScavData.RegisterFiremode(tab, "models/scav/nail.mdl")
@@ -974,6 +1014,10 @@ end
 		ScavData.RegisterFiremode(tab, "models/props_signs/raisedbillboard.mdl")
 		--ASW
 		ScavData.RegisterFiremode(tab, "models/swarm/shotgun/shotgunpellet.mdl")
+		--BMS
+		ScavData.RegisterFiremode(tab, "models/props_vehicles/abrams.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_vehicles/abrams_phys.mdl")
+		ScavData.RegisterFiremode(tab, "models/gibs/m1a1_abrams_gibs/m1_gib_turret.mdl")
 
 --[[==============================================================================================
 	--Electricity beam
@@ -1048,6 +1092,16 @@ end
 		ScavData.RegisterFiremode(tab, "models/props/machinery/generators/generator02.mdl", SCAV_SHORT_MAX)
 		ScavData.RegisterFiremode(tab, "models/props/machinery/generators/generator03.mdl", SCAV_SHORT_MAX)
 		ScavData.RegisterFiremode(tab, "models/props/machinery/generators/generator04.mdl", SCAV_SHORT_MAX)
+		--BMS
+		ScavData.RegisterFiremode(tab, "models/props_industrial/gasworks_transformer.mdl", SCAV_SHORT_MAX)
+		ScavData.RegisterFiremode(tab, "models/props_industrial/transformer_single.mdl", 15)
+		ScavData.RegisterFiremode(tab, "models/props_powerup/power_up_transformer_base.mdl", SCAV_SHORT_MAX)
+		ScavData.RegisterFiremode(tab, "models/props_powerup/power_up_transformer_base_flip.mdl", SCAV_SHORT_MAX)
+		ScavData.RegisterFiremode(tab, "models/props_powerup/power_up_transformer_bushing_hv.mdl", 15)
+		ScavData.RegisterFiremode(tab, "models/props_powerup/power_up_transformer_bushing_lv.mdl", 15)
+		ScavData.RegisterFiremode(tab, "models/props_powerup/power_up_transformer_bushing_tower.mdl", 15)
+		ScavData.RegisterFiremode(tab, "models/props_powerup/power_up_transformer_bushing_tower_short.mdl", 15)
+		ScavData.RegisterFiremode(tab, "models/props_powerup/power_up_transformer_relay_box.mdl", 15)
 
 --[[==============================================================================================
 	--Hyper beam
@@ -1473,6 +1527,9 @@ end
 		ScavData.RegisterFiremode(tab, "models/props_junk/garbage_cellphone01a.mdl", 6)
 		--Portal 2
 		ScavData.RegisterFiremode(tab, "models/props_office/office_phone.mdl", 10)
+		--BMS
+		ScavData.RegisterFiremode(tab, "models/props_generic/phone01_base.mdl", 6)
+		ScavData.RegisterFiremode(tab, "models/props_generic/phone01_headset.mdl", 4)
 
 --[[==============================================================================================
 	--Supersonic Shockwave
@@ -1594,6 +1651,20 @@ end
 		ScavData.RegisterFiremode(tab, "models/props_underground/old_speaker_big.mdl", 10)
 		--FoF
 		ScavData.RegisterFiremode(tab, "models/monastery/bell_large.mdl", 10)
+		--BMS
+		ScavData.RegisterFiremode(tab, "models/xenians/houndeye.mdl", 10)
+		ScavData.RegisterFiremode(tab, "models/xenians/houndeye_knockback.mdl", 10)
+		ScavData.RegisterFiremode(tab, "models/props_generic/loudspeaker.mdl", 10)
+		ScavData.RegisterFiremode(tab, "models/props_generic/loudspeaker001.mdl", 10)
+		ScavData.RegisterFiremode(tab, "models/props_underground/old_speaker.mdl", 10)
+		ScavData.RegisterFiremode(tab, "models/props_underground/old_speaker_big.mdl", 10)
+		ScavData.RegisterFiremode(tab, "models/props_blackmesa/firealarm_light.mdl", 10)
+		ScavData.RegisterFiremode(tab, "models/props_generic/alarmbell001.mdl", 10)
+		ScavData.RegisterFiremode(tab, "models/props_generic/alarmpull1.mdl", 10)
+		ScavData.RegisterFiremode(tab, "models/props_blackmesa/fireescape_sign.mdl", 10)
+		ScavData.RegisterFiremode(tab, "models/props_marines/army_radio.mdl", 10)
+		ScavData.RegisterFiremode(tab, "models/props_generic/bm_batteryradio01.mdl", 10)
+		ScavData.RegisterFiremode(tab, "models/props_generic/bm_citizenradio01.mdl", 10)
 
 --[[==============================================================================================
 	--Gas Canister 
@@ -1642,6 +1713,8 @@ end
 		ScavData.RegisterFiremode(tab, "models/props_equipment/oxygentank01.mdl")
 		--Portal 2
 		ScavData.RegisterFiremode(tab, "models/br_debris/deb_gas_canister.mdl")
+		--BMS
+		ScavData.RegisterFiremode(tab, "models/props_industrial/chloride_tank01.mdl")
 
 --[[==============================================================================================
 	--Disease Shot
@@ -1729,6 +1802,9 @@ end
 		ScavData.RegisterFiremode(tab, "models/props_urban/outhouse002.mdl", 3)
 		--FoF
 		ScavData.RegisterFiremode(tab, "models/elpaso/horse_poo.mdl")
+		--BMS
+		ScavData.RegisterFiremode(tab, "models/props_generic/toilet.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_lab/chemjar01.mdl")
 
 --[[==============================================================================================
 	--sniper rifle
@@ -1885,8 +1961,11 @@ PrecacheParticleSystem("scav_exp_plasma")
 			tab.Name = "#scav.scavcan.plasmagun"
 			tab.anim = ACT_VM_RECOIL1
 			tab.Level = 4
-			local identify = {} --all plasma guns are the same
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
+			tab.Identify = {} --all plasma guns are the same
+			local identify2 = {
+				["models/props_equipment/portablebattery01.mdl"] = SCAV_PLASMA_XEN
+			}
+			tab.Identify2 = setmetatable(identify2, {__index = function() return SCAV_PLASMA_DEFAULT end})
 			tab.MaxAmmo = 500
 			if SERVER then
 				tab.Callback = function(self, tr)	
@@ -1914,7 +1993,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 				tab.proj:SetMask(MASK_SHOT)
 				tab.OnArmed = function(self, item, olditemname)
 					if item.ammo ~= olditemname then
-						self.Owner:EmitSound("weapons/scav_gun/chargeup.wav")
+						self.Owner:EmitSound(tab.Identify2[item.ammo] ~= SCAV_PLASMA_XEN and "weapons/scav_gun/chargeup.wav" or "xen/portablebattery_poweron.wav")
 					end
 				end
 			end
@@ -1958,10 +2037,18 @@ PrecacheParticleSystem("scav_exp_plasma")
 				self:SetChargeAttack(ScavData.models[item.ammo].ChargeAttack, item)
 				return false
 			end
+			if SERVER then
+				ScavData.CollectFuncs["models/props_xen/xen_cart.mdl"] = function(self, ent) return {{"models/items/car_battery01.mdl", 50, 0}} end
+			end
 			tab.Cooldown = 0
 		ScavData.RegisterFiremode(tab, "models/items/car_battery01.mdl", 50)
 		--TF2
 		ScavData.RegisterFiremode(tab, "models/workshop/weapons/c_models/c_invasion_pistol/c_invasion_pistol.mdl", 12)
+		--BMS
+		ScavData.RegisterFiremode(tab, "models/props_junk/junk_6vbattery.mdl", 10)
+		ScavData.RegisterFiremode(tab, "models/props_junk/battery.mdl", 5)
+		ScavData.RegisterFiremode(tab, "models/props_junk/capacitor.mdl", 5)
+		ScavData.RegisterFiremode(tab, "models/props_equipment/portablebattery01.mdl", 100)
 
 --[[==============================================================================================
 	--Frag 12 High-Explosive round
@@ -2018,7 +2105,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 			tab.anim = ACT_VM_PRIMARYATTACK
 			tab.Level = 4
 			local identify = {
-				["models/weapons/c_models/c_leechgun/c_leechgun.mdl"] = SCAV_SYRINGE_LEECH
+				["models/weapons/c_models/c_leechgun/c_leechgun.mdl"] = SCAV_SYRINGE_LEECH,
 			}
 			tab.Identify = setmetatable(identify, {__index = function() return SCAV_SYRINGE_DEFAULT end})
 			tab.MaxAmmo = 190 --150 + 40
@@ -2039,7 +2126,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 						dmg:SetInflictor(self:GetInflictor())
 					end
 					tr.Entity:TakeDamageInfo(dmg)
-				end 
+				end
 			end
 			local callback_leech = function(self, tr)
 				callback(self, tr)
@@ -2057,13 +2144,14 @@ PrecacheParticleSystem("scav_exp_plasma")
 					tab.proj:SetMask(MASK_SHOT)
 			end
 			tab.ChargeAttack = function(self, item)
-				if self.Owner:KeyDown(IN_ATTACK) then		
+				if self.Owner:KeyDown(IN_ATTACK) then
+					local ident = tab.Identify[item.ammo]
 					local vel = (VectorRand(-0.01, 0.01) + self:GetAimVector()):GetNormalized() * 1500 * self:GetForceScale()
 					local pos = self.Owner:GetShootPos() + self:GetAimVector() * 24 + self:GetAimVector():Angle():Right() * 4 - self:GetAimVector():Angle():Up() * 4
 					--local proj = s_proj.AddProjectile(self.Owner, self.Owner:GetShootPos() + (self:GetAimVector():Angle():Right() * 2 - self:GetAimVector():Angle():Up() * 2) * 1, vel, ScavData.models["models/weapons/w_models/w_syringegun.mdl"].Callback, false, false, Vector(0, 0, -96))
 					if SERVER then
 						local proj = tab.proj
-						if tab.Identify[item.ammo] == SCAV_SYRINGE_LEECH then proj:SetCallback(callback_leech) end
+						if ident == SCAV_SYRINGE_LEECH then proj:SetCallback(callback_leech) end
 						proj:SetOwner(self.Owner)
 						proj:SetInflictor(self)
 						proj:SetPos(pos)
@@ -2082,7 +2170,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 							ef:SetStart(vel)
 							ef:SetEntity(self.Owner)
 							ef:SetScale(item.data % 2)
-							ef:SetColor(tab.Identify[item.ammo])
+							ef:SetColor(ident)
 						util.Effect("ef_scav_syringe", ef)
 					end
 				end
@@ -2103,8 +2191,8 @@ PrecacheParticleSystem("scav_exp_plasma")
 		--TF2
 		ScavData.RegisterFiremode(tab, "models/weapons/w_models/w_syringegun.mdl", 40)
 		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_syringegun/c_syringegun.mdl", 40)
-		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_leechgun/c_leechgun.mdl", 40)		
-		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_proto_syringegun/c_proto_syringegun.mdl", 40)		
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_leechgun/c_leechgun.mdl", 40)
+		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_proto_syringegun/c_proto_syringegun.mdl", 40)
 
 --[[==============================================================================================
 	--Physics Super Shotgun
@@ -3560,6 +3648,14 @@ PrecacheParticleSystem("scav_exp_plasma")
 				--ASW
 				ScavData.RegisterFiremode(tab, "models/items/teslacoil/teslacoil.mdl", 200)
 				ScavData.RegisterFiremode(tab, "models/weapons/mininglaser/mininglaser.mdl", 200)
+				--BMS
+				ScavData.RegisterFiremode(tab, "models/props_lab/labelecsocket01a.mdl", 50)
+				ScavData.RegisterFiremode(tab, "models/props_lab/labelecsocket01b.mdl", 100)
+				ScavData.RegisterFiremode(tab, "models/props_xen/power_box/xen_power_box.mdl", 200)
+				ScavData.RegisterFiremode(tab, "models/props_xen/power_box/xen_power_box_nocover.mdl", 200)
+				ScavData.RegisterFiremode(tab, "models/props_xen/power_box/xen_power_box_opendown.mdl", 200)
+				ScavData.RegisterFiremode(tab, "models/props_xen/power_box/xen_power_box_opentop.mdl", 200)
+				ScavData.RegisterFiremode(tab, "models/props_equipment/powergenerator01.mdl", SCAV_SHORT_MAX)
 		end
 
 --[[==============================================================================================
@@ -3699,6 +3795,17 @@ PrecacheParticleSystem("scav_exp_plasma")
 				ScavData.CollectFuncs["models/props_silo/silo_workspace1.mdl"] = function(self, ent) return {{ScavData.FormatModelname("models/scav/rad_hl2.mdl"), 10, ent:GetSkin(), 3}} end -- 3 cases from workstation
 				--TF2
 				ScavData.CollectFuncs["models/props_badlands/barrel_flatbed01.mdl"] = function(self, ent) return {{"models/props_badlands/barrel03.mdl", 10, ent:GetSkin(), 3}} end
+				--BMS
+				ScavData.CollectFuncs["models/props_blackmesa/barrel01.mdl"] = function(self, ent)
+					--only one skin is radioactive, the rest are regular barrels. Luckily, there's a mesh-identical duplicate of this prop
+					--so we only register one of them, and give the other one on wrong skins
+					if ent:GetSkin() == 4 then
+						return {{"models/props_blackmesa/barrel01.mdl", 10, 4}}
+					else
+						return {{"models/props_blackmesa/barrel_buoyant.mdl", 1, ent:GetSkin()}}
+					end
+				end
+				ScavData.CollectFuncs["models/props_blackmesa/barrel_buoyant.mdl"] = ScavData.CollectFuncs["models/props_blackmesa/barrel01.mdl"]
 			end
 			tab.Cooldown = 1
 		ScavData.RegisterFiremode(tab, "models/scav/rad_hl2.mdl", 10)
@@ -3709,6 +3816,16 @@ PrecacheParticleSystem("scav_exp_plasma")
 		ScavData.RegisterFiremode(tab, "models/props_badlands/barrel03.mdl", 10)
 		--HL:S
 		ScavData.RegisterFiremode(tab, "models/w_gaussammo.mdl", 10)
+		--BMS
+		ScavData.RegisterFiremode(tab, "models/props_industrial/radioactive_waste_processor.mdl", SCAV_SHORT_MAX)
+		ScavData.RegisterFiremode(tab, "models/weapons/w_gauss.mdl", 10)
+		ScavData.RegisterFiremode(tab, "models/weapons/w_gauss_mp.mdl", 10)
+		ScavData.RegisterFiremode(tab, "models/weapons/w_gaussammo.mdl", 10)
+		ScavData.RegisterFiremode(tab, "models/weapons/w_gaussammo_mp.mdl", 10)
+		ScavData.RegisterFiremode(tab, "models/weapons/w_egon.mdl", 10)
+		ScavData.RegisterFiremode(tab, "models/weapons/w_egon_pickup.mdl", 10)
+		ScavData.RegisterFiremode(tab, "models/weapons/w_egon_pickup_mp.mdl", 10)
+		ScavData.RegisterFiremode(tab, "models/props_blackmesa/barrel01.mdl")
 
 --[[==============================================================================================
 	--Phazon Beam

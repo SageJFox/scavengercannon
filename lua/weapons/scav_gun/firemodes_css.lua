@@ -78,6 +78,11 @@
 		--ASW
 		ScavData.RegisterFiremode(tab, "models/swarmprops/miscdeco/bridgeexplosivesmesh.mdl")
 		ScavData.RegisterFiremode(tab, "models/props/explosive/explosive.mdl")
+		--BMS
+		ScavData.RegisterFiremode(tab, "models/weapons/w_satchel.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_satchel_mp.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_marines/c4_explosive.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_equipment/blastingkit01_c4.mdl")
 		
 
 --[[==============================================================================================
@@ -637,6 +642,12 @@
 		ScavData.RegisterFiremode(tab, "models/weapons/w_pist_glock18.mdl", 20)
 		--L4D2
 		ScavData.RegisterFiremode(tab, "models/w_models/weapons/w_pistol_b.mdl", 15)
+		--BMS
+		ScavData.RegisterFiremode(tab, "models/weapons/w_glock.mdl", 17)
+		ScavData.RegisterFiremode(tab, "models/weapons/w_glock_lh.mdl", 17)
+		ScavData.RegisterFiremode(tab, "models/weapons/w_glock_mp.mdl", 17)
+		ScavData.RegisterFiremode(tab, "models/weapons/w_9mmclip.mdl", 17)
+		ScavData.RegisterFiremode(tab, "models/weapons/w_9mmclip_mp.mdl", 17)
 
 --[[==============================================================================================
 	--m3super90
@@ -962,6 +973,11 @@
 		ScavData.RegisterFiremode(tab, "models/weapons/w_smg_mp5.mdl", 30)
 		--L4D2
 		ScavData.RegisterFiremode(tab, "models/w_models/weapons/w_smg_mp5.mdl", 50)
+		--BMS
+		ScavData.RegisterFiremode(tab, "models/weapons/w_mp5.mdl", 30)
+		ScavData.RegisterFiremode(tab, "models/weapons/w_mp5_mp.mdl", 30)
+		ScavData.RegisterFiremode(tab, "models/weapons/w_9mmarclip.mdl", 30)
+		ScavData.RegisterFiremode(tab, "models/weapons/w_9mmarclip_mp.mdl", 30)
 
 --[[==============================================================================================
 	--p228

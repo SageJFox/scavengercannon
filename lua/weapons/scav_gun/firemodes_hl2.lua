@@ -262,6 +262,10 @@
 				["models/weapons/w_k98_rg_grenade.mdl"] = SCAV_SMGNADE_KAR98,
 				--[[L4D2]]["models/w_models/weapons/w_grenade_launcher.mdl"] = SCAV_SMGNADE_L4D2,
 				--[[HL1]]["models/grenade.mdl"] = SCAV_SMGNADE_HL1,
+				--[[BMS]]["models/weapons/w_argrenade.mdl"] = SCAV_SMGNADE_BMS,
+				["models/weapons/w_argrenade_mp.mdl"] = SCAV_SMGNADE_BMS,
+				["models/weapons/w_mp5grenade.mdl"] = SCAV_SMGNADE_BMS,
+				["models/weapons/w_mp5grenade_mp.mdl"] = SCAV_SMGNADE_BMS,
 			}
 			tab.Identify = setmetatable(identify, {__index = function() return SCAV_SMGNADE_DEFAULT end})
 			tab.MaxAmmo = 10
@@ -296,6 +300,10 @@
 							proj:SetModel("models/grenade.mdl")
 							self.Owner:EmitSound(math.random(2) == 1 and "weapons/glauncher.wav" or "weapons/glauncher2.wav")
 						end,
+						[SCAV_SMGNADE_BMS] = function(self, proj)
+							proj:SetModel("models/weapons/w_mp5grenade.mdl")
+							self.Owner:EmitSound("weapons/ar2/ar2_altfire.wav")
+						end,
 					}
 					modelfx[tab.Identify[item.ammo]](self, proj)
 					self.Owner:SetAnimation(PLAYER_ATTACK1)
@@ -327,6 +335,11 @@
 		ScavData.RegisterFiremode(tab, "models/weapons/w_k98_rg_grenade.mdl")
 		--HL1
 		ScavData.RegisterFiremode(tab, "models/grenade.mdl")
+		--BMS
+		ScavData.RegisterFiremode(tab, "models/weapons/w_argrenade.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_argrenade_mp.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_mp5grenade.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_mp5grenade_mp.mdl")
 
 --[[==============================================================================================
 	--Strider Cannon
@@ -733,6 +746,8 @@
 		ScavData.RegisterFiremode(tab, "models/w_grenade.mdl")
 		--L4D/2
 		ScavData.RegisterFiremode(tab, "models/w_models/weapons/w_eq_pipebomb.mdl")
+		--BMS
+		ScavData.RegisterFiremode(tab, "models/weapons/w_grenade_mp.mdl")
 
 
 
@@ -780,23 +795,30 @@
 			tab.anim = ACT_VM_FIDGET
 			tab.Level = 1
 			local identify = {
-				--[HL2] = 0,
-				--[[Battalion's Backup]]["models/weapons/c_models/c_battalion_buffpack/c_batt_buffpack.mdl"] = 1,
-				["models/workshop/weapons/c_models/c_battalion_buffpack/c_battalion_buffpack.mdl"] = 1,
-				--[[MannPower Resistance]]["models/pickups/pickup_powerup_defense.mdl"] = 2,
-				["models/pickups/pickup_powerup_resistance.mdl"] = 2,
-				--[[DoD:S]]["models/helmets/helmet_american.mdl"] = 3,
-				["models/helmets/helmet_german.mdl"] = 3,
+				--[HL2] = SCAV_BATTERY_DEFAULT,
+				--[[Battalion's Backup]]["models/weapons/c_models/c_battalion_buffpack/c_batt_buffpack.mdl"] = SCAV_BATTERY_BATTALION,
+				["models/workshop/weapons/c_models/c_battalion_buffpack/c_battalion_buffpack.mdl"] = SCAV_BATTERY_BATTALION,
+				--[[MannPower Resistance]]["models/pickups/pickup_powerup_defense.mdl"] = SCAV_BATTERY_RESISTANCE,
+				["models/pickups/pickup_powerup_resistance.mdl"] = SCAV_BATTERY_RESISTANCE,
+				--[[DoD:S]]["models/helmets/helmet_american.mdl"] = SCAV_BATTERY_DODSHELMET,
+				["models/helmets/helmet_german.mdl"] = SCAV_BATTERY_DODSHELMET,
+				--[[BM Helmet]]["models/props_am/helmet.mdl"] = SCAV_BATTERY_BMSHELMET,
+				["models/props_marines/helmet.mdl"] = SCAV_BATTERY_BMSHELMET,
+				--[[Vest]]["models/props_am/guard_vest.mdl"] = SCAV_BATTERY_VEST,
+				--[[HEV]]["models/props_am/hev_suit.mdl"] = SCAV_BATTERY_HEV,
 			}
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
+			tab.Identify = setmetatable(identify, {__index = function() return SCAV_BATTERY_DEFAULT end})
 			tab.MaxAmmo = 6
 			tab.ReturnArmor = function(self, item)
 				local t = ScavData.models[item.ammo]
 				local amount = {
-					[0] = 15,
-					[1] = 50,
-					[2] = 50,
-					[3] = 25
+					[SCAV_BATTERY_DEFAULT] = 15,
+					[SCAV_BATTERY_BATTALION] = 50,
+					[SCAV_BATTERY_RESISTANCE] = 50,
+					[SCAV_BATTERY_DODSHELMET] = 25,
+					[SCAV_BATTERY_BMSHELMET] = 40,
+					[SCAV_BATTERY_VEST] = 60,
+					[SCAV_BATTERY_HEV] = 100
 				}
 				return amount[t.Identify[item.ammo]]
 			end
@@ -809,19 +831,17 @@
 					end
 					self.Owner:SetArmor(math.min(self.Owner:GetMaxArmor(), self.Owner:Armor() + t.ReturnArmor(self, item)))
 					local itemfx = {
-						[0] = function(self)
-							self.Owner:EmitSound("items/battery_pickup.wav")
-						end,
-						[1] = function(self)
+						[SCAV_BATTERY_BATTALION] = function(self)
 							self.Owner:EmitSound( math.random(2) == 1 and "weapons/battalions_backup_red.wav" or "weapons/battalions_backup_blue.wav")
 						end,
-						[2] = function(self)
+						[SCAV_BATTERY_RESISTANCE] = function(self)
 							self.Owner:EmitSound("items/powerup_pickup_reduced_damage.wav")
 						end,
-						[3] = function(self)
+						[SCAV_BATTERY_DODSHELMET] = function(self)
 							self.Owner:EmitSound("physics/helmet.wav")
 						end,
 					}
+					setmetatable(itemfx, {__index = function() return function(self) self.Owner:EmitSound("items/battery_pickup.wav") end end})
 					itemfx[t.Identify[item.ammo]](self)
 					self.Owner:SendHUDOverlay(Color(0, 100, 255, 100), 0.25)
 					return self:TakeSubammo(item, 1)
@@ -839,6 +859,13 @@
 				ScavData.CollectFuncs["models/player/german_rocket.mdl"] = ScavData.CollectFuncs["models/player/german_assault.mdl"]
 				ScavData.CollectFuncs["models/player/german_sniper.mdl"] = ScavData.CollectFuncs["models/player/german_assault.mdl"]
 				ScavData.CollectFuncs["models/player/german_support.mdl"] = ScavData.CollectFuncs["models/player/german_assault.mdl"]
+				--BMS
+				ScavData.CollectFuncs["models/humans/hev_gordon.mdl"] = function(self, ent) return {
+					{"models/props_am/hev_suit.mdl", 1, 0},
+					{"models/weapons/w_crowbar_mp.mdl", 1, 0},
+				} end
+				ScavData.CollectFuncs["models/player/mp_scientist_hev.mdl"] = function(self, ent) return {{"models/props_am/hev_suit.mdl", 1, 0}} end
+				ScavData.CollectFuncs["models/humans/hev_male_xen.mdl"] = ScavData.CollectFuncs["models/player/mp_scientist_hev.mdl"]
 			end
 			tab.Cooldown = 0.2
 		ScavData.RegisterFiremode(tab, "models/items/battery.mdl")
@@ -852,6 +879,12 @@
 		ScavData.RegisterFiremode(tab, "models/helmets/helmet_german.mdl")
 		--HL:S
 		ScavData.RegisterFiremode(tab, "models/w_battery.mdl")
+		--BMS
+		ScavData.RegisterFiremode(tab, "models/weapons/w_battery.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_am/helmet.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_marines/helmet.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_am/guard_vest.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_am/hev_suit.mdl")
 		
 --[[==============================================================================================
 	--Shotgun
@@ -1148,6 +1181,8 @@
 		ScavData.RegisterFiremode(tab, "models/swarm/ammo/ammoshotgun.mdl", 12)
 		ScavData.RegisterFiremode(tab, "models/weapons/shotgun/shotgun.mdl", 12)
 		ScavData.RegisterFiremode(tab, "models/weapons/vindicator/vindicator.mdl", 12)
+		--BMS
+		ScavData.RegisterFiremode(tab, "models/weapons/w_shotgun_mp.mdl", 8)
 		
 --[[==============================================================================================
 	--Pistol
@@ -1490,6 +1525,8 @@
 		ScavData.RegisterFiremode(tab, "models/gibs/gunship_gibs_nosegun.mdl", 100)
 		--HLDM:S
 		ScavData.RegisterFiremode(tab, "models/mp/turret.mdl", 100)
+		--BMS
+		ScavData.RegisterFiremode(tab, "models/gibs/m1a1_abrams_gibs/m1_gib_turret_machinegun.mdl", 2)
 --[[==============================================================================================
 	--Combine Ball
 ==============================================================================================]]--
@@ -1729,9 +1766,13 @@
 			end
 			if SERVER then
 				ScavData.CollectFuncs["models/props_combine/health_charger001.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), math.Round(GetConVar("sk_healthcharger"):GetFloat()) or 50, ent:GetSkin()}} end --(default 50) health for chargers
+				ScavData.CollectFuncs["models/props_blackmesa/health_charger.mdl"] = ScavData.CollectFuncs["models/props_combine/health_charger001.mdl"]
+				ScavData.CollectFuncs["models/props_blackmesa/health_charger_clean.mdl"] = ScavData.CollectFuncs["models/props_blackmesa/health_charger.mdl"]
 			end
 		
 		ScavData.RegisterFiremode(tab, "models/props_combine/health_charger001.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_blackmesa/health_charger.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_blackmesa/health_charger_clean.mdl")
 
 
 
@@ -1844,10 +1885,15 @@
 			if SERVER then
 				ScavData.CollectFuncs["models/props_combine/suit_charger001.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), math.Round(GetConVar("sk_suitcharger"):GetFloat()) or 75, ent:GetSkin()}} end --(default 75) battery for chargers
 				ScavData.CollectFuncs["models/props_lab/hevplate.mdl"] = ScavData.CollectFuncs["models/props_combine/suit_charger001.mdl"]
+				ScavData.CollectFuncs["models/props_blackmesa/hev_charger.mdl"] = ScavData.CollectFuncs["models/props_lab/hevplate.mdl"]
+				ScavData.CollectFuncs["models/props_blackmesa/hev_charger_clean.mdl"] = ScavData.CollectFuncs["models/props_blackmesa/hev_charger.mdl"]
 			end
 		
 		ScavData.RegisterFiremode(tab, "models/props_combine/suit_charger001.mdl")
 		ScavData.RegisterFiremode(tab, "models/props_lab/hevplate.mdl")
+		--BMS
+		ScavData.RegisterFiremode(tab, "models/props_blackmesa/hev_charger.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_blackmesa/hev_charger_clean.mdl")
 		
 --[[==============================================================================================
 	-- .357 rounds
@@ -2027,6 +2073,10 @@ end
 		ScavData.RegisterFiremode(tab, "models/workshop_partner/weapons/c_models/c_dex_revolver/c_dex_revolver.mdl", 6)
 		--HL:S
 		ScavData.RegisterFiremode(tab, "models/w_357.mdl", 6)
+		--BMS
+		ScavData.RegisterFiremode(tab, "models/weapons/w_357_mp.mdl", 6)
+		ScavData.RegisterFiremode(tab, "models/weapons/w_357ammobox.mdl", 6)
+		ScavData.RegisterFiremode(tab, "models/weapons/w_357ammobox_mp.mdl", 6)
 		
 --[[==============================================================================================
 	--machinegun

@@ -114,12 +114,15 @@
 				--[[Needle]]["models/props_junk/garbage_syringeneedle001a.mdl"] = 2,
 				["models/w_models/weapons/w_eq_adrenaline.mdl"] = 2,
 				["models/swarm/stim/stim.mdl"] = 2,
+				["models/humans/props/scientist_syringe.mdl"] = 2,
 				--[[Disciplinary Action]]["models/weapons/c_models/c_riding_crop/c_riding_crop.mdl"] = 3,
 				["models/workshop/weapons/c_models/c_riding_crop/c_riding_crop.mdl"] = 3,
 				--[[MannUp Agility]]["models/pickups/pickup_powerup_agility.mdl"] = 4,
 				--[[MannUp Haste]]["models/pickups/pickup_powerup_haste.mdl"] = 5,
 				--[[Boot]]["models/items/powerup_speed.mdl"] = 6,
 				["models/props_junk/shoe001a.mdl"] = 6,
+				["models/props_questionableethics/smoking_boots_left.mdl"] = 6,
+				["models/props_questionableethics/smoking_boots_right.mdl"] = 6,
 			}
 			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			if SERVER then
@@ -248,6 +251,15 @@
 		--ASW
 		ScavData.RegisterFiremode(tab, "models/swarm/stim/stim.mdl")
 		ScavData.RegisterFiremode(tab, "models/swarmprops/miscdeco/synupcan.mdl")
+		--BMS
+		ScavData.RegisterFiremode(tab, "models/humans/props/scientist_syringe.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_questionableethics/smoking_boots_left.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_questionableethics/smoking_boots_right.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/coffeemug01a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/coffeemug01b.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_canteen/vacuumflask01b.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_canteen/vacuumflask01b_cup.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_canteen/vacuumflask01b_phyicsversion.mdl")
 		
 --[[==============================================================================================
 	--Cloaking Watch
@@ -1648,6 +1660,9 @@ setmetatable(hacksuccess, {__index = function() return {"buttons/combine_button1
 		ScavData.RegisterFiremode(tab, "models/w_medkit.mdl")
 		--ASW
 		ScavData.RegisterFiremode(tab, "models/items/personalmedkit/personalmedkit.mdl")
+		--BMS
+		ScavData.RegisterFiremode(tab, "models/weapons/w_medkit_classic.mdl")
+		ScavData.RegisterFiremode(tab, "models/weapons/w_medkit_stiff.mdl")
 
 --[[==============================================================================================
 	-- Pain Pills (temporary health)

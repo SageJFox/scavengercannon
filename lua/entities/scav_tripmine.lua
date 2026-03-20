@@ -121,6 +121,13 @@ end
 local traceinfo = {}
 	traceinfo.mask = MASK_SHOT
 
+local modelForward = {
+	["models/w_tripmine.mdl"] = true,
+	["models/weapons/w_tripmine.mdl"] = true,
+	["models/weapons/w_tripmine_mp.mdl"] = true,
+	["models/props_marines/triplaser.mdl"] = true,
+}
+
 function ENT:GetBeamTrace()
 
 	local index_att = self:LookupAttachment("beam_attach")
@@ -131,11 +138,12 @@ function ENT:GetBeamTrace()
 		local posang = self:GetAttachment(index_att)
 		vec_start = posang.Pos
 		ang_normal = posang.Ang
-		ang_normal = (-1 * ang_normal:Right()):Angle()
+		ang_normal = (-ang_normal:Right()):Angle()
 	else
 		vec_start = self:GetPos()
-		ang_normal = self:GetModel() == "models/w_tripmine.mdl" and self:GetAngles():Forward():Angle() or self:GetAngles():Up():Angle()
+		ang_normal = self:GetAngles():Up():Angle()
 	end
+	if modelForward[self:GetModel()] then ang_normal = self:GetAngles():Forward():Angle() end
 	
 	traceinfo.start = vec_start
 	traceinfo.endpos = vec_start + ang_normal:Forward() * self.Range

@@ -144,6 +144,9 @@ if SERVER then
 	
 	--Lost Coast
 	offsetmodels["models/lostcoast/fisherman/harpoon.mdl"] = {Vector(0, 0, -20), bit.bor(DMG_BULLET, DMG_AIRBOAT, DMG_BLAST)}
+
+	--Black Mesa
+	offsetmodels["models/weapons/crossbow_bolt.mdl"] = {Vector(0, -8, 0)}
 	
 	local b_trace 	= {}
 	local b_tr 		= {}
