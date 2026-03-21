@@ -896,38 +896,38 @@
 			tab.anim = ACT_VM_SECONDARYATTACK
 			tab.Level = 3
 			local identify = {
-				--[HL2] = 0,
-				--[[TF2 Stock]]["models/weapons/shells/shell_shotgun.mdl"] = 1,
-				["models/weapons/w_models/w_shotgun.mdl"] = 1,
-				["models/weapons/c_models/c_shotgun/c_shotgun.mdl"] = 1,
-				["models/workshop/weapons/c_models/c_trenchgun/c_trenchgun.mdl"] = 1,
-				--[[Widowmaker]]["models/weapons/c_models/c_dex_shotgun/c_dex_shotgun.mdl"] = 2,
-				["models/workshop_partner/weapons/c_models/c_dex_shotgun/c_dex_shotgun.mdl"] = 2,
-				--[[HL:S]]["models/shotgunshell.mdl"] = 3,
-				--[[FoF]]--["models/weapons/shotgun_shell2.mdl"] = 4,
-				--[[TF2 Scattergun]]["models/weapons/c_models/c_scattergun.mdl"] = 5,
-				["models/weapons/w_models/w_scattergun.mdl"] = 5,
-				--[[TF2 FaN]]["models/weapons/c_models/c_double_barrel.mdl"] = 6,
-				["models/weapons/c_models/c_xms_double_barrel.mdl"] = 6,
-				--[[TF2 Soda Popper]]["models/weapons/c_models/c_soda_popper/c_soda_popper.mdl"] = 7,
-				["models/workshop/weapons/c_models/c_soda_popper/c_soda_popper.mdl"] = 7,
-				--[[F2 Frontier Justice]]["models/weapons/c_models/c_frontierjustice/c_frontierjustice.mdl"] = 8,
-				["models/weapons/c_models/c_frontierjustice/c_frontierjustice_xmas.mdl"] = 8,
-				["models/weapons/w_models/w_frontierjustice.mdl"] = 8,
-				--[[TF2 Reserve Shooter]]["models/weapons/c_models/c_reserve_shooter/c_reserve_shooter.mdl"] = 9,
-				["models/workshop/weapons/c_models/c_reserve_shooter/c_reserve_shooter.mdl"] = 9,
-				--[[TF2 Family Business]]["models/weapons/c_models/c_russian_riot/c_russian_riot.mdl"] = 10,
-				["models/workshop/weapons/c_models/c_russian_riot/c_russian_riot.mdl"] = 10,
-				--[[TF2 Shortstop]]["models/weapons/c_models/c_shortstop/c_shortstop.mdl"] = 11,
-				["models/workshop/weapons/c_models/c_shortstop/c_shortstop.mdl"] = 11,
-				--[[TF2 Baby Face's Blaster]]["models/weapons/c_models/c_pep_scattergun.mdl"] = 12,
-				["models/workshop/weapons/c_models/c_pep_scattergun/c_pep_scattergun.mdl"] = 12,
-				--[[TF2 Backscatter]]["models/workshop/weapons/c_models/c_scatterdrum/c_scatterdrum.mdl"] = 13,
-				--[[ASW]]["models/swarm/ammo/ammoshotgun.mdl"] = 14,
-				["models/weapons/shotgun/shotgun.mdl"] = 14,
-				--[[Vindicator]]["models/weapons/vindicator/vindicator.mdl"] = 15,
+				--[HL2] = SCAV_SG_DEFAULT,
+				--[[TF2 Stock]]["models/weapons/shells/shell_shotgun.mdl"] = SCAV_SG_TF2,
+				["models/weapons/w_models/w_shotgun.mdl"] = SCAV_SG_TF2,
+				["models/weapons/c_models/c_shotgun/c_shotgun.mdl"] = SCAV_SG_TF2,
+				["models/workshop/weapons/c_models/c_trenchgun/c_trenchgun.mdl"] = SCAV_SG_TF2,
+				--[[Widowmaker]]["models/weapons/c_models/c_dex_shotgun/c_dex_shotgun.mdl"] = SCAV_SG_WIDOWMAKER,
+				["models/workshop_partner/weapons/c_models/c_dex_shotgun/c_dex_shotgun.mdl"] = SCAV_SG_WIDOWMAKER,
+				--[[HL:S]]["models/shotgunshell.mdl"] = SCAV_SG_HL,
+				--[[TF2 Scattergun]]["models/weapons/c_models/c_scattergun.mdl"] = SCAV_SG_SCATTER,
+				["models/weapons/w_models/w_scattergun.mdl"] = SCAV_SG_SCATTER,
+				--[[TF2 FaN]]["models/weapons/c_models/c_double_barrel.mdl"] = SCAV_SG_FAN,
+				["models/weapons/c_models/c_xms_double_barrel.mdl"] = SCAV_SG_FAN,
+				--[[TF2 Soda Popper]]["models/weapons/c_models/c_soda_popper/c_soda_popper.mdl"] = SCAV_SG_SODAPOP,
+				["models/workshop/weapons/c_models/c_soda_popper/c_soda_popper.mdl"] = SCAV_SG_SODAPOP,
+				--[[F2 Frontier Justice]]["models/weapons/c_models/c_frontierjustice/c_frontierjustice.mdl"] = SCAV_SG_TF2FJ,
+				["models/weapons/c_models/c_frontierjustice/c_frontierjustice_xmas.mdl"] = SCAV_SG_TF2FJ,
+				["models/weapons/w_models/w_frontierjustice.mdl"] = SCAV_SG_TF2FJ,
+				--[[TF2 Reserve Shooter]]["models/weapons/c_models/c_reserve_shooter/c_reserve_shooter.mdl"] = SCAV_SG_RESERVE,
+				["models/workshop/weapons/c_models/c_reserve_shooter/c_reserve_shooter.mdl"] = SCAV_SG_RESERVE,
+				--[[TF2 Family Business]]["models/weapons/c_models/c_russian_riot/c_russian_riot.mdl"] = SCAV_SG_FAMBIZ,
+				["models/workshop/weapons/c_models/c_russian_riot/c_russian_riot.mdl"] = SCAV_SG_FAMBIZ,
+				--[[TF2 Shortstop]]["models/weapons/c_models/c_shortstop/c_shortstop.mdl"] = SCAV_SG_SHORTSTOP,
+				["models/workshop/weapons/c_models/c_shortstop/c_shortstop.mdl"] = SCAV_SG_SHORTSTOP,
+				--[[TF2 Baby Face's Blaster]]["models/weapons/c_models/c_pep_scattergun.mdl"] = SCAV_SG_BFB,
+				["models/workshop/weapons/c_models/c_pep_scattergun/c_pep_scattergun.mdl"] = SCAV_SG_BFB,
+				--[[TF2 Backscatter]]["models/workshop/weapons/c_models/c_scatterdrum/c_scatterdrum.mdl"] = SCAV_SG_BACKSCATTER,
+				--[[ASW]]["models/swarm/ammo/ammoshotgun.mdl"] = SCAV_SG_ASW,
+				["models/weapons/shotgun/shotgun.mdl"] = SCAV_SG_ASW,
+				--[[Vindicator]]["models/weapons/vindicator/vindicator.mdl"] = SCAV_SG_VINDICATOR,
+				--[[BMS]]["models/weapons/w_shotgun_mp.mdl"] = SCAV_SG_BMS,
 			}
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
+			tab.Identify = setmetatable(identify, {__index = function() return SCAV_SG_DEFAULT end})
 			tab.MaxAmmo = 125
 
 			local bullet = {}
@@ -941,55 +941,58 @@
 				if SERVER then
 					if olditemname ~= "" and ScavData.models[olditemname] and ScavData.models[item.ammo].Name == ScavData.models[olditemname].Name then return end
 					local soundfx = {
-						[0] = function(self)
+						[SCAV_SG_DEFAULT] = function(self)
 							self.Owner:EmitSound("weapons/shotgun/shotgun_cock.wav")
 						end,
-						[1] = function(self)
+						[SCAV_SG_TF2] = function(self)
 							self.Owner:EmitSound("weapons/shotgun_cock_back.wav")
 							timer.Simple(0.25, function() if IsValid(self) and IsValid(self.Owner) then self.Owner:EmitSound("weapons/shotgun_cock_forward.wav") end end)
 						end,
-						[2] = function(self)
+						[SCAV_SG_WIDOWMAKER] = function(self)
 							self.Owner:EmitSound("weapons/widow_maker_pump_action_back.wav") --not used in TF2, but works here.
 							timer.Simple(0.25, function() if IsValid(self) and IsValid(self.Owner) then self.Owner:EmitSound("weapons/widow_maker_pump_action_forward.wav") end end)
 						end,
-						[3] = function(self)
+						[SCAV_SG_HL] = function(self)
 							self.Owner:EmitSound("weapons/scock1.wav")
 						end,
-						[5] = function(self)
+						[SCAV_SG_SCATTER] = function(self)
 							self.Owner:EmitSound("weapons/scatter_gun_reload.wav")
 						end,
-						[6] = function(self)
+						[SCAV_SG_FAN] = function(self)
 							self.Owner:EmitSound("weapons/scatter_gun_double_tube_close.wav")
 						end,
-						[7] = function(self)
+						[SCAV_SG_SODAPOP] = function(self)
 							self.Owner:EmitSound("weapons/scatter_gun_double_tube_close.wav")
 						end,
-						[8] = function(self)
+						[SCAV_SG_TF2FJ] = function(self)
 							self.Owner:EmitSound("weapons/shotgun_cock_back.wav")
 							timer.Simple(0.25, function() if IsValid(self) and IsValid(self.Owner) then self.Owner:EmitSound("weapons/shotgun_cock_forward.wav") end end)
 						end,
-						[9] = function(self)
+						[SCAV_SG_RESERVE] = function(self)
 							self.Owner:EmitSound("weapons/shotgun_cock_back.wav")
 							timer.Simple(0.25, function() if IsValid(self) and IsValid(self.Owner) then self.Owner:EmitSound("weapons/shotgun_cock_forward.wav") end end)
 						end,
-						[10] = function(self)
+						[SCAV_SG_FAMBIZ] = function(self)
 							self.Owner:EmitSound("weapons/shotgun_cock_back.wav")
 							timer.Simple(0.25, function() if IsValid(self) and IsValid(self.Owner) then self.Owner:EmitSound("weapons/shotgun_cock_forward.wav") end end)
 						end,
-						[11] = function(self)
+						[SCAV_SG_SHORTSTOP] = function(self)
 							self.Owner:EmitSound("weapons/short_stop_reload.wav")
 						end,
-						[12] = function(self)
+						[SCAV_SG_BFB] = function(self)
 							self.Owner:EmitSound("weapons/scatter_gun_reload.wav")
 						end,
-						[13] = function(self)
+						[SCAV_SG_BACKSCATTER] = function(self)
 							self.Owner:EmitSound("weapons/scatter_gun_reload.wav")
 						end,
-						[14] = function(self)
+						[SCAV_SG_ASW] = function(self)
 							self.Owner:EmitSound("weapons/3d/reloads/shotgun_c.wav")
 						end,
-						[15] = function(self)
+						[SCAV_SG_VINDICATOR] = function(self)
 							self.Owner:EmitSound("weapons/3d/reloads/vindicator_c.wav")
+						end,
+						[SCAV_SG_BMS] = function(self)
+							self.Owner:EmitSound("weapons/shotgun/shotgun_cock.wav")
 						end,
 					}
 					local tab = ScavData.models[item.ammo]
@@ -1008,34 +1011,31 @@
 				self.Owner:SetAnimation(PLAYER_ATTACK1)
 
 				local shootfx = {
-					[0] = function(self)
-						if SERVER then
-							self.Owner:EmitSound("weapons/shotgun/shotgun_fire6.wav")
-						end
+					[SCAV_SG_DEFAULT] = function(self)
 						timer.Simple(0.4, function()
 							if not IsValid(self) then return end
 							self:EjectShell("ShotgunShellEject", false)
 							if CLIENT or not IsValid(self.Owner) then return end
 							self.Owner:EmitSound("weapons/shotgun/shotgun_cock.wav")
 						end)
+						if CLIENT then return end
+						self.Owner:EmitSound("weapons/shotgun/shotgun_fire6.wav")
 					end,
-					[1] = function(self)
-						if SERVER then
-							self.Owner:EmitSound(self.Owner:GetStatusEffect("DamageX") and "weapons/shotgun_shoot_crit.wav" or "weapons/shotgun_shoot.wav")
-						end
+					[SCAV_SG_TF2] = function(self)
 						timer.Simple(0.4, function()
-							if SERVER then
-								if not IsValid(self) or not IsValid(self.Owner) then return end
-								self.Owner:EmitSound("weapons/shotgun_cock_back.wav")
-								timer.Simple(0.25, function() if IsValid(self) and IsValid(self.Owner) then self.Owner:EmitSound("weapons/shotgun_cock_forward.wav") end end)
-							end
 							self:EjectShellTF2("shotgun")
+							if CLIENT then return end
+							if not IsValid(self) or not IsValid(self.Owner) then return end
+							self.Owner:EmitSound("weapons/shotgun_cock_back.wav")
+							timer.Simple(0.25, function() if IsValid(self) and IsValid(self.Owner) then self.Owner:EmitSound("weapons/shotgun_cock_forward.wav") end end)
 						end)
+						if CLIENT then return end
+						self.Owner:EmitSound(self.Owner:GetStatusEffect("DamageX") and "weapons/shotgun_shoot_crit.wav" or "weapons/shotgun_shoot.wav")
 					end,
-					[2] = function(self)
+					[SCAV_SG_WIDOWMAKER] = function(self)
 						if SERVER then self.Owner:EmitSound(self.Owner:GetStatusEffect("DamageX") and "weapons/widow_maker_shot_crit_0" .. math.random(3) .. ".wav" or "weapons/widow_maker_shot_0" .. math.random(3) .. ".wav") end
 					end,
-					[3] = function(self)
+					[SCAV_SG_HL] = function(self)
 						timer.Simple(0.4, function()
 							if not IsValid(self) then return end
 							self:EjectShellHL1(true)
@@ -1045,7 +1045,7 @@
 						if CLIENT then return end
 						self.Owner:EmitSound("weapons/sbarrel1.wav")
 					end,
-					[5] = function(self)
+					[SCAV_SG_SCATTER] = function(self)
 						timer.Simple(0.4, function()
 							if SERVER then self.Owner:EmitSound("weapons/scatter_gun_reload.wav") end
 							self:EjectShellTF2("shotgun")
@@ -1053,7 +1053,7 @@
 						if CLIENT then return end
 						self.Owner:EmitSound(self.Owner:GetStatusEffect("DamageX") and "weapons/scatter_gun_shoot_crit.wav" or "weapons/scatter_gun_shoot.wav")
 					end,
-					[6] = function(self)
+					[SCAV_SG_FAN] = function(self)
 						--TODO: double barrel eject/reload sounds every other shot
 						--[[timer.Simple(0.4, function()
 							if SERVER then self.Owner:EmitSound("weapons/scatter_gun_reload.wav") end
@@ -1062,7 +1062,7 @@
 						if CLIENT then return end
 						self.Owner:EmitSound(self.Owner:GetStatusEffect("DamageX") and "weapons/scatter_gun_double_shoot_crit.wav" or "weapons/scatter_gun_double_shoot.wav")
 					end,
-					[7] = function(self)
+					[SCAV_SG_SODAPOP] = function(self)
 						--TODO: double barrel eject/reload sounds every other shot
 						--[[timer.Simple(0.4, function()
 							if SERVER then self.Owner:EmitSound("weapons/scatter_gun_reload.wav") end
@@ -1071,58 +1071,65 @@
 						if CLIENT then return end
 						self.Owner:EmitSound(self.Owner:GetStatusEffect("DamageX") and "weapons/scatter_gun_double_bonk_shoot_crit.wav" or "weapons/scatter_gun_double_bonk_shoot.wav")
 					end,
-					[8] = function(self)
+					[SCAV_SG_TF2FJ] = function(self)
 						timer.Simple(0.4, function()
-							if SERVER then
-								self.Owner:EmitSound("weapons/shotgun_cock_back.wav")
-								timer.Simple(0.25, function() if IsValid(self) and IsValid(self.Owner) then self.Owner:EmitSound("weapons/shotgun_cock_forward.wav") end end)
-							end
 							self:EjectShellTF2("shotgun")
+							if CLIENT then return end
+							self.Owner:EmitSound("weapons/shotgun_cock_back.wav")
+							timer.Simple(0.25, function() if IsValid(self) and IsValid(self.Owner) then self.Owner:EmitSound("weapons/shotgun_cock_forward.wav") end end)
 						end)
 						if CLIENT then return end
 						self.Owner:EmitSound(self.Owner:GetStatusEffect("DamageX") and "weapons/frontier_justice_shoot_crit.wav" or "weapons/frontier_justice_shoot.wav")
 					end,
-					[9] = function(self)
+					[SCAV_SG_RESERVE] = function(self)
 						timer.Simple(0.4, function()
-							if SERVER then
-								self.Owner:EmitSound("weapons/shotgun_cock_back.wav")
-								timer.Simple(0.25, function() if IsValid(self) and IsValid(self.Owner) then self.Owner:EmitSound("weapons/shotgun_cock_forward.wav") end end)
-							end
 							self:EjectShellTF2("shotgun")
+							if CLIENT then return end
+							self.Owner:EmitSound("weapons/shotgun_cock_back.wav")
+							timer.Simple(0.25, function() if IsValid(self) and IsValid(self.Owner) then self.Owner:EmitSound("weapons/shotgun_cock_forward.wav") end end)
 						end)
 						if CLIENT then return end
 						self.Owner:EmitSound(self.Owner:GetStatusEffect("DamageX") and "weapons/reserve_shooter_0" .. math.random(4) .. "_crit.wav" or "weapons/reserve_shooter_0" .. math.random(4) .. ".wav")
 					end,
-					[10] = function(self)
+					[SCAV_SG_FAMBIZ] = function(self)
 						timer.Simple(0.4, function()
-							if SERVER then
-								self.Owner:EmitSound("weapons/shotgun_cock_back.wav")
-								timer.Simple(0.25, function() if IsValid(self) and IsValid(self.Owner) then self.Owner:EmitSound("weapons/shotgun_cock_forward.wav") end end)
-							end
 							self:EjectShellTF2("shotgun")
+							if CLIENT then return end
+							self.Owner:EmitSound("weapons/shotgun_cock_back.wav")
+							timer.Simple(0.25, function() if IsValid(self) and IsValid(self.Owner) then self.Owner:EmitSound("weapons/shotgun_cock_forward.wav") end end)
 						end)
 						if CLIENT then return end
 						self.Owner:EmitSound(self.Owner:GetStatusEffect("DamageX") and "weapons/family_business_shoot_crit.wav" or "weapons/family_business_shoot.wav")
 					end,
-					[11] = function(self)
+					[SCAV_SG_SHORTSTOP] = function(self)
 						if CLIENT then return end
 						self.Owner:EmitSound(self.Owner:GetStatusEffect("DamageX") and "Weapon_Short_Stop.SingleCrit" or "Weapon_Short_Stop.Single")
 					end,
-					[12] = function(self)
+					[SCAV_SG_BFB] = function(self)
 						if CLIENT then return end
 						self.Owner:EmitSound(self.Owner:GetStatusEffect("DamageX") and "Weapon_Brawler_Blaster.SingleCrit" or "Weapon_Brawler_Blaster.Single")
 					end,
-					[13] = function(self)
+					[SCAV_SG_BACKSCATTER] = function(self)
 						if CLIENT then return end
 						self.Owner:EmitSound(self.Owner:GetStatusEffect("DamageX") and "Weapon_Back_Scatter.SingleCrit" or "Weapon_Back_Scatter.Single")
 					end,
-					[14] = function(self)
+					[SCAV_SG_ASW] = function(self)
 						if CLIENT then return end
 						self.Owner:EmitSound("weapons/2d/shotgun/fire_and_loadfp.wav")
 					end,
-					[15] = function(self)
+					[SCAV_SG_VINDICATOR] = function(self)
 						if CLIENT then return end
 						self.Owner:EmitSound("weapons/2d/vindicator/fire_and_loadfp.wav")
+					end,
+					[SCAV_SG_BMS] = function(self)
+						timer.Simple(0.4, function()
+							if not IsValid(self) then return end
+							self:EjectShell("ShotgunShellEject", false)
+							if CLIENT or not IsValid(self.Owner) then return end
+							self.Owner:EmitSound("weapons/shotgun/shotgun_pump" .. tostring(math.random(2)) .. ".wav")
+						end)
+						if CLIENT then return end
+						self.Owner:EmitSound("weapons/shotgun/single.wav")
 					end,
 				}
 				shootfx[tab.Identify[item.ammo]](self)
@@ -1766,11 +1773,13 @@
 			end
 			if SERVER then
 				ScavData.CollectFuncs["models/props_combine/health_charger001.mdl"] = function(self, ent) return {{ScavData.FormatModelname(ent:GetModel()), math.Round(GetConVar("sk_healthcharger"):GetFloat()) or 50, ent:GetSkin()}} end --(default 50) health for chargers
+				--BMS
 				ScavData.CollectFuncs["models/props_blackmesa/health_charger.mdl"] = ScavData.CollectFuncs["models/props_combine/health_charger001.mdl"]
 				ScavData.CollectFuncs["models/props_blackmesa/health_charger_clean.mdl"] = ScavData.CollectFuncs["models/props_blackmesa/health_charger.mdl"]
 			end
 		
 		ScavData.RegisterFiremode(tab, "models/props_combine/health_charger001.mdl")
+		--BMS
 		ScavData.RegisterFiremode(tab, "models/props_blackmesa/health_charger.mdl")
 		ScavData.RegisterFiremode(tab, "models/props_blackmesa/health_charger_clean.mdl")
 
@@ -2240,6 +2249,12 @@ end
 		
 		local tab = {} --TODO: recharge ammo (like airboat gun)
 			tab.Name = "#scav.scavcan.hornets"
+			local identify = {
+				--[[HL:S]]["models/agrunt.mdl"] = SCAV_HORNET_DEFAULT,
+				["models/w_hgun.mdl"] = SCAV_HORNET_DEFAULT,
+				--[[ASW]]["models/swarm/buzzer/buzzer.mdl"] = SCAV_HORNET_ASW,
+			}
+			tab.Identify = setmetatable(identify, {__index = function() return SCAV_HORNET_BMS end})
 			tab.anim = ACT_VM_PRIMARYATTACK
 			tab.Level = 5
 			tab.MaxAmmo = 50 --8
@@ -2250,6 +2265,11 @@ end
 					proj:SetAngles(self:GetAimVector():Angle())
 					proj:SetPhysicsAttacker(self.Owner)
 					proj:Spawn()
+					if tab.Identify[item.ammo] ~= SCAV_HORNET_DEFAULT then
+						local bms = (tab.Identify[item.ammo] == SCAV_HORNET_BMS)
+						proj:SetModel(bms and "models/weapons/w_hornet.mdl" or "models/swarm/buzzer/buzzer.mdl")
+						proj:SetModelScale(bms and 0.5 or 0.1)
+					end
 					proj:SetOwner(self.Owner)
 					proj:SetVelocity(self:GetAimVector() * 2000)
 					self.Owner:EmitSound("agrunt/ag_fire" .. math.random(1, 3) .. ".wav")
@@ -2263,6 +2283,14 @@ end
 		ScavData.RegisterFiremode(tab, "models/w_hgun.mdl", 50)
 		--ASW
 		ScavData.RegisterFiremode(tab, "models/swarm/buzzer/buzzer.mdl", 50)
+		--BMS
+		ScavData.RegisterFiremode(tab, "models/weapons/w_hgun.mdl", 50)
+		ScavData.RegisterFiremode(tab, "models/weapons/w_hgun_lowpoly.mdl", 50)
+		ScavData.RegisterFiremode(tab, "models/weapons/w_hgun_mp.mdl", 50)
+		ScavData.RegisterFiremode(tab, "models/weapons/w_hgun_mp.mdl", 50)
+		ScavData.RegisterFiremode(tab, "models/xenians/agrunt.mdl", 50)
+		ScavData.RegisterFiremode(tab, "models/xenians/agrunt_02.mdl", 50)
+		ScavData.RegisterFiremode(tab, "models/weapons/w_hornet.mdl", 1)
 		
 --[[==============================================================================================
 	--Controller Energy Ball
@@ -2289,7 +2317,10 @@ end
 				end
 			end
 			tab.Cooldown = 0.15
+		--HL:S
 		ScavData.RegisterFiremode(tab, "models/controller.mdl", 50)
+		--BMS
+		ScavData.RegisterFiremode(tab, "models/xenians/controller.mdl", 50)
 	
 --[[==============================================================================================
 	--Squid Spit
@@ -2316,7 +2347,10 @@ end
 				end
 			end
 			tab.Cooldown = 0.6
-		ScavData.RegisterFiremode(tab, "models/bullsquid.mdl", 5) 
+		--HL:S
+		ScavData.RegisterFiremode(tab, "models/bullsquid.mdl", 5)
+		--BMS
+		ScavData.RegisterFiremode(tab, "models/xenians/bullsquid.mdl", 5)
 
 --[[==============================================================================================
 	--Vortigaunt Beam

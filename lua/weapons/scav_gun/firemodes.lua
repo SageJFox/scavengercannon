@@ -495,6 +495,7 @@ end
 		ScavData.RegisterFiremode(tab, "models/weapons/w_machete.mdl")
 		--BMS
 		ScavData.RegisterFiremode(tab, "models/weapons/crossbow_bolt.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/pen.mdl")
 
 --[[==============================================================================================
 	--Scav Grenade
@@ -1665,6 +1666,10 @@ end
 		ScavData.RegisterFiremode(tab, "models/props_marines/army_radio.mdl", 10)
 		ScavData.RegisterFiremode(tab, "models/props_generic/bm_batteryradio01.mdl", 10)
 		ScavData.RegisterFiremode(tab, "models/props_generic/bm_citizenradio01.mdl", 10)
+		ScavData.RegisterFiremode(tab, "models/props_office/stereosystem.mdl", 10)
+		ScavData.RegisterFiremode(tab, "models/gibs/props_office/stereosystem_p1.mdl", 6)
+		ScavData.RegisterFiremode(tab, "models/gibs/props_office/stereosystem_p2.mdl", 2)
+		ScavData.RegisterFiremode(tab, "models/gibs/props_office/stereosystem_p3.mdl", 2)
 
 --[[==============================================================================================
 	--Gas Canister 
@@ -2203,38 +2208,42 @@ PrecacheParticleSystem("scav_exp_plasma")
 			tab.anim = ACT_VM_SECONDARYATTACK
 			tab.Level = 4
 			local identify = {
-				--[Breen Bust] = 0,
-				--[[Antlion Spawn Plug]]["models/props_debris/concrete_spawnplug001a.mdl"] = 1,
-				--[[Office Plant]]["models/props/cs_office/plant01.mdl"] = 2,
-				["models/elpaso/plant01.mdl"] = 2,
-				--[[Flower Barrel]]["models/props/de_inferno/flower_barrel.mdl"] = 3,
-				--[[Fountain Bowl]]["models/props/de_inferno/fountain_bowl.mdl"] = 4,
-				--[[Skylight]]["models/props/cs_militia/skylight_glass.mdl"] = 5,
-				--[[Atlas]]["models/props_unique/airport/atlas.mdl"] = 6,
-				--[[NP Column]]["models/props_debris/concrete_column001a_core.mdl"] = 7,
-				--[[Defective Turret]]["models/npcs/turret/turret_skeleton.mdl"] = 8,
-				["models/npcs/turret/turret_backwards.mdl"] = 8,
-				["models/npcs/monsters/monster_a.mdl"] = 8,
-				["models/npcs/monsters/monster_a_box.mdl"] = 8,
-				["models/npcs/monsters/monster_a_head.mdl"] = 8,
-				--[[Barricade]]["models/props_wasteland/barricade002a.mdl"] = 9,
-				--[[Boat]]["models/props_canal/boat001a.mdl"] = 10,
-				["models/props_canal/boat001b.mdl"] = 10,
-				["models/props_canal/boat002b.mdl"] = 10,
-				["models/props_fairgrounds/swan_boat.mdl"] = 10,
-				["models/props_swamp/row_boat_ref.mdl"] = 10,
-				["models/props_urban/boat002.mdl"] = 10,
-				["models/props_vehicles/boat_covered.mdl"] = 10,
-				["models/props_vehicles/boat_power.mdl"] = 10,
-				["models/props_vehicles/boat_ski.mdl"] = 10,
-				["models/props_vehicles/boat_smash.mdl"] = 10,
-				["models/lostcoast/props_wasteland/boat_wooden01a.mdl"] = 10,
-				["models/lostcoast/props_wasteland/boat_wooden02a.mdl"] = 10,
-				["models/lostcoast/props_wasteland/boat_wooden01a_static.mdl"] = 10,
-				["models/props_italian/boat_wooden03a.mdl"] = 10,
-				["models/leon/boat_normal.mdl"] = 10,
+				--[[Breen Bust]]["models/props_combine/breenbust.mdl"] = SCAV_PHYSSHOTSUPER_BUST,
+				--[[Antlion Spawn Plug]]["models/props_debris/concrete_spawnplug001a.mdl"] = SCAV_PHYSSHOTSUPER_ANTLIONPLUG,
+				--[[Office Plant]]["models/props/cs_office/plant01.mdl"] = SCAV_PHYSSHOTSUPER_OFFICEPLANT,
+				["models/elpaso/plant01.mdl"] = SCAV_PHYSSHOTSUPER_OFFICEPLANT,
+				--[[Flower Barrel]]["models/props/de_inferno/flower_barrel.mdl"] = SCAV_PHYSSHOTSUPER_FLOWERBARREL,
+				--[[Fountain Bowl]]["models/props/de_inferno/fountain_bowl.mdl"] = SCAV_PHYSSHOTSUPER_FOUNTAINBOWL,
+				--[[Skylight]]["models/props/cs_militia/skylight_glass.mdl"] = SCAV_PHYSSHOTSUPER_SKYLIGHT,
+				--[[Atlas]]["models/props_unique/airport/atlas.mdl"] = SCAV_PHYSSHOTSUPER_ATLAS,
+				--[[NP Column]]["models/props_debris/concrete_column001a_core.mdl"] = SCAV_PHYSSHOTSUPER_COLUMN,
+				--[[Defective Turret]]["models/npcs/turret/turret_skeleton.mdl"] = SCAV_PHYSSHOTSUPER_DEFECTIVE,
+				["models/npcs/turret/turret_backwards.mdl"] = SCAV_PHYSSHOTSUPER_DEFECTIVE,
+				["models/npcs/monsters/monster_a.mdl"] = SCAV_PHYSSHOTSUPER_DEFECTIVE,
+				["models/npcs/monsters/monster_a_box.mdl"] = SCAV_PHYSSHOTSUPER_DEFECTIVE,
+				["models/npcs/monsters/monster_a_head.mdl"] = SCAV_PHYSSHOTSUPER_DEFECTIVE,
+				--[[Barricade]]["models/props_wasteland/barricade002a.mdl"] = SCAV_PHYSSHOTSUPER_BARRICADE,
+				--[[Boat]]--[[["models/props_canal/boat001a.mdl"] = SCAV_PHYSSHOTSUPER_BOAT,
+				["models/props_canal/boat001b.mdl"] = SCAV_PHYSSHOTSUPER_BOAT,
+				["models/props_canal/boat002b.mdl"] = SCAV_PHYSSHOTSUPER_BOAT,
+				["models/props_fairgrounds/swan_boat.mdl"] = SCAV_PHYSSHOTSUPER_BOAT,
+				["models/props_swamp/row_boat_ref.mdl"] = SCAV_PHYSSHOTSUPER_BOAT,
+				["models/props_urban/boat002.mdl"] = SCAV_PHYSSHOTSUPER_BOAT,
+				["models/props_vehicles/boat_covered.mdl"] = SCAV_PHYSSHOTSUPER_BOAT,
+				["models/props_vehicles/boat_power.mdl"] = SCAV_PHYSSHOTSUPER_BOAT,
+				["models/props_vehicles/boat_ski.mdl"] = SCAV_PHYSSHOTSUPER_BOAT,
+				["models/props_vehicles/boat_smash.mdl"] = SCAV_PHYSSHOTSUPER_BOAT,
+				["models/lostcoast/props_wasteland/boat_wooden01a.mdl"] = SCAV_PHYSSHOTSUPER_BOAT,
+				["models/lostcoast/props_wasteland/boat_wooden02a.mdl"] = SCAV_PHYSSHOTSUPER_BOAT,
+				["models/lostcoast/props_wasteland/boat_wooden01a_static.mdl"] = SCAV_PHYSSHOTSUPER_BOAT,
+				["models/props_italian/boat_wooden03a.mdl"] = SCAV_PHYSSHOTSUPER_BOAT,
+				["models/leon/boat_normal.mdl"] = SCAV_PHYSSHOTSUPER_BOAT,]]
+				--[[Partition]]["models/props_office/partition_36x48.mdl"] = SCAV_PHYSSHOTSUPER_PARTITION,
+				--[[Partition]]["models/props_office/partition_36x60.mdl"] = SCAV_PHYSSHOTSUPER_PARTITION,
+				--[[Partition]]["models/props_office/partition_48x48.mdl"] = SCAV_PHYSSHOTSUPER_PARTITION,
+				--[[Partition]]["models/props_office/partition_48x60.mdl"] = SCAV_PHYSSHOTSUPER_PARTITION,
 			}
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
+			tab.Identify = setmetatable(identify, {__index = function() return SCAV_PHYSSHOTSUPER_BOAT end})
 			tab.MaxAmmo = 6
 			if SERVER then
 				tab.FireFunc = function(self, item)
@@ -2247,62 +2256,67 @@ PrecacheParticleSystem("scav_exp_plasma")
 						drag = true,
 					}
 					local propdetails = {
-						[0] = function(data)
+						[SCAV_PHYSSHOTSUPER_BUST] = function(data)
 							data.chunks = {"1", "2", "3", "4", "5", "6", "7"}
 							data.mdl = "models/props_combine/breenbust_Chunk0"
 							data.mass = 15
 						end,
-						[1] = function(data)
+						[SCAV_PHYSSHOTSUPER_ANTLIONPLUG] = function(data)
 							data.chunks = {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k"}
 							data.mdl = "models/props_debris/concrete_spawnchunk001"
 							data.mass = 25
 							data.drag = false
 							data.ang:Add(Angle(90, 0, 0))
 						end,
-						[2] = function(data)
+						[SCAV_PHYSSHOTSUPER_OFFICEPLANT] = function(data)
 							data.chunks = {"1", "2", "3", "4", "5", "6", "7"}
 							data.mdl = "models/props/cs_office/plant01_p"
 						end,
-						[3] = function(data)
+						[SCAV_PHYSSHOTSUPER_FLOWERBARREL] = function(data)
 							data.chunks = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"}
 							data.mdl = "models/props/de_inferno/flower_barrel_p"
 						end,
-						[4] = function(data)
+						[SCAV_PHYSSHOTSUPER_FOUNTAINBOWL] = function(data)
 							data.chunks = {"2", "3", "4", "5", "6", "7", "8", "9", "10"}
 							data.mdl = "models/props/de_inferno/fountain_bowl_p"
 						end,
-						[5] = function(data)
+						[SCAV_PHYSSHOTSUPER_SKYLIGHT] = function(data)
 							data.chunks = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14"}
 							data.mdl = "models/props/cs_militia/skylight_glass_p"
 							data.ang:Add(Angle(90, 0, 0))
 						end,
-						[6] = function(data)
+						[SCAV_PHYSSHOTSUPER_ATLAS] = function(data)
 							data.chunks = {"1", "2", "3", "4", "5", "6", "7", "8", "9"}
 							data.mdl = "models/props_unique/airport/atlas_break0"
 							data.pos:Add(Vector(0, 0, -32))
 							data.mass = 25
 							data.drag = false
 						end,
-						[7] = function(data)
+						[SCAV_PHYSSHOTSUPER_COLUMN] = function(data)
 							data.chunks = {"1", "2", "3", "4", "5", "6", "7", "8", "9"}
 							data.mdl = "models/props_debris/concrete_column001a_chunk0"
 							data.ang:Add(Angle(0, 0, 90)) --horizontal spread
 							data.mass = 25
 						end,
-						[8] = function(data)
+						[SCAV_PHYSSHOTSUPER_DEFECTIVE] = function(data)
 							data.chunks = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26"}
 							data.mdl = "models/npcs/turret/turret_fx_break_gib"
 							data.mass = 25
 						end,
-						[9] = function(data)
+						[SCAV_PHYSSHOTSUPER_BARRICADE] = function(data)
 							data.chunks = {"1", "2", "3", "4", "5", "6"}
 							data.mdl = "models/props_wasteland/barricade002a_chunk0"
 							data.ang:Add(Angle(0, 90, 0))
 							data.mass = 25
 						end,
-						[10] = function(data)
+						[SCAV_PHYSSHOTSUPER_BOAT] = function(data)
 							data.chunks = {"1", "2", "3", "4", "5", "6", "7", "8"}
 							data.mdl = "models/props_canal/boat001b_chunk0"
+							data.mass = 25
+						end,
+						[SCAV_PHYSSHOTSUPER_PARTITION] = function(data)
+							data.chunks = {"1", "2", "3", "4", "5", "6", "7"}
+							data.mdl = "models/props_office/partition_36x48_break0"
 							data.mass = 25
 						end,
 					}
@@ -2404,6 +2418,11 @@ PrecacheParticleSystem("scav_exp_plasma")
 			ScavData.RegisterFiremode(tab, "models/elpaso/plant01.mdl")
 		end
 		ScavData.RegisterFiremode(tab, "models/leon/boat_normal.mdl")
+		--BMS
+		ScavData.RegisterFiremode(tab, "models/props_office/partition_36x48.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_office/partition_36x60.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_office/partition_48x48.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_office/partition_48x60.mdl")
 
 --[[==============================================================================================
 	--Physics Shotgun
@@ -3013,6 +3032,13 @@ PrecacheParticleSystem("scav_exp_plasma")
 			ScavData.RegisterFiremode(tab, "models/props_junk/garbage_plasticbottle002a_fullsheet.mdl", 50)
 			ScavData.RegisterFiremode(tab, "models/props_junk/garbage_cleanercan01a.mdl", 50)
 			ScavData.RegisterFiremode(tab, "models/props_junk/garbage_cleanercan01a_fullsheet.mdl", 50)
+			--BMS
+			ScavData.RegisterFiremode(tab, "models/props_canteen/soda_fountain.mdl", 300)
+			ScavData.RegisterFiremode(tab, "models/props_junk/cleanerbottle01.mdl", 50)
+			ScavData.RegisterFiremode(tab, "models/props_junk/plasticcontainer01.mdl", 200)
+			ScavData.RegisterFiremode(tab, "models/props_junk/plasticcontainer02.mdl", 50)
+			ScavData.RegisterFiremode(tab, "models/props_junk/plasticcontainer03.mdl", 50)
+			ScavData.RegisterFiremode(tab, "models/props_junk/plasticcontainer04.mdl", 50)
 		end
 
 --[[==============================================================================================
@@ -3574,6 +3600,10 @@ PrecacheParticleSystem("scav_exp_plasma")
 				ScavData.RegisterFiremode(tab, "models/stalker.mdl", 200)
 				--ASW
 				ScavData.RegisterFiremode(tab, "models/swarm/mininglaser/mininglaser.mdl", 200)
+				--BMS
+				ScavData.RegisterFiremode(tab, "models/props_am/am_lasertube.mdl", 200)
+				ScavData.RegisterFiremode(tab, "models/props_questionableethics/qe_auxlaser.mdl", 300)
+				ScavData.RegisterFiremode(tab, "models/props_questionableethics/qe_primarylaser.mdl", SCAV_SHORT_MAX)
 		end
 
 --[[==============================================================================================

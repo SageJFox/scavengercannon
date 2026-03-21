@@ -94,6 +94,24 @@
 		--ASW
 		ScavData.RegisterFiremode(tab, "models/env/ryberg/outside/detonator/detonator.mdl", SCAV_SHORT_MAX)
 		ScavData.RegisterFiremode(tab, "models/swarmprops/techdeco/swarm_consolemesh.mdl", SCAV_SHORT_MAX)
+		--BMS
+		ScavData.RegisterFiremode(tab, "models/props_office/closed_laptop.mdl", SCAV_SHORT_MAX)
+		ScavData.RegisterFiremode(tab, "models/props_office/open_laptop.mdl", SCAV_SHORT_MAX)
+		ScavData.RegisterFiremode(tab, "models/props_blackmesa/supercomputer01a.mdl", SCAV_SHORT_MAX)
+		ScavData.RegisterFiremode(tab, "models/props_blackmesa/supercomputer01a_break08.mdl", SCAV_SHORT_MAX)
+		ScavData.RegisterFiremode(tab, "models/props_blackmesa/supercomputer01a_break09.mdl", SCAV_SHORT_MAX)
+		ScavData.RegisterFiremode(tab, "models/props_blackmesa/supercomputer01b.mdl", SCAV_SHORT_MAX)
+		ScavData.RegisterFiremode(tab, "models/props_blackmesa/supercomputer01b_break09.mdl", SCAV_SHORT_MAX)
+		ScavData.RegisterFiremode(tab, "models/props_blackmesa/supercomputer01c.mdl", SCAV_SHORT_MAX)
+		ScavData.RegisterFiremode(tab, "models/props_blackmesa/supercomputer01c_break01.mdl", SCAV_SHORT_MAX)
+		ScavData.RegisterFiremode(tab, "models/props_am/gadget01.mdl", SCAV_SHORT_MAX)
+		ScavData.RegisterFiremode(tab, "models/props_am/gadget02.mdl", SCAV_SHORT_MAX)
+		ScavData.RegisterFiremode(tab, "models/props_am/gadget03.mdl", SCAV_SHORT_MAX)
+		ScavData.RegisterFiremode(tab, "models/props_blackmesa/wallcomputer.mdl", SCAV_SHORT_MAX)
+		ScavData.RegisterFiremode(tab, "models/props_office/computer_desktop01.mdl", SCAV_SHORT_MAX)
+		ScavData.RegisterFiremode(tab, "models/props_office/computer_desktop02.mdl", SCAV_SHORT_MAX)
+		ScavData.RegisterFiremode(tab, "models/props_office/computer_desktop03.mdl", SCAV_SHORT_MAX)
+		ScavData.RegisterFiremode(tab, "models/props_marines/prc77_radio.mdl", SCAV_SHORT_MAX)
 		
 --[[==============================================================================================
 	--Energy Drink/Stim Pack
@@ -345,6 +363,14 @@
 		ScavData.RegisterFiremode(tab, "models/props_debris/paintbucket01_static.mdl", 30)
 		--HL:S
 		ScavData.RegisterFiremode(tab, "models/hassassin.mdl")
+		--BMS
+		ScavData.RegisterFiremode(tab, "models/props_junk/metalcontainer01.mdl", 30)
+		ScavData.RegisterFiremode(tab, "models/props_junk/metalcontainer02.mdl", 30)
+		ScavData.RegisterFiremode(tab, "models/props_junk/metalcontainer03.mdl", 30)
+		ScavData.RegisterFiremode(tab, "models/props_junk/metalcontainer04.mdl", 30)
+		ScavData.RegisterFiremode(tab, "models/props_junk/spraycan.mdl", 30)
+		ScavData.RegisterFiremode(tab, "models/humans/hassassin.mdl", 30)
+		ScavData.RegisterFiremode(tab, "models/player/hassassin.mdl", 30)
 		
 	
 
@@ -405,6 +431,8 @@
 		ScavData.RegisterFiremode(tab, "models/props_downtown/keycard_reader.mdl")
 		--Wiremod
 		ScavData.RegisterFiremode(tab, "models/bull/buttons/key_switch.mdl")
+		--BMS
+		ScavData.RegisterFiremode(tab, "models/props_blackmesa/alarmbox.mdl")
 
 --[[==============================================================================================
 	--Remote
@@ -524,7 +552,8 @@ elseif PORTAL2 then
 		"vo/wheatley/fgb_plugin_nags11.wav",
 	}
 end
-setmetatable(hackfail, {__index = function() return {"buttons/combine_button_locked.wav"} end})
+local hackfaildefault = {"buttons/combine_button_locked.wav"}
+setmetatable(hackfail, {__index = function() return hackfaildefault end})
 
 --Hacking attempt successful jingle
 local hacksuccess = {
@@ -599,7 +628,8 @@ elseif PORTAL2 then
 		"vo/wheatley/bw_sp_a4_tb_wall_button_intro07.wav",
 	}
 end
-setmetatable(hacksuccess, {__index = function() return {"buttons/combine_button1.wav"} end})
+local hacksuccessdefault = {"buttons/combine_button1.wav"}
+setmetatable(hacksuccess, {__index = function() return hacksuccessdefault end})
 
 	do
 		local tab = {}
@@ -612,6 +642,8 @@ setmetatable(hacksuccess, {__index = function() return {"buttons/combine_button1
 				--[[keyboard]]["models/props_c17/computer01_keyboard.mdl"] = 1,
 				["models/props/cs_office/computer_keyboard.mdl"] = 1,
 				["models/props/kb_mouse/keyboard.mdl"] = 1,
+				["models/props_office/computer_keyboard01.mdl"] = 1,
+				["models/props_office/computer_keyboard02.mdl"] = 1,
 				--[[wheatley]]["models/weapons/c_models/c_p2rec/c_p2rec.mdl"] = 2,
 				["models/npcs/personality_sphere/personality_sphere.mdl"] = 2,
 				["models/npcs/personality_sphere/personality_sphere_skins.mdl"] = 2,
@@ -1091,6 +1123,9 @@ setmetatable(hacksuccess, {__index = function() return {"buttons/combine_button1
 		--ASW
 		ScavData.RegisterFiremode(tab, "models/props/utilities/satellite_dish001a.mdl", SCAV_SHORT_MAX)
 		ScavData.RegisterFiremode(tab, "models/props/utilities/satellite_dish002a.mdl", SCAV_SHORT_MAX)
+		--BMS
+		ScavData.RegisterFiremode(tab, "models/props_office/computer_keyboard01.mdl", SCAV_SHORT_MAX)
+		ScavData.RegisterFiremode(tab, "models/props_office/computer_keyboard02.mdl", SCAV_SHORT_MAX)
 	end
 		
 --[[==============================================================================================
@@ -1882,6 +1917,9 @@ end
 		ScavData.RegisterFiremode(tab, "models/props_unique/mopbucket01.mdl", 30)
 		--ASW
 		ScavData.RegisterFiremode(tab, "models/props/furniture/misc/bathroomsink.mdl", 20)
+		--BMS
+		ScavData.RegisterFiremode(tab, "models/props_blackmesa/restroom_sink.mdl", 20)
+		ScavData.RegisterFiremode(tab, "models/props_office/aircan.mdl", 15)
 
 --[[==============================================================================================
 	-- Sandwich
@@ -1904,6 +1942,41 @@ end
 				["models/props/cs_italy/bananna.mdl"] = SCAV_SANDWICH_BANANA,
 				--[[Junk Food]]["models/props_equipment/snack_machine.mdl"] = SCAV_SANDWICH_JUNK,
 				["models/props_equipment/snack_machine2.mdl"] = SCAV_SANDWICH_JUNK,
+				["models/props_canteen/donutbox.mdl"] = SCAV_SANDWICH_JUNK,
+				["models/props_canteen/vendingmachine01.mdl"] = SCAV_SANDWICH_JUNK,
+				["models/gibs/props_canteen/vendingmachine01_p1a.mdl"] = SCAV_SANDWICH_JUNK,
+				["models/gibs/props_canteen/vendingmachine01_p1b.mdl"] = SCAV_SANDWICH_JUNK,
+				["models/gibs/props_canteen/vendingmachine01_p1c.mdl"] = SCAV_SANDWICH_JUNK,
+				["models/gibs/props_canteen/vm_snack01.mdl"] = SCAV_SANDWICH_JUNK,
+				["models/gibs/props_canteen/vm_snack02.mdl"] = SCAV_SANDWICH_JUNK,
+				["models/gibs/props_canteen/vm_snack03.mdl"] = SCAV_SANDWICH_JUNK,
+				["models/gibs/props_canteen/vm_snack04.mdl"] = SCAV_SANDWICH_JUNK,
+				["models/gibs/props_canteen/vm_snack05.mdl"] = SCAV_SANDWICH_JUNK,
+				["models/gibs/props_canteen/vm_snack06.mdl"] = SCAV_SANDWICH_JUNK,
+				["models/gibs/props_canteen/vm_snack07.mdl"] = SCAV_SANDWICH_JUNK,
+				["models/gibs/props_canteen/vm_snack08.mdl"] = SCAV_SANDWICH_JUNK,
+				["models/gibs/props_canteen/vm_snack09.mdl"] = SCAV_SANDWICH_JUNK,
+				["models/gibs/props_canteen/vm_snack10.mdl"] = SCAV_SANDWICH_JUNK,
+				["models/gibs/props_canteen/vm_snack11.mdl"] = SCAV_SANDWICH_JUNK,
+				["models/gibs/props_canteen/vm_snack12.mdl"] = SCAV_SANDWICH_JUNK,
+				["models/gibs/props_canteen/vm_snack13.mdl"] = SCAV_SANDWICH_JUNK,
+				["models/gibs/props_canteen/vm_snack14.mdl"] = SCAV_SANDWICH_JUNK,
+				["models/gibs/props_canteen/vm_snack15.mdl"] = SCAV_SANDWICH_JUNK,
+				["models/gibs/props_canteen/vm_snack16.mdl"] = SCAV_SANDWICH_JUNK,
+				["models/gibs/props_canteen/vm_snack17.mdl"] = SCAV_SANDWICH_JUNK,
+				["models/gibs/props_canteen/vm_snack18.mdl"] = SCAV_SANDWICH_JUNK,
+				["models/gibs/props_canteen/vm_snack19.mdl"] = SCAV_SANDWICH_JUNK,
+				["models/gibs/props_canteen/vm_snack20.mdl"] = SCAV_SANDWICH_JUNK,
+				["models/gibs/props_canteen/vm_snack21.mdl"] = SCAV_SANDWICH_JUNK,
+				["models/gibs/props_canteen/vm_snack22.mdl"] = SCAV_SANDWICH_JUNK,
+				["models/gibs/props_canteen/vm_snack23.mdl"] = SCAV_SANDWICH_JUNK,
+				["models/gibs/props_canteen/vm_snack24.mdl"] = SCAV_SANDWICH_JUNK,
+				["models/gibs/props_canteen/vm_snack25.mdl"] = SCAV_SANDWICH_JUNK,
+				["models/gibs/props_canteen/vm_snack26.mdl"] = SCAV_SANDWICH_JUNK,
+				["models/gibs/props_canteen/vm_snack27.mdl"] = SCAV_SANDWICH_JUNK,
+				["models/gibs/props_canteen/vm_snack28.mdl"] = SCAV_SANDWICH_JUNK,
+				["models/gibs/props_canteen/vm_snack29.mdl"] = SCAV_SANDWICH_JUNK,
+				["models/gibs/props_canteen/vm_snack30.mdl"] = SCAV_SANDWICH_JUNK,
 			}
 			tab.Identify = setmetatable(identify, {__index = function() return SCAV_SANDWICH_DEFAULT end})
 			tab.MaxAmmo = 3
@@ -1939,8 +2012,6 @@ end
 				--TF2
 				ScavData.CollectFuncs["models/weapons/c_models/c_sandwich/c_sandwich.mdl"] = function(self, ent) return {{self.christmas and "models/weapons/c_models/c_sandwich/c_sandwich_xmas.mdl" or ScavData.FormatModelname(ent:GetModel()), 1, math.random(0, 1)}} end
 				ScavData.CollectFuncs["models/items/plate.mdl"] = function(self, ent) return {{self.christmas and "models/items/plate_sandwich_xmas.mdl" or ScavData.FormatModelname(ent:GetModel()), 1, math.random(0, 1)}} end
-				--L4D/2
-				ScavData.CollectFuncs["models/props_equipment/snack_machine.mdl"] = ScavData.GiveOneOfItemInf
 			end
 		ScavData.RegisterFiremode(tab, "models/food/burger.mdl")
 		ScavData.RegisterFiremode(tab, "models/food/hotdog.mdl")
@@ -1999,13 +2070,52 @@ end
 		ScavData.RegisterFiremode(tab, "models/props_fairgrounds/garbage_hamburger_container.mdl")
 		ScavData.RegisterFiremode(tab, "models/props_fairgrounds/garbage_popcorn_box.mdl")
 		ScavData.RegisterFiremode(tab, "models/props_fairgrounds/garbage_popcorn_tub.mdl")
-		ScavData.RegisterFiremode(tab, "models/props_equipment/snack_machine.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_equipment/snack_machine.mdl", SCAV_SHORT_MAX)
 		ScavData.RegisterFiremode(tab, "models/props_equipment/snack_machine2.mdl")
 		--Portal/2
 		ScavData.RegisterFiremode(tab, "models/props/milk_carton/milk_carton.mdl")
 		ScavData.RegisterFiremode(tab, "models/props/milk_carton/milk_carton_open.mdl")
 		--DoD:S
 		ScavData.RegisterFiremode(tab, "models/props_misc/ration_box01.mdl")
+		--BMS
+		ScavData.RegisterFiremode(tab, "models/props_canteen/donutbox.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_canteen/pizza_box.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/interdimensional_pizza.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_canteen/taco.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_canteen/vendingmachine01.mdl", SCAV_SHORT_MAX)
+		ScavData.RegisterFiremode(tab, "models/gibs/props_canteen/vendingmachine01_p1a.mdl", SCAV_SHORT_MAX)
+		ScavData.RegisterFiremode(tab, "models/gibs/props_canteen/vendingmachine01_p1b.mdl", SCAV_SHORT_MAX)
+		ScavData.RegisterFiremode(tab, "models/gibs/props_canteen/vendingmachine01_p1c.mdl", SCAV_SHORT_MAX)
+		ScavData.RegisterFiremode(tab, "models/gibs/props_canteen/vm_snack01.mdl")
+		ScavData.RegisterFiremode(tab, "models/gibs/props_canteen/vm_snack02.mdl")
+		ScavData.RegisterFiremode(tab, "models/gibs/props_canteen/vm_snack03.mdl")
+		ScavData.RegisterFiremode(tab, "models/gibs/props_canteen/vm_snack04.mdl")
+		ScavData.RegisterFiremode(tab, "models/gibs/props_canteen/vm_snack05.mdl")
+		ScavData.RegisterFiremode(tab, "models/gibs/props_canteen/vm_snack06.mdl")
+		ScavData.RegisterFiremode(tab, "models/gibs/props_canteen/vm_snack07.mdl")
+		ScavData.RegisterFiremode(tab, "models/gibs/props_canteen/vm_snack08.mdl")
+		ScavData.RegisterFiremode(tab, "models/gibs/props_canteen/vm_snack09.mdl")
+		ScavData.RegisterFiremode(tab, "models/gibs/props_canteen/vm_snack10.mdl")
+		ScavData.RegisterFiremode(tab, "models/gibs/props_canteen/vm_snack11.mdl")
+		ScavData.RegisterFiremode(tab, "models/gibs/props_canteen/vm_snack12.mdl")
+		ScavData.RegisterFiremode(tab, "models/gibs/props_canteen/vm_snack13.mdl")
+		ScavData.RegisterFiremode(tab, "models/gibs/props_canteen/vm_snack14.mdl")
+		ScavData.RegisterFiremode(tab, "models/gibs/props_canteen/vm_snack15.mdl")
+		ScavData.RegisterFiremode(tab, "models/gibs/props_canteen/vm_snack16.mdl")
+		ScavData.RegisterFiremode(tab, "models/gibs/props_canteen/vm_snack17.mdl")
+		ScavData.RegisterFiremode(tab, "models/gibs/props_canteen/vm_snack18.mdl")
+		ScavData.RegisterFiremode(tab, "models/gibs/props_canteen/vm_snack19.mdl")
+		ScavData.RegisterFiremode(tab, "models/gibs/props_canteen/vm_snack20.mdl")
+		ScavData.RegisterFiremode(tab, "models/gibs/props_canteen/vm_snack21.mdl")
+		ScavData.RegisterFiremode(tab, "models/gibs/props_canteen/vm_snack22.mdl")
+		ScavData.RegisterFiremode(tab, "models/gibs/props_canteen/vm_snack23.mdl")
+		ScavData.RegisterFiremode(tab, "models/gibs/props_canteen/vm_snack24.mdl")
+		ScavData.RegisterFiremode(tab, "models/gibs/props_canteen/vm_snack25.mdl")
+		ScavData.RegisterFiremode(tab, "models/gibs/props_canteen/vm_snack26.mdl")
+		ScavData.RegisterFiremode(tab, "models/gibs/props_canteen/vm_snack27.mdl")
+		ScavData.RegisterFiremode(tab, "models/gibs/props_canteen/vm_snack28.mdl")
+		ScavData.RegisterFiremode(tab, "models/gibs/props_canteen/vm_snack29.mdl")
+		ScavData.RegisterFiremode(tab, "models/gibs/props_canteen/vm_snack30.mdl")
 
 --[[==============================================================================================
 	-- Crit Boost
@@ -2551,6 +2661,10 @@ end
 		--ASW
 		ScavData.RegisterFiremode(tab, "models/props/furniture/misc/bathroombin.mdl", SCAV_SHORT_MAX)
 		ScavData.RegisterFiremode(tab, "models/env/ryberg/outside/dumpster/dumpster.mdl", SCAV_SHORT_MAX)
+		--BMS
+		ScavData.RegisterFiremode(tab, "models/props_generic/trashbin002.mdl", SCAV_SHORT_MAX)
+		ScavData.RegisterFiremode(tab, "models/props_canteen/canteenbin.mdl", SCAV_SHORT_MAX)
+		ScavData.RegisterFiremode(tab, "models/props_junk/refusebin.mdl", SCAV_SHORT_MAX)
 
 --[[==============================================================================================
 	-- Punish Prop Virus
