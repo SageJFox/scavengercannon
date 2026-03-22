@@ -307,6 +307,7 @@ function ENT:Explode(ply, radius, damage)
 	if not IsValid(self) then return end
 
 	if self.Exploded then return end
+	self.Exploded = true
 
 	if not IsValid(ply) then
 		ply = self.Owner
@@ -336,7 +337,6 @@ function ENT:Explode(ply, radius, damage)
 	effectdata:SetOrigin(self:GetPos())
 	util.Effect("Explosion", effectdata, true, true)
 
-	self.Exploded = true
 
 	self:Remove()
 	return
