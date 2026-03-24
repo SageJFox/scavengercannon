@@ -324,8 +324,12 @@ function SWEP:PotentialArmor()
 	return potential
 end
 
+--IsFirstTimePredicted doesn't work properly on the client in singleplayer apparently, because why would it
+local spclientattacksthisframe = 0
+
 function SWEP:Think()
 	if game.SinglePlayer() then
+		if CLIENT then spclientattacksthisframe = 0 end
 		self:CallOnClient("Think")
 	end
 
@@ -459,7 +463,11 @@ function SWEP:PrimaryAttack()
 		self:CallOnClient("PrimaryAttack")
 	end
 
-	if not IsFirstTimePredicted() then return end
+	if CLIENT and game.SinglePlayer() then
+		spclientattacksthisframe = spclientattacksthisframe + 1
+	end
+
+	if not IsFirstTimePredicted() and not (CLIENT and game.SinglePlayer() and spclientattacksthisframe <= 1) then return end
 
 	--In a state that prevents primary attack
 	if self.ChargeAttack or self:IsLocked() then return end
