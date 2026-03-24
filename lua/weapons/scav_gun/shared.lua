@@ -458,6 +458,9 @@ function SWEP:PrimaryAttack()
 	if game.SinglePlayer() then
 		self:CallOnClient("PrimaryAttack")
 	end
+
+	if not IsFirstTimePredicted() then return end
+
 	--In a state that prevents primary attack
 	if self.ChargeAttack or self:IsLocked() then return end
 
