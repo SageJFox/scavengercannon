@@ -447,6 +447,7 @@
 ==============================================================================================]]--
 		
 if SERVER then
+	util.AddNetworkString("scav_hackstart")
 	util.AddNetworkString("scav_hackdone")
 
 --Give player credit for any kills their hacking gets
@@ -933,23 +934,23 @@ setmetatable(hacksuccess, {__index = function() return hacksuccessdefault end})
 					end
 					--Invalid Target
 					if not IsValid(self:GetNWFiremodeEnt()) then
-						self:EmitSound(hackfail[ident][math.random(#hackfail[ident])]) --todo: unique fail sounds too?
+						self.Owner:EmitSound(hackfail[ident][math.random(#hackfail[ident])]) --todo: unique fail sounds too?
 						return endhack(STATUS_INVALID)
 					end
 					--User Canceled
 					if not self.Owner:KeyDown(IN_ATTACK) then
-						self:EmitSound(hackfail[ident][math.random(#hackfail[ident])])
+						self.Owner:EmitSound(hackfail[ident][math.random(#hackfail[ident])])
 						return endhack(STATUS_CANCELED)
 					end
 					--Out of Range
 					if self.Owner:GetShootPos():DistToSqr(self:GetNWFiremodeEnt():GetPos()) > hackrange^2 then
-						self:EmitSound(hackfail[ident][math.random(#hackfail[ident])])
+						self.Owner:EmitSound(hackfail[ident][math.random(#hackfail[ident])])
 						return endhack(STATUS_OUTOFRANGE)
 					end
 					--Hack Successful
 					local wheatleyslow = ident == SCAV_HACK_WHEATLEY and wheatleytime or 1
 					if self.HackingProgress > self.HackTime * wheatleyslow then
-						self:EmitSound(hacksuccess[ident][math.random(#hacksuccess[ident])])
+						self.Owner:EmitSound(hacksuccess[ident][math.random(#hacksuccess[ident])])
 						interactions[string.lower(self:GetNWFiremodeEnt():GetClass())].Action(self, self:GetNWFiremodeEnt())
 						return endhack(STATUS_SUCCESS, true)
 					end
@@ -969,7 +970,7 @@ setmetatable(hacksuccess, {__index = function() return hacksuccessdefault end})
 						wep.HackSuccess = net.ReadBool()
 						wep:SetChargeAttack()
 						wep.HackingProgress = 0
-						wep:EmitSound(wep.HackSuccess and (hacksuccess[ident][math.random(#hacksuccess[ident])]) or hackfail[ident][math.random(#hackfail[ident])])
+						--wep:EmitSound(wep.HackSuccess and (hacksuccess[ident][math.random(#hacksuccess[ident])]) or hackfail[ident][math.random(#hackfail[ident])])
 						wep.nextfire = CurTime() + hackcooldown * wep:GetCooldownScale()
 						wep.HackStatus = net.ReadUInt(STATUS_SIZE)
 						timer.Simple(hackcooldown * wep:GetCooldownScale(), function()
@@ -980,6 +981,25 @@ setmetatable(hacksuccess, {__index = function() return hacksuccessdefault end})
 				end
 				return hackthinktime * self:GetCooldownScale()
 			end
+
+			local function fireprocess(self, target, hacktime, ident)
+				if IsValid(target) then
+					if CLIENT and not game.SinglePlayer() then self.HackTime = hacktime end
+					self:SendWeaponAnim(ACT_VM_FIDGET)
+					tab.Cooldown = hackthinktime * self:GetCooldownScale()
+					return true
+				else
+					if SERVER then self.Owner:EmitSound(hackfail[ident][math.random(#hackfail[ident])]) end
+					tab.Cooldown = hackcooldown * self:GetCooldownScale()
+					self.HackSuccess = nil
+					timer.Simple(hackcooldown * self:GetCooldownScale(), function()
+						if not IsValid(self) then return end
+						self.HackStatus = nil
+					end)
+					return false
+				end
+			end
+
 			function tab.FireFunc(self, item)
 				local ident = tab.Identify[item.ammo]
 				tracep.start = self.Owner:GetShootPos()
@@ -991,32 +1011,33 @@ setmetatable(hacksuccess, {__index = function() return hacksuccessdefault end})
 				else
 					self.HackStatus = STATUS_INVALID
 				end
-				local target = self:GetNWFiremodeEnt()
-				if IsValid(target) then
+				if SERVER or game.SinglePlayer() then
+					local target = tr.Entity
 					local wheatleyslow = ident == SCAV_HACK_WHEATLEY and wheatleytime or 1
-					self.HackTime = interactions[string.lower(target:GetClass())].HackTime * wheatleyslow
-					--speed us up if we found something with a virus
-					if target.ScavVirus or target.ScavVirusParticle then
-						self.HackTime = math.min(interactions.virus * wheatleyslow, self.HackTime)
+					if IsValid(target) then
+						self.HackTime = interactions[string.lower(target:GetClass())].HackTime * wheatleyslow
+						--speed us up if we found something with a virus
+						if target.ScavVirus then
+							self.HackTime = math.min(interactions.virus * wheatleyslow, self.HackTime)
+						end
 					end
-					self:SendWeaponAnim(ACT_VM_FIDGET)
-					tab.Cooldown = hackthinktime * self:GetCooldownScale()
-				else
-					self:EmitSound(hackfail[ident][math.random(#hackfail[ident])])
-					tab.Cooldown = hackcooldown * self:GetCooldownScale()
-					self.HackSuccess = nil
-					timer.Simple(hackcooldown * self:GetCooldownScale(), function()
-						if not IsValid(self) then return end
-						self.HackStatus = nil
-					end)
+					if not game.SinglePlayer() then
+						net.Start("scav_hackstart")
+							net.WriteEntity(self)
+							net.WriteEntity(target)
+							net.WriteUInt(self.HackTime, 8)
+						net.Send(self.Owner)
+					end
+					if not fireprocess(self, target, self.HackTime, ident) then return false end
+					if SERVER then
+						self.ef_radio = self:CreateToggleEffect("scav_stream_radio", ident)
+						--self.ef_wires = self:CreateToggleEffect("scav_stream_cord")
+						--if IsValid(self.ef_wires) and IsValid(tr.Entity) then
+						--	self.ef_wires:Setendent(tr.Entity)
+						--end
+					end
+				elseif not IsValid(tr.Entity) then
 					return false
-				end
-				if SERVER then
-					self.ef_radio = self:CreateToggleEffect("scav_stream_radio", ident)
-					--self.ef_wires = self:CreateToggleEffect("scav_stream_cord")
-					--if IsValid(self.ef_wires) and IsValid(tr.Entity) then
-					--	self.ef_wires:Setendent(tr.Entity)
-					--end
 				end
 				self:SetChargeAttack(tab.ChargeAttack, item)
 				return false
@@ -1033,6 +1054,13 @@ setmetatable(hacksuccess, {__index = function() return hacksuccessdefault end})
 				ScavData.CollectFuncs["models/weapons/w_models/w_wrangler.mdl"] = function(self, ent) return {{self.christmas and "models/weapons/c_models/c_wrangler_xmas.mdl" or ScavData.FormatModelname(ent:GetModel()), SCAV_SHORT_MAX, ent:GetSkin(), 1}} end
 				ScavData.CollectFuncs["models/weapons/c_models/c_wrangler.mdl"] = ScavData.CollectFuncs["models/weapons/w_models/w_wrangler.mdl"]
 			else
+				net.Receive("scav_hackstart", function()
+					local self = net.ReadEntity()
+					if not IsValid(self) then return end
+					local target = net.ReadEntity()
+					local hacktime = net.ReadUInt(8)
+					fireprocess(self, target, hacktime)
+				end)
 				local headertext = function(text) draw.DrawText(text, "ScavScreenFontSmX", 44, 6, color_black, TEXT_ALIGN_LEFT) end
 				local signalstrengthicon = function(self, target)
 					signal:SetInt("$frame", isnumber(target) and target or signalstrength(self, target))
