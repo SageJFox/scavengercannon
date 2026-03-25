@@ -495,7 +495,10 @@ end
 		ScavData.RegisterFiremode(tab, "models/weapons/w_machete.mdl")
 		--BMS
 		ScavData.RegisterFiremode(tab, "models/weapons/crossbow_bolt.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_marines/bayonet.mdl")
 		ScavData.RegisterFiremode(tab, "models/props_junk/pen.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/scissors.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_canteen/spork.mdl")
 
 --[[==============================================================================================
 	--Scav Grenade
@@ -924,12 +927,9 @@ end
 					proj:SetPos(self:GetProjectileShootPos())
 					local ang = self.Owner:EyeAngles()
 					ang:RotateAroundAxis(self.Owner:GetAimVector(), 90)
-					if item.ammo == "models/scav/shuriken.mdl" or
-						item.ammo == "models/weapons/scav/shuriken.mdl" then
-						proj.Trail = util.SpriteTrail(proj, 0, Color(255, 255, 255, 255), true, 2, 0, 0.3, 0.25, "trails/smoke.vmt")
-						proj.DmgAmt = 8
-						self.Owner:EmitSound("weapons/ar2/fire1.wav")
-					end
+					proj.Trail = util.SpriteTrail(proj, 0, color_white, true, 2, 0, 0.3, 0.25, "trails/smoke.vmt")
+					proj.DmgAmt = 8
+					self.Owner:EmitSound("weapons/ar2/fire1.wav")
 					proj:SetAngles(ang)
 					proj.NoPin = true
 					proj.Drop = vector_origin
@@ -941,12 +941,16 @@ end
 				ScavData.CollectFuncs["models/props_unique/jukebox01.mdl"] = function(self, ent) return {{"models/scav/shuriken.mdl", SCAV_SHORT_MAX, 0}} end --TODO: record model
 				--Portal 2
 				ScavData.CollectFuncs["models/props_gameplay/laser_disc_player.mdl"] = function(self, ent) return {{"models/props_gameplay/laser_disc.mdl", SCAV_SHORT_MAX, 0}} end
+				--BMS
+				ScavData.CollectFuncs["models/props_junk/cd_drive.mdl"] = function(self, ent) return {{"models/props_office/cd_music.mdl", SCAV_SHORT_MAX, 0}} end
 			end
 			tab.Cooldown = 0.2
 		ScavData.RegisterFiremode(tab, "models/scav/shuriken.mdl")
 		ScavData.RegisterFiremode(tab, "models/weapons/scav/shuriken.mdl")
 		--Portal 2
 		ScavData.RegisterFiremode(tab, "models/props_gameplay/laser_disc.mdl")
+		--BMS
+		ScavData.RegisterFiremode(tab, "models/props_office/cd_music.mdl")
 
 --[[==============================================================================================
 	--Tank shell
@@ -1103,6 +1107,8 @@ end
 		ScavData.RegisterFiremode(tab, "models/props_powerup/power_up_transformer_bushing_tower.mdl", 15)
 		ScavData.RegisterFiremode(tab, "models/props_powerup/power_up_transformer_bushing_tower_short.mdl", 15)
 		ScavData.RegisterFiremode(tab, "models/props_powerup/power_up_transformer_relay_box.mdl", 15)
+		ScavData.RegisterFiremode(tab, "models/props_industrial/powerbox_large_01.mdl", 15)
+		ScavData.RegisterFiremode(tab, "models/props_industrial/service_terminal.mdl", 15)
 
 --[[==============================================================================================
 	--Hyper beam
@@ -1531,6 +1537,8 @@ end
 		--BMS
 		ScavData.RegisterFiremode(tab, "models/props_generic/phone01_base.mdl", 6)
 		ScavData.RegisterFiremode(tab, "models/props_generic/phone01_headset.mdl", 4)
+		ScavData.RegisterFiremode(tab, "models/props_industrial/desk_console1.mdl", 10)
+		ScavData.RegisterFiremode(tab, "models/props_industrial/desk_console1a.mdl", 6)
 
 --[[==============================================================================================
 	--Supersonic Shockwave
@@ -1670,6 +1678,8 @@ end
 		ScavData.RegisterFiremode(tab, "models/gibs/props_office/stereosystem_p1.mdl", 6)
 		ScavData.RegisterFiremode(tab, "models/gibs/props_office/stereosystem_p2.mdl", 2)
 		ScavData.RegisterFiremode(tab, "models/gibs/props_office/stereosystem_p3.mdl", 2)
+		ScavData.RegisterFiremode(tab, "models/props_generic/hand_dryer.mdl", 10)
+		ScavData.RegisterFiremode(tab, "models/props_industrial/aircompressor.mdl", 10)
 
 --[[==============================================================================================
 	--Gas Canister 
@@ -1707,6 +1717,7 @@ end
 					self.Owner:EmitSound("physics/metal/metal_canister_impact_hard" .. math.random(3) .. ".wav")
 					return self:TakeSubammo(item, 1)
 				end
+				ScavData.CollectFuncs["models/props_industrial/cylinder_store.mdl"] = function(self, ent) return {{"models/props_c17/canister01a.mdl", 3, 0, 2}} end
 			end
 			tab.Cooldown = 1.5
 			
@@ -2212,6 +2223,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 				--[[Antlion Spawn Plug]]["models/props_debris/concrete_spawnplug001a.mdl"] = SCAV_PHYSSHOTSUPER_ANTLIONPLUG,
 				--[[Office Plant]]["models/props/cs_office/plant01.mdl"] = SCAV_PHYSSHOTSUPER_OFFICEPLANT,
 				["models/elpaso/plant01.mdl"] = SCAV_PHYSSHOTSUPER_OFFICEPLANT,
+				["models/props_generic/plant_office.mdl"] = SCAV_PHYSSHOTSUPER_OFFICEPLANT,
 				--[[Flower Barrel]]["models/props/de_inferno/flower_barrel.mdl"] = SCAV_PHYSSHOTSUPER_FLOWERBARREL,
 				--[[Fountain Bowl]]["models/props/de_inferno/fountain_bowl.mdl"] = SCAV_PHYSSHOTSUPER_FOUNTAINBOWL,
 				--[[Skylight]]["models/props/cs_militia/skylight_glass.mdl"] = SCAV_PHYSSHOTSUPER_SKYLIGHT,
@@ -2414,11 +2426,12 @@ PrecacheParticleSystem("scav_exp_plasma")
 		--DoD:S
 		ScavData.RegisterFiremode(tab, "models/props_italian/boat_wooden03a.mdl")
 		--FoF
-		if CSS then --Chunks aren't in FoF, prop isn't breakable
-			ScavData.RegisterFiremode(tab, "models/elpaso/plant01.mdl")
-		end
 		ScavData.RegisterFiremode(tab, "models/leon/boat_normal.mdl")
+		if CSS then --Chunks aren't in FoF/BMS, prop isn't breakable
+			ScavData.RegisterFiremode(tab, "models/elpaso/plant01.mdl")
 		--BMS
+			ScavData.RegisterFiremode(tab, "models/props_generic/plant_office.mdl")
+		end
 		ScavData.RegisterFiremode(tab, "models/props_office/partition_36x48.mdl")
 		ScavData.RegisterFiremode(tab, "models/props_office/partition_36x60.mdl")
 		ScavData.RegisterFiremode(tab, "models/props_office/partition_48x48.mdl")
@@ -2440,6 +2453,16 @@ PrecacheParticleSystem("scav_exp_plasma")
 				["models/props_interiors/toilet_elongated.mdl"] = 1,
 				--[[Watermelon]]["models/props_junk/watermelon01.mdl"] = 2,
 				--[[Vent]]["models/props_junk/vent001.mdl"] = 3,
+				["models/props_blackmesa/bms_vent_01.mdl"] = 3,
+				["models/props_blackmesa/bms_vent_44_01.mdl"] = 3,
+				["models/props_blackmesa/bms_vent_44_break.mdl"] = 3,
+				["models/props_blackmesa/bms_vent_48_01.mdl"] = 3,
+				["models/props_blackmesa/bms_vent_48_break.mdl"] = 3,
+				["models/props_blackmesa/bms_vent_64_01.mdl"] = 3,
+				["models/props_blackmesa/bms_vent_64_break.mdl"] = 3,
+				["models/props_blackmesa/bms_vent_break.mdl"] = 3,
+				["models/props_industrial/vent4040.mdl"] = 3,
+				["models/props_industrial/vent4040_2.mdl"] = 3,
 				--[[Sink]]["models/props_wasteland/prison_sink001a.mdl"] = 4,
 				["models/props_wasteland/prison_sink001b.mdl"] = 4,
 				--[[Barrel]]["models/props/de_inferno/wine_barrel.mdl"] = 5,
@@ -2453,6 +2476,8 @@ PrecacheParticleSystem("scav_exp_plasma")
 				["models/props_mvm/sack_stack_pallet.mdl"] = 9,
 				["models/props/miscdeco/pallet/pallet.mdl"] = 9,
 				["models/props/miscdeco/pallet/palletsingle.mdl"] = 9,
+				["models/props_junk/warehouse_pallet01.mdl"] = 9,
+				["models/props_junk/warehouse_pallet01_static.mdl"] = 9,
 				--[[CSS Pallet]]["models/props/de_prodigy/wood_pallet_01.mdl"] = 10,
 				--basically the same as CSS, but do it separately in case they have L4D mounted and not CSS
 				--[[L4D Pallet]]["models/props_industrial/pallet01.mdl"] = 11,
@@ -2652,6 +2677,20 @@ PrecacheParticleSystem("scav_exp_plasma")
 			--ASW
 			ScavData.RegisterFiremode(tab, "models/props/furniture/misc/toilet.mdl")
 			ScavData.RegisterFiremode(tab, "models/props/miscdeco/pallet/palletsingle.mdl")
+			--BMS
+			ScavData.RegisterFiremode(tab, "models/props_generic/urinal01.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_junk/warehouse_pallet01.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_junk/warehouse_pallet01_static.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_blackmesa/bms_vent_01.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_blackmesa/bms_vent_44_01.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_blackmesa/bms_vent_44_break.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_blackmesa/bms_vent_48_01.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_blackmesa/bms_vent_48_break.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_blackmesa/bms_vent_64_01.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_blackmesa/bms_vent_64_break.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_blackmesa/bms_vent_break.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_industrial/vent4040.mdl")
+			ScavData.RegisterFiremode(tab, "models/props_industrial/vent4040_2.mdl")
 
 --[[==============================================================================================
 	--Flamethrower
@@ -2774,6 +2813,8 @@ PrecacheParticleSystem("scav_exp_plasma")
 			ScavData.RegisterFiremode(tab, "models/props_junk/metalgascan.mdl", 25)
 			ScavData.RegisterFiremode(tab, "models/props_junk/gascan001a.mdl", 25)
 			ScavData.RegisterFiremode(tab, "models/props_mining/oiltank01.mdl", SCAV_SHORT_MAX)
+			ScavData.RegisterFiremode(tab, "models/props_explosive/explosive_butane_can.mdl", 50)
+			ScavData.RegisterFiremode(tab, "models/props_explosive/explosive_butane_can02.mdl", 50)
 			--TF2
 			ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_flamethrower/c_flamethrower.mdl", 200)
 			ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_degreaser/c_degreaser.mdl", 200)
@@ -2798,6 +2839,11 @@ PrecacheParticleSystem("scav_exp_plasma")
 			--ASW
 			ScavData.RegisterFiremode(tab, "models/weapons/flamethrower/flamethrower.mdl", 200)
 			ScavData.RegisterFiremode(tab, "models/swarm/ammo/ammoflamer.mdl", 200)
+			--BMS
+			ScavData.RegisterFiremode(tab, "models/props_industrial/petrolcan.mdl", 25)
+			ScavData.RegisterFiremode(tab, "models/props_junk/oil_can.mdl", 25)
+			ScavData.RegisterFiremode(tab, "models/props_industrial/gascanister01.mdl", 50)
+			ScavData.RegisterFiremode(tab, "models/props_industrial/gascanister02.mdl", 100)
 
 --[[==============================================================================================
 	--Fireball
@@ -3193,6 +3239,13 @@ PrecacheParticleSystem("scav_exp_plasma")
 			--ASW
 			ScavData.RegisterFiremode(tab, "models/props/furniture/misc/fridge.mdl", 100)
 			ScavData.RegisterFiremode(tab, "models/props/techdeco/laboratory/freezerlaboratory.mdl", 200)
+			--BMS
+			ScavData.RegisterFiremode(tab, "models/props_generic/frig.mdl", 200)
+			ScavData.RegisterFiremode(tab, "models/props_industrial/cryotank_01.mdl", SCAV_SHORT_MAX)
+			ScavData.RegisterFiremode(tab, "models/props_industrial/nitrogentank_xl.mdl", 200)
+			ScavData.RegisterFiremode(tab, "models/props_industrial/nitrogentank_l.mdl", 175)
+			ScavData.RegisterFiremode(tab, "models/props_industrial/nitrogentank_m.mdl", 125)
+			ScavData.RegisterFiremode(tab, "models/props_industrial/nitrogentank_s.mdl", 100)
 		end
 
 --[[==============================================================================================
@@ -3527,6 +3580,11 @@ PrecacheParticleSystem("scav_exp_plasma")
 				ScavData.RegisterFiremode(tab, "models/props_normandy/mill_grinder.mdl", SCAV_SHORT_MAX)
 				--ASW
 				ScavData.RegisterFiremode(tab, "models/weapons/chainsaw/chainsaw.mdl", 1000)
+				--BMS
+				ScavData.RegisterFiremode(tab, "models/props_junk/drill.mdl", 200)
+				ScavData.RegisterFiremode(tab, "models/props_junk/junk_hacksaw.mdl", 200)
+				ScavData.RegisterFiremode(tab, "models/props_inbound/radial_saw.mdl", SCAV_SHORT_MAX)
+				ScavData.RegisterFiremode(tab, "models/props_questionableethics/qe_necropsy_machine.mdl", SCAV_SHORT_MAX)
 		end
 
 --[[==============================================================================================
@@ -3598,9 +3656,14 @@ PrecacheParticleSystem("scav_exp_plasma")
 				ScavData.RegisterFiremode(tab, "models/roller_spikes.mdl", 200)
 				ScavData.RegisterFiremode(tab, "models/roller_vehicledriver.mdl", 200)
 				ScavData.RegisterFiremode(tab, "models/stalker.mdl", 200)
+				--TF2
+				ScavData.RegisterFiremode(tab, "models/props_farm/welding_machine01.mdl", 200)
 				--ASW
+				ScavData.RegisterFiremode(tab, "models/swarm/welder/welder.mdl", 200)
 				ScavData.RegisterFiremode(tab, "models/swarm/mininglaser/mininglaser.mdl", 200)
 				--BMS
+				ScavData.RegisterFiremode(tab, "models/props_lab/surgical_laser.mdl", 200)
+				ScavData.RegisterFiremode(tab, "models/props_industrial/welder.mdl", 200)
 				ScavData.RegisterFiremode(tab, "models/props_am/am_lasertube.mdl", 200)
 				ScavData.RegisterFiremode(tab, "models/props_questionableethics/qe_auxlaser.mdl", 300)
 				ScavData.RegisterFiremode(tab, "models/props_questionableethics/qe_primarylaser.mdl", SCAV_SHORT_MAX)

@@ -804,6 +804,8 @@
 				["models/helmets/helmet_german.mdl"] = SCAV_BATTERY_DODSHELMET,
 				--[[BM Helmet]]["models/props_am/helmet.mdl"] = SCAV_BATTERY_BMSHELMET,
 				["models/props_marines/helmet.mdl"] = SCAV_BATTERY_BMSHELMET,
+				["models/props_2fort/hardhat001.mdl"] = SCAV_BATTERY_BMSHELMET,
+				["models/props_junk/hardhat.mdl"] = SCAV_BATTERY_BMSHELMET,
 				--[[Vest]]["models/props_am/guard_vest.mdl"] = SCAV_BATTERY_VEST,
 				--[[HEV]]["models/props_am/hev_suit.mdl"] = SCAV_BATTERY_HEV,
 			}
@@ -874,6 +876,7 @@
 		ScavData.RegisterFiremode(tab, "models/pickups/pickup_powerup_resistance.mdl")
 		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_battalion_buffpack/c_batt_buffpack.mdl")
 		ScavData.RegisterFiremode(tab, "models/workshop/weapons/c_models/c_battalion_buffpack/c_battalion_buffpack.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_2fort/hardhat001.mdl")
 		--DoD:S
 		ScavData.RegisterFiremode(tab, "models/helmets/helmet_american.mdl")
 		ScavData.RegisterFiremode(tab, "models/helmets/helmet_german.mdl")
@@ -885,6 +888,7 @@
 		ScavData.RegisterFiremode(tab, "models/props_marines/helmet.mdl")
 		ScavData.RegisterFiremode(tab, "models/props_am/guard_vest.mdl")
 		ScavData.RegisterFiremode(tab, "models/props_am/hev_suit.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/hardhat.mdl")
 		
 --[[==============================================================================================
 	--Shotgun

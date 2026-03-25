@@ -190,6 +190,64 @@ local tab = {}
 		table.insert(items, 2, {"models/gibs/fast_zombie_legs.mdl", 1, 0})
 		return items
 	end
+	--Black Mesa flipped these, headcrab's on 0 now
+	ScavData.CollectFuncs["models/zombies/zombie_grunt_torso.mdl"] = function(self, ent)
+		local items = {{"models/zombies/zombie_grunt_torso.mdl", 1, 0}}
+		if not tobool(ent:GetBodygroup(ent:FindBodygroupByName("headcrab1"))) then
+			table.insert(items, {"models/xenians/headcrab.mdl", 1, 0})
+		end
+		return items
+	end
+	ScavData.CollectFuncs["models/zombies/zombie_grunt.mdl"] = function(self, ent)
+		local items = ScavData.CollectFuncs["models/zombies/zombie_grunt_torso.mdl"](self, ent)
+		table.insert(items, 2, {"models/gibs/zombies/zombie_grunt/legs.mdl", 1, 0})
+		return items
+	end
+	ScavData.CollectFuncs["models/player/mp_zombie_marine.mdl"] = ScavData.CollectFuncs["models/zombies/zombie_grunt.mdl"]
+	ScavData.CollectFuncs["models/zombies/zombie_marine.mdl"] = ScavData.CollectFuncs["models/zombies/zombie_grunt.mdl"]
+
+	ScavData.CollectFuncs["models/zombies/zombie_guard_torso.mdl"] = function(self, ent)
+		local items = {{"models/zombies/zombie_guard_torso.mdl", 1, 0}}
+		if not tobool(ent:GetBodygroup(ent:FindBodygroupByName("headcrab1"))) then
+			table.insert(items, {"models/xenians/headcrab.mdl", 1, 0})
+		end
+		return items
+	end
+	ScavData.CollectFuncs["models/zombies/zombie_guard.mdl"] = function(self, ent)
+		local items = ScavData.CollectFuncs["models/zombies/zombie_guard_torso.mdl"](self, ent)
+		table.insert(items, 2, {"models/gibs/zombies/zombie_guard/legs.mdl", 1, 0})
+		return items
+	end
+	ScavData.CollectFuncs["models/player/mp_zombie_guard.mdl"] = ScavData.CollectFuncs["models/zombies/zombie_guard.mdl"]
+
+	ScavData.CollectFuncs["models/zombies/zombie_hev_torso.mdl"] = function(self, ent)
+		local items = {{"models/zombies/zombie_hev_torso.mdl", 1, 0}}
+		if not tobool(ent:GetBodygroup(ent:FindBodygroupByName("headcrab1"))) then
+			table.insert(items, {"models/xenians/headcrab.mdl", 1, 0})
+		end
+		return items
+	end
+	ScavData.CollectFuncs["models/zombies/zombie_hev.mdl"] = function(self, ent)
+		local items = ScavData.CollectFuncs["models/zombies/zombie_hev_torso.mdl"](self, ent)
+		table.insert(items, 2, {"models/gibs/zombies/zombie_hev/legs.mdl", 1, 0})
+		return items
+	end
+	ScavData.CollectFuncs["models/player/mp_zombie_sci.mdl"] = ScavData.CollectFuncs["models/zombies/zombie_sci.mdl"]
+
+	ScavData.CollectFuncs["models/zombies/zombie_sci_torso.mdl"] = function(self, ent)
+		local items = {{"models/zombies/zombie_sci_torso.mdl", 1, 0}}
+		if not tobool(ent:GetBodygroup(ent:FindBodygroupByName("headcrab1"))) then
+			table.insert(items, {"models/xenians/headcrab.mdl", 1, 0})
+		end
+		return items
+	end
+	ScavData.CollectFuncs["models/zombies/zombie_sci.mdl"] = function(self, ent)
+		local items = ScavData.CollectFuncs["models/zombies/zombie_sci_torso.mdl"](self, ent)
+		table.insert(items, 2, {"models/gibs/zombies/zombie_sci/legs.mdl", 1, 0})
+		return items
+	end
+	ScavData.CollectFuncs["models/player/mp_zombie_sci.mdl"] = ScavData.CollectFuncs["models/zombies/zombie_sci.mdl"]
+
 	ScavData.CollectFuncs["models/props_junk/garbage128_composite001a.mdl"] = function(self, ent)
 		local items = {
 			{"models/props_junk/garbage_plasticbottle001a.mdl", 50, 0},
@@ -344,7 +402,7 @@ local tab = {}
 				{ScavData.FormatModelname("models/props_wasteland/cafeteria_table001a.mdl"), 1, 0}}
 	end
 	ScavData.CollectFuncs["models/props_silo/tirestack.mdl"] = function(self, ent)
-		return {{"models/props/de_prodigy/tire1.mdl", 1, 0, 4},
+		return {{"models/props_silo/tire1.mdl", 1, 0, 4},
 				{CSS and "models/props/de_prodigy/wood_pallet_01.mdl" or "models/props_junk/wood_pallet001a.mdl", 1, 0}}
 	end
 	ScavData.CollectFuncs["models/props_silo/tirestack2.mdl"] = function(self, ent)
@@ -408,6 +466,15 @@ local tab = {}
 			return {{"models/w_models/weapons/w_eq_painpills.mdl", math.Round(num), 0}}
 		end
 	end
+	--BMS
+	ScavData.CollectFuncs["models/props_industrial/tirestack.mdl"] = ScavData.CollectFuncs["models/props_silo/tirestack.mdl"]
+	ScavData.CollectFuncs["models/props_vehicles/jeep01.mdl"] = ScavData.CollectFuncs["models/props_vehicles/car001b_hatchback.mdl"]
+	ScavData.CollectFuncs["models/props_vehicles/jeep01_phys.mdl"] = ScavData.CollectFuncs["models/props_vehicles/jeep01.mdl"]
+	ScavData.CollectFuncs["models/props_vehicles/jeep02.mdl"] = ScavData.CollectFuncs["models/props_vehicles/jeep01.mdl"]
+	ScavData.CollectFuncs["models/props_vehicles/jeep03.mdl"] = ScavData.CollectFuncs["models/props_vehicles/jeep01.mdl"]
+	ScavData.CollectFuncs["models/props_vehicles/jeep01_burnt.mdl"] = ScavData.CollectFuncs["models/props_vehicles/jeep01.mdl"]
+	ScavData.CollectFuncs["models/props_vehicles/jeep01_burnt_dynamic.mdl"] = ScavData.CollectFuncs["models/props_vehicles/jeep01_burnt.mdl"]
+	ScavData.CollectFuncs["models/props_vehicles/jeep01_phys_burn.mdl"] = ScavData.CollectFuncs["models/props_vehicles/jeep01_burnt.mdl"]
 	--CRATES
 	ScavData.CollectFuncs["models/items/item_item_crate.mdl"] = function(self, ent) --some random HL2 supplies
 		local supplies = {
@@ -636,6 +703,56 @@ local tab = {}
 		end
 		return items
 	end
+	--BMS Crate
+	ScavData.CollectFuncs["models/props_generic/bm_supplycrate01.mdl"] = function(self, ent)
+		local supplies = {
+			{"models/weapons/w_medkit_classic.mdl", 1, 0},
+			{"models/weapons/w_medkit_stiff.mdl", 1, 0},
+			{"models/weapons/w_battery.mdl", 1, 0},
+			{"models/weapons/w_glock.mdl", 17, 0},
+			{"models/weapons/w_357_mp.mdl", 6, 0},
+			{"models/weapons/w_mp5.mdl", 25, 0},
+			{"models/weapons/w_argrenade.mdl", 1, 0},
+			{"models/weapons/w_shotgun_mp.mdl", 8, 0},
+			{"models/weapons/w_grenade_mp.mdl", 5, 0},
+			{"models/weapons/w_rpg_projectile.mdl", 3, 0},
+			{"models/weapons/w_tripmine.mdl", 1, 0},
+			{"models/weapons/w_satchel.mdl", 1, 0},
+			{"models/weapons/w_hgun.mdl", 50, 0},
+			{"models/props_junk/spraycan.mdl", 30, 0},
+			{"models/weapons/w_gaussammo.mdl", 10, 0},
+			{"models/props_junk/flare.mdl", 1, 0},
+			{"models/props_equipment/portablebattery01.mdl", 100, 0},
+			{"models/props_generic/bm_batteryradio01.mdl", 10, 0},
+			{"models/props_generic/safetyshower.mdl", 30, 0},
+			{"models/props_junk/coffeemug01a.mdl", 1, 0},
+			{"models/props_questionableethics/smoking_boots_right.mdl", 1, 0},
+			{"models/props_canteen/spork.mdl", 1, 0},
+			{"models/props_junk/pen.mdl", 1, 0},
+			{"models/weapons/crossbow_bolt.mdl", 1, 0},
+			{"models/props_industrial/gascanister01.mdl", 50, 0},
+			{"models/props_generic/plant_office.mdl", 1, 0},
+			{"models/props_canteen/donutbox.mdl", 1, 0},
+			{"models/props_canteen/pizza_box.mdl", 1, 0},
+			{"models/props_canteen/taco.mdl", 1, 0},
+		}
+		local items = {}
+		if (self.Owner:Health() + self:PotentialHealing()) * 1.3 <= self.Owner:GetMaxHealth() then -- about 76% health or lower
+			table.insert(items, {math.random(2) == 1 and "models/weapons/w_medkit_classic.mdl" or "models/weapons/w_medkit_stiff.mdl", 1, 0})
+		end
+		if (self.Owner:Armor() + self:PotentialArmor()) * 3  <= self.Owner:GetMaxArmor() then
+			table.insert(items, {"models/weapons/w_battery.mdl", 1, 0})
+		end
+		for i=0, math.random(3) do
+			table.insert(items, supplies[math.random(#supplies)])
+		end
+		return items
+	end
+	ScavDataCollectCopy("models/props_generic/bm_supplycrate01a_box.mdl", "models/props_generic/bm_supplycrate01.mdl")
+	ScavDataCollectCopy("models/items/xen_supplypod01a.mdl", "models/props_generic/bm_supplycrate01.mdl")
+	ScavDataCollectCopy("models/items/xen_supplypod01a_p1.mdl", "models/props_generic/bm_supplycrate01.mdl")
+	ScavDataCollectCopy("models/items/xen_supplypod01b_p1.mdl", "models/props_generic/bm_supplycrate01.mdl")
+	ScavDataCollectCopy("models/items/xen_supplypod01c_p1.mdl", "models/props_generic/bm_supplycrate01.mdl")
 	--L4D2 Gift
 	--Portal Cake (isn't solid :c)
 	--Make HL2 Oil Drums sometimes provide Radioactive/BioHazard Barrel Firemodes?

@@ -112,6 +112,13 @@
 		ScavData.RegisterFiremode(tab, "models/props_office/computer_desktop02.mdl", SCAV_SHORT_MAX)
 		ScavData.RegisterFiremode(tab, "models/props_office/computer_desktop03.mdl", SCAV_SHORT_MAX)
 		ScavData.RegisterFiremode(tab, "models/props_marines/prc77_radio.mdl", SCAV_SHORT_MAX)
+		ScavData.RegisterFiremode(tab, "models/props_industrial/control_console_001.mdl", SCAV_SHORT_MAX)
+		ScavData.RegisterFiremode(tab, "models/props_industrial/desk_console2.mdl", SCAV_SHORT_MAX)
+		ScavData.RegisterFiremode(tab, "models/props_industrial/desk_console2_wgh.mdl", SCAV_SHORT_MAX)
+		ScavData.RegisterFiremode(tab, "models/props_industrial/desk_console3.mdl", SCAV_SHORT_MAX)
+		ScavData.RegisterFiremode(tab, "models/props_industrial/wall_console1.mdl", SCAV_SHORT_MAX)
+		ScavData.RegisterFiremode(tab, "models/props_industrial/wall_console2.mdl", SCAV_SHORT_MAX)
+		ScavData.RegisterFiremode(tab, "models/props_industrial/wall_console_sm.mdl", SCAV_SHORT_MAX)
 		
 --[[==============================================================================================
 	--Energy Drink/Stim Pack
@@ -433,6 +440,7 @@
 		ScavData.RegisterFiremode(tab, "models/bull/buttons/key_switch.mdl")
 		--BMS
 		ScavData.RegisterFiremode(tab, "models/props_blackmesa/alarmbox.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_blackmesa/wallconsole.mdl")
 
 --[[==============================================================================================
 	--Remote
@@ -1124,6 +1132,8 @@ setmetatable(hacksuccess, {__index = function() return hacksuccessdefault end})
 		ScavData.RegisterFiremode(tab, "models/props/utilities/satellite_dish001a.mdl", SCAV_SHORT_MAX)
 		ScavData.RegisterFiremode(tab, "models/props/utilities/satellite_dish002a.mdl", SCAV_SHORT_MAX)
 		--BMS
+		ScavData.RegisterFiremode(tab, "models/props_desert/radardome01b.mdl", SCAV_SHORT_MAX)
+		ScavData.RegisterFiremode(tab, "models/props_st/radar_dish.mdl", SCAV_SHORT_MAX)
 		ScavData.RegisterFiremode(tab, "models/props_office/computer_keyboard01.mdl", SCAV_SHORT_MAX)
 		ScavData.RegisterFiremode(tab, "models/props_office/computer_keyboard02.mdl", SCAV_SHORT_MAX)
 	end
@@ -1920,6 +1930,9 @@ end
 		--BMS
 		ScavData.RegisterFiremode(tab, "models/props_blackmesa/restroom_sink.mdl", 20)
 		ScavData.RegisterFiremode(tab, "models/props_office/aircan.mdl", 15)
+		ScavData.RegisterFiremode(tab, "models/props_generic/safetyshower.mdl", 30)
+		ScavData.RegisterFiremode(tab, "models/props_industrial/fire_buckets.mdl", 30)
+		ScavData.RegisterFiremode(tab, "models/props_junk/mopbucket01.mdl", 30)
 
 --[[==============================================================================================
 	-- Sandwich
@@ -1944,6 +1957,9 @@ end
 				["models/props_equipment/snack_machine2.mdl"] = SCAV_SANDWICH_JUNK,
 				["models/props_canteen/donutbox.mdl"] = SCAV_SANDWICH_JUNK,
 				["models/props_canteen/vendingmachine01.mdl"] = SCAV_SANDWICH_JUNK,
+				["models/props_office/c1a2c_foodcrate_01.mdl"] = SCAV_SANDWICH_JUNK,
+				["models/props_office/c1a2c_foodcrate_02.mdl"] = SCAV_SANDWICH_JUNK,
+				["models/props_office/c1a2c_foodcrate_03.mdl"] = SCAV_SANDWICH_JUNK,
 				["models/gibs/props_canteen/vendingmachine01_p1a.mdl"] = SCAV_SANDWICH_JUNK,
 				["models/gibs/props_canteen/vendingmachine01_p1b.mdl"] = SCAV_SANDWICH_JUNK,
 				["models/gibs/props_canteen/vendingmachine01_p1c.mdl"] = SCAV_SANDWICH_JUNK,
@@ -2082,6 +2098,9 @@ end
 		ScavData.RegisterFiremode(tab, "models/props_canteen/pizza_box.mdl")
 		ScavData.RegisterFiremode(tab, "models/props_junk/interdimensional_pizza.mdl")
 		ScavData.RegisterFiremode(tab, "models/props_canteen/taco.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_office/c1a2c_foodcrate_01.mdl", SCAV_SHORT_MAX)
+		ScavData.RegisterFiremode(tab, "models/props_office/c1a2c_foodcrate_02.mdl", SCAV_SHORT_MAX)
+		ScavData.RegisterFiremode(tab, "models/props_office/c1a2c_foodcrate_03.mdl", SCAV_SHORT_MAX)
 		ScavData.RegisterFiremode(tab, "models/props_canteen/vendingmachine01.mdl", SCAV_SHORT_MAX)
 		ScavData.RegisterFiremode(tab, "models/gibs/props_canteen/vendingmachine01_p1a.mdl", SCAV_SHORT_MAX)
 		ScavData.RegisterFiremode(tab, "models/gibs/props_canteen/vendingmachine01_p1b.mdl", SCAV_SHORT_MAX)
@@ -2116,6 +2135,7 @@ end
 		ScavData.RegisterFiremode(tab, "models/gibs/props_canteen/vm_snack28.mdl")
 		ScavData.RegisterFiremode(tab, "models/gibs/props_canteen/vm_snack29.mdl")
 		ScavData.RegisterFiremode(tab, "models/gibs/props_canteen/vm_snack30.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_blackmesa/carcass_whole.mdl")
 
 --[[==============================================================================================
 	-- Crit Boost
@@ -2312,6 +2332,8 @@ end
 			ScavData.RegisterFiremode(tab, "models/props_2fort/fire_extinguisher.mdl", 100)
 			--ASW
 			ScavData.RegisterFiremode(tab, "models/swarm/fireext/fireextpickup.mdl", 100)
+			--BMS
+			ScavData.RegisterFiremode(tab, "models/props_blackmesa/fireextinguisher.mdl", 100)
 		end
 
 --[[==============================================================================================
@@ -2665,6 +2687,7 @@ end
 		ScavData.RegisterFiremode(tab, "models/props_generic/trashbin002.mdl", SCAV_SHORT_MAX)
 		ScavData.RegisterFiremode(tab, "models/props_canteen/canteenbin.mdl", SCAV_SHORT_MAX)
 		ScavData.RegisterFiremode(tab, "models/props_junk/refusebin.mdl", SCAV_SHORT_MAX)
+		ScavData.RegisterFiremode(tab, "models/props_office/metalbin01.mdl", SCAV_SHORT_MAX)
 
 --[[==============================================================================================
 	-- Punish Prop Virus
@@ -3071,6 +3094,7 @@ end
 		ScavData.RegisterFiremode(tab, "models/props_office/file_cabient_1970.mdl")
 		ScavData.RegisterFiremode(tab, "models/props_office/filebox_1980.mdl")
 		ScavData.RegisterFiremode(tab, "models/props_office/office_desk_1970.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_underground/filecabinet_lobby.mdl")
 		--DoD:S
 		ScavData.RegisterFiremode(tab, "models/props_crates/static_crate_40.mdl")
 		ScavData.RegisterFiremode(tab, "models/props_crates/static_crate_48.mdl")
@@ -3120,4 +3144,71 @@ end
 		ScavData.RegisterFiremode(tab, "models/monastery/crate1.mdl")
 		ScavData.RegisterFiremode(tab, "models/monastery/crate2.mdl")
 		ScavData.RegisterFiremode(tab, "models/monastery/crate3.mdl")
+		--BMS
+		ScavData.RegisterFiremode(tab, "models/props_blackmesa/tarp_crate.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_generic/crate_128x36.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_generic/crate_144x60.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_generic/crate_36x36.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_generic/crate_48x48.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_generic/crate_64x96.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_office/file_box.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_office/file_box_bottom.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/cardboardbox01a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/cardboardbox01b.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/cardboardbox02.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/cardboardbox03.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/cardboardbox04.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/cardboardbox05.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/cardboardbox06.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/cardboardbox07.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/cardboardbox08a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/warehouse_pallet02.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/warehouse_pallet02_static.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/warehouse_pallet03.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/warehouse_pallet03_static.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/warehouse_pallet04.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/warehouse_pallet04_static.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_questionableethics/qe_kitchen_bar.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_questionableethics/qe_kitchen_left.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_questionableethics/qe_kitchen_right.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_questionableethics/qe_lab_cab_angled.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_questionableethics/qe_lab_cab_island.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_am/am_breakroom_cab.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_am/am_lab1_cab_island.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_am/am_lab1_cab_l.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_am/am_lab1_cab_med1.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_am/am_lab1_cab_med2.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_am/am_lab2_cab_hood.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_am/am_lab2_cab_lg.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_am/am_lab2_cab_sm.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_am/am_lab3_cab_l.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_blackmesa/bms_metalcrate_36x36.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_blackmesa/bms_metalcrate_48x48.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_blackmesa/bms_metalcrate_64x96.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_blackmesa/bms_metalcrate_tarp.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_blackmesa/metalcrate01.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_blackmesa/metalcrate01_static.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_equipment/hardcase_01.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_equipment/hardcase_01a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_equipment/storagetrunk01a.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_equipment/storagetrunk01b.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_office/paper_box.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_office/file_cabinet_03.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_office/file_cabinet_large.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_office/file_cabinet_large_static.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_office/filecabinet01.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_office/filecabinet01group.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_office/officefilecabinet.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_office/officefilecabinet_static.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_generic/storage_cabinet.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_generic/storage_cabinet_static.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_marines/alicepack.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_marines/ammobox01.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_marines/ammo_crate.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_marines/ammo_crate02.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_marines/ammo_crate02_static.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_marines/ammocrate01.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_marines/ammocrate01_static.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_blackmesa/shelves01.mdl")
+		ScavData.RegisterFiremode(tab, "models/props_junk/vegbox01.mdl")
 		

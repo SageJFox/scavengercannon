@@ -147,6 +147,7 @@ if SERVER then
 
 	--Black Mesa
 	offsetmodels["models/weapons/crossbow_bolt.mdl"] = {Vector(0, -8, 0)}
+	offsetmodels["models/props_canteen/spork.mdl"] = {Vector(0, 2.5, 0)}
 	
 	local b_trace 	= {}
 	local b_tr 		= {}

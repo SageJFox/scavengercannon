@@ -528,8 +528,12 @@ if SERVER then
 	end
 
 	local offsets = {}
-
-	offsets["models/props_c17/statue_horse.mdl"] = function() return Angle(0, 180, 0) end
+	local angle_flip = Angle(0, 180, 0)
+	local angle_clockwise = Angle(0, 90, 0)
+	offsets["models/props_c17/statue_horse.mdl"] = function() return angle_flip end
+	offsets["models/props_junk/scissors.mdl"] = function() return angle_flip end
+	offsets["models/props_canteen/spork.mdl"] = function() return angle_flip end
+	offsets["models/props_marines/bayonet.mdl"] = function() return angle_clockwise end
 
 	setmetatable(offsets, {__index = function()
 		return function(ent)
