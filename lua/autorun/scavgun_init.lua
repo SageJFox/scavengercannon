@@ -335,19 +335,12 @@ end
 if CLIENT then
 
 	function ScavData.GetTracerShootPos(pl, defaultpos)
-	
-		if not IsValid(pl) then
-			return defaultpos
-		end
-		
-		if CLIENT and pl == GetViewEntity() then
-			local vm = pl:GetViewModel()
-			return vm:GetAttachment(vm:LookupAttachment("muzzle")).Pos
-		else
-			local wep = pl:GetActiveWeapon()
-			return wep:GetAttachment(wep:LookupAttachment("muzzle")).Pos
-		end
-		
+		if not IsValid(pl) then return defaultpos end
+
+		local wep = pl:GetActiveWeapon()
+		if pl == GetViewEntity() then wep = pl:GetViewModel() end
+
+		return wep:GetAttachment(wep:LookupAttachment("muzzle")).Pos
 	end
 
 end
