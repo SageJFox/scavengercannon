@@ -641,7 +641,7 @@
 			"ang": "{86.607398986816 -175.40223693848 169.70465087891}",
 			"material": "",
 			"KeyValues": {
-				"modelname": "models//props_debris/metal_panel01a.mdl",
+				"modelname": "models/props_debris/metal_panel01a.mdl",
 				"skin": 1,
 				"lifetime": 0,
 				"classname": "sdm_prop_spawn",
@@ -656,7 +656,7 @@
 			"ang": "{0.21934121847153 69.18896484375 -111.65205383301}",
 			"material": "",
 			"KeyValues": {
-				"modelname": "models//props_wasteland/barricade001a.mdl",
+				"modelname": "models/props_wasteland/barricade001a.mdl",
 				"skin": 0,
 				"lifetime": 0,
 				"classname": "sdm_prop_spawn",
