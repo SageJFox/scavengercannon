@@ -1139,9 +1139,9 @@
 				"noscav": 1,
 				"modelname": "models/props_lab/blastdoor001a.mdl",
 				"skin": 0,
-				"classname": "prop_physics"
+				"classname": "prop_physics",
+				"physfrozen": 1
 			},
-			"physfrozen": 1,
 			"pos": "[374.76922607422 -675.44738769531 -363.55978393555]"
 		},
 		{
