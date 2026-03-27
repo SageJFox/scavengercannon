@@ -356,8 +356,8 @@ local PANEL = {}
 	
 	function PANEL:Think()
 		if CurTime()-self.LastRefresh > 0.1 then
-			local timeleft = tostring(math.max(math.floor(GAMEMODE:GetGNWFloat("MapEndTime")),0))
-			self.TextTable[1] = GAMEMODE:GetGNWVar("ServerName")
+			local timeleft = tostring(math.max(math.floor(GAMEMODE:GetGNWFloat("MapEndTime") or 0),0))
+			self.TextTable[1] = GAMEMODE:GetGNWVar("ServerName") or "My Marry's God Server"
 			self.TextTable[3] = #player.GetAll()
 			self.TextTable[5] = string.FormattedTime(timeleft,"%02i:%02i")
 			local text = table.concat(self.TextTable)

@@ -60,9 +60,10 @@ function GM:ScoreboardShow()
 end
 
 function GM:ScoreboardHide()
-	if IsValid(self.Scoreboard) then
-		self.ScoreBoard:SetVisible(false)
-	end
+	self.ScoreBoard:KillFocus()
+	self.ScoreBoard:SetVisible(false)
+	self.ScoreBoard:Hide()
+	self.ScoreBoard:SetDrawOnTop(false)
 end
 
 function GM:SpawnMenuEnabled()
