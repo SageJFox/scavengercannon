@@ -5,10 +5,10 @@ GM.menu = NULL
 GM.MenuOpen = false
 
 local function getbottomofpanel(panel)
-	return panel.y+panel:GetTall()
+	return panel.y + panel:GetTall()
 end
 local function getrightofpanel(panel)
-	return panel.x+panel:GetWide()
+	return panel.x + panel:GetWide()
 end
 
 local MENU = {}
@@ -19,13 +19,13 @@ function MENU:Init()
 		self.sheet.Paint = func_empty
 
 	self.menulabel = vgui.Create("DLabel", self)
-		self.menulabel:SetText("MAIN MENU")
+		self.menulabel:SetText("#scav.menu")
 		self.menulabel:SetFont("HUDHintTextLarge")
 
-	self:AddSubMenu("sdm_submenu_main", "Main", "icon16/star.png")
-	self:AddSubMenu("sdm_submenu_equipment", "Equipment", "icon16/bomb.png")
-	self:AddSubMenu("sdm_submenu_playermodel", "Player Model", "icon16/group.png")
-	self:AddSubMenu("sdm_submenu_options", "Options", "icon16/key.png")
+	self:AddSubMenu("sdm_submenu_main", "#scav.menu.main", "icon16/star.png")
+	self:AddSubMenu("sdm_submenu_equipment", "#scav.menu.eq", "icon16/bomb.png")
+	self:AddSubMenu("sdm_submenu_playermodel", "#scav.menu.player", "icon16/group.png")
+	self:AddSubMenu("sdm_submenu_options", "#scav.menu.options", "icon16/key.png")
 	self.initialized = true
 end
 
@@ -60,8 +60,8 @@ function MENU:AutoSetup()
 end
 
 function MENU:SetMode(mode)
-	self.menus["Main"].ModeLabel:SetText(mode)
-	self.menus["Main"].DescLabel:SetText(GAMEMODE.Description)
+	self.menus["#scav.menu.main"].ModeLabel:SetText(mode)
+	self.menus["#scav.menu.main"].DescLabel:SetText(GAMEMODE.Description)
 end
 
 function MENU:Close()
@@ -127,9 +127,9 @@ local PANEL = {}
 	
 	function PANEL:Init()
 		self.SpecButton = vgui.Create("DButton", self)
-			self.SpecButton:SetText("Spectate")		
+			self.SpecButton:SetText("#scav.menu.spectate")		
 		self.JoinButton = vgui.Create("DButton", self)
-			self.JoinButton:SetText("Join Game")
+			self.JoinButton:SetText("#scav.menu.join")
 		self.ModeLabel = vgui.Create("sdm_labelbox", self)
 			self.ModeLabel:SetText(GAMEMODE:GetModeName())
 		self.DescLabel = vgui.Create("sdm_labelbox", self)
@@ -289,9 +289,9 @@ local PANEL = {}
 	function PANEL:Init()
 		--weapon
 			self.WepLabel = vgui.Create("sdm_labelbox", self)
-				self.WepLabel:SetText("Secondary Weapon")
+				self.WepLabel:SetText("#scav.menu.eq.secondary")
 			self.WepDescLabel = vgui.Create("sdm_labelbox", self)
-				self.WepDescLabel:SetText("This is a gun")
+				self.WepDescLabel:SetText("#scav.menu.eq.desc.default")
 				self.WepDescLabel:SetWrap(true)
 			self.WepPreviewLabel = vgui.Create("sdm_labelbox", self)
 			self.WepSelectBox = vgui.Create("DPanelList", self)
@@ -303,7 +303,7 @@ local PANEL = {}
 			self:SetWeapon(GetConVarString("sdm_w2"))
 		--extra
 			self.ExtraLabel = vgui.Create("sdm_labelbox", self)
-			self.ExtraLabel:SetText("Gadget - Not yet available.")
+			self.ExtraLabel:SetText("#scav.menu.eq.gadget")
 		self.initialized = true
 	end
 	
@@ -314,11 +314,12 @@ local PANEL = {}
 	end
 
 	local flavortexts = {
-						["weapon_blackholegun"] = ('An awe and terror inspiring machine of war, the CF-2200 "Black Hole Gun" is one of the most dreaded weapons to see on the other side of the battlefield. It is capable of using any nearby matter to fuel its internal gravity manipulator. The weapon uses this manipulator to turn loose junk into a storm of deadly projectiles that fly toward the point of impact. Many users have reported a strange slowing of time during an active "black hole". \n \n This weapon is reccomended for advanced combatants.'), 
-						["weapon_alchemygun"] =   ('Originally designed as a tool to end world hunger, the technology behind the Alchemy Gun had so much potential in military applications that the original project was scrapped entirely and the team behind it found a new job in making it into a tool of war. This device will disassociate the elements of any object and store them for later use. A variety of useful items can be made using these gathered resources, such as health kits, ammunition, and powerful weapons. \n \n Reccomended for expert combatants.'), 
-						--["capture_device"] = ('Much like its deadlier cousin, the SC-08 "Scavenger Cannon", the Capture Device is capable of picking up and storing various objects. Unlike the Scavenger Cannon, it has a capacity of one object and will not modify the original object in any way. The convenience of this is that while objects become irrecoverable or unstable once they enter the Scavenger Cannon, anything trapped in the Capture Device can be released at any time or injected into the Scavenger Cannon. \n \n Reccomended for experienced combatants.'), 
-						["weapon_backuppistol"] =  ("A standard pistol. While it may lack the immediate appeal of some of the other weapons available on the battlefield, its versatility makes it a life saver. This weapon feeds on your battle suit's energy reserves, which means that with proper use, you will never run out of ammo. The weapon can also be primed to fire up to ten beams at once with its secondary fire. Additional damage is inflicted upon enemy combatants that are already injured. \n \n Reccomended for newer combatants.")
-					 }
+		["weapon_blackholegun"] = "bhg", 
+		["weapon_alchemygun"] =   "alc", 
+		["capture_device"] = "cd", 
+		["weapon_backuppistol"] =  "bup",
+	}
+	setmetatable(flavortexts, {__index = function() return "default" end})
 	
 	
 	function PANEL:SetupWeaponSelection()
@@ -349,7 +350,7 @@ local PANEL = {}
 		self.WepPreview:SetModel(wep.WorldModel)
 		self.WepPreview:LayoutEntity()
 		self.WepPreviewLabel:SetText(wep.PrintName)
-		self.WepDescLabel:SetText(flavortexts[classname])
+		self.WepDescLabel:SetText("#scav.menu.eq.desc." .. flavortexts[classname])
 		self.WepDescLabel:InvalidateLayout()
 	end
 	
@@ -392,7 +393,7 @@ local PANEL = {}
 	vgui.Register("sdm_submenu_equipment", PANEL, "DPanel")
 
 	local PANEL = {}
-	local oncolorpress = function()
+	--[[local oncolorpress = function()
 		RunConsoleCommand("scav_opencolor")
 	end
 	--concommand: scav_opencolor
@@ -414,6 +415,6 @@ local PANEL = {}
 		end
 		self.ColorMenuButton:SetPos(32, 32)
 		self.ColorMenuButton:SetSize(96, 32)
-	end
+	end]]
 
 	vgui.Register("sdm_submenu_options", PANEL, "DPanel")
