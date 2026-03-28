@@ -452,7 +452,7 @@ local PANEL = {}
 		PANEL.Tall = 48
 
 		function PANEL:Init()
-			self:SetTitle("#scav.score")
+			self:SetTitle(ScavLocalize("#scav.score", ""))
 		end
 	
 		function PANEL:Think()

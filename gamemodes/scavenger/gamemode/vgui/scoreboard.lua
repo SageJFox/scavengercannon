@@ -69,9 +69,8 @@ local PANEL = {}
 	]]
 
 	function PANEL:InvalidateLayout()
-		if not self.initialized then
-			return false
-		end
+		if not self.initialized then return false end
+		
 		self.Icon:SetPos(16, self:GetTall() / 2 - self.Icon:GetTall() / 2)
 		self.NameLabel:SetPos(24 + self.Icon:GetWide(), self:GetTall() / 2 - self.NameLabel:GetTall() / 2)
 		self.PointLabel:SetPos(self.PointX, self.NameLabel.y)
@@ -153,7 +152,6 @@ local PANEL = {}
 	end
 	
 	function PANEL:SetTeam(teamid)
-		--self.List:SetTitle(team.GetName(teamid))
 		self.m_bgColor = team.GetColor(teamid)
 		self.m_bgColor.a = 200
 		local col = team.GetColor(teamid)
@@ -167,10 +165,10 @@ local PANEL = {}
 			self.ScoreLabel:SetText(team.GetScore(teamid))
 		end
 		local wins = team.GetWins(teamid)
-		self.TeamLabelBox:SetText(team.GetName(teamid) .. (teamid == TEAM_UNASSIGNED and "" or (" - " .. win .. " Win" .. (wins == 1 and "" or "s"))))
+		self.TeamLabelBox:SetText(teamid == TEAM_UNASSIGNED and team.GetName(teamid) or ScavLocalize(wins == 1 and "scav.score.team.win" or "scav.score.team.wins", team.GetName(teamid), wins))
 		self.TeamLabelBox:InvalidateLayout()
 		self.team = teamid
-		self:Rebuild()		
+		self:Rebuild()
 	end
 	
 	function PANEL:GetTeam()
@@ -219,9 +217,9 @@ local PANEL = {}
 	end
 	
 	function PANEL:Think()
-		self.ScoreLabel:SetText("Score: " .. team.GetScore(self.team))
+		self.ScoreLabel:SetText(ScavLocalize("scav.score", team.GetScore(self.team)))
 		self.ScoreLabel:SizeToContents()
-		self.TeamLabelBox:SetText(self.team == TEAM_UNASSIGNED and "Players" or (team.GetName(self.team) .. " - " .. team.GetScore(self.team) .. " Points"))
+		self.TeamLabelBox:SetText(self.team == TEAM_UNASSIGNED and "#scav.score.unassigned" or ScavLocalize(team.GetScore(self.team) == 1 and "scav.score.team.point" or "scav.score.team.points", team.GetName(self.team), team.GetScore(self.team)))
 		self.m_bgColor = dkgray
 	end
 	
@@ -251,21 +249,19 @@ local PANEL = {}
 			self.ServerInfo:SetSpacing(0)
 			self.ServerInfo.ServerName = vgui.Create("sdm_labelbox", self.ServerInfo)
 				self.ServerInfo.ServerName:SetFont("sdm_title")
-				self.ServerInfo.ServerName:SetText(GAMEMODE:GetGNWVar("ServerName") .. ": " .. #player.GetAll() .. "/" .. game.MaxPlayers())
+				self.ServerInfo.ServerName:SetText(ScavLocalize("scav.score.header", GAMEMODE:GetGNWVar("ServerName"), #player.GetAll(), game.MaxPlayers()))
 				self.ServerInfo.ServerName:SetHMargin(0)
 				self.ServerInfo:AddItem(self.ServerInfo.ServerName)
 			self.ServerInfo.ModeName = vgui.Create("DLabel", self.ServerInfo)
-				--self.ServerInfo.ServerName:SetFont("sdm_title")
 				self.ServerInfo.ModeName:SetFont("HUDHintTextLarge")
-				self.ServerInfo.ModeName:SetText("     MODE: " .. GAMEMODE:GetModeName())
+				self.ServerInfo.ModeName:SetText(ScavLocalize("scav.score.mode", GAMEMODE:GetModeName()))
 				self.ServerInfo:AddItem(self.ServerInfo.ModeName)
 		self.TeamSpace = vgui.Create("DPanelList", self)
 		self.TeamSpace:EnableHorizontal(true)
 		self.SpectatorsBox = vgui.Create("sdm_labelbox", self)
 			self.SpectatorsBox:SetWrap(true)
 			self.SpectatorsBox:SetAutoStretchVertical(false)
-			self.SpectatorsBox:SetText("Spectators: ")
-		self.TextTable = {"HOSTNAME", ": ", "0", "/" .. game.MaxPlayers() .. " | Map Time Remaining: ", "00:00"}
+			self.SpectatorsBox:SetText("#scav.score.spectators")
 		self.initialized = true
 	end
 	
@@ -337,11 +333,8 @@ local PANEL = {}
 		if CurTime() - self.LastRefresh <= 0.1 then return end
 
 		local timeleft = tostring(math.max(math.floor(GAMEMODE:GetGNWFloat("MapEndTime") or 0), 0))
-		self.TextTable[1] = GAMEMODE:GetGNWVar("ServerName") or "My Marry's God Server"
-		self.TextTable[3] = #player.GetAll()
-		self.TextTable[5] = string.FormattedTime(timeleft, "%02i:%02i")
-		local text = table.concat(self.TextTable)
-		self.ServerInfo.ServerName:SetText(text) --really messy but whatever
+		--really messy but whatever
+		self.ServerInfo.ServerName:SetText(ScavLocalize("scav.score.header.time", ScavLocalize("scav.score.header", GAMEMODE:GetGNWVar("ServerName") or "My Marry's God Server", #player.GetAll(), game.MaxPlayers()), string.FormattedTime(timeleft, ScavLocalize("scav.score.time"))))
 		self:Refresh()
 		self.LastRefresh = CurTime()
 	end
@@ -353,7 +346,7 @@ local PANEL = {}
 		self.NoTeamsPanel:SetSize(self.TeamSpace:GetWide(), self.TeamSpace:GetTall())
 		self.NoTeamsPanel.Label:SetSize(self.TeamSpace:GetWide(), self.TeamSpace:GetTall())
 		self.NoTeamsPanel:SetFont("sdm_title")
-		self.NoTeamsPanel:SetText("No players have joined the game!")
+		self.NoTeamsPanel:SetText("#scav.score.noone")
 		self.NoTeamsPanel:InvalidateLayout()
 		self.NoTeamsPanel.NoTeamsPanel = true
 		self.TeamSpace:AddItem(self.NoTeamsPanel)
@@ -364,8 +357,7 @@ local PANEL = {}
 		for k, v in ipairs(players) do
 			players[k] = v:Nick()
 		end
-		local specs = "Spectators: " .. string.Implode(", ", players)
-		self.SpectatorsBox:SetText(specs)
+		self.SpectatorsBox:SetText(ScavLocalize("scav.score.spectators", table.concat(players, ScavLocalize("scav.score.spectators.sep"))))
 	end
 	
 	function PANEL:AddPlayer(pl)
