@@ -2,7 +2,7 @@ DeriveGamemode("base")
 
 --GAMEMODE INFO
 
-GM.Name		= "Scavenger Deathmatch"
+GM.Name		= "#scav.dm"
 GM.Author	= "Ghor"
 
 --EXTERNAL FILES
@@ -39,19 +39,19 @@ AddCSLuaFile("rounds.lua")
 include("character.lua")
 
 local modetranslate = {
-[SDM_MODE_DM] = "Deathmatch",
-[SDM_MODE_DM_TEAM] = "Team Deathmatch",
-[SDM_MODE_CTF] = "Capture the Flag",
-[SDM_MODE_CELLCONTROL] = "Cell Control",
-[SDM_MODE_HOARD] = "Hoard",
-[SDM_MODE_SURVIVAL] = "Survival",
-[SDM_MODE_CAPTURE] = "Capture",
-[SDM_MODE_CUSTOM] = "Mission"
+	[SDM_MODE_DM] = "scav.mode.dm",
+	[SDM_MODE_DM_TEAM] = "scav.mode.tdm",
+	[SDM_MODE_CTF] = "scav.mode.ctf",
+	[SDM_MODE_CELLCONTROL] = "scav.mode.cell",
+	[SDM_MODE_HOARD] = "scav.mode.hoard",
+	[SDM_MODE_SURVIVAL] = "scav.mode.survive",
+	[SDM_MODE_CAPTURE] = "scav.mode.cap",
+	[SDM_MODE_CUSTOM] = "scav.mode.custom"
 }
 
 function GM:GetModeName()
 	local mode = self:GetMode()
-	return modetranslate[mode]
+	return ScavLocalize(modetranslate[mode])
 end
 
 
@@ -71,17 +71,16 @@ if CLIENT then --include client files
 	include("HUD.lua")
 end
 
---PLAYERS = {}
-
 function GM:Think()
-	--PLAYERS = player.GetAll()
-	if SERVER then
-		if not self:IsRoundInProgress() and (self:GetGNWFloat("MapEndTime") < CurTime()) and (GetGlobalFloat("sdm_votedeadline") == 0) then
-			PrintMessage(HUD_PRINTTALK,"Map time limit reached. Voting for next map has begun.")
-			for k,v in pairs(player.GetHumans()) do
-				v:ConCommand("sdm_vote")
-			end
-			ScavData.SetVotingDeadline(30)
-		end
+	if CLIENT then return end
+	if self:IsRoundInProgress() then return end
+	if self:GetGNWFloat("MapEndTime") >= CurTime() then return end
+	if GetGlobalFloat("sdm_votedeadline") ~= 0 then return end
+
+	--TODO: cannot localize on server!
+	PrintMessage(HUD_PRINTTALK, "Map time limit reached. Voting for next map has begun."--[[ScavLocalize("scav.map.timeup")]])
+	for k,v in pairs(player.GetHumans()) do
+		v:ConCommand("sdm_vote")
 	end
+	ScavData.SetVotingDeadline(30)
 end
