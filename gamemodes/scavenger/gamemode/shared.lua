@@ -21,8 +21,8 @@ function GM:GetMode()
 	return self:GetGNWVar("mode") or 0
 end
 
---include("stats.lua")
---AddCSLuaFile("stats.lua")
+include("stats.lua")
+AddCSLuaFile("stats.lua")
 
 include("weapons.lua")
 AddCSLuaFile("weapons.lua")
