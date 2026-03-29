@@ -13,10 +13,6 @@ end
 
 cvars.AddChangeCallback("hostname",updateservername)
 
-function GM:Initialize()
-	
-end
-
 function GM:InitPostEntity()
 	self:RemoveVPhysEntities()
 	local mapinfo = game.GetMap() --get the name of the map

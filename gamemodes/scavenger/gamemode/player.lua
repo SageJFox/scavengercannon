@@ -1,5 +1,10 @@
 local PLAYER = FindMetaTable("Player")
 
+AddCSLuaFile()
+DEFINE_BASECLASS("gamemode_base")
+
+--local PLAYER = {} --todo: player class definition shouldn't be adding to Player metatable
+
 function PLAYER:IsSpectator()
 	return ((self:Team() == TEAM_SPECTATOR) or (self:Team() == TEAM_CONNECTING) or (not self:Alive() and (self:Lives() <= 0)))
 end
@@ -29,7 +34,11 @@ if SERVER then
 		pl:KillSilent()
 	end
 
-	function GM:PlayerSpawn(pl)
+	function GM:PlayerSpawn(pl, transition)
+
+		player_manager.SetPlayerClass(pl, "player_sdm")
+		BaseClass.PlayerSpawn(self, pl, transition)
+
 		if pl:Team() == TEAM_SPECTATOR then
 			pl:SetMoveType(MOVETYPE_NOCLIP)
 			pl:Spectate(OBS_MODE_ROAMING)
@@ -37,12 +46,7 @@ if SERVER then
 			return true
 		end
 		pl:UnSpectate()
-		gamemode.Call("PlayerLoadout", pl)
-		gamemode.Call("PlayerSetModel", pl)
-		umsg.Start("sdm_plmodel", pl)
-			umsg.Entity(pl)
-			umsg.String(pl:GetModel())
-		umsg.End()
+
 		pl:SetCharacterFromModel()
 		pl:SetChargeRateDelayed(5, 1)
 		pl:SetEnergy(pl:GetMaxEnergy())
@@ -118,16 +122,6 @@ if SERVER then
 	end
 	
 end
-
-if CLIENT then
-	usermessage.Hook("sdm_plmodel", function(um)
-		local ent = um:ReadEntity()
-		local model = um:ReadString()
-		if not IsValid(ent) then return end
-		ent:SetModel(model)
-	end)
-end
-
 
 if SERVER then
 	hook.Add("PlayerInitialSpawn", "AddDashValues", function(pl)
@@ -590,3 +584,5 @@ if CLIENT then
 		util.Effect("ef_sdm_headshot", edata)
 	end)
 end
+
+player_manager.RegisterClass("player_sdm", {}--[[PLAYER]], "player_default")

@@ -1,4 +1,4 @@
-DeriveGamemode("base")
+DEFINE_BASECLASS("gamemode_base")
 
 --GAMEMODE INFO
 
@@ -48,6 +48,10 @@ local modetranslate = {
 	[SDM_MODE_CAPTURE] = "scav.mode.cap",
 	[SDM_MODE_CUSTOM] = "scav.mode.custom"
 }
+
+function GM:Initialize()
+	
+end
 
 function GM:GetModeName()
 	local mode = self:GetMode()
