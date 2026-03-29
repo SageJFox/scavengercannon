@@ -1,29 +1,29 @@
 
 
-function TEAM_SetColor(numTeam, tblColor) team.SetUp(numTeam,team.GetName(numTeam),tblColor) end
-function TEAM_SetName(numTeam, strName) team.SetUp(numTeam,strName,team.GetColor(numTeam)) end
-TEAM_SetColor(TEAM_CONNECTING,color_white)
-TEAM_SetColor(TEAM_UNASSIGNED,Color(100,100,100,255))
-TEAM_SetColor(TEAM_SPECTATOR,Color(150,150,150,100))
+function TEAM_SetColor(numTeam, tblColor) team.SetUp(numTeam, team.GetName(numTeam), tblColor) end
+function TEAM_SetName(numTeam, strName) team.SetUp(numTeam, strName, team.GetColor(numTeam)) end
+TEAM_SetColor(TEAM_CONNECTING, color_white)
+TEAM_SetColor(TEAM_UNASSIGNED, Color(100, 100, 100, 255))
+TEAM_SetColor(TEAM_SPECTATOR, Color(150, 150, 150, 100))
 
-TEAM_SetColor(TEAM_RED,Color(155,40,40,255))
-TEAM_SetColor(TEAM_BLUE,Color(26,115,187,255))
-TEAM_SetColor(TEAM_GREEN,Color(181,230,29,255))
-TEAM_SetColor(TEAM_YELLOW,Color(255,255,0,255))
-TEAM_SetColor(TEAM_ORANGE,Color(255,128,16,255))
-TEAM_SetColor(TEAM_PURPLE,Color(146,26,255,255))
-TEAM_SetColor(TEAM_BROWN,Color(128,64,0,255))
-TEAM_SetColor(TEAM_TEAL,Color(0,255,172,255))
+TEAM_SetColor(TEAM_RED, Color(155, 40, 40, 255))
+TEAM_SetColor(TEAM_BLUE, Color(26, 115, 187, 255))
+TEAM_SetColor(TEAM_GREEN, Color(181, 230, 29, 255))
+TEAM_SetColor(TEAM_YELLOW, Color(255, 255, 0, 255))
+TEAM_SetColor(TEAM_ORANGE, Color(255, 128, 16, 255))
+TEAM_SetColor(TEAM_PURPLE, Color(146, 26, 255, 255))
+TEAM_SetColor(TEAM_BROWN, Color(128, 64, 0, 255))
+TEAM_SetColor(TEAM_TEAL, Color(0, 255, 172, 255))
 
-TEAM_SetName(TEAM_SPECTATOR,"Spectators")
-TEAM_SetName(TEAM_RED,"Red Team")
-TEAM_SetName(TEAM_BLUE,"Blue Team")
-TEAM_SetName(TEAM_GREEN,"Green Team")
-TEAM_SetName(TEAM_YELLOW,"Yellow Team")
-TEAM_SetName(TEAM_ORANGE,"Orange Team")
-TEAM_SetName(TEAM_PURPLE,"Purple Team")
-TEAM_SetName(TEAM_BROWN,"Brown Team")
-TEAM_SetName(TEAM_TEAL,"Teal Team")
+TEAM_SetName(TEAM_SPECTATOR, "#scav.team.spectate")
+TEAM_SetName(TEAM_RED, "#scav.team.red")
+TEAM_SetName(TEAM_BLUE, "#scav.team.blue")
+TEAM_SetName(TEAM_GREEN, "#scav.team.green")
+TEAM_SetName(TEAM_YELLOW, "#scav.team.yellow")
+TEAM_SetName(TEAM_ORANGE, "#scav.team.orange")
+TEAM_SetName(TEAM_PURPLE, "#scav.team.purple")
+TEAM_SetName(TEAM_BROWN, "#scav.team.brown")
+TEAM_SetName(TEAM_TEAL, "#scav.team.teal")
 
 GM.Teams = {}
 	GM.Teams[TEAM_UNASSIGNED] = false
@@ -45,7 +45,7 @@ function team.Joinable(teamid)
 		return true
 	end
 	]]
-	return GAMEMODE:GetGNWBool("TeamJoinable"..teamid)
+	return GAMEMODE:GetGNWBool("TeamJoinable" .. teamid)
 end
 
 
@@ -62,10 +62,9 @@ local teamnametoindex = {}
 	teamnametoindex["teal"] = TEAM_TEAL
 
 function team.ToTeamID(name)
-	if type(name) == "number" then
-		return name
-	end
-	return teamnametoindex[string.lower(name)] or MsgAll("ERROR! Unknown team: "..tostring(name))
+	if type(name) == "number" then return name end
+	
+	return teamnametoindex[string.lower(name)] or MsgAll("ERROR! Unknown team: " .. tostring(name))
 end
 	
 if CLIENT then
@@ -80,11 +79,11 @@ if CLIENT then
 		GAMEMODE.Teams[TEAM_BROWN] = um:ReadBool()
 		GAMEMODE.Teams[TEAM_TEAL] = um:ReadBool()
 	end
-	usermessage.Hook("sdm_teams",ReceiveTeams)
+	usermessage.Hook("sdm_teams", ReceiveTeams)
 end
 
 function GM:SendPlayerTeams(pl)
-	umsg.Start("sdm_teams",pl)
+	umsg.Start("sdm_teams", pl)
 		umsg.Bool(team.Joinable(TEAM_UNASSIGNED))
 		umsg.Bool(team.Joinable(TEAM_RED))
 		umsg.Bool(team.Joinable(TEAM_BLUE))
@@ -119,7 +118,7 @@ if CLIENT then
 		GAMEMODE.Teams[TEAM_BROWN] = um:ReadBool()
 		GAMEMODE.Teams[TEAM_TEAL] = um:ReadBool()
 	end
-	usermessage.Hook("sdm_teams",ReceiveTeams)
+	usermessage.Hook("sdm_teams", ReceiveTeams)
 end
 
 function team.GetSpawnTime(teamid)
@@ -127,39 +126,39 @@ function team.GetSpawnTime(teamid)
 end
 
 function GM:UpdateTeams()
-	for k,v in pairs(player.GetAll()) do
+	for k, v in pairs(player.GetAll()) do
 		self:SendPlayerTeams(v)
 	end
 end
 
 function GM:SendPlayerInfo(pl)
 	--[[
-	for k,v in pairs(InitCVars) do
-		umsg.Start("sdm_cvar",pl)
+	for k, v in pairs(InitCVars) do
+		umsg.Start("sdm_cvar", pl)
 			umsg.String(k)
 			umsg.String(v)
 		umsg.End()
 	end
-	umsg.Start("sdm_subgm",pl)
+	umsg.Start("sdm_subgm", pl)
 		umsg.String(s_file.gamevars.mode)
 	umsg.End()
 	]]
 	GM:SendPlayerTeams(pl)
 	--[[
-	umsg.Start("sync_roundstart",pl)
+	umsg.Start("sync_roundstart", pl)
 		umsg.Long(game_roundendtime)
 	umsg.End()]]
 end
 	
 TeamScores = {}
 
-function team.SetScore(teamid,score) --I overwrote this, I don't remember why other than the original version not working
-	GAMEMODE:SetGNWVar("TeamScore"..teamid,score)
+function team.SetScore(teamid, score) --I overwrote this, I don't remember why other than the original version not working
+	GAMEMODE:SetGNWVar("TeamScore" .. teamid, score)
 	TeamScores[teamid] = score
 end
 
-function team.AddScore(teamid,score)
-	team.SetScore(teamid,team.GetScore(teamid)+score)
+function team.AddScore(teamid, score)
+	team.SetScore(teamid, team.GetScore(teamid) + score)
 end
 
 function team.GetScore(teamid)
@@ -173,7 +172,7 @@ function team.GetScore(teamid)
 		return TeamScores[teamid]
 	end
 	if CLIENT then
-		return GAMEMODE:GetGNWVar("TeamScore"..teamid)
+		return GAMEMODE:GetGNWVar("TeamScore" .. teamid)
 	end
 end
 
@@ -187,21 +186,21 @@ function team.GetScoreLimit(teamid)
 			return GAMEMODE:GetGameVar("PointLimit")
 		end
 	else
-		return GAMEMODE:GetGNWShort("TeamPointLimit"..teamid)
+		return GAMEMODE:GetGNWShort("TeamPointLimit" .. teamid)
 	end
 end
 
 function team.GetWins(teamid)
-	return GAMEMODE:GetGNWShort("TeamWins"..teamid)
+	return GAMEMODE:GetGNWShort("TeamWins" .. teamid)
 end
 
 function team.AddWin(teamid)
-	GAMEMODE:SetGNWShort("TeamWins"..teamid,team.GetWins(teamid)+1)
+	GAMEMODE:SetGNWShort("TeamWins" .. teamid, team.GetWins(teamid) + 1)
 end
 
 
 
-function GM:PlayerRequestTeam(pl,teamid)
+function GM:PlayerRequestTeam(pl, teamid)
 	if pl:Team() == teamid then
 		return
 	end
@@ -210,24 +209,24 @@ function GM:PlayerRequestTeam(pl,teamid)
 	end
 	-- This team isn't joinable
 	if (teamid ~= TEAM_SPECTATOR) and (pl.NextTeamswitch > CurTime()) then
-		pl:PrintMessage(HUD_PRINTTALK,"You must wait "..math.ceil(pl.NextTeamswitch-CurTime()).." seconds before changing teams.")
+		pl:PrintMessage(HUD_PRINTTALK, ScavLocalize("scav.team.select.cooldown", math.ceil(pl.NextTeamswitch - CurTime())))
 		return
 	end
-	if (not GAMEMODE:PlayerCanJoinTeam( pl, teamid )) then
+	if (not GAMEMODE:PlayerCanJoinTeam(pl, teamid)) then
 		 -- Messages here should be outputted by this function
 		return
 	end
 	if pl:Team() ~= TEAM_SPECTATOR then
 		pl:Kill()
-		pl.NextSpawnTime = CurTime()+team.GetSpawnTime(teamid)
+		pl.NextSpawnTime = CurTime() + team.GetSpawnTime(teamid)
 	else
 		--pl:Kill()
 		pl:KillSilent()
 	end
-	GAMEMODE:PlayerJoinTeam(pl,teamid)
+	GAMEMODE:PlayerJoinTeam(pl, teamid)
 end
 
-function GM:PlayerJoinTeam(pl,teamid)
+function GM:PlayerJoinTeam(pl, teamid)
 	local oldteam = pl:Team()
 	pl:SetFrags(0)
 	pl:SetDeaths(0)
@@ -237,10 +236,10 @@ function GM:PlayerJoinTeam(pl,teamid)
 		--pl:UnSpectate()
 	end
 	pl:SetTeam(teamid)
-	gamemode.Call("OnPlayerChangedTeam",pl,oldteam,teamid)
+	gamemode.Call("OnPlayerChangedTeam", pl, oldteam, teamid)
 end
 
-function GM:PlayerCanJoinTeam(pl,teamid)
+function GM:PlayerCanJoinTeam(pl, teamid)
 	if team.Joinable(teamid) or (teamid == TEAM_SPECTATOR) then
 		return true
 	end
@@ -248,67 +247,67 @@ function GM:PlayerCanJoinTeam(pl,teamid)
 end
 
 if SERVER then
-	function GM:OnPlayerChangedTeam(pl,oldteam,newteam)
+
+	util.AddNetworkString("scav_gm_plchangedteam")
+
+	function GM:OnPlayerChangedTeam(pl, oldteam, newteam)
 		if (oldteam == newteam) then
 			return
 		end
+
+		if (newteam ~= TEAM_SPECTATOR) then
+			pl.NextTeamswitch = CurTime() + 10
+		end
+		net.Start("scav_gm_plchangedteam")
+			net.WriteEntity(pl)
+			net.WriteUInt(oldteam, 10)
+			net.WriteUInt(newteam, 10)
+		net.Broadcast()
+	end
+else
+	net.Receive("scav_gm_plchangedteam", function()
+		local pl = net.ReadEntity()
+		if not IsValid(pl) then return end
+
+		local oldteam = net.ReadUInt(10)
+		local newteam = net.ReadUInt(10)
 		local oldteamname = team.GetName(oldteam)
 		local newteamname = team.GetName(newteam)
-		if newteam == TEAM_SPECTATOR then
-			PrintMessage(HUD_PRINTTALK,pl:Name().." is now spectating.")
-		elseif oldteam == TEAM_SPECTATOR then
-			PrintMessage(HUD_PRINTTALK,pl:Name().." has joined "..newteamname..".")
-		else
-			PrintMessage(HUD_PRINTTALK,pl:Name().." has left "..oldteamname.." and joined "..newteamname..".")
-		end
-		if (newteam ~= TEAM_SPECTATOR) then
-			pl.NextTeamswitch = CurTime()+10
-		end
-		umsg.Start("gm_plchangedteam")
-			umsg.Entity(pl)
-			umsg.Short(oldteam)
-			umsg.Short(newteam)
-		umsg.End()
-	end
-end
 
-if CLIENT then
-	usermessage.Hook("gm_plchangedteam",function(um)
-		local pl = um:ReadEntity()
-		local oldteam = um:ReadShort()
-		local newteam = um:ReadShort()
-		gamemode.Call("OnPlayerChangedTeam",pl,oldteam,newteam)
+		if newteam == TEAM_SPECTATOR then
+			LocalPlayer():PrintMessage(HUD_PRINTTALK, ScavLocalize("scav.team.select.spectate", pl:Name()))
+		elseif oldteam == TEAM_SPECTATOR then
+			LocalPlayer():PrintMessage(HUD_PRINTTALK, ScavLocalize(newteam == TEAM_UNASSIGNED and "scav.team.select.dm" or "scav.team.select.join", pl:Name(), newteamname))
+		else
+			LocalPlayer():PrintMessage(HUD_PRINTTALK, ScavLocalize("scav.team.select.switch", pl:Name(), newteamname, oldteamname))
+		end
+		
+		gamemode.Call("OnPlayerChangedTeam", pl, oldteam, newteam)
 	end)
 end
 
 GM.teamstuff = {}
-function GM.teamstuff.sortbyfrags(a,b)
-	local frags = (a:Frags() > b:Frags())
-	if not frags and (a:Frags() == b:Frags()) then
-		local deaths = (a:Deaths() < b:Deaths())
-		if not deaths and (a:Deaths() == b:Deaths()) then
-			return (a:EntIndex() < b:EntIndex())
-		else
-			return deaths
-		end
-	else
-		return frags
-	end
+function GM.teamstuff.sortbyfrags(a, b)
+	--Most frags
+	if a:Frags() ~= b:Frags() then return (a:Frags() > b:Frags()) end
+	--Fewest deaths
+	if a:Deaths() ~= b:Deaths() then return (a:Deaths() < b:Deaths()) end
+	--Slot order
+	return (a:EntIndex() < b:EntIndex())
 end
+
 
 SortPlayersByScore = GM.teamstuff.sortbyfrags
 
--- return or ((a:Frags() == b:Frags()) and (a:Deaths() > b:Deaths())) or ((a:Deaths() == b:Deaths()) and (a:EntIndex() > b:EntIndex()))
-
 function GM:GetTeamPlayersByPlace(n_team)
 	self.teamstuff.scoresort[n_team] = team.GetPlayers(n_team)
-	table.sort(self.teamstuff.scoresort[n_team],SortPlayersByScore)
+	table.sort(self.teamstuff.scoresort[n_team], SortPlayersByScore)
 	return self.teamstuff.scoresort[n_team]
 end
 
 function team.GetSortedPlayers(teamnum)
 	local players = team.GetPlayers(teamnum)
-	table.sort(players,SortPlayersByScore)
+	table.sort(players, SortPlayersByScore)
 	return players
 end
 

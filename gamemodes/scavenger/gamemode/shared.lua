@@ -61,14 +61,17 @@ if SERVER then --include server files, send client files
 	AddCSLuaFile("vgui/mainmenu.lua")
 	AddCSLuaFile("vgui/teamsmenu.lua")
 	AddCSLuaFile("HUD.lua")
-end
-
-if CLIENT then --include client files
+	util.AddNetworkString("scav_gm_vote")
+else --include client files
 	include("vgui/commoncontrols.lua")
 	include("vgui/scoreboard.lua")
 	include("vgui/mainmenu.lua")
 	include("vgui/teamsmenu.lua")
 	include("HUD.lua")
+
+	net.Receive("scav_gm_vote", function()
+		LocalPlayer():PrintMessage(HUD_PRINTTALK, ScavLocalize("scav.map.timeup"))
+	end)
 end
 
 function GM:Think()
@@ -77,9 +80,10 @@ function GM:Think()
 	if self:GetGNWFloat("MapEndTime") >= CurTime() then return end
 	if GetGlobalFloat("sdm_votedeadline") ~= 0 then return end
 
-	--TODO: cannot localize on server!
-	PrintMessage(HUD_PRINTTALK, "Map time limit reached. Voting for next map has begun."--[[ScavLocalize("scav.map.timeup")]])
-	for k,v in pairs(player.GetHumans()) do
+	net.Start("scav_gm_vote")
+	net.Broadcast()
+	
+	for _, v in pairs(player.GetHumans()) do
 		v:ConCommand("sdm_vote")
 	end
 	ScavData.SetVotingDeadline(30)
