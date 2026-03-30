@@ -5,6 +5,32 @@ DEFINE_BASECLASS("gamemode_base")
 
 --local PLAYER = {} --todo: player class definition shouldn't be adding to Player metatable
 
+if CLIENT then
+	--recreated convars from sandbox
+	CreateConVar( "cl_playercolor", "0.24 0.34 0.41", {FCVAR_ARCHIVE, FCVAR_USERINFO, FCVAR_DONTRECORD}, "The value is a Vector - so between 0-1 - not between 0-255" )
+	CreateConVar( "cl_weaponcolor", "0.30 1.80 2.10", {FCVAR_ARCHIVE, FCVAR_USERINFO, FCVAR_DONTRECORD}, "The value is a Vector - so between 0-1 - not between 0-255" )
+
+	local pcolor = Vector(GetConVar("cl_playercolor"):GetString())
+	local wcolor = Vector(GetConVar("cl_weaponcolor"):GetString())
+
+	cvars.AddChangeCallback("cl_playercolor", function(convar, oldval, newval)
+		pcolor = Vector(GetConVar(convar):GetString())
+	end)
+
+	cvars.AddChangeCallback("cl_weaponcolor", function(convar, oldval, newval)
+		wcolor = Vector(GetConVar(convar):GetString())
+	end)
+
+	function PLAYER:GetPlayerColor()
+		return pcolor
+	end
+
+	function PLAYER:GetWeaponColor()
+		return wcolor
+	end
+end
+
+
 function PLAYER:IsSpectator()
 	return ((self:Team() == TEAM_SPECTATOR) or (self:Team() == TEAM_CONNECTING) or (not self:Alive() and (self:Lives() <= 0)))
 end
