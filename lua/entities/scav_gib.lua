@@ -74,7 +74,7 @@ function ENT:Initialize()
 				edata:SetAngles(boneang)
 				edata:SetScale(v)
 				edata:SetStart((bonepos - center):GetNormalized() * 600 + vel)
-				edata:SetAttachment()
+				edata:SetAttachment(0)
 				util.Effect("ef_scav_gib",edata)
 			end
 		end
