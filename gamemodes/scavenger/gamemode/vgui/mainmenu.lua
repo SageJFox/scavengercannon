@@ -176,18 +176,119 @@ local function nametomodelname(modelname)
 end
 	
 local PANEL = {}
+
+	--Generate new skin/bodygroup sliders for currently selected model
+	local function updateModelSettings(self)
+		if not ispanel(self) then return end
+
+		local ent = self.Preview:GetEntity()
+		if not IsValid(ent) then return end
+
+		self.ModelSettings:Clear()
+
+		local x = self.ModelSettings:GetWide() / 6
+		local y = 16
+		local w = math.Round(x * 4)
+		x = math.Round(x)
+		local h = 50
+		local lh = 20
+		local sep = 10
+
+		--First skin selection, if we've got any
+		local skins = ent:SkinCount() - 1
+		if skins > 0 then
+			self.ModelSkin = self.ModelSettings:Add("DNumSlider")
+				self.ModelSkin:SetPos(x, y)
+				self.ModelSkin:SetSize(w, h)
+				self.ModelSkin:SetText("#scav.menu.player.skin")
+				self.ModelSkin:SetDecimals(0)
+				self.ModelSkin:SetMin(0)
+				self.ModelSkin:SetDefaultValue(0)
+				self.ModelSkin:SetMax(skins)
+				self.ModelSkin:SetValue(0)
+				self.ModelSkin:SetConVar("cl_playerskin")
+				self.ModelSkin.OnValueChanged = function(p, v)
+					local v = math.Round(v)
+					self.ModelSkin:SetValue(v)
+					ent:SetSkin(v)
+				end
+			y = y + h + sep
+		end
+
+		self.ModelBodyGroups = {}
+
+		local function updateBodyGroups()
+			local bgroups = {}
+			for k, v in pairs(self.ModelBodyGroups) do
+				table.insert(bgroups, math.Round(v:GetValue()))
+			end
+			RunConsoleCommand("cl_playerbodygroups", table.concat(bgroups, " "))
+		end
+
+		--tell player what they're looking at
+		local label = self.ModelSettings:Add("DLabel")
+			label:SetPos(x, y)
+			label:SetSize(w, lh)
+			label:SetText("#scav.menu.player.bodygroup")
+		y = y + lh + sep
+		
+		local anybodygroup = false
+
+		--adding controls for each bodygroup
+		for k = 0, ent:GetNumBodyGroups() - 1 do
+			local totalsub = ent:GetBodygroupCount(k) - 1
+			local empty = (totalsub <= 0)
+			--make a slider for each bodygroup, even if it's useless (makes processing easier)
+
+			local slider = self.ModelSettings:Add("DNumSlider")
+				table.insert(self.ModelBodyGroups, k, slider)
+				slider:SetPos(x, y)
+				slider:SetSize(w, h)
+				slider:SetText(ent:GetBodygroupName(k))
+				slider:SetDecimals(0)
+				slider:SetMin(0)
+				slider:SetDefaultValue(0)
+				slider:SetMax(totalsub)
+				slider:SetValue(0)
+			--slider is actually usable
+			if not empty then
+				slider.OnValueChanged = function(p, v)
+					local v = math.Round(v)
+					slider:SetValue(v)
+					ent:SetBodygroup(k, v)
+					updateBodyGroups()
+				end
+				y = y + h + sep
+				anybodygroup = true
+			else
+				--slider:SetDark(true)
+				slider:SetVisible(false)
+				slider:SetPos(x, 1000000)
+			end
+		end
+
+		--Model lacks any setable bodygroups, hide the label
+		if not anybodygroup then
+			label:SetPos(x, 1000000)
+			label:SetVisible(false)
+		end
+	end
+
 	function PANEL:Init()
 	
 		self.PreviewLabel = vgui.Create("sdm_labelbox", self)
-		self.PreviewLabel:SetText(GetConVarString("cl_playermodel"))
-		self.PreviewLabel:SetMargins(0, 0)
-		self.PreviewLabel:SetAlignment(TEXT_ALIGN_CENTER)
+			self.PreviewLabel:SetText(GetConVarString("cl_playermodel"))
+			self.PreviewLabel:SetMargins(0, 0)
+			self.PreviewLabel:SetAlignment(TEXT_ALIGN_CENTER)
 		self.PreviewBox = vgui.Create("DPanel", self)
-		self.Preview = vgui.Create("DModelPanel", self.PreviewBox)
-		self.Preview:SetModel(nametomodelname(GetConVarString("cl_playermodel")))
-		self.Models = vgui.Create("DPanelList", self)
-		self.Models:EnableHorizontal(true)
-		self.Models:EnableVerticalScrollbar(true)
+			self.Preview = vgui.Create("DModelPanel", self.PreviewBox)
+				self.Preview:SetModel(nametomodelname(GetConVarString("cl_playermodel")))
+		self.ModelsBox = vgui.Create("DPanel", self)
+			self.Models = vgui.Create("DPanelList", self.ModelsBox)
+				self.Models:EnableHorizontal(true)
+				self.Models:EnableVerticalScrollbar(true)
+			self.ModelSettings = vgui.Create("DPanel", self.ModelsBox)
+		updateModelSettings(self)
 
 		self:SetupPlayerModels()
 
@@ -222,7 +323,10 @@ local PANEL = {}
 			icon.modelname = model
 			icon.nicename = name
 			icon:SetMouseInputEnabled(true)
-			icon.OnMousePressed = pmodelbuttonpressed --self.menu.wepclick1
+			icon.OnMousePressed = function(button)
+				pmodelbuttonpressed(button)
+				updateModelSettings(self)
+			end
 			icon:SetEnabled(true)
 			icon.Preview = self.Preview
 			icon.PreviewLabel = self.PreviewLabel
@@ -234,16 +338,23 @@ local PANEL = {}
 	end
 	
 	function PANEL:InvalidateLayout()
-		if not self.initialized then
-			return
-		end
+		if not self.initialized then return end
 		
+		self.ModelsBox:SetPos(self:GetWide() / 3 + 64, 32)
+		self.ModelsBox:SetWide(self:GetWide() / 3 * 2 - 96)
+		self.ModelsBox:SetTall(self:GetTall() - 64)
+		self.ModelsBox:SetSkin(self:GetSkin())
 
-		
-		self.Models:SetPos(self:GetWide() / 3 + 64, 32)
-		self.Models:SetWide(self:GetWide() / 3 * 2 - 96)
-		self.Models:SetTall(self:GetTall() - 64)
+		self.Models:SetPos(0, 0)
+		self.Models:SetWide(self.ModelsBox:GetWide() / 2)
+		self.Models:SetTall(self.ModelsBox:GetTall())
 		self.Models:SetSkin(self:GetSkin())
+
+		self.ModelSettings:SetPos(self.ModelsBox:GetWide() / 2, 0)
+		self.ModelSettings:SetWide(self.ModelsBox:GetWide() / 2)
+		self.ModelSettings:SetTall(self.ModelsBox:GetTall())
+		self.ModelSettings:SetSkin(self:GetSkin())
+		
 		
 		self.PreviewLabel:SetSkin(self:GetSkin())
 		self.PreviewLabel:SetPos(32, 32)
@@ -261,6 +372,8 @@ local PANEL = {}
 		self.Preview:SetAnimated(true)
 		self.Preview:SetAnimSpeed(1)
 		self.Preview:SetFOV(85 * r)
+
+		updateModelSettings(self)
 	end
 
 	vgui.Register("sdm_submenu_playermodel", PANEL, "DPanel")
