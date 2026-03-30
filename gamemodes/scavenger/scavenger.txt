@@ -3,6 +3,7 @@
 	"base"				"base"
 	"title"				"Scavenger"
 	"maps"				"^scav_|^sdm_|^sctf_|^sg_"
+	"category"		"pvp"
 	"menusystem"		"1"
 	//"workshopid"		"0"
 
