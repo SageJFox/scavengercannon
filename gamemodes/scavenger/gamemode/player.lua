@@ -7,8 +7,10 @@ DEFINE_BASECLASS("gamemode_base")
 
 if CLIENT then
 	--recreated convars from sandbox
-	CreateConVar( "cl_playercolor", "0.24 0.34 0.41", {FCVAR_ARCHIVE, FCVAR_USERINFO, FCVAR_DONTRECORD}, "The value is a Vector - so between 0-1 - not between 0-255" )
-	CreateConVar( "cl_weaponcolor", "0.30 1.80 2.10", {FCVAR_ARCHIVE, FCVAR_USERINFO, FCVAR_DONTRECORD}, "The value is a Vector - so between 0-1 - not between 0-255" )
+	CreateConVar("cl_playercolor", "0.24 0.34 0.41", {FCVAR_ARCHIVE, FCVAR_USERINFO, FCVAR_DONTRECORD}, "The value is a Vector - so between 0-1 - not between 0-255")
+	CreateConVar("cl_weaponcolor", "0.30 1.80 2.10", {FCVAR_ARCHIVE, FCVAR_USERINFO, FCVAR_DONTRECORD}, "The value is a Vector - so between 0-1 - not between 0-255")
+	CreateConVar("cl_playerskin", "0", {FCVAR_ARCHIVE, FCVAR_USERINFO, FCVAR_DONTRECORD}, "The skin to use, if the model has any")
+	CreateConVar("cl_playerbodygroups", "0", {FCVAR_ARCHIVE, FCVAR_USERINFO, FCVAR_DONTRECORD}, "The bodygroups to use, if the model has any")
 
 	local pcolor = Vector(GetConVar("cl_playercolor"):GetString())
 	local wcolor = Vector(GetConVar("cl_weaponcolor"):GetString())
@@ -611,4 +613,24 @@ if CLIENT then
 	end)
 end
 
-player_manager.RegisterClass("player_sdm", {}--[[PLAYER]], "player_default")
+local PLAYER_SDM = {}
+
+function PLAYER_SDM:SetModel()
+	local cl_playermodel = self.Player:GetInfo("cl_playermodel")
+	local modelname = player_manager.TranslatePlayerModel(cl_playermodel)
+	util.PrecacheModel(modelname)
+	self.Player:SetModel(modelname)
+
+	local skin = self.Player:GetInfoNum("cl_playerskin", 0)
+	self.Player:SetSkin(skin)
+
+	local bodygroups = self.Player:GetInfo("cl_playerbodygroups")
+	if not bodygroups then bodygroups = "" end
+
+	local groups = string.Explode(" ", bodygroups)
+	for i = 0, self.Player:GetNumBodyGroups() - 1 do
+		self.Player:SetBodygroup(i, tonumber(groups[i + 1]) or 0)
+	end
+end
+
+player_manager.RegisterClass("player_sdm", PLAYER_SDM, "player_default")
