@@ -177,6 +177,14 @@ end
 	
 local PANEL = {}
 
+	local function updateplayercolor(pan)
+		pan:GetEntity().GetPlayerColor = function(self)
+			if not ispanel(pcol) then return Vector(GetConVar("cl_playercolor"):GetString()) end
+			return pcol:GetVector()
+		end
+		pan:GetEntity():GetPlayerColor()
+	end
+
 	--Generate new skin/bodygroup sliders for currently selected model
 	local function updateModelSettings(self)
 		if not ispanel(self) then return end
@@ -272,7 +280,12 @@ local PANEL = {}
 			label:SetPos(x, 1000000)
 			label:SetVisible(false)
 		end
+
+		updateplayercolor(self.Preview)
 	end
+
+	preview = 0
+	pcol = 0
 
 	function PANEL:Init()
 	
@@ -283,6 +296,8 @@ local PANEL = {}
 		self.PreviewBox = vgui.Create("DPanel", self)
 			self.Preview = vgui.Create("DModelPanel", self.PreviewBox)
 				self.Preview:SetModel(nametomodelname(GetConVarString("cl_playermodel")))
+				updateplayercolor(self.Preview)
+			preview = self.Preview
 		self.ModelsBox = vgui.Create("DPanel", self)
 			self.Models = vgui.Create("DPanelList", self.ModelsBox)
 				self.Models:EnableHorizontal(true)
@@ -468,10 +483,7 @@ local PANEL = {}
 	end
 	
 	function PANEL:InvalidateLayout()
-		if not self.initialized then
-			return
-		end
-
+		if not self.initialized then return end
 
 		self.WepLabel:SetPos(16, 16)
 		self.WepLabel:SetSize(self:GetWide() - 64, 32)
@@ -506,28 +518,56 @@ local PANEL = {}
 	vgui.Register("sdm_submenu_equipment", PANEL, "DPanel")
 
 	local PANEL = {}
-	--[[local oncolorpress = function()
-		RunConsoleCommand("scav_opencolor")
-	end
-	--concommand: scav_opencolor
+
 	--convar: cl_scav_high
 	--convar: cl_scav_iconalpha
 	--convar: scav_hands
 	
 	
 	function PANEL:Init()
-		self.ColorMenuButton = vgui.Create("DButton", self)
-		self.ColorMenuButton:SetText("Select Color")
-		self.ColorMenuButton.DoClick = oncolorpress
+		self.ColorMenu = self:Add("DPanel")
+			self.ColorMenuPlayerLabel = self.ColorMenu:Add("DLabel")
+				self.ColorMenuPlayerLabel:SetText("#smwidget.color_plr")
+			self.ColorMenuPlayer = self.ColorMenu:Add("DColorMixer")
+				pcol = self.ColorMenuPlayer
+				self.ColorMenuPlayer:SetAlphaBar(false)
+				self.ColorMenuPlayer:SetPalette(false)
+				self.ColorMenuPlayer:SetVector(Vector(GetConVarString("cl_playercolor")))
+				--self.ColorMenuPlayer:SetConVar("cl_playercolor")
+				self.ColorMenuPlayer.ValueChanged = function(col)
+					GetConVar("cl_playercolor"):SetString(tostring(self.ColorMenuPlayer:GetVector()))
+					--preview:GetEntity():SetPlayerColor(self.ColorMenuPlayer:GetVector())
+					preview:GetEntity():GetPlayerColor()
+				end
+			self.ColorMenuWeaponLabel = self.ColorMenu:Add("DLabel")
+				self.ColorMenuWeaponLabel:SetText("#smwidget.color_wep")
+			self.ColorMenuWeapon = self.ColorMenu:Add("DColorMixer")
+				self.ColorMenuWeapon:SetAlphaBar(false)
+				self.ColorMenuWeapon:SetPalette(false)
+				self.ColorMenuWeapon:SetVector(Vector(GetConVarString("cl_weaponcolor")))
+				--self.ColorMenuWeapon:SetConVar("cl_weaponcolor")
+				self.ColorMenuWeapon.ValueChanged = function(col)
+					GetConVar("cl_weaponcolor"):SetString(tostring(self.ColorMenuWeapon:GetVector()))
+				end
 		self.initialized = true
 	end
 
 	function PANEL:InvalidateLayout()
-		if not self.initialized then
-			return
-		end
-		self.ColorMenuButton:SetPos(32, 32)
-		self.ColorMenuButton:SetSize(96, 32)
-	end]]
+		if not self.initialized then return end
+
+		self.ColorMenu:DockPadding(8, 8, 8, 8)
+		self.ColorMenu:SetSize(320, 600)
+
+		self.ColorMenuPlayerLabel:Dock(TOP)
+
+		self.ColorMenuPlayer:Dock(TOP)
+		self.ColorMenuPlayer:SetSize(200, math.min(self:GetTall() / 3, 260))
+
+		self.ColorMenuWeaponLabel:DockMargin(0, 32, 0, 0)
+		self.ColorMenuWeaponLabel:Dock(TOP)
+
+		self.ColorMenuWeapon:Dock(TOP)
+		self.ColorMenuWeapon:SetSize(200, math.min( self:GetTall() / 3, 260))
+	end
 
 	vgui.Register("sdm_submenu_options", PANEL, "DPanel")

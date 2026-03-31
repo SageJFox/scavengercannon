@@ -527,7 +527,7 @@ else
 				if dmginfo:IsDamageType(DMG_BLAST) and IsValid(inflictor) then
 					inflictor.BlastKills = (inflictor.BlastKills or 0) + 1
 					if inflictor.BlastKills > 2 then
-						--attacker:AddScavAchievement(SCAVACHIEVEMENT_TRIPLEGIB, 1)
+						attacker:AddScavAchievement(SCAVACHIEVEMENT_TRIPLEGIB, 1)
 					end
 				end
 			end
@@ -631,6 +631,9 @@ function PLAYER_SDM:SetModel()
 	for i = 0, self.Player:GetNumBodyGroups() - 1 do
 		self.Player:SetBodygroup(i, tonumber(groups[i + 1]) or 0)
 	end
+
+	self.Player:GetPlayerColor()
+	self.Player:GetWeaponColor()
 end
 
 player_manager.RegisterClass("player_sdm", PLAYER_SDM, "player_default")
