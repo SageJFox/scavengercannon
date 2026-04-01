@@ -209,11 +209,24 @@ if SERVER then
 	end)
 	]]
 	
+	util.AddNetworkString("sdm_achievement")
+
 	function GM:OnPlayerAchieved(pl, index)
 		pl:EmitSound("weapons/fx/rics/ric2.wav")
-		PrintMessage(HUD_PRINTTALK, pl:Nick() .. " has achieved " .. ScavStats.Achievements[index].printname .. "!")
+		net.Start("sdm_achievement")
+			net.WritePlayer(pl)
+			net.WriteUInt(index, 7) -- !!!IMPORTANT!!! This gives a max of 127 achievements, should we ever pass that, this needs changing!
+			net.Broadcast()
+		print(pl:Nick() .. " has achieved " .. ScavStats.Achievements[index].printname .. "!")
 	end
 	
+else
+	net.Receive("sdm_achievement", function()
+		local pl = net.ReadPlayer()
+		if not IsValid(pl) then return end
+		local index = net.ReadUInt(7)
+		chat.AddText(ScavLocalize("#scav.achievement", pl:Nick(), ScavStats.Achievements[index].printname))
+	end)
 end
 
 
