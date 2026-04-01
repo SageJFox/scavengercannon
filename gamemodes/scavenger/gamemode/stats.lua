@@ -29,10 +29,10 @@ local function RegisterAward(index, name, printname, icon)
 	}
 end
 local function RegisterAchievement(index, name, localization, icon, amttoachieve, secret, quiet)
-	if SERVER then
-		sql.Query([[REPLACE INTO ScavAchievements (AchievementID, AchievementTitle) VALUES (]] .. index .. [[, "]] .. name .. [[");]])
-	end
 	local index = index or (#ScavStats.Achievements + 1)
+	if SERVER then
+		sql.Query([[REPLACE INTO ScavAchievements (AchievementID, AchievementName) VALUES (]] .. index .. [[, "]] .. name .. [[");]])
+	end
 	ScavStats.Achievements[index] = {
 		["index"] = index,
 		["name"] = name,
