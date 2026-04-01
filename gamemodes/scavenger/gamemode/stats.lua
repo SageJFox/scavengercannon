@@ -85,13 +85,13 @@ if SERVER then
 		return self.ScavAwards[name] or 0
 	end
 
-	function PLAYER:AddScavAchievement(name, amt)
+	function PLAYER:AddScavAchievement(name, amt, noannounce)
 		local amttoachieve = ScavStats.Achievements[name].amttoachieve
 		local progress = self:GetScavAchievementProgress(name)
 		if progress >= amttoachieve then
 			return
 		end
-		if amt + progress >= amttoachieve then
+		if not noannounce and amt + progress >= amttoachieve then
 			gamemode.Call("OnPlayerAchieved", self, name)
 		end
 		self.ScavAchievements[name] = math.min(amt + progress, amttoachieve)
@@ -149,7 +149,7 @@ if SERVER then
 			for k, v in pairs(result) do
 				local index = tonumber(v['AchievementID'])
 				self.ScavAchievements[index] = 0
-				self:AddScavAchievement(index, tonumber(v['Progress']))
+				self:AddScavAchievement(index, tonumber(v['Progress']), true)
 			end
 		end
 	end
