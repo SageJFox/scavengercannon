@@ -53,18 +53,18 @@ if SERVER then
 			local success = sql.Query(
 					[[
 					CREATE TABLE "ScavPlayers" ("SteamID" TEXT PRIMARY KEY  NOT NULL, "PlayerName" TEXT);
-					CREATE TABLE "ScavAchievements" ("AchievementID" INTEGER PRIMARY KEY  NOT NULL, "AchievementName" TEXT NOT NULL );
-					CREATE TABLE "ScavAwards" ("AwardID" INTEGER PRIMARY KEY  NOT NULL, "AwardName" TEXT NOT NULL );
-					CREATE TABLE "ScavStats" ("StatID" INTEGER PRIMARY KEY  NOT NULL, "StatName" TEXT NOT NULL );
+					CREATE TABLE "ScavAchievements" ("AchievementID" INTEGER PRIMARY KEY  NOT NULL, "AchievementName" TEXT NOT NULL);
+					CREATE TABLE "ScavAwards" ("AwardID" INTEGER PRIMARY KEY  NOT NULL, "AwardName" TEXT NOT NULL);
+					CREATE TABLE "ScavStats" ("StatID" INTEGER PRIMARY KEY  NOT NULL, "StatName" TEXT NOT NULL);
 					CREATE TABLE "ScavPlayerAchievements" ("SteamID" TEXT NOT NULL, "AchievementID" INTEGER NOT NULL, "Progress" INTEGER NOT NULL, FOREIGN KEY (SteamID) REFERENCES ScavPlayers(SteamID), FOREIGN KEY (AchievementID) REFERENCES ScavAchievements(AchievementID), PRIMARY KEY (SteamID, AchievementID));
-					CREATE TABLE "ScavPlayerAwards" ("SteamID" TEXT NOT NULL, "AwardID" INTEGER NOT NULL, "AwardAmount" INTEGER NOT NULL, FOREIGN KEY(SteamID) REFERENCES ScavPlayers(SteamID), FOREIGN KEY(AwardID) REFERENCES ScavAwards(AwardID), PRIMARY KEY (SteamID, AwardID) );
+					CREATE TABLE "ScavPlayerAwards" ("SteamID" TEXT NOT NULL, "AwardID" INTEGER NOT NULL, "AwardAmount" INTEGER NOT NULL, FOREIGN KEY(SteamID) REFERENCES ScavPlayers(SteamID), FOREIGN KEY(AwardID) REFERENCES ScavAwards(AwardID), PRIMARY KEY (SteamID, AwardID));
 					CREATE TABLE "ScavPlayerStats" ("SteamID" TEXT NOT NULL, "StatID" INTEGER NOT NULL, "Value" INTEGER NOT NULL, FOREIGN KEY (SteamID) REFERENCES ScavPlayers(SteamID), FOREIGN KEY (StatID) REFERENCES ScavStats(StatID), PRIMARY KEY (SteamID, StatID));
 					CREATE INDEX "playerIndex" ON "ScavPlayers" ("SteamID" ASC);
 					CREATE INDEX "playerStatIndex" ON "ScavPlayerStats" ("SteamID" DESC, "StatID" DESC);]])
 			sql.Commit()
 			if success == false then
 				print("Scav DM Database initialization error! " .. tostring(sql.LastError()))
-			else
+			elseif success then
 				print("Scav DM Database successfully initialized!")
 			end
 	end
