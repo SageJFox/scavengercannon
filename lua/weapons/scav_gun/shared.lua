@@ -1205,33 +1205,30 @@ if CLIENT then
 	end
 
 	function PANEL:Think()
-		if LocalPlayer().GetActiveWeapon then
+		if not LocalPlayer().GetActiveWeapon then return end
 
-			self.wep = LocalPlayer():GetActiveWeapon()
-			local isscav = IsValid(self.wep) and self.wep:GetClass() == "scav_gun"
+		self.wep = LocalPlayer():GetActiveWeapon()
+		local isscav = IsValid(self.wep) and self.wep:GetClass() == "scav_gun"
 
-			self:SetVisible(isscav)
+		self:SetVisible(isscav)
 
-			if not IsValid(self.wep) then
-				return
-			end
+		if not IsValid(self.wep) then return end
 
-			if isscav then
-				if self.wep.ChargeAttack then
-					self.item = self.wep.chargeitem
-				elseif IsValid(self.wep) and self.wep.GetCurrentItem and self.wep:GetCurrentItem() then
-					self.item = self.wep:GetCurrentItem()
-				end
-			end
+		if not isscav then
+			self.Preview:SetVisible(false)
+			self.item = nil
+			return
+		end
 
-			if isscav and self.item and (self.wep.ChargeAttack or self.wep.inv:GetItemCount() > 0)  then
-				self.Preview:SetVisible(true)
-				self.Preview:SetModel(self.item.ammo, self.item.data)
-			else
-				self.Preview:SetVisible(false)
-				self.item = nil
-			end
+		if self.wep.ChargeAttack then
+			self.item = self.wep.chargeitem
+		elseif IsValid(self.wep) and self.wep.GetCurrentItem and self.wep:GetCurrentItem() then
+			self.item = self.wep:GetCurrentItem()
+		end
 
+		if self.item and self.wep.inv and (self.wep.ChargeAttack or self.wep.inv:GetItemCount() > 0)  then
+			self.Preview:SetVisible(true)
+			self.Preview:SetModel(self.item.ammo, self.item.data)
 		end
 	end
 
@@ -1249,41 +1246,41 @@ if CLIENT then
 		local wep = self.wep
 		local item = wep:GetCurrentItem()
 
-		if IsValid(wep) and wep:GetClass() == "scav_gun" then
-			surface.SetTextColor(self.TextColor)
-			surface.SetFont("Scav_MenuLarge")
-			surface.SetTextPos(96, 48)
+		if not IsValid(wep) or wep:GetClass() ~= "scav_gun" then return end
 
-			local firemodename = "#scav.scavcan.unknown"
+		surface.SetTextColor(self.TextColor)
+		surface.SetFont("Scav_MenuLarge")
+		surface.SetTextPos(96, 48)
 
-			if item then
-				local itemtab = ScavData.models[item.ammo]
-				if ScavData.LocalPlayerKnowsItem(item.ammo) and itemtab then
-					if itemtab.Name then
-						firemodename = itemtab.Name
-					elseif itemtab.GetName then
-						firemodename = itemtab.GetName(wep, item)
-					end
+		local firemodename = "#scav.scavcan.unknown"
+
+		if item then
+			local itemtab = ScavData.models[item.ammo]
+			if ScavData.LocalPlayerKnowsItem(item.ammo) and itemtab then
+				if itemtab.Name then
+					firemodename = itemtab.Name
+				elseif itemtab.GetName then
+					firemodename = itemtab.GetName(wep, item)
 				end
 			end
+		end
 
-			surface.DrawText(firemodename)
-			surface.SetTextPos(96, 16)
+		surface.DrawText(firemodename)
+		surface.SetTextPos(96, 16)
 
-			surface.DrawText(ScavLocalize("scav.scavcan.ammo", wep.inv:GetItemCount(), wep:GetCapacity()))
-			surface.SetTextPos(104, 64)
-			surface.SetDrawColor(255, 255, 255, 200)
-			surface.DrawRect(16, 80, (wep.nextfire-UnPredictedCurTime()) * 256 / (wep.nextfire - wep.receivednextfire) - 32, 8)
+		surface.DrawText(ScavLocalize("scav.scavcan.ammo", wep.inv:GetItemCount(), wep:GetCapacity()))
+		surface.SetTextPos(104, 64)
+		surface.SetDrawColor(255, 255, 255, 200)
+		surface.DrawRect(16, 80, (wep.nextfire - UnPredictedCurTime()) * 256 / (wep.nextfire - wep.receivednextfire) - 32, 8)
 
-			if item then
-				if self.item.subammo == SCAV_SHORT_MAX then
-					surface.DrawText(ScavLocalize("scav.scavcan.subammo", "scav.scavcan.inf"))
-				else
-					surface.DrawText(ScavLocalize("scav.scavcan.subammo", self.item.subammo))
-				end
+		if item then
+			if self.item.subammo == SCAV_SHORT_MAX then
+				surface.DrawText(ScavLocalize("scav.scavcan.subammo", "scav.scavcan.inf"))
 			else
-				surface.DrawText(ScavLocalize("scav.scavcan.subammo", "0"))
+				surface.DrawText(ScavLocalize("scav.scavcan.subammo", self.item.subammo))
 			end
+		else
+			surface.DrawText(ScavLocalize("scav.scavcan.subammo", "0"))
 		end
 	end
 
@@ -1296,11 +1293,7 @@ if CLIENT then
 	HUD:SetSkin("sg_menu")
 
 	function SWEP:HasItemTypeSameAsLast()
-		if not self:GetCurrentItem() then
-			return false
-		else
-			return (ScavData.models[self.currentmodel] == ScavData.models[self:GetCurrentItem().ammo])
-		end
+		return self:GetCurrentItem() and (ScavData.models[self.currentmodel] == ScavData.models[self:GetCurrentItem().ammo]) or false
 	end
 
 	function SWEP:Deploy()
@@ -1311,7 +1304,6 @@ if CLIENT then
 		if IsValid(self.Owner) then
 			self:Reskin(self.Owner:AccountID())
 		end
-
 	end
 
 	net.Receive("scv_asgn", function()
@@ -1339,22 +1331,21 @@ if CLIENT then
 	end)
 
 	local function applyeffect(ent)
-		if IsValid(ent) then
-			ent:SetModelScale(0, 0.1)
-			local edata = EffectData()
-			edata:SetOrigin(ent:GetPos())
-			edata:SetEntity(ent)
-			util.Effect("ef_scav_launch", edata, true, true)
-			return true
-		end
-		return false
+		if not IsValid(ent) then return false end
+
+		ent:SetModelScale(0, 0.1)
+		local edata = EffectData()
+		edata:SetOrigin(ent:GetPos())
+		edata:SetEntity(ent)
+		util.Effect("ef_scav_launch", edata, true, true)
+		return true
 	end
 
 	hook.Add("OnEntityCreated", "scv_leffect", function(ent)
-		if IsValid(ent) and ent:GetMaterial() == "scv_leffect" then
-			ent:SetMaterial()
-			applyeffect(ent)
-		end
+		if not IsValid(ent) or ent:GetMaterial() ~= "scv_leffect" then return end
+		
+		ent:SetMaterial()
+		applyeffect(ent)
 	end)
 
 	-------------------------------------
