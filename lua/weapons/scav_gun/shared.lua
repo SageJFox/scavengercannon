@@ -1229,6 +1229,8 @@ if CLIENT then
 		if self.item and self.wep.inv and (self.wep.ChargeAttack or self.wep.inv:GetItemCount() > 0)  then
 			self.Preview:SetVisible(true)
 			self.Preview:SetModel(self.item.ammo, self.item.data)
+		else
+			self.Preview:SetVisible(false)
 		end
 	end
 
@@ -1343,7 +1345,7 @@ if CLIENT then
 
 	hook.Add("OnEntityCreated", "scv_leffect", function(ent)
 		if not IsValid(ent) or ent:GetMaterial() ~= "scv_leffect" then return end
-		
+
 		ent:SetMaterial()
 		applyeffect(ent)
 	end)
