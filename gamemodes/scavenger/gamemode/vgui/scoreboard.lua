@@ -406,7 +406,7 @@ local PANEL = {}
 	
 	function PANEL:ValidateTeam(teamid)
 		local panel = self:GetTeamPanel(teamid)
-		if not panel then return end
+		--if not panel then return end
 
 		panel:ValidatePlayers()
 

@@ -406,9 +406,10 @@ if CLIENT then
 		teamid = tonumber(teamid)
 		timer.Simple(0.25, function() self.ScoreBoard:ValidateTeam(teamid) end)
 	end
-	usermessage.Hook("GMPlayerDisconnectedTeam", function(um)
-		local teamid = um:ReadShort()
-		gamemode.Call("PlayerDisconnectedTeam", teamid)
+
+	net.Receive("sdm_disconnect", function()
+		local plteam = net.ReadUInt(4) + 1000
+		gamemode.Call("PlayerDisconnectedTeam", plteam)
 	end)
 
 	function GM:OnPlayerChangedTeam(pl, oldteam, newteam) 
@@ -423,6 +424,18 @@ if CLIENT then
 		gamemode.Call("OnPlayerChangedTeam", pl, oldteam, newteam)
 	end)
 else
+	util.AddNetworkString("sdm_disconnect")
+
+	hook.Add("PlayerDisconnected", "SDMTeamDisconnect", function(pl)
+		local plteam = pl:Team()
+		if plteam == TEAM_CONNECTING or plteam == TEAM_SPECTATOR then return end
+		net.Start("sdm_disconnect")
+			net.WriteUInt(plteam - 1000, 4) --save some bits, team enums start at 1001
+		net.Broadcast()
+		gamemode.Call("PlayerDisconnectedTeam", plteam)
+	end)
+
+
 
 	function GM:GetFallDamage(ply, vel)
 		if self:GetGameVar("sdm_main_mod_falldmg") then

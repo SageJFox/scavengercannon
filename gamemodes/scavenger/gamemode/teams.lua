@@ -288,6 +288,7 @@ end
 
 GM.teamstuff = {}
 function GM.teamstuff.sortbyfrags(a, b)
+	if not IsValid(a) or not IsValid(b) then return end
 	--Most frags
 	if a:Frags() ~= b:Frags() then return (a:Frags() > b:Frags()) end
 	--Fewest deaths
@@ -295,7 +296,6 @@ function GM.teamstuff.sortbyfrags(a, b)
 	--Slot order
 	return (a:EntIndex() < b:EntIndex())
 end
-
 
 SortPlayersByScore = GM.teamstuff.sortbyfrags
 
