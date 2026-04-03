@@ -423,6 +423,18 @@ if CLIENT then
 		local newteam = um:ReadShort()
 		gamemode.Call("OnPlayerChangedTeam", pl, oldteam, newteam)
 	end)
+
+	function GM:HUDDrawTargetID()
+		local ent = LocalPlayer():GetEyeTrace().Entity
+		if not IsValid(ent) or not ent:IsPlayer() then return false end
+		
+		local pteam = LocalPlayer():Team()
+		local oteam = ent:Team()
+		if pteam ~= oteam or pteam == TEAM_UNASSIGNED or oteam == TEAM_SPECTATOR then return false end
+
+		return true
+	end
+
 else
 	util.AddNetworkString("sdm_disconnect")
 
@@ -434,8 +446,6 @@ else
 		net.Broadcast()
 		gamemode.Call("PlayerDisconnectedTeam", plteam)
 	end)
-
-
 
 	function GM:GetFallDamage(ply, vel)
 		if self:GetGameVar("sdm_main_mod_falldmg") then
@@ -485,7 +495,6 @@ else
 			end
 		end
 	end
-	
 
 	function GM:PlayerDeathSound()
 		return true
