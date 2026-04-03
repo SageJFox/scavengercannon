@@ -80,6 +80,21 @@ function GM:GameVar(key, value)
 	end
 end
 
+function GM:PlayerShouldTakeDamage(ply, attacker)
+	--[[local rules = self:GetInfoEnt()
+	if not IsValid(rules) then return true end
+
+	--todo: when we do friendly fire, etc. logic in info_sdm
+	--Self Damage
+	--if ply == attacker then return rules:--GetSelfDamage() end
+
+	if not attacker:IsPlayer() then return true end
+
+	local pteam = ply:Team()
+	if pteam ~= attacker:Team() or pteam == TEAM_UNASSIGNED then return true end]]
+	
+	return true
+end
 
 function GM:EntityTakeDamage(ent, dmginfo)
 	if not ent:IsPlayer() then return end
@@ -94,6 +109,8 @@ function GM:EntityTakeDamage(ent, dmginfo)
 		umsg.End()
 	end
 	ent:GetCharacter():HandlePain(ent, dmginfo)
+
+	return
 end
 
 --[[
