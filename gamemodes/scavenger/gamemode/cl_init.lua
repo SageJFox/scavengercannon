@@ -125,7 +125,7 @@ end
 
 usermessage.Hook("sdm_pldmged", function(um)
 	--um:ReadEntity():EmitSound("physics/plastic/plastic_box_impact_bullet5.wav")
-	surface.PlaySound("physics/plastic/plastic_box_impact_bullet5.wav")
+	--surface.PlaySound("physics/plastic/plastic_box_impact_bullet5.wav")
 	surface.PlaySound("physics/plastic/plastic_box_impact_bullet5.wav")
 end)
 
