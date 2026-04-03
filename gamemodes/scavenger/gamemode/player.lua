@@ -457,12 +457,12 @@ else
 		end
 	end
 	
-	function GM:PlayerTraceAttack(pl, dmginfo, dir, trace)
+	--[[function GM:PlayerTraceAttack(pl, dmginfo, dir, trace)
 		if SERVER then
 			gamemode.Call("ScalePlayerDamage", pl, trace.HitGroup, dmginfo) --this is a redundant call, the engine calls ScalePlayerDamage on its own
 		end
 		return true
-	end
+	end]]
 	
 	function GM:ScalePlayerDamage(pl, hitgroup, dmginfo) 
 		if hitgroup == HITGROUP_HEAD then
