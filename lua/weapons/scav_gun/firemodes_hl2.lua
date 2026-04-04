@@ -577,84 +577,47 @@
 			tab.dmginfo = DamageInfo()
 			tab.vmin = Vector(-8, -8, -8)
 			tab.vmax = Vector(8, 8, 8)
-			if SERVER then
-				tab.FireFunc = function(self, item)
-						local tr = self.Owner:GetEyeTraceNoCursor()
-						local tab = ScavData.models[item.ammo]
-						if not IsValid(tr.Entity) then
-							local tracep = {}
-								tracep.start = self.Owner:GetShootPos()
-								tracep.endpos = self.Owner:GetShootPos() + self:GetAimVector() * 850
-								tracep.filter = self.Owner
-								tracep.mask = MASK_SHOT
-								tracep.mins = tab.vmin
-								tracep.maxs = tab.vmax
-							self.Owner:LagCompensation(true)
-							tr = util.TraceHull(tracep)
-							self.Owner:LagCompensation(false)
-						end
-						if IsValid(tr.Entity) and tr.Entity:GetPhysicsObject():IsValid() and ((tr.HitPos-tr.StartPos):Length() < 250 + 600 * item.data) then
-							self.Owner:ViewPunch(Angle(-5, math.Rand(-5, 5), 0))
-							local ef = EffectData()
-							ef:SetStart(self.Owner:GetShootPos())
-							ef:SetOrigin(tr.HitPos)
-							ef:SetEntity(self)
-							local dmg = tab.dmginfo
-							if item.data == 0 then
-								util.Effect("ef_scav_tr3", ef)
-								tr.Entity:GetPhysicsObject():ApplyForceOffset(tr.Normal * 200000, tr.HitPos)
-								dmg:SetDamage(1)
-								dmg:SetDamageForce(tr.Normal * 200000)
-								dmg:SetAttacker(self.Owner)
-								dmg:SetInflictor(self)
-								dmg:SetDamagePosition(tr.HitPos)
-								dmg:SetDamageType(DMG_PHYSGUN)
-								tr.Entity:TakeDamageInfo(dmg)
-							else
-								util.Effect("ef_scav_tr4", ef) --TO DO: Merge into ef_scav_tr3
-								tr.Entity:GetPhysicsObject():ApplyForceOffset(tr.Normal * 3000000, tr.HitPos)
-								if tr.Entity:IsPlayer() then
-									tr.Entity:SetVelocity(tr.Normal * 3000)
-								end
-								dmg:SetDamage(75)
-								dmg:SetDamageForce(tr.Normal * 3000000)
-								dmg:SetAttacker(self.Owner)
-								dmg:SetInflictor(self)
-								dmg:SetDamagePosition(tr.HitPos)
-								dmg:SetDamageType(DMG_PHYSGUN)
-								tr.Entity:TakeDamageInfo(dmg)
-							end
-							tr.Entity:SetPhysicsAttacker(self.Owner)
-						else
-							self.Owner:EmitToAllButSelf("weapons/physcannon/physcannon_dryfire.wav")
-						end
-						return false
+			tab.FireFunc = function(self, item)
+				local tr = self.Owner:GetEyeTraceNoCursor()
+				local tab = ScavData.models[item.ammo]
+				local super = tobool(item.data)
+				if not IsValid(tr.Entity) then
+					local tracep = {}
+						tracep.start = self.Owner:GetShootPos()
+						tracep.endpos = self.Owner:GetShootPos() + self:GetAimVector() * (super and 850 or 250)
+						tracep.filter = self.Owner
+						tracep.mask = MASK_SHOT
+						tracep.mins = tab.vmin
+						tracep.maxs = tab.vmax
+					self.Owner:LagCompensation(true)
+					tr = util.TraceHull(tracep)
+					self.Owner:LagCompensation(false)
 				end
-			else
-				tab.FireFunc = function(self, item)
-					local tr = self.Owner:GetEyeTraceNoCursor()
-					local tab = ScavData.models[item.ammo]
-					if not IsValid(tr.Entity) then
-						local tracep = {}
-							tracep.start = self.Owner:GetShootPos()
-							tracep.endpos = self.Owner:GetShootPos() + self:GetAimVector() * 850
-							tracep.filter = self.Owner
-							tracep.mask = MASK_SHOT
-							tracep.mins = tab.vmin
-							tracep.maxs = tab.vmax
-						tr = util.TraceHull(tracep)
-					elseif tr.Entity:GetPhysicsObject():IsValid() and ((tr.HitPos-tr.StartPos):Length() < 250 + 600 * item.data) then
-						local ef = EffectData()
-							ef:SetStart(self.Owner:GetShootPos())
-							ef:SetOrigin(tr.HitPos)
-							ef:SetEntity(self)
+				if IsValid(tr.Entity) and (tr.Entity:GetPhysicsObject():IsValid() or CLIENT) and ((tr.HitPos - tr.StartPos):LengthSqr() < (super and 722500 or 62500)) then --850 or 250
+					self.Owner:ViewPunch(Angle(-5, math.Rand(-5, 5), 0))
+					local ef = EffectData()
+						ef:SetStart(self.Owner:GetShootPos())
+						ef:SetOrigin(tr.HitPos)
+						ef:SetEntity(self)
+						ef:SetScale(super and 1 or 0)
+					util.Effect("ef_scav_tr3", ef)
+					if SERVER then
+						local forcemult = super and 3000000 or 200000
+						tr.Entity:GetPhysicsObject():ApplyForceOffset(tr.Normal * forcemult, tr.HitPos)
 						local dmg = tab.dmginfo
-						util.Effect(item.data == 0 and "ef_scav_tr3" or "ef_scav_tr4", ef)
-					else
-						self.Owner:EmitSound("weapons/physcannon/physcannon_dryfire.wav")
+							dmg:SetDamage(super and 75 or 1)
+							dmg:SetDamageForce(tr.Normal * forcemult)
+							dmg:SetAttacker(self.Owner)
+							dmg:SetInflictor(self)
+							dmg:SetDamagePosition(tr.HitPos)
+							dmg:SetDamageType(DMG_PHYSGUN)
+						tr.Entity:TakeDamageInfo(dmg)
+						tr.Entity:SetPhysicsAttacker(self.Owner)
 					end
-					return false
+				elseif SERVER then
+					self.Owner:EmitSound("weapons/physcannon/physcannon_dryfire.wav")
 				end
+				return false
 			end
 			tab.Cooldown = 0.5
 		ScavData.RegisterFiremode(tab, "models/weapons/w_physics.mdl", SCAV_SHORT_MAX)

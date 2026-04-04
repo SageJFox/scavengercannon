@@ -19,9 +19,21 @@ function EFFECT:Init(data)
 		ef:SetNormal((startpos - self.endpos):GetNormalized())
 	util.Effect("ManhackSparks", ef)
 
+	self.super = tobool(data:GetScale())
+	
 	self.Owner = self.Weapon.Owner
-	if not IsValid(self.Owner) then return end
-	self.Owner:EmitSound("Weapon_PhysCannon.Launch")
+	if IsValid(self.Owner) then 
+		self.Owner:EmitSound(self.super and "Weapon_MegaPhysCannon.Launch" or "Weapon_PhysCannon.Launch", self.super and 255 or nil)
+	end
+
+	if not self.super then return end
+
+	self.mat = Material("sprites/scav_tr_phys")
+
+	util.Effect("ManhackSparks", ef)
+	util.Effect("ManhackSparks", ef)
+
+	self.midpos = (self:GetPos() + self.endpos) / 2 + VectorRand() * 5
 end
 
 function EFFECT:Think()
@@ -35,10 +47,19 @@ end
 function EFFECT:Render()
 	self.startpos = self:GetTracerShootPos(self:GetPos(), self.Weapon, 1)
 	self.dir = self.endpos - self.startpos
-	if CurTime() < self.Created + 0.02 then
+	if not self.super and CurTime() < self.Created + 0.02 then
 		render.SetMaterial(self.mat2)
 		render.DrawSprite(self:GetTracerShootPos(self:GetPos(), self.Weapon, 1), 16, 16, self.col)
 	end
 	render.SetMaterial(self.mat)
+	render.DrawBeam(self.startpos, self.endpos, 8, 0, 1, color_white)
+
+	if not self.super then return end
+
+	render.StartBeam(3)
+		render.AddBeam(self.startpos, 4, 0, color_white)
+		render.AddBeam(self.midpos, 4, 0.5, color_white)
+		render.AddBeam(self.endpos, 4, 1, color_white)
+	render.EndBeam()
 	render.DrawBeam(self.startpos, self.endpos, 8, 0, 1, color_white)
 end
