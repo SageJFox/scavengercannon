@@ -1,5 +1,22 @@
 --BIG thanks to Hank Hill for all the sweet SQL work
 
+--DO NOT MESS WITH THESE ENUMS, THEY GO WITH THE DATABASE. IF YOU REMOVE OR CHANGE ANY OF THESE THINGS WILL GET FUCKED UP
+SCAVSTAT_PLAYTIME = 1
+SCAVSTAT_GAMESPLAYED = 2
+SCAVSTAT_WINS = 3
+SCAVSTAT_LOSSES = 4
+SCAVSTAT_DRAWS = 5
+SCAVSTAT_POINTS = 6
+SCAVSTAT_FRAGS = 7
+SCAVSTAT_DEATHS = 8
+SCAVSTAT_SUICIDES = 9
+SCAVSTAT_GIBS = 10
+SCAVSTAT_HEADSHOTS = 11
+SCAVSTAT_DAMAGE = 12
+SCAVSTAT_HEALING = 13
+SCAVSTAT_KILLSTREAK = 14
+SCAVSTAT_POINTSTREAK = 15
+
 ScavStats = {}
 ScavStats.Stats = {}
 ScavStats.Awards = {}
@@ -155,6 +172,9 @@ if SERVER then
 	end
 	
 	function PLAYER:CommitScavStats()
+		--record playtime
+		self:AddScavStat(SCAVSTAT_PLAYTIME, math.Round(CurTime() - self.StartTime))
+
 		local id = self.ScavStatsID
 		local nick = self.ScavStatsNick
 		--local id = sql.SQLStr(self:SteamID())
@@ -171,7 +191,6 @@ if SERVER then
 				sql.Query([[REPLACE INTO ScavPlayerAchievements (SteamID, AchievementID, Progress) VALUES("]] .. id .. [[", ]] .. k .. [[, ]] .. v .. [[);]])
 			end
 		sql.Commit()
-		
 	end
 
 	local function commitonremove(pl)
@@ -182,6 +201,7 @@ if SERVER then
 	
 	hook.Add("PlayerInitialSpawn", "ScavStats", function(pl)
 		pl:LoadScavStats()
+		pl.StartTime = CurTime()
 		pl:CallOnRemove("CommitScavStats", commitonremove, pl)
 	end)
 	
@@ -228,25 +248,6 @@ else
 		chat.AddText(ScavLocalize("#scav.achievement", pl:Nick(), ScavStats.Achievements[index].printname))
 	end)
 end
-
-
---DO NOT MESS WITH THESE ENUMS, THEY GO WITH THE DATABASE. IF YOU REMOVE OR CHANGE ANY OF THESE THINGS WILL GET FUCKED UP
-
-SCAVSTAT_PLAYTIME = 1
-SCAVSTAT_GAMESPLAYED = 2
-SCAVSTAT_WINS = 3
-SCAVSTAT_LOSSES = 4
-SCAVSTAT_DRAWS = 5
-SCAVSTAT_POINTS = 6
-SCAVSTAT_FRAGS = 7
-SCAVSTAT_DEATHS = 8
-SCAVSTAT_SUICIDES = 9
-SCAVSTAT_GIBS = 10
-SCAVSTAT_HEADSHOTS = 11
-SCAVSTAT_DAMAGE = 12
-SCAVSTAT_HEALING = 13
-SCAVSTAT_KILLSTREAK = 14
-SCAVSTAT_POINTSTREAK = 15
 
 sql.Begin()
 	RegisterStat(SCAVSTAT_PLAYTIME, "PlayTime", "#scav.stats.time")
