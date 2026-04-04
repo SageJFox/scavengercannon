@@ -131,11 +131,16 @@ devskins = {
 }
 
 function SWEP:Reskin(steamid)
-	if devskins[steamid] ~= nil then
-		if IsValid(self.Owner:GetViewModel()) and self.Owner:GetActiveWeapon():GetClass() == "scav_gun" then
-			self.Owner:GetViewModel():SetSubMaterial(0, devskins[steamid])
-		end
-	end
+	if not devskins[steamid] then return end
+
+	local vm = self.Owner:GetViewModel()
+	if not IsValid(vm) then return end
+
+	--ensure it's actually the Scav Cannon
+	local sc = self.Owner:GetActiveWeapon()
+	if not IsValid(sc) or sc:GetClass() ~= "scav_gun" then return end
+
+	vm:SetSubMaterial(0, devskins[steamid])
 end
 
 function SWEP:Initialize()
