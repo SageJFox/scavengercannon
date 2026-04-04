@@ -118,11 +118,10 @@ function HUD.PerformLayout()
 	SetupBottomLeft(elementsbyanchor["bottomleft"])
 end
 
-hook.Add("Think","HUDThink",function()
+hook.Add("Think", "HUDThink", function()
 	local pl = LocalPlayer()
-	if not IsValid(pl) then
-		return
-	end
+	if not IsValid(pl) then return end
+
 	local startedspec = false
 	local startedplaying = false
 	local spawned = false
@@ -237,7 +236,7 @@ fragcounter.Skin = "sg_menu"
 fragcounter.HideOnSpectate = true
 fragcounter.HideOnDead = true
 
-function fragcounter.OnInit(panel,info)
+function fragcounter.OnInit(panel, info)
 	panel:SetPlayer(LocalPlayer())
 end
 
@@ -320,4 +319,14 @@ local function setupdm()
 	HUD.AddElement(energy)
 end
 
-hook.Add("OnRoundStart","SetupDMHUD",setupdm)
+--You'd think there'd be a saner way to do this
+local function setupdmvalid()
+	if not IsValid(LocalPlayer()) then return timer.Create("sdm_setuphud", 0, 1, setupdmvalid) end
+	setupdm()
+end
+
+gameevent.Listen("player_activate")
+hook.Add("player_activate", "sdm_setuphud", function(data)
+	timer.Create("sdm_setuphud", 0, 1, setupdmvalid)
+end)
+--hook.Add("OnRoundStart", "SetupDMHUD", setupdm)
