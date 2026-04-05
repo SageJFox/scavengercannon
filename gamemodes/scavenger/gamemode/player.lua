@@ -175,24 +175,6 @@ if SERVER then
 		end
 	end
 	
-	
-	function table.shuffle(tab)
-		local sorttable = {}
-		local newtab = {}
-		if tab then
-			for _, v in pairs(tab) do
-				table.insert(sorttable, v)
-			end
-			for _, v in pairs(tab) do
-				local maxvalues = #sorttable
-				local randindex = math.random(1, maxvalues)
-				table.insert(newtab, sorttable[randindex])
-				table.remove(sorttable, randindex)
-			end
-		end
-		return newtab
-	end
-	
 	local spawnpoints
 	
 	function GM:GenerateSpawnPointList()
@@ -204,11 +186,11 @@ if SERVER then
 	end)
 	
 	function GM:ShuffleSpawnPointList()
-		spawnpoints = table.shuffle(spawnpoints)
+		table.Shuffle(spawnpoints)
 	end
 	
 	function GM:PlayerSelectSpawn(pl)
-		spawnpoints = table.shuffle(spawnpoints)
+		table.Shuffle(spawnpoints)
 		for _, v in pairs(spawnpoints) do
 			if v:PlayerCanSpawn(pl) then
 				return v
