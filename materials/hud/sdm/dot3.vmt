@@ -1,0 +1,8 @@
+"UnlitGeneric"
+{
+	"$basetexture" "HUD/sdm/dot3"
+	"$additive" 0
+	"$translucent" 1
+	"$vertexalpha" 1
+	"$vertexcolor" 1
+}
