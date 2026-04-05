@@ -37,15 +37,11 @@ GM.Teams = {}
 	GM.Teams[TEAM_TEAL] = false
 
 function team.Joinable(teamid)
-	--[[
+	if not team.GetInfoEnt then return true end
 	local ent = team.GetInfoEnt(teamid)
-	if not IsValid(ent) or not ent.Joinable then
-		return false
-	else
-		return true
-	end
-	]]
-	return GAMEMODE:GetGNWBool("TeamJoinable" .. teamid)
+	if not IsValid(ent) or not ent:GetJoinable() then return false end
+
+	return true
 end
 
 
@@ -177,17 +173,8 @@ function team.GetScore(teamid)
 end
 
 function team.GetScoreLimit(teamid)
-	if SERVER then
-		local infoent = team.GetInfoEnt(teamid)
-		if IsValid(infoent) and infoent:GetScoreLimit() then
-			return infoent:GetScoreLimit()
-		else
-			--return GAMEMODE:GetInfoEnt():GetScoreLimit()
-			return GAMEMODE:GetGameVar("PointLimit")
-		end
-	else
-		return GAMEMODE:GetGNWShort("TeamPointLimit" .. teamid)
-	end
+	local infoent = team.GetInfoEnt(teamid)
+	return IsValid(infoent) and infoent:GetScoreLimit() or GAMEMODE:GetInfoEnt():GetScoreLimit()
 end
 
 function team.GetWins(teamid)
@@ -223,7 +210,7 @@ function GM:PlayerRequestTeam(pl, teamid)
 		--pl:Kill()
 		pl:KillSilent()
 	end
-	GAMEMODE:PlayerJoinTeam(pl, teamid)
+	self:PlayerJoinTeam(pl, teamid)
 end
 
 function GM:PlayerJoinTeam(pl, teamid)
