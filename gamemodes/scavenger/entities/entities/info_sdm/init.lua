@@ -17,14 +17,14 @@ function ENT:Initialize()
 end
 
 local modetranslate = {
-["deathmatch"] = SDM_MODE_DM,
-["team_deathmatch"] = SDM_MODE_DM_TEAM,
-["ctf"] = SDM_MODE_CTF,
-["cell_control"] = SDM_MODE_CELLCONTROL,
-["hoard"] = SDM_MODE_HOARD,
-["survival"] = SDM_MODE_SURVIVAL,
-["capture"] = SDM_MODE_CAPTURE,
-["custom"] = SDM_MODE_CUSTOM
+	["deathmatch"] = SDM_MODE_DM,
+	["team_deathmatch"] = SDM_MODE_DM_TEAM,
+	["ctf"] = SDM_MODE_CTF,
+	["cell_control"] = SDM_MODE_CELLCONTROL,
+	["hoard"] = SDM_MODE_HOARD,
+	["survival"] = SDM_MODE_SURVIVAL,
+	["capture"] = SDM_MODE_CAPTURE,
+	["custom"] = SDM_MODE_CUSTOM
 }
 
 function ENT:KeyValue(key,value)

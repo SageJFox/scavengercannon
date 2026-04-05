@@ -60,7 +60,7 @@ function ENT:Think()
 		self.timeofdeath = 0
 	end
 	if self.lifetime ~= 0 and self.resettime < CurTime() then
-		--print("LifeTime: "..self.lifetime..", Overdue by "..(CurTime() - self.resettime))
+		--print("LifeTime: " .. self.lifetime .. ", Overdue by " .. (CurTime() - self.resettime))
 		if self.sent:IsValid() then
 			if self.sent:GetPos() == self:GetPos() then
 				self.resettime = CurTime() + self.lifetime

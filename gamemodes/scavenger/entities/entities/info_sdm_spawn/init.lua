@@ -1,22 +1,22 @@
 ENT.Type = "point"
 ENT.Team = TEAM_UNASSIGNED
-local vec_down = Vector(0,0,-128)
-local vec_up = Vector(0,0,72)
+local vec_down = Vector(0, 0, -128)
+local vec_up = Vector(0, 0, 72)
 local tracetab = {}
-tracetab.mins = Vector(-16,-16,0)
-tracetab.maxs = Vector(16,16,0)
+tracetab.mins = Vector(-16, -16, 0)
+tracetab.maxs = Vector(16, 16, 0)
 
 
 function ENT:Initialize()
 	tracetab.start = self:GetPos()
-	tracetab.endpos = self:GetPos()+vec_down
+	tracetab.endpos = self:GetPos() + vec_down
 	local tr = util.TraceHull(tracetab)
 	if tr.Hit then
 		self:SetPos(tr.HitPos)
 	end
 end
 
-function ENT:KeyValue(key,value)
+function ENT:KeyValue(key, value)
 	key = string.lower(key)
 	if key == "team" then
 		value = team.ToTeamID(value)
@@ -24,9 +24,9 @@ function ENT:KeyValue(key,value)
 	end
 end
 
-function ENT:CheckOccupied() --Checks for an entity occupying the spawn position, returns the hit entity, null if unoccupied
+function ENT:CheckOccupied() --Checks for an entity occupying the spawn position,  returns the hit entity,  null if unoccupied
 	tracetab.start = self:GetPos()
-	tracetab.endpos = self:GetPos()+vec_up
+	tracetab.endpos = self:GetPos() + vec_up
 	local tr = util.TraceHull(tracetab)
 	return tr.Entity
 end

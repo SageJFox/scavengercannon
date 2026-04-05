@@ -2,8 +2,8 @@ ENT.Type = "anim"
 ENT.Base = "base_anim"
 
 function ENT:SetupDataTables()
-	self:DTVar("Bool",0,"AbsSkyPath")
-	self:DTVar("Int",0,"Precipitation")
+	self:DTVar("Bool", "AbsSkyPath")
+	self:DTVar("Int", "Precipitation")
 	self.dt.AbsSkyPath = false
 end
 
@@ -17,7 +17,7 @@ function ENT:Initialize()
 		--Entity(0):StopParticles()
 		self.PrecipitationFlags = self:GetFlagTable(self.dt.Precipitation)
 		if self.PrecipitationFlags[1] then
-			ParticleEffect("sdm_rain1",Vector(0,0,0),Angle(0,0,0),self)
+			ParticleEffect("sdm_rain1", vector_origin, angle_zero, self)
 		end	
 	else
 		self.dt.Precipitation = self.Precipitation
@@ -27,8 +27,8 @@ end
 function ENT:GetFlagTable(number)
 	local str = math.IntToBin(number)
 	local tab = {}
-	for i=1,#str do
-		tab[i] = tobool(string.Left(string.Right(str,i),1))
+	for i=1, #str do
+		tab[i] = tobool(string.Left(string.Right(str, i), 1))
 	end
 	return tab
 end

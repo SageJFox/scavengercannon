@@ -22,7 +22,7 @@ local TYPE_TRANSLATE = {
 	["Player"]		= TYPE_ENT,
 	["string"]		= TYPE_STRING,
 	["Vector"]		= TYPE_VECTOR
-	}
+}
 
 local function GNWType(var)
 	local vartype = type(var)

@@ -9,7 +9,7 @@ ENT.StatusIntensity = 1
 function ENT:Initialize()
 end
 
-function ENT:KeyValue(key,value)
+function ENT:KeyValue(key, value)
 	key = string.lower(key)
 	if key == "statustype" then
 		self.StatusType = tostring(value)
@@ -20,7 +20,7 @@ function ENT:KeyValue(key,value)
 	end
 end
 
-function ENT:Input(name,value,activator)
+function ENT:Input(name, value, activator)
 	name = string.lower(name)
 	if name == "setstatustype" then
 		self.StatusType = tostring(value)
@@ -29,6 +29,6 @@ function ENT:Input(name,value,activator)
 	elseif name == "setstatusintensity" then
 		self.StatusIntensity = tonumber(value)
 	elseif name == "inflictstatus" then
-		value:InflictStatusEffect(self.StatusType,self.StatusDuration,self.StatusIntensity,game.GetWorld())
+		value:InflictStatusEffect(self.StatusType, self.StatusDuration, self.StatusIntensity, game.GetWorld())
 	end
 end
