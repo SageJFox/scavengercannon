@@ -74,6 +74,53 @@ if SERVER then
 		return a <= 0
 	end
 
+	--Set player's health regen rate, in amt per second. Can be negative to apply a health drain.
+	function PLAYER:SetHealthRegen(amt)
+		self.hpregenrate = amt
+		local regenname = tostring(self) .. "_hpregen"
+
+		if self.hpregenrate == 0 then
+			timer.Remove(regenname)
+			return
+		end
+
+		local function hpregen()
+			if not IsValid(self) or not self:Alive() or self.hpregenrate == 0 then return timer.Remove(regenname) end
+
+			local change = self.hpregenrate > 0 and 1 or -1
+			local newhp = self:Health() + change
+			if newhp <= 0 then return self:Kill() end
+
+			timer.Create(regenname, 1 / math.abs(self.hpregenrate), 1, hpregen)
+			self:SetHealth(math.min(newhp, self:GetMaxHealth()))
+		end
+
+		timer.Create(regenname, 1 / math.abs(self.hpregenrate), 1, hpregen)
+	end
+
+	--Set player's armor regen rate, in amt per second. Can be negative to apply an armor drain.
+	function PLAYER:SetArmorRegen(amt)
+		self.armorregenrate = amt
+		local regenname = tostring(self) .. "_armorregen"
+
+		if self.armorregenrate == 0 then
+			timer.Remove(regenname)
+			return
+		end
+
+		local function armorregen()
+			if not IsValid(self) or not self:Alive() or self.armorregenrate == 0 then return timer.Remove(regenname) end
+
+			local change = self.armorregenrate > 0 and 1 or -1
+			local newarmor = self:Armor() + change
+
+			timer.Create(regenname, 1 / math.abs(self.armorregenrate), 1, armorregen)
+			self:SetArmor(math.max(0, math.min(newarmor, self:GetMaxArmor())))
+		end
+
+		timer.Create(regenname, 1 / math.abs(self.armorregenrate), 1, armorregen)
+	end
+
 	function GM:PlayerSpawn(pl, transition)
 
 		player_manager.SetPlayerClass(pl, "player_sdm")
@@ -100,9 +147,10 @@ if SERVER then
 
 		pl:SetMaxHealth(setifnotnoset(teamrules:GetMaxHealth(), not_positive, 100))
 		pl:SetHealth(setifnotnoset(teamrules:GetStartingHealth(), not_positive, 100))
-		--todo: health and armor regen
+		pl:SetHealthRegen(teamrules:GetHealthRegen())
 		pl:SetMaxArmor(setifnotnoset(teamrules:GetMaxArmor(), not_positive, 100))
 		pl:SetArmor(setifnotnoset(teamrules:GetStartingArmor(), not_positive, 0))
+		pl:SetArmorRegen(teamrules:GetArmorRegen())
 
 		pl:SetMaxEnergy(setifnotnoset(teamrules:GetMaxEnergy(), not_positive, 100), true)
 		pl:SetEnergy(setifnotnoset(teamrules:GetStartingEnergy(), not_positive, 100), true)
