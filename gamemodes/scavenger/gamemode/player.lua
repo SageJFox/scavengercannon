@@ -62,6 +62,18 @@ if SERVER then
 		pl:KillSilent()
 	end
 
+	--helper function, returns default if var matches a noset value (noset can be a function that takes var, return true to use default)
+	local function setifnotnoset(var, noset, default)
+		if isfunction(noset) then
+			return noset(var) and default or var
+		end
+		return var == noset and default or var
+	end
+
+	local function not_positive(a)
+		return a <= 0
+	end
+
 	function GM:PlayerSpawn(pl, transition)
 
 		player_manager.SetPlayerClass(pl, "player_sdm")
@@ -82,6 +94,19 @@ if SERVER then
 		pl:SetRunSpeed(pl:GetWalkSpeed())
 		pl:SetStepSize(24)
 		pl:SetJumpPower(275)
+
+		local teamrules = team.GetInfoEnt(pl:Team())
+		if not IsValid(teamrules) then return end
+
+		pl:SetMaxHealth(setifnotnoset(teamrules:GetMaxHealth(), not_positive, 100))
+		pl:SetHealth(setifnotnoset(teamrules:GetStartingHealth(), not_positive, 100))
+		--todo: health and armor regen
+		pl:SetMaxArmor(setifnotnoset(teamrules:GetMaxArmor(), not_positive, 100))
+		pl:SetArmor(setifnotnoset(teamrules:GetStartingArmor(), not_positive, 0))
+
+		pl:SetMaxEnergy(setifnotnoset(teamrules:GetMaxEnergy(), not_positive, 100), true)
+		pl:SetEnergy(setifnotnoset(teamrules:GetStartingEnergy(), not_positive, 100), true)
+		pl:SetChargeRate(setifnotnoset(teamrules:GetEnergyRegen(), not_positive, 5), true)
 	end
 	
 	function GM:PlayerCanSpawn(pl)
