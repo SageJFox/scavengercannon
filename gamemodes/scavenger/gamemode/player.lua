@@ -150,7 +150,7 @@ if SERVER then
 		pl:SetChargeRateDelayed(5, 1)
 		pl:SetEnergy(pl:GetMaxEnergy())
 		pl:SetWalkSpeed(250)
-		pl:SetRunSpeed(pl:GetWalkSpeed())
+		pl:SetRunSpeed(400)
 		pl:SetStepSize(24)
 		pl:SetJumpPower(275)
 
@@ -369,22 +369,22 @@ function GM:Move(pl, movedata)
 	]]
 	--movedata:SetMaxSpeed(2000)
 	--movedata:SetMaxClientSpeed(2000)
-	local scale = 1
 	local wep = pl:GetActiveWeapon()
 	local attacktime = 0
 	if IsValid(wep) then
 		attacktime = math.max(wep:GetNextPrimaryFire(), wep:GetNextSecondaryFire())
 	end
 	local ctime = CurTime()
-	if pl:Alive() and not pl.NoSprintUntilNextSprintPress and pl:KeyDown(IN_SPEED) and (pl.sprinting or ((ctime - attacktime > 1) and not pl.Attacking)) and (pl:GetEnergy() > 20 * FrameTime()) then
+	if pl:Alive() and not pl.NoSprintUntilNextSprintPress and pl:KeyDown(IN_SPEED) and (pl.sprinting or ((ctime - attacktime > 1) and not pl.Attacking)) and pl:GetEnergy() > 20 * FrameTime() then
 		if (pl:GetGroundEntity() ~= NULL) then
 			if not pl.sprinting then
 				if CLIENT then
 					pl:EmitSound("player/suit_sprint.wav")
+				else
+					pl:SprintEnable()
 				end
 				pl.sprinting = true
 			end
-			scale = scale * 1.25
 			pl:SetEnergy(pl:GetEnergy() - 20 * FrameTime())
 		end
 		if IsValid(wep) and (attacktime <= ctime) then
@@ -392,20 +392,11 @@ function GM:Move(pl, movedata)
 			wep:SetNextSecondaryFire(ctime + 1)
 		end
 	else
-		if CLIENT and pl.sprinting then
-			--pl:EmitSound("player/suit_sprint.wav", 100, 52)
-		end
+		if pl.sprinting and SERVER then pl:SprintDisable() end
 		pl.NoSprintUntilNextSprintPress = true
 		pl.sprinting = false
-		
 	end
-	if scale ~= 1 then
-		movedata:SetMaxClientSpeed(movedata:GetMaxClientSpeed() * scale)
-		movedata:SetMaxSpeed(movedata:GetMaxSpeed() * scale)
-		movedata:SetForwardSpeed(movedata:GetForwardSpeed() * scale)
-		movedata:SetSideSpeed(movedata:GetSideSpeed() * scale)
-		--movedata:SetVelocity(movedata:GetVelocity() * 2)
-	end
+	
 	return movedata
 end
 
