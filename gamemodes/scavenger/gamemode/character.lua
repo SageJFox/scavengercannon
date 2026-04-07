@@ -559,10 +559,10 @@ do
 					{["sound"]="vo/npc/female01/pain09.wav"}
 				}
 	CHAR.TauntSounds = {
-					{["sound"]="vo/coast/odessa/female/cheer01"},
-					{["sound"]="vo/coast/odessa/female/cheer02"},
-					{["sound"]="vo/npc/female/gotone01"},
-					{["sound"]="vo/npc/female/gotone02"},
+					{["sound"]="vo/coast/odessa/female/cheer01.wav"},
+					{["sound"]="vo/coast/odessa/female/cheer02.wav"},
+					{["sound"]="vo/npc/female/gotone01.wav"},
+					{["sound"]="vo/npc/female/gotone02.wav"},
 					}
 	CHAR.JumpSounds = {
 					{["sound"]="vo/npc/female01/pain02.wav"},
@@ -622,14 +622,14 @@ do --combine
 					{["sound"]="npc/combine_soldier/pain2.wav"}
 				}
 	CHAR.LeftFootsteps = {
-		{["sound"]="npc/combine_soldier/gear1.wav",["vol"]=37},
-		{["sound"]="npc/combine_soldier/gear2.wav",["vol"]=37},
-		{["sound"]="npc/combine_soldier/gear3.wav",["vol"]=37},
+		{["sound"]="npc/combine_soldier/gear1.wav",["vol"]=30},
+		{["sound"]="npc/combine_soldier/gear2.wav",["vol"]=30},
+		{["sound"]="npc/combine_soldier/gear3.wav",["vol"]=30},
 	}
 	CHAR.RightFootsteps = {
-		{["sound"]="npc/combine_soldier/gear4.wav",["vol"]=37},
-		{["sound"]="npc/combine_soldier/gear5.wav",["vol"]=37},
-		{["sound"]="npc/combine_soldier/gear6.wav",["vol"]=37},
+		{["sound"]="npc/combine_soldier/gear4.wav",["vol"]=30},
+		{["sound"]="npc/combine_soldier/gear5.wav",["vol"]=30},
+		{["sound"]="npc/combine_soldier/gear6.wav",["vol"]=30},
 	}
 	local tauntsentences = {"Taunt01","Taunt02","Taunt03","Taunt04"}
 	function CHAR:HandleTaunt(attacker,victim,attackersfragsthislife)
