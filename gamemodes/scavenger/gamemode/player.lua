@@ -204,9 +204,6 @@ if SERVER then
 		--MsgAll("WARNING! NO VALID SPAWN POINTS!")
 	end
 	
-end
-
-if SERVER then
 	hook.Add("PlayerInitialSpawn", "AddDashValues", function(pl)
 		pl.LastDirection = 0
 		pl.LastDirectionPress = 0
@@ -242,7 +239,7 @@ function GM:KeyRelease(pl, key)
 	]]
 end
 
-local dash_value = 500
+--local dash_value = 500
 
 function GM:KeyPress(pl, key)
 	if CLIENT and not IsFirstTimePredicted() then
@@ -444,17 +441,20 @@ end
 
 if CLIENT then
 	function GM:PlayerDeath(victim, killer, inflictor)
-		timer.Simple(0.25, function() self.ScoreBoard:SortPlayerTeam(victim) end)
+		if IsValid(victim) then
+			timer.Simple(0.25, function() self.ScoreBoard:SortPlayerTeam(victim) end)
+		end
 		if IsValid(killer) and killer:IsPlayer() then
 			timer.Simple(0.25, function() self.ScoreBoard:SortPlayerTeam(killer) end)
 		end
 	end
 
-	usermessage.Hook("GMPlayerDeath", function(um)
-		local v = um:ReadEntity()
-		local k = um:ReadEntity()
-		local i = um:ReadEntity()
-		gamemode.Call("PlayerDeath", v, k, i)
+	net.Receive("sdm_playerdeath", function()
+		local v = net.ReadEntity()
+		local k = net.ReadEntity()
+		--we don't use the inflictor (at the moment), so why bother networking it?
+		--local i = net.ReadEntity()
+		gamemode.Call("PlayerDeath", v, k, nil)--i)
 	end)
 
 	function GM:PlayerDisconnectedTeam(teamid) --Called when a team loses a player to a disconnect
@@ -492,6 +492,7 @@ if CLIENT then
 
 else
 	util.AddNetworkString("sdm_disconnect")
+	util.AddNetworkString("sdm_playerdeath")
 
 	hook.Add("PlayerDisconnected", "SDMTeamDisconnect", function(pl)
 		local plteam = pl:Team()
@@ -572,17 +573,21 @@ else
 			inflictor = victim.killedbyinflictor
 			dmginfo:SetInflictor(inflictor)
 		end	
-		if not attacker.fragsthislife then
-			attacker.fragsthislife = 0
-		end
 		local suicide = (attacker == victim)
-		local friendlyfire = (attacker:IsPlayer() and (victim:Team() ~= TEAM_UNASSIGNED) and (attacker:Team() == victim:Team()))
+		local friendlyfire = (IsValid(attacker) and attacker:IsPlayer() and victim:Team() ~= TEAM_UNASSIGNED and attacker:Team() == victim:Team())
 		victim.fragsthislife = 0
 		victim:AddScavStat(SCAVSTAT_DEATHS, 1)
 		victim:AddDeaths(1)
 		if not inflictor then
 			inflictor = dmginfo:GetInflictor()
 		end
+
+		net.Start("sdm_playerdeath")
+			net.WriteEntity(victim)
+			net.WriteEntity(attacker)
+			--net.WriteEntity(inflictor)
+		net.Broadcast()
+
 		if (IsValid(attacker) and attacker:IsPlayer()) then
 
 			if suicide then
@@ -591,7 +596,7 @@ else
 			if suicide or friendlyfire then
 				attacker:AddFrags(-1)
 			else
-				attacker.fragsthislife = attacker.fragsthislife + 1
+				attacker.fragsthislife = (attacker.fragsthislife or 0) + 1
 				attacker:GetCharacter():HandleTaunt(attacker, victim, attacker.fragsthislife)
 				--[[
 				if attacker.fragsthislife%5 == 0 then
