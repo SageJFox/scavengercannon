@@ -34,7 +34,7 @@ end
 
 
 function PLAYER:IsSpectator()
-	return ((self:Team() == TEAM_SPECTATOR) or (self:Team() == TEAM_CONNECTING) or (not self:Alive() and (self:Lives() <= 0)))
+	return ((self:Team() == TEAM_SPECTATOR) or (self:Team() == TEAM_CONNECTING) or (not self:Alive() and (self:Lives() == 0)))
 end
 
 --lives
@@ -43,12 +43,23 @@ function PLAYER:Lives()
 	return self:GetNWInt("lives")
 end
 
-function PLAYER:AddLives(lives)
-	self:SetLives(self:Lives() + lives)
+function PLAYER:AddLives(add)
+	local a = tonumber(add)
+	if a == 0 then return end 
+	if not a then return ErrorNoHaltWithStack("Warning! Tried to add non-number '" .. tostring(add) .. "' to " .. self:Nick() .. "'s lives!") end
+
+	local lives = self:Lives()
+	--player lives < 0 means the player isn't using lives, don't add them
+	if lives < 0 then return end
+
+	self:SetLives(math.max(0, math.Round(lives + a)))
 end
 
 function PLAYER:SetLives(lives)
-	self:SetNWInt("lives", lives)
+	local l = tonumber(lives)
+	if not l then return ErrorNoHaltWithStack("Warning! Tried to set " .. self:Nick() .. "'s lives to non-number '" .. tostring(lives) .. "'!") end
+
+	self:SetNWInt("lives", math.max(-1, math.Round(l)))
 end
 
 if SERVER then
@@ -57,6 +68,7 @@ if SERVER then
 	end
 	
 	function GM:PlayerInitialSpawn(pl)
+		pl:SetLives(-1)
 		gamemode.Call("PlayerJoinTeam", pl, TEAM_SPECTATOR)
 		self:SendPlayerTeams(pl)
 		pl:KillSilent()
@@ -158,21 +170,28 @@ if SERVER then
 	end
 	
 	function GM:PlayerCanSpawn(pl)
-		if pl:Team() == TEAM_SPECTATOR then
-			return false
-		end
+		local pteam = pl:Team()
+		if pteam == TEAM_SPECTATOR then return false end
+
 		local ctime = CurTime()
 		local spawndelay = (pl.NextSpawnTime or 0) - ctime
-		local usinglives = self:GetGNWVar("UseLives")
-		return (spawndelay <= 0) and (not usinglives  or (pl:Lives()>0))
+		local enoughlives = pl:Lives() ~= 0
+
+		local teamrules = team.GetInfoEnt(pteam)
+		--if we're using pooled lives, or the player is on a team not using lives but came from one that did before, we don't actually care what their lives count is
+		if IsValid(teamrules) then
+			local teamlives = teamrules:GetLives()
+			local pooled = teamrules:GetPooledLives()
+			if teamlives <= 0 then enoughlives = (not pooled) end
+			if pooled and teamlives > 0 then enoughlives = true end
+		end
+		return spawndelay <= 0 and enoughlives
 	end
 
 	function GM:PlayerDeathThink(pl)
-		if self:PlayerCanSpawn(pl) then
-			if ( pl:KeyPressed( IN_ATTACK ) or pl:KeyPressed( IN_ATTACK2 ) or pl:KeyPressed( IN_JUMP ) ) then
-				pl:Spawn()
-			end
-		end
+		if not self:PlayerCanSpawn(pl) then return false end
+
+		return BaseClass:PlayerDeathThink(pl)
 	end
 	
 	local spawnpoints
@@ -613,16 +632,9 @@ else
 					end
 				end
 			end
+		end
 
-		end 
 		if ((dmginfo:GetDamage() > 30) and dmginfo:IsExplosionDamage()) or (dmginfo:GetDamage() > 200) and not victim.nogib then
-		--[[
-			local edata = EffectData()
-			edata:SetOrigin(victim:GetPos())
-			edata:SetEntity(victim)
-			edata:SetStart(dmginfo:GetDamageForce()/100)
-			util.Effect("ef_playergib", edata)
-			]]
 			local gib = ents.Create("scav_gib")
 			gib:SetOwner(victim)
 			gib:Spawn()
@@ -638,6 +650,26 @@ else
 		--	victim:SpectateEntity(attacker)
 		--end
 		victim:SetMoveType(MOVETYPE_NONE)
+		
+		victim:AddLives(-1)
+		local livesleft = (victim:Lives() ~= 0)
+		local spawndelay = 5
+
+		local teamrules = team.GetInfoEnt(victim:Team())
+		if IsValid(teamrules) then
+			--handle pooled lives
+			if teamrules:GetPooledLives() then
+				local teamlives = teamrules:GetLives() - 1
+				teamrules:SetLives(teamlives)
+				livesleft = teamlives > 0
+			--player might have their lives being tracked from a previous team with lives, while this one doesn't actively use them
+			elseif teamrules:GetLives() <= 0 then
+				livesleft = true
+			end
+			spawndelay = teamrules:GetSpawnDelay()
+		end
+
+		victim.NextSpawnTime = livesleft and (CurTime() + spawndelay) or math.huge
 	end
 end
 

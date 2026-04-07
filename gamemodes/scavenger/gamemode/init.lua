@@ -2,8 +2,6 @@ AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("shared.lua")
 include("shared.lua")
 
-GM:SetGNWVar("UseLives", false)
-
 GM:SetGNWVar("ServerName", GetConVarString("hostname"))
 GM:SetGNWFloat("MapEndTime", 1200)
 

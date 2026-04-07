@@ -185,34 +185,6 @@ function team.AddWin(teamid)
 	GAMEMODE:SetGNWShort("TeamWins" .. teamid, team.GetWins(teamid) + 1)
 end
 
-
-
-function GM:PlayerRequestTeam(pl, teamid)
-	if pl:Team() == teamid then
-		return
-	end
-	if not pl.NextTeamswitch then
-		pl.NextTeamswitch = 0
-	end
-	-- This team isn't joinable
-	if (teamid ~= TEAM_SPECTATOR) and (pl.NextTeamswitch > CurTime()) then
-		pl:PrintMessage(HUD_PRINTTALK, ScavLocalize("scav.team.select.cooldown", math.ceil(pl.NextTeamswitch - CurTime())))
-		return
-	end
-	if (not GAMEMODE:PlayerCanJoinTeam(pl, teamid)) then
-		 -- Messages here should be outputted by this function
-		return
-	end
-	if pl:Team() ~= TEAM_SPECTATOR then
-		pl:Kill()
-		pl.NextSpawnTime = CurTime() + team.GetSpawnTime(teamid)
-	else
-		--pl:Kill()
-		pl:KillSilent()
-	end
-	self:PlayerJoinTeam(pl, teamid)
-end
-
 function GM:PlayerJoinTeam(pl, teamid)
 	local oldteam = pl:Team()
 	pl:SetFrags(0)
@@ -226,16 +198,118 @@ function GM:PlayerJoinTeam(pl, teamid)
 	gamemode.Call("OnPlayerChangedTeam", pl, oldteam, teamid)
 end
 
-function GM:PlayerCanJoinTeam(pl, teamid)
-	if team.Joinable(teamid) or (teamid == TEAM_SPECTATOR) then
-		return true
-	end
-	return false
-end
+local SWAPPED = 0
+local NO_COOLDOWN = 1
+local NO_UNJOINABLE = 2
+local NO_YOURLIVES = 3
+local NO_TEAMLIVES = 4
+local NO_THEIRLIVES = 5
 
 if SERVER then
+	util.AddNetworkString("sdm_plchangedteam")
 
-	util.AddNetworkString("scav_gm_plchangedteam")
+	--helper for sending a localized message on the client
+	local function displayinchat(pl, oldteam, newteam, reason)
+		net.Start("sdm_plchangedteam")
+			net.WriteEntity(pl)
+			net.WriteUInt(oldteam, 10)
+			net.WriteUInt(newteam, 10)
+			net.WriteUInt(reason, 3)
+		if reason == SWAPPED then
+			net.Broadcast()
+		else
+			net.Send(pl)
+		end
+	end
+
+	function GM:PlayerRequestTeam(pl, teamid)
+		if pl:Team() == teamid then
+			return
+		end
+		if not pl.NextTeamswitch then
+			pl.NextTeamswitch = 0
+		end
+		-- This team isn't joinable
+		if (teamid ~= TEAM_SPECTATOR) and (pl.NextTeamswitch > CurTime()) then
+			--using "old team" as our time remaining for the message
+			displayinchat(pl, math.ceil(pl.NextTeamswitch - CurTime()), teamid, NO_COOLDOWN)
+			return
+		end
+		if (not GAMEMODE:PlayerCanJoinTeam(pl, teamid)) then
+			-- Messages here should be outputted by this function
+			return
+		end
+		if pl:Team() ~= TEAM_SPECTATOR then
+			local wasalive = pl:Alive()
+			if wasalive then pl:Kill() end
+			pl.NextSpawnTime = CurTime() + team.GetSpawnTime(teamid)
+			-- don't lose a life for team swapping
+			local teamrules = team.GetInfoEnt(pl:Team())
+			if IsValid(teamrules) and wasalive and teamid ~= TEAM_SPECTATOR then
+				if not teamrules:GetPooledLives() then
+					pl:AddLives(1)
+				else
+					teamrules:SetLives(teamrules:GetLives() + 1)
+				end
+			end
+		else
+			--pl:Kill()
+			pl:KillSilent()
+		end
+		self:PlayerJoinTeam(pl, teamid)
+	end
+
+	function GM:PlayerCanJoinTeam(pl, teamid)
+		if teamid == TEAM_SPECTATOR then return true end
+		if not team.Joinable(teamid) then displayinchat(pl, 0, teamid, NO_UNJOINABLE) return false end
+		
+		
+		--Handle lives
+		--[[A player having negative lives means they aren't using the lives system on their current team.
+		However, players could be switching to a team that does use lives, or from one that does to one that doesn't.
+		Players could also switch from a team that doesn't use pooled lives to one that does, or vice versa.
+		There's a lot of potential permutations. Generally, we don't want players gaming the system for more lives than they should had.]]
+
+		local playerlives = pl:Lives()
+		--player has no lives, it's always a no
+		if playerlives == 0 then displayinchat(pl, 0, teamid, NO_YOURLIVES) return false end
+		
+
+		local teamrules = team.GetInfoEnt(teamid)
+		--shouldn't happen, but y'know
+		if not IsValid(teamrules) then return true end
+		
+		local teamlives = teamrules:GetLives()
+		local lifepool = teamrules:GetPooledLives()
+		local curteam = pl:Team()
+		local curteamrules = team.GetInfoEnt(curteam)
+		local curteamlives = IsValid(curteamrules) and curteamrules:GetLives() or 0
+		local curteampool = IsValid(curteamrules) and curteamrules:GetPooledLives() or false
+		
+		--player's current team uses pooled lives, don't let them leave if it's out of lives
+		if curteampool then
+			if curteamlives <= 0 then
+				displayinchat(pl, curteam, teamid, NO_TEAMLIVES)
+				return false
+			--give the player the lower of their lives or their new team's lives
+			elseif teamlives > 0 and playerlives > 0 then
+				pl:SetLives(math.min(teamlives, playerlives))
+			end
+			return true
+		end
+
+		--other team has lives, give player the lower of the two counts (unless they didn't use lives before, then give them this team's count)
+		if teamlives > 0 then
+			pl:SetLives(playerlives < 0 and teamlives or math.min(teamlives, playerlives))
+			return true
+		end
+
+		if lifepool then
+			displayinchat(pl, curteam, teamid, NO_THEIRLIVES)
+		end
+		return not lifepool
+	end
+
 
 	function GM:OnPlayerChangedTeam(pl, oldteam, newteam)
 		if (oldteam == newteam) then
@@ -245,31 +319,39 @@ if SERVER then
 		if (newteam ~= TEAM_SPECTATOR) then
 			pl.NextTeamswitch = CurTime() + 10
 		end
-		net.Start("scav_gm_plchangedteam")
-			net.WriteEntity(pl)
-			net.WriteUInt(oldteam, 10)
-			net.WriteUInt(newteam, 10)
-		net.Broadcast()
+		displayinchat(pl, oldteam, newteam, SWAPPED)
 	end
 else
-	net.Receive("scav_gm_plchangedteam", function()
+	net.Receive("sdm_plchangedteam", function()
 		local pl = net.ReadEntity()
 		if not IsValid(pl) then return end
 
 		local oldteam = net.ReadUInt(10)
 		local newteam = net.ReadUInt(10)
+		local swapped = net.ReadUInt(3)
 		local oldteamname = team.GetName(oldteam)
 		local newteamname = team.GetName(newteam)
 
-		if newteam == TEAM_SPECTATOR then
-			LocalPlayer():PrintMessage(HUD_PRINTTALK, ScavLocalize("scav.team.select.spectate", pl:Name()))
-		elseif oldteam == TEAM_SPECTATOR then
-			LocalPlayer():PrintMessage(HUD_PRINTTALK, ScavLocalize(newteam == TEAM_UNASSIGNED and "scav.team.select.dm" or "scav.team.select.join", pl:Name(), newteamname))
+		if swapped == SWAPPED then
+			if newteam == TEAM_SPECTATOR then
+				LocalPlayer():PrintMessage(HUD_PRINTTALK, ScavLocalize("scav.team.select.spectate", pl:Name()))
+			elseif oldteam == TEAM_SPECTATOR then
+				LocalPlayer():PrintMessage(HUD_PRINTTALK, ScavLocalize(newteam == TEAM_UNASSIGNED and "scav.team.select.dm" or "scav.team.select.join", pl:Name(), newteamname))
+			else
+				LocalPlayer():PrintMessage(HUD_PRINTTALK, ScavLocalize("scav.team.select.switch", pl:Name(), newteamname, oldteamname))
+			end
+			
+			gamemode.Call("OnPlayerChangedTeam", pl, oldteam, newteam)
+		--Rest of these are failure messages
+		elseif swapped == NO_COOLDOWN then
+			LocalPlayer():PrintMessage(HUD_PRINTTALK, ScavLocalize("scav.team.select.cooldown", oldteam))
+		elseif swapped == NO_UNJOINABLE then
+			LocalPlayer():PrintMessage(HUD_PRINTTALK, ScavLocalize("scav.team.select.nojoin", newteamname))
+		elseif swapped == NO_YOURLIVES then
+			LocalPlayer():PrintMessage(HUD_PRINTTALK, ScavLocalize("scav.team.select.nolives"))
 		else
-			LocalPlayer():PrintMessage(HUD_PRINTTALK, ScavLocalize("scav.team.select.switch", pl:Name(), newteamname, oldteamname))
+			LocalPlayer():PrintMessage(HUD_PRINTTALK, ScavLocalize("scav.team.select.nolives.team", swapped == NO_TEAMLIVES and oldteamname or newteamname))
 		end
-		
-		gamemode.Call("OnPlayerChangedTeam", pl, oldteam, newteam)
 	end)
 end
 
