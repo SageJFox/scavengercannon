@@ -12,6 +12,9 @@ ENT.frozen = 0
 ENT.resettime = 0
 ENT.sent = NULL
 ENT.timeofdeath = 0
+ENT.mins = vector_origin
+ENT.maxs = vector_origin
+ENT.gotbounds = false
 
 function ENT:Initialize()
 	--self:SpawnEntity()
@@ -59,18 +62,24 @@ function ENT:Think()
 		self:SpawnEntity()
 		self.timeofdeath = 0
 	end
-	if self.lifetime ~= 0 and self.resettime < CurTime() then
-		--print("LifeTime: " .. self.lifetime .. ", Overdue by " .. (CurTime() - self.resettime))
-		if self.sent:IsValid() then
-			if self.sent:GetPos() == self:GetPos() then
-				self.resettime = CurTime() + self.lifetime
-			else
-				self.sent:Remove()
-				self:SpawnEntity()
-				self.resettime = CurTime() + self.lifetime
-			end
-		end
+	if self.lifetime == 0 or self.resettime >= CurTime() then return end
+	--print("LifeTime: " .. self.lifetime .. ", Overdue by " .. (CurTime() - self.resettime))
+	if not IsValid(self.sent) then return end
+	local tracep = {}
+		tracep.start = self:GetPos()
+		tracep.endpos = self:GetPos()
+		tracep.mins = self.mins
+		tracep.maxs = self.maxs
+		tracep.filter = {self.sent}
+		tracep.mask = MASK_ALL
+		tracep.whitelist = true
+		tracep.ignoreworld = true
+	local tr = util.TraceHull(tracep)
+	if not tr.Hit then
+		self.sent:Remove()
+		self:SpawnEntity()
 	end
+	self.resettime = CurTime() + self.lifetime
 end
 
 function ENT:SpawnEntity()
@@ -82,12 +91,23 @@ function ENT:SpawnEntity()
 		self.sent:Remove()
 	end
 	self.sent = ents.Create(self.spawnclass)
-	self.sent:SetModel(self.modelname)
-	self.sent:SetSkin(self.skin)
-	self.sent:SetPos(self:GetPos())
-	self.sent:SetAngles(self:GetAngles())
-	self.sent:Spawn()
-	self.sent.value = self.value
+		self.sent:SetModel(self.modelname)
+		self.sent:SetSkin(self.skin)
+		self.sent:SetPos(self:GetPos())
+		self.sent:SetAngles(self:GetAngles())
+		self.sent:Spawn()
+		self.sent.value = self.value
+
+	if not self.gotbounds and IsValid(self.sent) then
+		self.mins, self.maxs = self.sent:GetModelBounds()
+		self.mins:Rotate(self:GetAngles())
+		self.mins:Mul(0.875)
+		self.maxs:Rotate(self:GetAngles())
+		self.maxs:Mul(0.875)
+		debugoverlay.Box(self:GetPos(), self.mins, self.maxs, 100, color_white)
+		self.gotbounds = true
+	end
+
 	--if self.lifetime ~= 0 then
 	--	EntReaper.AddDyingEnt(self.sent, self.lifetime)
 	--end
