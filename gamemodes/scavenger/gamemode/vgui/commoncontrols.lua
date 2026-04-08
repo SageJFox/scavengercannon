@@ -8,7 +8,7 @@ local PANEL = {}
 
 	function PANEL:Init()
 		self.Label = vgui.Create("DLabel", self)
-		self.Font = "HUDHintTextLarge"
+		self.Font = "Scav_MenuLarge"
 		self.Label:SetFont(self.Font)
 		self.Label:SetAutoStretchVertical(self.ASV)
 		self.Label:SetWrap(self.Wrap)
@@ -16,9 +16,7 @@ local PANEL = {}
 	end
 	
 	function PANEL:InvalidateLayout()
-		if not self.initialized then
-			return
-		end
+		if not self.initialized then return end
 		--self.Label:SizeToContents()
 		--self.Label:SetPos(8, self:GetTall() / 2 - self.Label:GetTall() / 2)
 		--self.Label:SetWide(self:GetWide() - 16)
@@ -181,6 +179,9 @@ local PANEL = {}
 	end
 	
 	function PANEL:Paint(pw, ph)
+		
+		SKIN:PaintFrame(self, self:GetWide(), self:GetTall())
+
 		local yaw = EyeAngles().y
 		local pos1 = EyePos()
 		if IsValid(self.Ent) then
@@ -214,328 +215,399 @@ local PANEL = {}
 		
 	vgui.Register("sdm_entpointer", PANEL)
 
-	local PANEL = {}
-		PANEL.DoAutoPos = true
-		PANEL.PointerHorizontalSpacing = 32
-		PANEL.PointerVerticalSpacing = 16
-		PANEL.PointerDiameter = 32
-		
-		function PANEL:Init()
-			self.initialized = true
-			self.Items = {}
-		end
-		
-		function PANEL:SetPointerDiameter(amt)
-			self.PointerDiameter = amt
-			self:AutoSize()
-		end
-		
-		function PANEL:SetPointerHorizontalSpacing(amt)
-			self.PointerHorizontalSpacing = amt
-			self:AutoSize()
-		end
-		
-		function PANEL:SetPointerVerticalSpacing(amt)
-			self.PointerVerticalSpacing = amt
-			self:AutoSize()
-		end
-		
-		function PANEL:AutoSize()
-			local mul = self.PointerHorizontalSpacing + self.PointerDiameter
-			for k, v in ipairs(self.Items) do
-				v:SetPos(self.PointerHorizontalSpacing + (k - 1) * mul, self.PointerVerticalSpacing)
-				v:SetSize(self.PointerDiameter, self.PointerDiameter)
-			end
-			self:SetSize(self.PointerHorizontalSpacing + #self.Items * mul, self.PointerVerticalSpacing * 2 + self.PointerDiameter)
-		end
-		
-		function PANEL:AutoPos()
-			self:SetPos(ScrW() / 2 - self:GetWide() / 2, 0)
-		end
-		
-		function PANEL:InvalidateLayout()
-			if not self.initialized then
-				return
-			end
 
+local PANEL = {}
+	PANEL.DoAutoPos = true
+	PANEL.PointerHorizontalSpacing = 32
+	PANEL.PointerVerticalSpacing = 16
+	PANEL.PointerDiameter = 32
+	
+	function PANEL:Init()
+		self.initialized = true
+		self.Items = {}
+	end
+	
+	function PANEL:SetPointerDiameter(amt)
+		self.PointerDiameter = amt
+		self:AutoSize()
+	end
+	
+	function PANEL:SetPointerHorizontalSpacing(amt)
+		self.PointerHorizontalSpacing = amt
+		self:AutoSize()
+	end
+	
+	function PANEL:SetPointerVerticalSpacing(amt)
+		self.PointerVerticalSpacing = amt
+		self:AutoSize()
+	end
+	
+	function PANEL:AutoSize()
+		local mul = self.PointerHorizontalSpacing + self.PointerDiameter
+		for k, v in ipairs(self.Items) do
+			v:SetPos(self.PointerHorizontalSpacing + (k - 1) * mul, self.PointerVerticalSpacing)
+			v:SetSize(self.PointerDiameter, self.PointerDiameter)
 		end
-		
-		function PANEL:Clear()
-			for k, v in ipairs(self.Items) do
-				self.Items[k] = nil
-				v:Remove()
-			end
-		end
-		
-
-		
-		function PANEL:AddFlag(ent)
-			if not ent.dt then
-				return
-			end
-			local panel = vgui.Create("sdm_entpointer", self)
-			panel:SetSize(self.PointerDiameter, self.PointerDiameter)
-			panel:SetEntity(ent)
-			panel:SetColor(team.GetColor(ent.dt.Team))
-			table.insert(self.Items, panel)
-			self:AutoSize()
-		end
-		
-		function PANEL:SetupFlags()
-			self:Clear()
-			for k, v in ipairs(ents.FindByClass("sdm_flag")) do
-				self:AddFlag(v)
-			end
-			if self.DoAutoPos then	
-				self:AutoPos()
-			end
-		end
-		
-		vgui.Register("sdm_flagtracker", PANEL, "DPanel")
-		
-	local PANEL = {}
-		
-		function PANEL:Init()
-		end
-		
-		function PANEL:AutoPos()
-			self:SetPos(ScrW() / 2 - self:GetWide() / 2, 64)
-		end
-		
-		vgui.Register("sdm_objective", PANEL, "sdm_labelbox")
-		
-	local PANEL = {}
-		PANEL.Title = "Title"
-		PANEL.Text = "Text"
-		function PANEL:Init()
-			self.initialized = true
-			self:SetSize(112, 56)
-			self.TitleLabel = vgui.Create("DLabel", self)
-				self.TitleLabel:SetText(self.Title)
-				self.TitleLabel:SetFont("HUDHintTextLarge")
-				self.TitleLabel:SetPos(4, 4)
-				self.TitleLabel:SizeToContents()
-			self.TextLabel = vgui.Create("DLabel", self)
-				self.TextLabel:SetFont("DermaLarge")
-				self.TextLabel:SetPos(24, 14)
-				self.TextLabel:SetText(self.Text)
+		self:SetSize(self.PointerHorizontalSpacing + #self.Items * mul, self.PointerVerticalSpacing * 2 + self.PointerDiameter)
+	end
+	
+	function PANEL:AutoPos()
+		self:SetPos(ScrW() / 2 - self:GetWide() / 2, 0)
+	end
+	
+	function PANEL:InvalidateLayout()
+		if not self.initialized then
+			return
 		end
 
+	end
+	
+	function PANEL:Clear()
+		for k, v in ipairs(self.Items) do
+			self.Items[k] = nil
+			v:Remove()
+		end
+	end
+	
+	function PANEL:AddFlag(ent)
+		if not ent.dt then
+			return
+		end
+		local panel = vgui.Create("sdm_entpointer", self)
+		panel:SetSize(self.PointerDiameter, self.PointerDiameter)
+		panel:SetEntity(ent)
+		panel:SetColor(team.GetColor(ent.dt.Team))
+		table.insert(self.Items, panel)
+		self:AutoSize()
+	end
+	
+	function PANEL:SetupFlags()
+		self:Clear()
+		for k, v in ipairs(ents.FindByClass("sdm_flag")) do
+			self:AddFlag(v)
+		end
+		if self.DoAutoPos then	
+			self:AutoPos()
+		end
+	end
+	
+	vgui.Register("sdm_flagtracker", PANEL, "DPanel")
 
-		function PANEL:InvalidateLayout()
-			if not self.initialized then
-				return
-			end
-		end
-		
-		function PANEL:SetText(text)
-			self.TextLabel:SetText(text)
-			self.TextLabel:SizeToContents()
-			self.TextLabel:SetPos((self:GetWide() - self.TextLabel:GetWide()) / 2, 12 + (self:GetTall() - 12 - self.TextLabel:GetTall()) / 2)
-		end
-		
-		function PANEL:SetTitle(title)
-			self.TitleLabel:SetText(title)
+
+local PANEL = {}
+	
+	function PANEL:Init()
+	end
+	
+	function PANEL:AutoPos()
+		self:SetPos(ScrW() / 2 - self:GetWide() / 2, 64)
+	end
+	
+	vgui.Register("sdm_objective", PANEL, "sdm_labelbox")
+
+
+local PANEL = {}
+	PANEL.Title = "Title"
+	PANEL.Text = "Text"
+	function PANEL:Init()
+		self.initialized = true
+		self:SetSize(112, 56)
+		self.TitleLabel = vgui.Create("DLabel", self)
+			self.TitleLabel:SetText(self.Title)
+			self.TitleLabel:SetFont("Scav_MenuLarge")
+			self.TitleLabel:SetPos(6, 4)
 			self.TitleLabel:SizeToContents()
-		end
-		
-		vgui.Register("sdm_generichudbox", PANEL, "DPanel")
-
-	local PANEL = {}
-		PANEL.EndTime = 0
-		PANEL.Title = "#scav.score.time"
-		PANEL.Wide = 112
-		PANEL.Tall = 48
-		
-		function PANEL:Init()
-			self.initialized = true
-			self:SetSize(self.Wide, self.Tall)
-			self.TitleLabel = vgui.Create("DLabel", self)
-				self.TitleLabel:SetText("#scav.score.time")
-				self.TitleLabel:SetFont("DebugFixed")
-				self.TitleLabel:SetPos(4, 4)
-				self.TitleLabel:SizeToContents()
-			self.TextLabel = vgui.Create("DLabel", self)
-				self.TextLabel:SetFont("Trebuchet24")
-				self.TextLabel:SetPos(24, 14)
-				self.TextLabel:SetText("00:00")
-		end
-		
-		function PANEL:Think()
-			local timeleft = self.EndTime - CurTime()
-			self.TextLabel:SetText(string.FormattedTime(math.max(timeleft, 0), "%02i:%02i"))
-		end
-		
-		function PANEL:SetEndTime(when)
-			self.EndTime = when
-		end
-		
-		function PANEL:GetEndTime()
-			return self.EndTime
-		end
-		
-		vgui.Register("sdm_timer", PANEL, "DPanel")
-		
-
-	local function cap(c)
-		return string.upper(c)
+		self.TextLabel = vgui.Create("DLabel", self)
+			self.TextLabel:SetFont("DermaLarge")
+			self.TextLabel:SetPos(24, 14)
+			self.TextLabel:SetText(self.Text)
 	end
 
-	--default localization strings aren't capitalized, we want'em to be
-	local function camelCaseLocalize(token)
-		local text = language.GetPhrase(token)
-			text = string.gsub(text, "^(%a)", cap)
-			text = string.gsub(text, "%s(%a)", cap)
-			return text
+	function PANEL:InvalidateLayout()
+		if not self.initialized then return end
+	end
+	
+	function PANEL:SetText(text)
+		self.TextLabel:SetText(text)
+		self.TextLabel:SizeToContents()
+		self.TextLabel:SetPos((self:GetWide() - self.TextLabel:GetWide()) / 2, 12 + (self:GetTall() - 12 - self.TextLabel:GetTall()) / 2)
+	end
+	
+	function PANEL:SetTitle(title)
+		self.TitleLabel:SetText(title)
+		self.TitleLabel:SizeToContents()
+	end
+	
+	vgui.Register("sdm_generichudbox", PANEL, "DPanel")
+
+local color_white_title = Color(255, 255, 255, 150)
+local color_black_title = Color(0, 0, 0, 224)
+
+local PANEL = {}
+	PANEL.BGColor = Color(50, 50, 50, 255)
+	PANEL.Flipped = false
+
+	function PANEL:Flip()
+		self.Flipped = (not self.Flipped)
+		self.TitleLabel:SetX(self.TitleLabel:GetX() + (self.Flipped and 8 or -8))
 	end
 
-	local PANEL = {}
-		PANEL.Player = NULL
-		PANEL.Title = "#health"
-		PANEL.Wide = 112
-		PANEL.Tall = 48
-		
-		function PANEL:Init()
-			self:SetSize(self.Wide, self.Tall)
-			self:SetTitle(camelCaseLocalize("#health")) 
+	function PANEL:Paint()
+		if not self.Flipped then
+			SKIN:PaintFrame(self, self:GetWide(), self:GetTall())
+		else
+			SKIN:PaintFrameReverse(self, self:GetWide(), self:GetTall())
 		end
-		
-		function PANEL:Think()
-			self:SetText(IsValid(self.Player) and self.Player:Health() or "0")
-		end
-		
-		function PANEL:SetPlayer(pl)
-			self.Player = pl
-		end
-		
-		function PANEL:GetPlayer()
-			return self.Player
-		end
-		
-		vgui.Register("sdm_healthpanel", PANEL, "sdm_generichudbox")
+	end
 
-	local PANEL = {}
-		PANEL.Title = "#armor"
-		PANEL.Wide = 96
-		PANEL.Tall = 48
+	function PANEL:PlayerColor()
+		local bgcol = Vector(0, 0, 0)
+		local pl = LocalPlayer()
+		if self.GetPlayer then pl = self:GetPlayer() end
 
-		function PANEL:Init()
-			self:SetSize(self.Wide, self.Tall)
-			self:SetTitle(camelCaseLocalize("#armor")) 
-		end
-		
-		function PANEL:Think()
-			self:SetText(IsValid(self.Player) and math.floor(self.Player:Armor()) or "0")
-		end
-		
-		vgui.Register("sdm_armorpanel", PANEL, "sdm_healthpanel")
-
-	local PANEL = {}
-		PANEL.Title = "#energy"
-		PANEL.Wide = 72
-		PANEL.Tall = 48
-
-		function PANEL:Init()
-			self:SetSize(self.Wide, self.Tall)
-			self:SetTitle(camelCaseLocalize("#energy")) 
-		end
-		
-		function PANEL:Think()
-			self:SetText(IsValid(self.Player) and math.floor(self.Player:GetEnergy()) or "0")
-		end
-		
-		vgui.Register("sdm_energypanel", PANEL, "sdm_healthpanel")
-		
-	local PANEL = {}
-		PANEL.Title = "#score"
-		PANEL.Wide = 112
-		PANEL.Tall = 48
-
-		function PANEL:Init()
-			self:SetTitle(ScavLocalize("#scav.score", ""))
-		end
-	
-		function PANEL:Think()
-			self:SetText(ScavLocalize("scav.points.format", IsValid(self.Player) and tostring(math.floor(self.Player:Frags())) or "0", GAMEMODE:GetGNWShort("PointLimit")))
-		end
-		
-		vgui.Register("sdm_fragpanel", PANEL, "sdm_healthpanel")
-		
-	local PANEL = {}
-		PANEL.Title = "#paginate.next"
-		PANEL.Wide = 128
-		PANEL.Tall = 48
-
-		function PANEL:Init()
-			self:SetTitle("#scav.points.next")
-		end
-	
-		function PANEL:Think()
-			
-			if IsValid(self.Player) and (self.Player:Team() ~= TEAM_SPECTATOR) then
-				local sortedplayers = team.GetSortedPlayers(self.Player:Team())
-				local place = 1
-				for k, v in pairs(sortedplayers) do
-					if v == self.Player then
-						place = k
-						break
-					end
-				end
-				if place == 1 then
-					--self:SetText(math.floor(team.GetScoreLimit(self.Player:Team()) - self.Player:Frags()))
-					self:SetText("#scav.score.lead")
-				else
-					local nextpl = sortedplayers[place - 1]
-					local text = math.floor(nextpl:Frags() - self.Player:Frags())
-					if text == 0 then
-						text = "#scav.score.tied"
-					end
-					self:SetText(text)
-				end
+		if IsValid(pl) then
+			if pl:Team() == TEAM_UNASSIGNED or pl:Team() == TEAM_CONNECTING or pl:Team() == TEAM_SPECTATOR then
+				bgcol = pl:GetPlayerColor()
+				self.BGColor = Color(bgcol.r * 255, bgcol.g * 255, bgcol.b * 255, 255)
 			else
-				self:SetText("0")
+				self.BGColor = team.GetColor(pl:Team())
 			end
-		end
-		
-		vgui.Register("sdm_dm_fragsbehind", PANEL, "sdm_healthpanel")
-		
-		team.GetSortedPlayers(teamnum)
-		
-	local PANEL = {}
-		PANEL.TitleString = "Title"
-		PANEL.TextString = "Text"
-		function PANEL:Init()
-			self.Title = vgui.Create("DLabel", self)
-				self.Title:SetFont("DebugFixed")
-			self.Text = vgui.Create("DLabel", self)
-				self.Text:SetFont("DermaLarge")
-			self.initialized = true
-		end
-		
-		function PANEL:SetTitle(text)
-			self.TitleString = text
-			self.Title:SetText(text)
-			self.Title:SizeToContents()
-			self:InvalidateLayout()
 		end
 
-		function PANEL:SetText(text)
-			self.TextString = text
-			self.Text:SetText(text)
-			self.Text:SizeToContents()
-			self:InvalidateLayout()
-		end
-		
-		function PANEL:InvalidateLayout()
-			if not self.initialized then
-				return false
-			end
-			self.Title:SetPos(self:GetWide() / 2 - self.Title:GetWide() / 2, 8)
-			self.Text:SetPos(self:GetWide() / 2 - self.Text:GetWide() / 2, 16)
-		end
+		self.TextLight = ((self.BGColor.r + self.BGColor.g + self.BGColor.b) / 3 < 150)
+
+		self:SetBackgroundColor(self.BGColor)
+		self.TitleLabel:SetTextColor(self.TextLight and color_white_title or color_black_title)
+		self.TextLabel:SetTextColor(self.TextLight and color_white or color_black)
+	end
 	
-		function PANEL:AutoPos()
-			self:SetPos(ScrW() / 2 - self:GetWide() / 2, 0)
+	vgui.Register("sdm_playercolorhudbox", PANEL, "sdm_generichudbox")
+
+local PANEL = {}
+	PANEL.EndTime = 0
+	PANEL.Title = "#scav.score.time"
+	PANEL.Wide = 112
+	PANEL.Tall = 48
+
+	function PANEL:Init()
+		self.initialized = true
+		self:SetSize(self.Wide, self.Tall)
+		self.TitleLabel = vgui.Create("DLabel", self)
+			self.TitleLabel:SetText("#scav.score.time")
+			self.TitleLabel:SetFont("Scav_MenuLarge")
+			self.TitleLabel:SetPos(4, 4)
+			self.TitleLabel:SizeToContents()
+		self.TextLabel = vgui.Create("DLabel", self)
+			self.TextLabel:SetFont("Trebuchet24")
+			self.TextLabel:SetPos(24, 14)
+			self.TextLabel:SetText("00:00")
+		self:PlayerColor()
+	end
+
+	function PANEL:Paint()
+		SKIN:PaintFrame(self, self:GetWide(), self:GetTall())
+	end
+
+	function PANEL:PlayerColor()
+		local bgcol = Vector(0, 0, 0)
+		if IsValid(LocalPlayer()) then
+			if LocalPlayer():Team() == TEAM_UNASSIGNED then
+				bgcol = LocalPlayer():GetPlayerColor()
+				self.BGColor = Color(bgcol.r * 255, bgcol.g * 255, bgcol.b * 255, 255)
+			else
+				self.BGColor = team.GetColor(LocalPlayer():Team())
+			end
+			if (self.BGColor.r + self.BGColor.g + self.BGColor.b) / 3 < 150 then
+				self.TextColor = color_white
+			else
+				self.TextColor = color_black
+			end
 		end
+
+		self:SetBackgroundColor(self.BGColor)
+		self:SetFGColor(self.TextColor)
+	end
+	
+	function PANEL:Think()
+		local timeleft = self.EndTime - CurTime()
+		self.TextLabel:SetText(string.FormattedTime(math.max(timeleft, 0), "%02i:%02i"))
+	end
+	
+	function PANEL:SetEndTime(when)
+		self.EndTime = when
+	end
+	
+	function PANEL:GetEndTime()
+		return self.EndTime
+	end
+	
+	vgui.Register("sdm_timer", PANEL, "DPanel")
+	
+
+local function cap(c)
+	return string.upper(c)
+end
+
+--default localization strings aren't capitalized, we want'em to be
+local function camelCaseLocalize(token)
+	local text = language.GetPhrase(token)
+		text = string.gsub(text, "^(%a)", cap)
+		text = string.gsub(text, "%s(%a)", cap)
+		return text
+end
+
+local PANEL = {}
+	PANEL.Player = NULL
+	PANEL.Title = "#health"
+	PANEL.Wide = 112
+	PANEL.Tall = 48
+	
+	function PANEL:Init()
+		self:SetSize(self.Wide, self.Tall)
+		self:SetTitle(camelCaseLocalize("#health"))
+		self:Flip() --so apparently the effects of this stick for the future panels, so if you want derived panels unflipped you gotta flip'em again
+	end
+	
+	function PANEL:Think()
+		self:SetText(IsValid(self.Player) and self.Player:Health() or "0")
+	end
+	
+	function PANEL:SetPlayer(pl)
+		self.Player = pl
+		self:PlayerColor()
+	end
+	
+	function PANEL:GetPlayer()
+		return self.Player
+	end
+	
+	vgui.Register("sdm_healthpanel", PANEL, "sdm_playercolorhudbox")
+
+local PANEL = {}
+	PANEL.Title = "#armor"
+	PANEL.Wide = 96
+	PANEL.Tall = 48
+
+	function PANEL:Init()
+		self:SetSize(self.Wide, self.Tall)
+		self:SetTitle(camelCaseLocalize("#armor"))
+		self:Flip()
+	end
+	
+	function PANEL:Think()
+		self:SetText(IsValid(self.Player) and math.floor(self.Player:Armor()) or "0")
+	end
+	
+	vgui.Register("sdm_armorpanel", PANEL, "sdm_healthpanel")
+
+local PANEL = {}
+	PANEL.Title = "#energy"
+	PANEL.Wide = 72
+	PANEL.Tall = 48
+
+	function PANEL:Init()
+		self:SetSize(self.Wide, self.Tall)
+		self:SetTitle(camelCaseLocalize("#energy"))
+		self:Flip()
+	end
+	
+	function PANEL:Think()
+		self:SetText(IsValid(self.Player) and math.floor(self.Player:GetEnergy()) or "0")
+	end
+	
+	vgui.Register("sdm_energypanel", PANEL, "sdm_healthpanel")
+	
+local PANEL = {}
+	PANEL.Title = "#score"
+	PANEL.Wide = 112
+	PANEL.Tall = 48
+
+	function PANEL:Init()
+		self:SetTitle(ScavLocalize("#scav.score", ""))
+		self:Flip()
+	end
+
+	function PANEL:Think()
+		self:SetText(ScavLocalize("scav.points.format", IsValid(self.Player) and tostring(math.floor(self.Player:Frags())) or "0", GAMEMODE:GetGNWShort("PointLimit")))
+	end
+	
+	vgui.Register("sdm_fragpanel", PANEL, "sdm_healthpanel")
+	
+local PANEL = {}
+	PANEL.Title = "#paginate.next"
+	PANEL.Wide = 128
+	PANEL.Tall = 48
+
+	function PANEL:Init()
+		self:SetTitle("#scav.points.next")
+	end
+
+	function PANEL:Think()
 		
-	vgui.Register("sdm_hudpanel2", PANEL, "DPanel")
+		if IsValid(self.Player) and (self.Player:Team() ~= TEAM_SPECTATOR) then
+			local sortedplayers = team.GetSortedPlayers(self.Player:Team())
+			local place = 1
+			for k, v in pairs(sortedplayers) do
+				if v == self.Player then
+					place = k
+					break
+				end
+			end
+			if place == 1 then
+				--self:SetText(math.floor(team.GetScoreLimit(self.Player:Team()) - self.Player:Frags()))
+				self:SetText("#scav.score.lead")
+			else
+				local nextpl = sortedplayers[place - 1]
+				local text = math.floor(nextpl:Frags() - self.Player:Frags())
+				if text == 0 then
+					text = "#scav.score.tied"
+				end
+				self:SetText(text)
+			end
+		else
+			self:SetText("0")
+		end
+	end
+	
+	vgui.Register("sdm_dm_fragsbehind", PANEL, "sdm_healthpanel")
+	
+	team.GetSortedPlayers(teamnum)
+	
+local PANEL = {}
+	PANEL.TitleString = "Title"
+	PANEL.TextString = "Text"
+	function PANEL:Init()
+		self.Title = vgui.Create("DLabel", self)
+			self.Title:SetFont("Scav_MenuLarge")
+		self.Text = vgui.Create("DLabel", self)
+			self.Text:SetFont("DermaLarge")
+		self.initialized = true
+	end
+	
+	function PANEL:SetTitle(text)
+		self.TitleString = text
+		self.Title:SetText(text)
+		self.Title:SizeToContents()
+		self:InvalidateLayout()
+	end
+
+	function PANEL:SetText(text)
+		self.TextString = text
+		self.Text:SetText(text)
+		self.Text:SizeToContents()
+		self:InvalidateLayout()
+	end
+	
+	function PANEL:InvalidateLayout()
+		if not self.initialized then
+			return false
+		end
+		self.Title:SetPos(self:GetWide() / 2 - self.Title:GetWide() / 2, 8)
+		self.Text:SetPos(self:GetWide() / 2 - self.Text:GetWide() / 2, 16)
+	end
+
+	function PANEL:AutoPos()
+		self:SetPos(ScrW() / 2 - self:GetWide() / 2, 0)
+	end
+	
+vgui.Register("sdm_hudpanel2", PANEL, "DPanel")

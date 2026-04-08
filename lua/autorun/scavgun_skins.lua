@@ -93,41 +93,44 @@ SKIN.tex.Button_Dead			= GWEN.CreateTextureBorder( 480, 64, 31, 31, 8, 8, 8, 8 )
 SKIN.tex.Button_Down			= GWEN.CreateTextureBorder( 480, 96, 31, 31, 8, 8, 8, 8 )
 SKIN.tex.Shadow					= GWEN.CreateTextureBorder( 448, 0, 31, 31, 8, 8, 8, 8 )
 
-SKIN.tex.Tree					= GWEN.CreateTextureBorder( 256, 128, 127, 127, 16, 16, 16, 16 )
-SKIN.tex.Checkbox_Checked		= GWEN.CreateTextureNormal( 448, 32, 15, 15 )
-SKIN.tex.Checkbox				= GWEN.CreateTextureNormal( 464, 32, 15, 15 )
-SKIN.tex.CheckboxD_Checked		= GWEN.CreateTextureNormal( 448, 48, 15, 15 )
-SKIN.tex.CheckboxD				= GWEN.CreateTextureNormal( 464, 48, 15, 15 )
-SKIN.tex.RadioButton_Checked	= GWEN.CreateTextureNormal( 448, 64, 15, 15 )
-SKIN.tex.RadioButton			= GWEN.CreateTextureNormal( 464, 64, 15, 15 )
-SKIN.tex.RadioButtonD_Checked	= GWEN.CreateTextureNormal( 448, 80, 15, 15 )
-SKIN.tex.RadioButtonD			= GWEN.CreateTextureNormal( 464, 80, 15, 15 )
-SKIN.tex.TreePlus				= GWEN.CreateTextureNormal( 448, 96, 15, 15 )
-SKIN.tex.TreeMinus				= GWEN.CreateTextureNormal( 464, 96, 15, 15 )
-SKIN.tex.TextBox				= GWEN.CreateTextureBorder( 0, 150, 127, 21, 4, 4, 4, 4 )
-SKIN.tex.TextBox_Focus			= GWEN.CreateTextureBorder( 0, 172, 127, 21, 4, 4, 4, 4 )
-SKIN.tex.TextBox_Disabled		= GWEN.CreateTextureBorder( 0, 194, 127, 21, 4, 4, 4, 4 )
-SKIN.tex.MenuBG_Column			= GWEN.CreateTextureBorder( 128, 128, 127, 63, 24, 8, 8, 8 )
-SKIN.tex.MenuBG					= GWEN.CreateTextureBorder( 128, 192, 127, 63, 8, 8, 8, 8 )
-SKIN.tex.MenuBG_Hover			= GWEN.CreateTextureBorder( 128, 256, 127, 31, 8, 8, 8, 8 )
-SKIN.tex.MenuBG_Spacer			= GWEN.CreateTextureNormal( 128, 288, 127, 3 )
-SKIN.tex.Menu_Strip				= GWEN.CreateTextureBorder( 0, 128, 127, 21, 8, 8, 8, 8 )
-SKIN.tex.Menu_Check				= GWEN.CreateTextureNormal( 448, 112, 15, 15 )
-SKIN.tex.Tab_Control			= GWEN.CreateTextureBorder( 0, 256, 127, 127, 16, 16, 16, 16 )
-SKIN.tex.TabB_Active			= GWEN.CreateTextureBorder( 0,		416, 63, 31, 8, 8, 8, 8 )
-SKIN.tex.TabB_Inactive			= GWEN.CreateTextureBorder( 128,	416, 63, 31, 8, 8, 8, 8 )
-SKIN.tex.TabT_Active			= GWEN.CreateTextureBorder( 0,		384, 63, 31, 8, 8, 8, 8 )
-SKIN.tex.TabT_Inactive			= GWEN.CreateTextureBorder( 128,	384, 63, 31, 8, 8, 8, 8 )
-SKIN.tex.TabL_Active			= GWEN.CreateTextureBorder( 64,		384, 31, 63, 8, 8, 8, 8 )
-SKIN.tex.TabL_Inactive			= GWEN.CreateTextureBorder( 64+128, 384, 31, 63, 8, 8, 8, 8 )
-SKIN.tex.TabR_Active			= GWEN.CreateTextureBorder( 96,		384, 31, 63, 8, 8, 8, 8 )
-SKIN.tex.TabR_Inactive			= GWEN.CreateTextureBorder( 96+128, 384, 31, 63, 8, 8, 8, 8 )
-SKIN.tex.Tab_Bar				= GWEN.CreateTextureBorder( 128, 352, 127, 31, 4, 4, 4, 4 )
+SKIN.tex.Tree					= GWEN.CreateTextureBorder(256, 128, 127, 127, 16, 16, 16, 16)
+SKIN.tex.TreeFlipped			= GWEN.CreateTextureBorder(0, 256, 127, 127, 16, 16, 16, 16)
+SKIN.tex.Checkbox_Checked		= GWEN.CreateTextureNormal(448, 32, 15, 15)
+SKIN.tex.Checkbox				= GWEN.CreateTextureNormal(464, 32, 15, 15)
+SKIN.tex.CheckboxD_Checked		= GWEN.CreateTextureNormal(448, 48, 15, 15)
+SKIN.tex.CheckboxD				= GWEN.CreateTextureNormal(464, 48, 15, 15)
+SKIN.tex.RadioButton_Checked	= GWEN.CreateTextureNormal(448, 64, 15, 15)
+SKIN.tex.RadioButton			= GWEN.CreateTextureNormal(464, 64, 15, 15)
+SKIN.tex.RadioButtonD_Checked	= GWEN.CreateTextureNormal(448, 80, 15, 15)
+SKIN.tex.RadioButtonD			= GWEN.CreateTextureNormal(464, 80, 15, 15)
+SKIN.tex.TreePlus				= GWEN.CreateTextureNormal(448, 96, 15, 15)
+SKIN.tex.TreeMinus				= GWEN.CreateTextureNormal(464, 96, 15, 15)
+SKIN.tex.TextBox				= GWEN.CreateTextureBorder(0, 150, 127, 21, 4, 4, 4, 4)
+SKIN.tex.TextBox_Focus			= GWEN.CreateTextureBorder(0, 172, 127, 21, 4, 4, 4, 4)
+SKIN.tex.TextBox_Disabled		= GWEN.CreateTextureBorder(0, 194, 127, 21, 4, 4, 4, 4)
+SKIN.tex.MenuBG_Column			= GWEN.CreateTextureBorder(128, 128, 127, 63, 24, 8, 8, 8)
+SKIN.tex.MenuBG					= GWEN.CreateTextureBorder(128, 192, 127, 63, 8, 8, 8, 8)
+SKIN.tex.MenuBG_Hover			= GWEN.CreateTextureBorder(128, 256, 127, 31, 8, 8, 8, 8)
+SKIN.tex.MenuBG_Spacer			= GWEN.CreateTextureNormal(128, 288, 127, 3)
+SKIN.tex.Menu_Strip				= GWEN.CreateTextureBorder(0, 128, 127, 21, 8, 8, 8, 8)
+SKIN.tex.Menu_Check				= GWEN.CreateTextureNormal(448, 112, 15, 15)
+SKIN.tex.Tab_Control			= GWEN.CreateTextureBorder(0, 0, 127, 127, 16, 16, 16, 16)
+SKIN.tex.TabB_Active			= GWEN.CreateTextureBorder(0,		416, 63, 31, 8, 8, 8, 8)
+SKIN.tex.TabB_Inactive			= GWEN.CreateTextureBorder(128,	416, 63, 31, 8, 8, 8, 8)
+SKIN.tex.TabT_Active			= GWEN.CreateTextureBorder(0,		384, 63, 31, 8, 8, 8, 8)
+SKIN.tex.TabT_Inactive			= GWEN.CreateTextureBorder(128,	384, 63, 31, 8, 8, 8, 8)
+SKIN.tex.TabL_Active			= GWEN.CreateTextureBorder(64,		384, 31, 63, 8, 8, 8, 8)
+SKIN.tex.TabL_Inactive			= GWEN.CreateTextureBorder(64 + 128, 384, 31, 63, 8, 8, 8, 8)
+SKIN.tex.TabR_Active			= GWEN.CreateTextureBorder(96,		384, 31, 63, 8, 8, 8, 8)
+SKIN.tex.TabR_Inactive			= GWEN.CreateTextureBorder(96 + 128, 384, 31, 63, 8, 8, 8, 8)
+SKIN.tex.Tab_Bar				= GWEN.CreateTextureBorder(128, 352, 127, 31, 4, 4, 4, 4)
 
 SKIN.tex.Window = {}
 
-SKIN.tex.Window.Normal			= GWEN.CreateTextureBorder( 0, 0, 127, 127, 16, 16, 16, 16 )
-SKIN.tex.Window.Inactive		= GWEN.CreateTextureBorder( 128, 0, 127, 127, 16, 16, 16, 16 )
+SKIN.tex.Window.Normal			= GWEN.CreateTextureBorder(0, 0, 127, 127, 16, 16, 16, 16)
+SKIN.tex.Window.Flipped			= GWEN.CreateTextureBorder(128, 0, -127, 127, 16, 16, 16, 16)
+SKIN.tex.Window.Inactive		= GWEN.CreateTextureBorder(0, 0, 127, 127, 16, 16, 16, 16)
+SKIN.tex.Window.InactiveFlipped	= GWEN.CreateTextureBorder(128, 0, 127, 127, 16, 16, 16, 16)
 
 SKIN.tex.Window.Close			= GWEN.CreateTextureNormal( 32, 448, 31, 24 )
 SKIN.tex.Window.Close_Hover		= GWEN.CreateTextureNormal( 64, 448, 31, 24 )
@@ -360,11 +363,24 @@ function SKIN:PaintFrame( panel, w, h )
 		self.tex.Window.Normal( 0, 0, w, h )
 
 	else
+		self.tex.Window.Inactive(0, 0, w, h)
+	end
+end
 
-		self.tex.Window.Inactive( 0, 0, w, h )
-
+function SKIN:PaintFrameReverse(panel, w, h)
+	if panel.m_bPaintShadow then
+		local wasEnabled = DisableClipping(true)
+		self.tex.Shadow(-4, -4, w + 10, h + 10)
+		DisableClipping(wasEnabled)
 	end
 
+	self.tex.TreeFlipped(0, 0, w, h, panel.m_bgColor)
+
+	if panel:HasHierarchicalFocus() then
+		self.tex.Window.Flipped(0, 0, w, h)
+	else
+		self.tex.Window.InactiveFlipped(0, 0, w, h)
+	end
 end
 
 --[[---------------------------------------------------------

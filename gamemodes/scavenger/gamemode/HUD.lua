@@ -111,6 +111,7 @@ function HUD.PerformLayout()
 			if v.Panel:IsVisible() and (v.anchor == anchor) then
 				table.insert(elementsbyanchor[anchor],v)
 			end
+			if v.Panel.PlayerColor then v.Panel:PlayerColor() end
 		end
 		table.SortByMember(elementsbyanchor[anchor],"sortpriority",sortascend)
 	end
