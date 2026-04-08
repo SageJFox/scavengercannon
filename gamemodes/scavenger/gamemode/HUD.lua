@@ -38,14 +38,15 @@ function HUD.BuildFromInfo(info)
 	local panel = vgui.Create(info.Type)
 	panel.info = info
 	if info.OnInit then
-		info.OnInit(panel,info)
+		info.OnInit(panel, info)
 	end
 	if info.Skin then
 		panel:SetSkin(info.Skin)
 	end
+
 	panel.x = info.x or 0
 	panel.y = info.y or 0
-	panel:SetSize(info.wide or panel:GetWide(),info.tall or panel:GetTall())
+	panel:SetSize(info.wide or panel:GetWide(), info.tall or panel:GetTall())
 	info.Panel = panel
 	if info.OnHUDUpdate then
 		info.LastHUDUpdate = 0
@@ -56,7 +57,7 @@ function HUD.BuildFromInfo(info)
 end
 
 function HUD.Clear()
-	for name,info in pairs(HUD.Elements) do
+	for name, info in pairs(HUD.Elements) do
 		if IsValid(info.Panel) then
 			info.Panel:Remove()
 		end
@@ -65,13 +66,13 @@ function HUD.Clear()
 end
 
 function HUD.Rebuild()
-	for name,info in pairs(HUD.Elements) do
+	for name, info in pairs(HUD.Elements) do
 		HUD.BuildFromInfo(info)
 	end
 	HUD.PerformLayout()
 end
 
-local anchors = {"top","none","bottomleft"}
+local anchors = {"top", "none", "bottomleft"}
 
 local function SortTop(elements)
 	if not elements then
@@ -79,41 +80,41 @@ local function SortTop(elements)
 	end
 	local totalx = 0
 	local totaly = 0
-	local hw = ScrW()/2
-	for k,v in pairs(elements) do
-		totalx = totalx+v.Panel:GetWide()
+	local hw = ScrW() / 2
+	for _, v in pairs(elements) do
+		totalx = totalx + v.Panel:GetWide()
 	end
 	offsetx = 0
-	for k,v in pairs(elements) do
-		v.Panel.x = offsetx+hw-totalx/2
-		offsetx = offsetx+v.Panel:GetWide()+4
+	for _, v in pairs(elements) do
+		v.Panel.x = offsetx + hw - totalx / 2
+		offsetx = offsetx+v.Panel:GetWide() + 4
 	end
 end
 
 local function SetupBottomLeft(elements)
 	local h = ScrH()
 	local totalx = 0
-	for k,v in pairs(elements) do
-		v.Panel:SetPos(v.x+totalx,h-v.Panel:GetTall()+v.y)
-		totalx = totalx+v.Panel:GetWide()+6
+	for _, v in pairs(elements) do
+		v.Panel:SetPos(v.x + totalx, h - v.Panel:GetTall() + v.y)
+		totalx = totalx + v.Panel:GetWide() + 6
 	end
 end
 
-local function sortascend(a,b)
+local function sortascend(a, b)
 	return a > b
 end
 
 function HUD.PerformLayout()
 	local elementsbyanchor = {}
-	for index,anchor in pairs(anchors) do
+	for index, anchor in pairs(anchors) do
 		elementsbyanchor[anchor] = {}
-		for k,v in pairs(HUD.Elements) do
+		for _, v in pairs(HUD.Elements) do
 			if v.Panel:IsVisible() and (v.anchor == anchor) then
-				table.insert(elementsbyanchor[anchor],v)
+				table.insert(elementsbyanchor[anchor], v)
 			end
 			if v.Panel.PlayerColor then v.Panel:PlayerColor() end
 		end
-		table.SortByMember(elementsbyanchor[anchor],"sortpriority",sortascend)
+		table.SortByMember(elementsbyanchor[anchor], "sortpriority", sortascend)
 	end
 	SortTop(elementsbyanchor["top"])
 	SetupBottomLeft(elementsbyanchor["bottomleft"])
@@ -146,7 +147,7 @@ hook.Add("Think", "HUDThink", function()
 	local alive = LocalPlayer():Alive()
 	local ctime = CurTime()
 	if (spawned or died or startedspec or startedplaying) then
-		for k,v in pairs(HUD.Elements) do
+		for _, v in pairs(HUD.Elements) do
 			if (spawned and v.HideOnAlive) or (died and playing and v.HideOnDead) or (startedspec and v.HideOnSpectate) or (startedplaying and v.HideOnPlaying) then
 				v.Panel:SetVisible(false)
 			else
@@ -155,9 +156,9 @@ hook.Add("Think", "HUDThink", function()
 		end
 		HUD.PerformLayout()
 	end
-	for k,v in pairs(HUD.Elements) do
-		if v.OnHUDUpdate and v.Panel:IsVisible() and (ctime-v.LastHUDUpdate > v.HUDUpdateInterval) then
-			v.OnHUDUpdate(v.Panel,v)
+	for _, v in pairs(HUD.Elements) do
+		if v.OnHUDUpdate and v.Panel:IsVisible() and (ctime - v.LastHUDUpdate > v.HUDUpdateInterval) then
+			v.OnHUDUpdate(v.Panel, v)
 			v.LastHUDUpdate = ctime
 		end
 	end
@@ -220,7 +221,7 @@ timeremaining.HideOnSpectate = false
 timeremaining.HideOnDead = true
 timeremaining.HUDUpdateInterval = 1
 
-function timeremaining.OnHUDUpdate(panel,info)
+function timeremaining.OnHUDUpdate(panel, info)
 	panel:SetEndTime(GAMEMODE:GetGNWVar("RoundEndTime"))
 end
 
