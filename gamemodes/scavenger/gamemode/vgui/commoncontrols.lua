@@ -146,152 +146,6 @@ local PANEL = {}
 	end
 	
 	vgui.Register("sdm_labelbox", PANEL, "DPanel")
-	
-	
-local PANEL = {}
-	PANEL.Ent = NULL
-	local flagtex = surface.GetTextureID("HUD/sdm/dot")
-	local flagtex2 = surface.GetTextureID("HUD/sdm/dot2")
-	local flagtex3 = surface.GetTextureID("HUD/sdm/dot3")
-	
-	function PANEL:Init()
-		--self.Color = Color(255, 255, 255, 255)
-	end
-	
-	function PANEL:SetEntity(ent)
-		self.Ent = ent
-	end
-	
-	function PANEL:GetEntity()
-		return self.Ent
-	end
-	
-	function PANEL:SetColor(col)
-		if type(col) == "nil" then
-			self.Color = nil
-		else
-			self.Color = table.Copy(col)
-		end
-	end
-
-	function PANEL:GetColor()
-		return table.Copy(self.Color)
-	end
-	
-	function PANEL:Paint(pw, ph)
-		
-		SKIN:PaintFrame(self, self:GetWide(), self:GetTall())
-
-		local yaw = EyeAngles().y
-		local pos1 = EyePos()
-		if IsValid(self.Ent) then
-			local r, g, b, a = 255, 255, 255, 255
-			if self.Color then
-				r, g, b, a = self.Color.r, self.Color.g, self.Color.b, self.Color.a
-			elseif self.Ent.dt and self.Ent.dt.Team then
-				local col = team.GetColor(self.Ent.dt.Team)
-				r, g, b, a = col.r, col.g, col.b, col.a	
-			end
-			local w, h = self:GetSize()
-			local dia = math.min(w, h)
-			if self.Ent:GetOwner() == GetViewEntity() then
-				surface.SetTexture(flagtex2)
-			else
-				surface.SetTexture(flagtex)
-			end
-			local pos2 = self.Ent:GetPos()
-			surface.SetDrawColor(r, g, b, a)
-			local dist = pos2:Distance(pos1)
-			surface.DrawTexturedRectRotated(w / 2, h / 2, dia, dia, math.Rad2Deg(math.atan2((pos2.y - pos1.y), (pos2.x - pos1.x))) - yaw)
-			if self.Ent:GetOwner():IsPlayer() then
-				surface.SetTexture(flagtex3)
-				local col = team.GetColor(self.Ent:GetOwner():Team())
-				surface.SetDrawColor(col.r, col.g, col.b, col.a)
-				surface.DrawTexturedRect(w / 2 - dia / 2, h / 2 - dia / 2, dia, dia)
-			end
-			surface.SetDrawColor(255, 255, 255, 255)
-		end
-	end
-		
-	vgui.Register("sdm_entpointer", PANEL)
-
-
-local PANEL = {}
-	PANEL.DoAutoPos = true
-	PANEL.PointerHorizontalSpacing = 32
-	PANEL.PointerVerticalSpacing = 16
-	PANEL.PointerDiameter = 32
-	
-	function PANEL:Init()
-		self.initialized = true
-		self.Items = {}
-	end
-	
-	function PANEL:SetPointerDiameter(amt)
-		self.PointerDiameter = amt
-		self:AutoSize()
-	end
-	
-	function PANEL:SetPointerHorizontalSpacing(amt)
-		self.PointerHorizontalSpacing = amt
-		self:AutoSize()
-	end
-	
-	function PANEL:SetPointerVerticalSpacing(amt)
-		self.PointerVerticalSpacing = amt
-		self:AutoSize()
-	end
-	
-	function PANEL:AutoSize()
-		local mul = self.PointerHorizontalSpacing + self.PointerDiameter
-		for k, v in ipairs(self.Items) do
-			v:SetPos(self.PointerHorizontalSpacing + (k - 1) * mul, self.PointerVerticalSpacing)
-			v:SetSize(self.PointerDiameter, self.PointerDiameter)
-		end
-		self:SetSize(self.PointerHorizontalSpacing + #self.Items * mul, self.PointerVerticalSpacing * 2 + self.PointerDiameter)
-	end
-	
-	function PANEL:AutoPos()
-		self:SetPos(ScrW() / 2 - self:GetWide() / 2, 0)
-	end
-	
-	function PANEL:InvalidateLayout()
-		if not self.initialized then
-			return
-		end
-
-	end
-	
-	function PANEL:Clear()
-		for k, v in ipairs(self.Items) do
-			self.Items[k] = nil
-			v:Remove()
-		end
-	end
-	
-	function PANEL:AddFlag(ent)
-		if not ent.dt then
-			return
-		end
-		local panel = vgui.Create("sdm_entpointer", self)
-		panel:SetSize(self.PointerDiameter, self.PointerDiameter)
-		panel:SetEntity(ent)
-		panel:SetColor(team.GetColor(ent.dt.Team))
-		table.insert(self.Items, panel)
-		self:AutoSize()
-	end
-	
-	function PANEL:SetupFlags()
-		self:Clear()
-		for k, v in ipairs(ents.FindByClass("sdm_flag")) do
-			self:AddFlag(v)
-		end
-		if self.DoAutoPos then	
-			self:AutoPos()
-		end
-	end
-	
-	vgui.Register("sdm_flagtracker", PANEL, "DPanel")
 
 
 local PANEL = {}
@@ -377,11 +231,191 @@ local PANEL = {}
 		self.TextLight = ((self.BGColor.r + self.BGColor.g + self.BGColor.b) / 3 < 150)
 
 		self:SetBackgroundColor(self.BGColor)
-		self.TitleLabel:SetTextColor(self.TextLight and color_white_title or color_black_title)
-		self.TextLabel:SetTextColor(self.TextLight and color_white or color_black)
+		if IsValid(self.TitleLabel) then
+			self.TitleLabel:SetTextColor(self.TextLight and color_white_title or color_black_title)
+		end
+		if IsValid(self.TextLabel) then
+			self.TextLabel:SetTextColor(self.TextLight and color_white or color_black)
+		end
+	end
+
+	function PANEL:GetSDMColor()
+		return self.BGColor, self.TextLight
 	end
 	
 	vgui.Register("sdm_playercolorhudbox", PANEL, "sdm_generichudbox")
+	
+	
+local PANEL = {}
+	PANEL.Ent = NULL
+	local flagtex = surface.GetTextureID("HUD/sdm/dot")
+	local flagtex2 = surface.GetTextureID("HUD/sdm/dot2")
+	local flagtex3 = surface.GetTextureID("HUD/sdm/dot3")
+	
+	function PANEL:Init()
+		--self.Color = Color(255, 255, 255, 255)
+	end
+	
+	function PANEL:SetEntity(ent)
+		self.Ent = ent
+	end
+	
+	function PANEL:GetEntity()
+		return self.Ent
+	end
+	
+	function PANEL:SetColor(col)
+		if type(col) == "nil" then
+			self.Color = nil
+		else
+			self.Color = table.Copy(col)
+		end
+	end
+
+	function PANEL:GetColor()
+		return table.Copy(self.Color)
+	end
+	
+	function PANEL:Paint(pw, ph)
+		local yaw = EyeAngles().y
+		local pos1 = EyePos()
+		if not IsValid(self.Ent) then return end
+		local r, g, b, a = 255, 255, 255, 255
+		if self.Color then
+			r, g, b, a = self.Color.r, self.Color.g, self.Color.b, self.Color.a
+		elseif self.Ent.GetTeam then
+			local col = team.GetColor(self.Ent:GetTeam())
+			r, g, b, a = col.r, col.g, col.b, col.a
+		end
+		local pl = self.Ent:GetOwner()
+
+		--make sure the flag icon isn't matching the panel color
+		--TODO: colorblind support!
+		if not IsValid(pl) then
+			local teamcol, light = self:GetParent():GetSDMColor()
+			if math.abs(r + g + b - teamcol.r - teamcol.g - teamcol.b) < 16 then
+				if light then
+					r = 255
+				else
+					r = 72 --brighter than the usual of black so we can still see the arrow
+				end
+				g = r
+				b = r
+			end
+		end
+
+		local w, h = self:GetSize()
+		local dia = math.min(w, h)
+
+		if pl == GetViewEntity() then
+			surface.SetTexture(flagtex2)
+		else
+			surface.SetTexture(flagtex)
+		end
+		local pos2 = self.Ent:GetPos()
+		surface.SetDrawColor(r, g, b, a)
+		local dist = pos2:Distance(pos1)
+		surface.DrawTexturedRectRotated(w / 2, h / 2, dia, dia, math.deg(math.atan2((pos2.y - pos1.y), (pos2.x - pos1.x))) - yaw)
+
+		if pl:IsPlayer() then
+			surface.SetTexture(flagtex3)
+			local t = pl:Team()
+			local col = team.GetColor(t)
+			if t == LocalPlayer():Team() then
+				col = (col.r + col.g + col.b) / 3 < 150 and color_white or color_black
+			end
+			if pl ~= LocalPlayer() and (t == TEAM_UNASSIGNED or t == TEAM_SPECTATOR or t == TEAM_CONNECTING) then
+				local c = pl:GetPlayerColor()
+				col = Color(c.r * 255, c.g * 255, c.b * 255, 255)
+			end
+			surface.SetDrawColor(col.r, col.g, col.b, col.a)
+			surface.DrawTexturedRect(w / 2 - dia / 2, h / 2 - dia / 2, dia, dia)
+		end
+
+		surface.SetDrawColor(255, 255, 255, 255)
+	end
+		
+	vgui.Register("sdm_entpointer", PANEL)
+
+
+local PANEL = {}
+	PANEL.DoAutoPos = true
+	PANEL.PointerHorizontalSpacing = 32
+	PANEL.PointerVerticalSpacing = 16
+	PANEL.PointerDiameter = 32
+	
+	function PANEL:Init()
+		self.initialized = true
+		self.Items = {}
+		self.TitleLabel:Remove()
+		self.TextLabel:Remove()
+	end
+	
+	function PANEL:SetPointerDiameter(amt)
+		self.PointerDiameter = amt
+		self:AutoSize()
+	end
+	
+	function PANEL:SetPointerHorizontalSpacing(amt)
+		self.PointerHorizontalSpacing = amt
+		self:AutoSize()
+	end
+	
+	function PANEL:SetPointerVerticalSpacing(amt)
+		self.PointerVerticalSpacing = amt
+		self:AutoSize()
+	end
+	
+	function PANEL:AutoSize()
+		local mul = self.PointerHorizontalSpacing + self.PointerDiameter
+		for k, v in ipairs(self.Items) do
+			v:SetPos(self.PointerHorizontalSpacing + (k - 1) * mul, self.PointerVerticalSpacing)
+			v:SetSize(self.PointerDiameter, self.PointerDiameter)
+		end
+		self:SetSize(self.PointerHorizontalSpacing + #self.Items * mul, self.PointerVerticalSpacing * 2 + self.PointerDiameter)
+	end
+	
+	function PANEL:AutoPos()
+		self:SetPos(ScrW() / 2 - self:GetWide() / 2, 12)
+	end
+	
+	function PANEL:InvalidateLayout()
+		if not self.initialized then
+			return
+		end
+
+	end
+	
+	function PANEL:Clear()
+		for k, v in ipairs(self.Items) do
+			self.Items[k] = nil
+			v:Remove()
+		end
+	end
+	
+	function PANEL:AddFlag(ent)
+		local panel = vgui.Create("sdm_entpointer", self)
+		panel:SetSize(self.PointerDiameter, self.PointerDiameter)
+		panel:SetEntity(ent)
+		if ent.dt then
+			panel:SetColor(team.GetColor(ent.dt.Team))
+		end
+		table.insert(self.Items, panel)
+		self:AutoSize()
+	end
+
+	function PANEL:SetupFlags()
+		self:Clear()
+		for _, v in ipairs(ents.FindByClass("sdm_flag")) do
+			self:AddFlag(v)
+		end
+		if self.DoAutoPos then	
+			self:AutoPos()
+		end
+	end
+	
+	vgui.Register("sdm_flagtracker", PANEL, "sdm_playercolorhudbox")
+
 
 local PANEL = {}
 	PANEL.EndTime = 0

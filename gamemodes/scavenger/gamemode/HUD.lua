@@ -309,6 +309,24 @@ energy.HideOnDead = true
 
 energy.OnInit = fragcounter.OnInit
 
+local flagtracker = {}
+flagtracker.Type = "sdm_flagtracker"
+flagtracker.Name = "flagtracker"
+flagtracker.x = 0
+flagtracker.y = 12
+flagtracker.wide = 72
+flagtracker.tall = 48
+flagtracker.anchor = "top"
+flagtracker.centerx = true
+flagtracker.centery = false
+flagtracker.sortpriority = 2
+flagtracker.Skin = "sg_menu"
+flagtracker.HideOnSpectate = false
+flagtracker.HideOnDead = true
+flagtracker.DoAutoPos = false
+
+flagtracker.OnInit = fragcounter.OnInit
+
 local function setupdm()
 	HUD.Clear()
 	if GAMEMODE:GetGNWFloat("TimeLimit") ~= 0 then
@@ -319,7 +337,14 @@ local function setupdm()
 	HUD.AddElement(health)
 	HUD.AddElement(armor)
 	HUD.AddElement(energy)
+	--[[HUD.AddElement(flagtracker)
+	HUD.Elements["flagtracker"].Panel:SetupFlags()]]
 end
+
+hook.Add("OnRoundStart", "sdm_flagtracker", function()
+	if not HUD.Elements["flagtracker"] then return end
+	HUD.Elements["flagtracker"].Panel:SetupFlags()
+end)
 
 --You'd think there'd be a saner way to do this
 local function setupdmvalid()
