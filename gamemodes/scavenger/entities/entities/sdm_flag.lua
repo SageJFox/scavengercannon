@@ -6,8 +6,10 @@ ENT.Model = "models/flag/flag.mdl"
 ENT.ReturnPos = vector_origin
 ENT.ReturnAng = angle_zero
 ENT.ReturnTime = 10
-ENT.mins = Vector(-8, -8, -8)
-ENT.maxs = Vector(8, 8, 32)
+ENT.mins = Vector(-8, -8, 0)
+ENT.maxs = Vector(8, 8, 64)
+ENT.FallToGround = true
+ENT.DenyDrop = false
 
 function ENT:SetupDataTables()
 	self:NetworkVar("Entity", "Grabbed") --player carrying us
@@ -23,10 +25,10 @@ if SERVER then
 	concommand.Add("sdm_drop_flag", function(pl)
 		if not IsValid(pl) then return end
 		local self = pl.sdmflag
-		if not IsValid(self) then return end
+		if not IsValid(self) or self.DenyDrop then return end
 
-		self:RemoveGrabber(pl)
 		pl.sdmflagdropped = self
+		self:RemoveGrabber(pl)
 	end)
 
 	function ENT:AcceptInput(name, activator, caller, data)
@@ -73,6 +75,8 @@ if SERVER then
 			self:SetTeam(team.ToTeamID(value))
 		elseif string.lower(key) == "rules" then
 			self.Logic = logic[tonumber(value)]
+		elseif string.lower(key) == "denydrop" then
+			self.DenyDrop = tobool(value)
 		end
 
 		if table.HasValue(outputs, key) then
@@ -82,6 +86,29 @@ if SERVER then
 
 	function ENT:UpdateTransmitState()
 		return TRANSMIT_ALWAYS
+	end
+
+	function ENT:ToGround(pos)
+		if not self.FallToGround then return 0 end
+
+		local pos = pos or self:GetPos()
+		local filter = player.GetAll()
+		table.insert(filter, self)
+		local tracep = {}
+			tracep.start = Vector(pos)
+			pos.z = -16384
+			tracep.endpos = pos
+			tracep.filter = filter
+		local tr = util.TraceEntity(tracep, self)
+		--local mins, maxs = self:GetCollisionBounds()
+		--debugoverlay.SweptBox(tracep.start, tracep.endpos, mins, maxs, angle_zero, 50, color_white)
+		--debugoverlay.Box(tr.HitPos, mins, maxs, 50, Color(255, 0, 0, 128))
+		if tr.StartSolid then return 0 end
+
+		self:SetPos(tr.HitPos)
+		self:SetGroundEntity(tr.HitWorld and Entity(0) or tr.Entity)
+
+		return tracep.start.z - tr.HitPos.z
 	end
 
 	function ENT:RemoveGrabber(pl, reason)
@@ -100,7 +127,15 @@ if SERVER then
 			net.WritePlayer(pl)
 		net.Broadcast()
 
-		--todo: drop to ground
+		local ang = self:GetAngles()
+		ang.p = 0
+		ang.r = 0
+		self:SetAngles(ang)
+		--touch test gets messed up here. If we drop more than our height, let player pick us up again if they touch us
+		if self:ToGround(pl and pl:GetPos() or nil) > self.maxs.z + 4 --[[allotment for trigger bounds]] then
+			--delay a bit in case player is longjumping with a slight height difference
+			timer.Simple(0.1, function() if not IsValid(pl) then return end pl.sdmflagdropped = nil end)
+		end
 		
 		if not IsValid(pl) then return end
 
@@ -122,6 +157,12 @@ if SERVER then
 		self:SetPos(self.ReturnPos)
 		self:SetAngles(self.ReturnAng)
 		timer.Remove(tostring(self))
+		self:ToGround()
+
+		for _, ply in ipairs(player.GetAll()) do
+			if ply.sdmflagdropped ~= self then continue end
+			ply.sdmflagdropped = nil
+		end
 	end
 
 	function ENT:StartTouch(pl)
@@ -159,6 +200,14 @@ if SERVER then
 		net.Broadcast()
 
 		self:TriggerOutput("OnGrabbed", pl)
+	end
+
+	function ENT:EndTouch(ent)
+		if ent == self:GetGroundEntity() then
+			self:SetGroundEntity()
+			self:ToGround()
+		end
+		--if ent.sdmflagdropped == self then ent.sdmflagdropped = nil end
 	end
 
 	local function flagdropdead(pl, inflictor, attacker)
@@ -202,6 +251,7 @@ function ENT:Initialize()
 		--self:SetCollisionBounds(self:GetModelBounds())
 		self:SetCollisionBounds(self.mins, self.maxs)
 		self:UseTriggerBounds(true, 8)
+		self:ToGround()
 	else
 		self:UpdateHUD()
 	end

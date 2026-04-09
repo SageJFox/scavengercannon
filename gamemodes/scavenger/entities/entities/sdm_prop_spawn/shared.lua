@@ -104,7 +104,7 @@ function ENT:SpawnEntity()
 		self.mins:Mul(0.875)
 		self.maxs:Rotate(self:GetAngles())
 		self.maxs:Mul(0.875)
-		debugoverlay.Box(self:GetPos(), self.mins, self.maxs, 100, color_white)
+		--debugoverlay.Box(self:GetPos(), self.mins, self.maxs, 100, color_white)
 		self.gotbounds = true
 	end
 
