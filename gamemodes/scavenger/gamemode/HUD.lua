@@ -327,19 +327,34 @@ flagtracker.DoAutoPos = false
 
 flagtracker.OnInit = fragcounter.OnInit
 
-local function setupdm()
+local function standardhud()
 	HUD.Clear()
 	if GAMEMODE:GetGNWFloat("TimeLimit") ~= 0 then
 		HUD.AddElement(timeremaining)
 	end
-	HUD.AddElement(fragcounter)
-	HUD.AddElement(fragsbehind)
 	HUD.AddElement(health)
 	HUD.AddElement(armor)
 	HUD.AddElement(energy)
-	--[[HUD.AddElement(flagtracker)
-	HUD.Elements["flagtracker"].Panel:SetupFlags()]]
 end
+
+local setuphud = {
+	[SDM_MODE_DM] = function()
+		standardhud()
+		HUD.AddElement(fragcounter)
+		HUD.AddElement(fragsbehind)
+	end,
+	[SDM_MODE_DM_TEAM] = function()
+		standardhud()
+		HUD.AddElement(fragcounter) --todo: fragcounter for teams
+		HUD.AddElement(fragsbehind)
+	end,
+	[SDM_MODE_CTF] = function()
+		standardhud()
+		HUD.AddElement(flagtracker)
+		HUD.Elements["flagtracker"].Panel:SetupFlags()
+	end,
+}
+setmetatable(setuphud, {__index = function() return SDM_MODE_DM end})
 
 hook.Add("OnRoundStart", "sdm_flagtracker", function()
 	if not HUD.Elements["flagtracker"] then return end
@@ -349,11 +364,11 @@ end)
 --You'd think there'd be a saner way to do this
 local function setupdmvalid()
 	if not IsValid(LocalPlayer()) then return timer.Create("sdm_setuphud", 0, 1, setupdmvalid) end
-	setupdm()
+	setuphud[GAMEMODE:GetGNWVar("mode")]()
 end
 
 gameevent.Listen("player_activate")
 hook.Add("player_activate", "sdm_setuphud", function(data)
 	timer.Create("sdm_setuphud", 0, 1, setupdmvalid)
 end)
---hook.Add("OnRoundStart", "SetupDMHUD", setupdm)
+--hook.Add("OnRoundStart", "SetupHUD", function() setuphud[GAMEMODE:GetGNWVar("mode")]() end)
