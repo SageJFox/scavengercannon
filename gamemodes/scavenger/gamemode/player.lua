@@ -24,11 +24,13 @@ if CLIENT then
 	end)
 
 	function PLAYER:GetPlayerColor()
-		return pcolor
+		local t = self:Team()
+		return team.IsReal(t) and team.GetColorVector(t) or pcolor
 	end
 
 	function PLAYER:GetWeaponColor()
-		return wcolor
+		local t = self:Team()
+		return team.IsReal(t) and team.GetColorVector(t) or wcolor
 	end
 end
 

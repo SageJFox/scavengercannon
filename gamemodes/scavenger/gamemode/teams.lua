@@ -25,6 +25,16 @@ TEAM_SetName(TEAM_PURPLE, "#scav.team.purple")
 TEAM_SetName(TEAM_BROWN, "#scav.team.brown")
 TEAM_SetName(TEAM_TEAL, "#scav.team.teal")
 
+for t, v in pairs(team.GetAllTeams()) do
+	local tcol = team.GetColor(t)
+	v.ColorVector = Vector(tcol.r / 255, tcol.g / 255, tcol.b / 255)
+end
+
+function team.GetColorVector(t)
+	if not team.Valid(t) then return vector_origin end
+	return team.GetAllTeams()[t].ColorVector
+end
+
 GM.Teams = {}
 	GM.Teams[TEAM_UNASSIGNED] = false
 	GM.Teams[TEAM_RED] = false
