@@ -34,7 +34,7 @@ end
 
 
 function PLAYER:IsSpectator()
-	return ((self:Team() == TEAM_SPECTATOR) or (self:Team() == TEAM_CONNECTING) or (not self:Alive() and (self:Lives() == 0)))
+	return (not team.IsReal(self:Team(), true) or (not self:Alive() and (self:Lives() == 0)))
 end
 
 --lives
@@ -171,7 +171,7 @@ if SERVER then
 	
 	function GM:PlayerCanSpawn(pl)
 		local pteam = pl:Team()
-		if pteam == TEAM_SPECTATOR then return false end
+		if not team.IsReal(pteam, true) then return false end
 
 		local ctime = CurTime()
 		local spawndelay = (pl.NextSpawnTime or 0) - ctime
@@ -506,7 +506,7 @@ else
 
 	hook.Add("PlayerDisconnected", "SDMTeamDisconnect", function(pl)
 		local plteam = pl:Team()
-		if plteam == TEAM_CONNECTING or plteam == TEAM_SPECTATOR then return end
+		if not team.IsReal(plteam, true) then return end
 		net.Start("sdm_disconnect")
 			net.WriteUInt(plteam - 1000, 4) --save some bits, team enums start at 1001
 		net.Broadcast()

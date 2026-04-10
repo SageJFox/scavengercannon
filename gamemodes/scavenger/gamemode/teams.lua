@@ -62,6 +62,13 @@ function team.ToTeamID(name)
 	
 	return teamnametoindex[string.lower(name)] or MsgAll("ERROR! Unknown team: " .. tostring(name))
 end
+
+function team.IsReal(t, unassigned)
+	if t == TEAM_UNASSIGNED then return tobool(unassigned) end
+	if t == TEAM_CONNECTING then return false end
+	if t == TEAM_SPECTATOR then return false end
+	return team.Valid(t)
+end
 	
 if CLIENT then
 	local function ReceiveTeams(um) --receives the playable teams from the server
@@ -174,7 +181,7 @@ end
 
 function team.GetScoreLimit(teamid)
 	local infoent = team.GetInfoEnt(teamid)
-	return IsValid(infoent) and infoent:GetScoreLimit() or GAMEMODE:GetInfoEnt():GetScoreLimit()
+	return IsValid(infoent) and infoent:GetScoreLimit() or (IsValid(GAMEMODE:GetInfoEnt()) and GAMEMODE:GetInfoEnt():GetScoreLimit() or 0)
 end
 
 function team.GetWins(teamid)

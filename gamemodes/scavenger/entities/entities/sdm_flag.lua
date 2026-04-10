@@ -59,8 +59,8 @@ if SERVER then
 	local LOGIC_OWN = 2
 	local LOGIC_ALL = 3
 	local logic = {}
-		logic[LOGIC_ALL] =  function(flag, pl) return pl ~= TEAM_CONNECTING and pl ~= TEAM_SPECTATOR end
-		logic[LOGIC_OTHER] = function(flag, pl) return logic[LOGIC_ALL](flag, pl) and flag ~= pl end
+		logic[LOGIC_ALL] =  function(flag, pl) return team.IsReal(pl, true) end
+		logic[LOGIC_OTHER] = function(flag, pl) return logic[LOGIC_ALL](flag, pl) and (flag ~= pl or flag == TEAM_UNASSIGNED) end
 		logic[LOGIC_OWN] = function(flag, pl) return flag == pl end
 		setmetatable(logic,{__index = function() return LOGIC_OTHER end})
 

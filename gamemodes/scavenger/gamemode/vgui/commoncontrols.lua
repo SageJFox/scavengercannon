@@ -220,11 +220,11 @@ local PANEL = {}
 		if self.GetPlayer then pl = self:GetPlayer() end
 
 		if IsValid(pl) then
-			if pl:Team() == TEAM_UNASSIGNED or pl:Team() == TEAM_CONNECTING or pl:Team() == TEAM_SPECTATOR then
+			if team.IsReal(pl:Team()) then
+				self.BGColor = team.GetColor(pl:Team())
+			else
 				bgcol = pl:GetPlayerColor()
 				self.BGColor = Color(bgcol.r * 255, bgcol.g * 255, bgcol.b * 255, 255)
-			else
-				self.BGColor = team.GetColor(pl:Team())
 			end
 		end
 
@@ -324,7 +324,7 @@ local PANEL = {}
 			if t == LocalPlayer():Team() then
 				col = (col.r + col.g + col.b) / 3 < 150 and color_white or color_black
 			end
-			if pl ~= LocalPlayer() and (t == TEAM_UNASSIGNED or t == TEAM_SPECTATOR or t == TEAM_CONNECTING) then
+			if pl ~= LocalPlayer() and not team.IsReal(t) then
 				local c = pl:GetPlayerColor()
 				col = Color(c.r * 255, c.g * 255, c.b * 255, 255)
 			end

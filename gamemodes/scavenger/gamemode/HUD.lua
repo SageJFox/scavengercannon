@@ -129,7 +129,7 @@ hook.Add("Think", "HUDThink", function()
 	local spawned = false
 	local died = false
 	alive = pl:Alive()
-	playing = (pl:Team() ~= TEAM_SPECTATOR)
+	playing = team.IsReal(pl:Team(), true)
 	if (not playing) and (lastteam ~= TEAM_SPECTATOR) then
 		startedspec = true
 		lastteam = pl:Team()
