@@ -302,7 +302,7 @@ local PANEL = {}
 			self.Models = vgui.Create("DPanelList", self.ModelsBox)
 				self.Models:EnableHorizontal(true)
 				self.Models:EnableVerticalScrollbar(true)
-			self.ModelSettings = vgui.Create("DPanel", self.ModelsBox)
+			self.ModelSettings = vgui.Create("DScrollPanel", self.ModelsBox)
 		updateModelSettings(self)
 
 		self:SetupPlayerModels()
