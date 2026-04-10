@@ -1,0 +1,249 @@
+{
+	"gamevars": {
+		"sdm_main_mod_champion": false,
+		"sdm_main_mod_toxic": false,
+		"sdm_main_mod_rocketjump": true,
+		"maxpoints": 15,
+		"plspeed": 1,
+		"sdm_main_mod_selfdamage": true,
+		"dmgscale": 1,
+		"sdm_main_mod_blastdeath": false,
+		"mode": "ctf",
+		"sdm_main_mod_instagib": false,
+		"sdm_main_mod_cloak": false,
+		"sdm_main_mod_falldmg": true,
+		"sdm_main_mod_drown": true,
+		"name": "Classic CTF",
+		"author": "Sierra",
+		"gravity": 600,
+		"sdm_main_mod_vamp": false,
+		"timelimit": 0
+	},
+	"entities": [
+		{
+			"Outputs": {},
+			"skin": 0,
+			"ang": "{0 -90 0}",
+			"material": "",
+			"KeyValues": {
+				"modelname": "models/flag/flag.mdl",
+				"skin": 0,
+				"classname": "sdm_flag",
+				"returntime": 30,
+				"team": "red",
+				"value": "5",
+				"rules": 1
+			},
+			"pos": "[-486.156708 3371.630127 -72.968750]"
+		},
+		{
+			"Outputs": {},
+			"skin": 0,
+			"ang": "{0 90 0}",
+			"material": "",
+			"KeyValues": {
+				"modelname": "models/flag/flag.mdl",
+				"skin": 1,
+				"classname": "sdm_flag",
+				"returntime": 30,
+				"team": "blue",
+				"value": "5",
+				"rules": 1
+			},
+			"pos": "[486.156708 -3371.630127 -72.968750]"
+		},
+		{
+			"Outputs": {},
+			"skin": 0,
+			"ang": "{-86.222244262695 -124.98461151123 138.6139831543}",
+			"material": "",
+			"KeyValues": {
+				"modelname": "models/items/combine_rifle_ammo01.mdl",
+				"skin": 0,
+				"lifetime": 0,
+				"classname": "sdm_prop_spawn",
+				"delay": 14.829999923706,
+				"spawnclass": "prop_physics"
+			},
+			"pos": "[-471.92593383789 -1618.029296875 326.32302856445]"
+		},
+		{
+			"Outputs": {},
+			"skin": 0,
+			"ang": "{-0.09093277156353 51.988994598389 0.073752380907536}",
+			"material": "",
+			"KeyValues": {
+				"modelname": "models/items/car_battery01.mdl",
+				"skin": 0,
+				"lifetime": 0,
+				"classname": "sdm_prop_spawn",
+				"delay": 14.829999923706,
+				"spawnclass": "prop_physics"
+			},
+			"pos": "[-531.20837402344 -1598.1750488281 328.06497192383]"
+		},
+		{
+			"Outputs": {},
+			"skin": 0,
+			"ang": "{1.6101033687592 142.39602661133 -0.43197631835938}",
+			"material": "",
+			"KeyValues": {
+				"modelname": "models/items/357ammobox.mdl",
+				"skin": 0,
+				"lifetime": 0,
+				"classname": "sdm_prop_spawn",
+				"delay": 14.829999923706,
+				"spawnclass": "prop_physics"
+			},
+			"pos": "[-482.93399047852 -1578.326171875 322.44815063477]"
+		},
+		{
+			"Outputs": {},
+			"skin": 0,
+			"ang": "{-38.580307006836 -0.00041402754141018 -0.02044677734375}",
+			"material": "",
+			"KeyValues": {
+				"modelname": "models/props_junk/wood_pallet001a.mdl",
+				"skin": 0,
+				"lifetime": 0,
+				"classname": "sdm_prop_spawn",
+				"delay": 14.829999923706,
+				"spawnclass": "prop_physics"
+			},
+			"pos": "[136.43815612793 -91.979927062988 183.83798217773]"
+		},
+		{
+			"Outputs": {},
+			"skin": 0,
+			"ang": "{0 0 0}",
+			"material": "",
+			"KeyValues": {
+				"modelname": "models/vortigaunt.mdl",
+				"skin": 0,
+				"lifetime": 0,
+				"classname": "sdm_prop_spawn",
+				"delay": 19.979999542236,
+				"spawnclass": "prop_physics"
+			},
+			"pos": "[361.17663574219 -26.590570449829 165.26724243164]"
+		},
+		{
+			"Outputs": {},
+			"skin": 0,
+			"ang": "{0 359.49273681641 0}",
+			"material": "",
+			"KeyValues": {
+				"team": "blue",
+				"classname": "info_sdm_spawn",
+				"modelname": "models/humans/group02/male_07.mdl"
+			},
+			"pos": "[-1446.830566 -1442.163208 320.031250]"
+		},
+		{
+			"Outputs": {},
+			"skin": 0,
+			"ang": "{0 359.49273681641 0}",
+			"material": "",
+			"KeyValues": {
+				"team": "blue",
+				"classname": "info_sdm_spawn",
+				"modelname": "models/humans/group02/male_07.mdl"
+			},
+			"pos": "[-1251.850220 -1441.546997 320.031250]"
+		},{
+			"Outputs": {},
+			"skin": 0,
+			"ang": "{0 180 0}",
+			"material": "",
+			"KeyValues": {
+				"team": "red",
+				"classname": "info_sdm_spawn",
+				"modelname": "models/humans/group02/male_07.mdl"
+			},
+			"pos": "[1446.830566 1442.163208 320.031250]"
+		},
+		{
+			"Outputs": {},
+			"skin": 0,
+			"ang": "{0 180 0}",
+			"material": "",
+			"KeyValues": {
+				"team": "red",
+				"classname": "info_sdm_spawn",
+				"modelname": "models/humans/group02/male_07.mdl"
+			},
+			"pos": "[1251.850220 1441.546997 320.031250]"
+		},
+		{
+			"Outputs": {},
+			"skin": 0,
+			"ang": "{0 89.286430358887 -2.1011048829678e-006}",
+			"material": "",
+			"KeyValues": {
+				"maxhealth": 100,
+				"lives": 0,
+				"startinghealth": 100,
+				"startingenergy": 500,
+				"modelname": "models/props_wasteland/medbridge_post01.mdl",
+				"team": "red",
+				"maxenergy": 500,
+				"pooledlives": 0,
+				"targetname": "",
+				"startingarmor": 0,
+				"maxarmor": 100,
+				"armorregen": 0,
+				"respawntime": 5,
+				"energyregen": 10,
+				"joinable": 1,
+				"classname": "info_sdm_team",
+				"healthregen": 0,
+				"teamname": ""
+			},
+			"pos": "[0 687.469238 0.031250]"
+		},
+		{
+			"Outputs": {},
+			"skin": 0,
+			"ang": "{0 89.286430358887 -2.1011048829678e-006}",
+			"material": "",
+			"KeyValues": {
+				"maxhealth": 100,
+				"lives": 0,
+				"startinghealth": 100,
+				"startingenergy": 500,
+				"modelname": "models/props_wasteland/medbridge_post01.mdl",
+				"team": "blue",
+				"maxenergy": 500,
+				"pooledlives": 0,
+				"targetname": "",
+				"startingarmor": 0,
+				"maxarmor": 100,
+				"armorregen": 0,
+				"respawntime": 5,
+				"energyregen": 10,
+				"joinable": 1,
+				"classname": "info_sdm_team",
+				"healthregen": 0,
+				"teamname": ""
+			},
+			"pos": "[0 -687.469238 0.031250]"
+		},
+		{
+			"Outputs": {},
+			"skin": 0,
+			"ang": "{0 90.096458435059 -2.1011048829678e-006}",
+			"material": "",
+			"KeyValues": {
+				"deathlimit": "",
+				"timelimit": 0,
+				"modelname": "models/props_lab/monitor01a.mdl",
+				"maxpoints": 15,
+				"friendlyfire": 0,
+				"classname": "info_sdm",
+				"mode": "ctf",
+				"targetname": "info_sdm"
+			},
+			"pos": "[0 0 16]"
+		}
+	]
+}
