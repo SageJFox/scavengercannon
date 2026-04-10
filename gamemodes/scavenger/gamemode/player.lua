@@ -551,12 +551,30 @@ else
 			local teamid = self:Team()
 			team.AddScore(teamid, amt)
 			local limit = team.GetScoreLimit(teamid)
-			if (limit ~= 0) and (team.GetScore(teamid) >= limit) then
+			if limit ~= 0 and team.GetScore(teamid) >= limit then
 				GAMEMODE:EndRoundTeam(teamid)
 			end
 		elseif GAMEMODE:GetMode() == SDM_MODE_DM then
 			local limit = team.GetScoreLimit(teamid)
-			if (limit ~= 0) and (self:Frags() >= limit) then
+			if limit ~= 0 and self:Frags() >= limit then
+				GAMEMODE:EndRoundPlayer(self)
+			end
+		end
+	end
+
+	function PLAYER:AddScore(amt)
+		self:AddFrags(amt)
+		self:AddScavStat(SCAVSTAT_POINTS, amt)
+		if GAMEMODE:GetMode() == SDM_MODE_DM_TEAM then
+			local teamid = self:Team()
+			team.AddScore(teamid, amt)
+			local limit = team.GetScoreLimit(teamid)
+			if limit ~= 0 and team.GetScore(teamid) >= limit then
+				GAMEMODE:EndRoundTeam(teamid)
+			end
+		elseif GAMEMODE:GetMode() == SDM_MODE_DM then
+			local limit = team.GetScoreLimit(teamid)
+			if limit ~= 0 and self:Frags() >= limit then
 				GAMEMODE:EndRoundPlayer(self)
 			end
 		end

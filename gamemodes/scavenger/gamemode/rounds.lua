@@ -86,21 +86,121 @@ end
 function GM:OnPreRoundStart(delay)
 end
 
-function GM:EndRound()
-	if self:IsRoundInProgress() then
-		gamemode.Call("OnRoundEnd", endcondition, enddata)
+local endroundlogic = {
+	[SDM_MODE_DM] = {
+		[ENDCONDITION_TIME] = function()
+			local winners, highscore = {}, -50
+			local losers = player.GetHumans()
+			--find our winner(s)
+			for _, pl in ipairs(losers) do
+				if not team.IsReal(pl:Team(), true) then continue end
+
+				pl:AddScavStat(SCAVSTAT_GAMESPLAYED, 1)
+				local score = pl:Frags()
+				if score < highscore then continue end
+
+				if score > highscore then
+					winners = {pl}
+					highscore = score
+					continue
+				end
+
+				table.insert(winners, pl)
+			end
+			--award a win, or draws
+			local tie = (#winners > 1)
+			for _, winner in ipairs(winners) do
+				winner:AddScavStat(tie and SCAVSTAT_DRAWS or SCAVSTAT_WINS, 1)
+				table.RemoveByValue(losers, winner)
+			end
+			--womp womp
+			for _, loser in ipairs(losers) do
+				loser:AddScavStat(SCAVSTAT_LOSSES, 1)
+			end
+		end,
+	},
+	[SDM_MODE_DM_TEAM] = {
+		[ENDCONDITION_TIME] = function()
+			local winners, highscore = {}, -50
+			local losers = player.GetHumans()
+			local tie = false
+			--find our winner(s)
+			for t, v in pairs(team.GetAllTeams()) do
+				if not team.IsReal(t, true) then continue end
+				
+				local score = team.GetScore(t)
+				if score < highscore then continue end
+
+				if score > highscore then
+					winners = team.GetPlayers(t)
+					highscore = score
+					tie = false
+					continue
+				end
+
+				table.Add(winners, team.GetPlayers(t))
+				tie = true
+			end
+			--award a win, or draws
+			for _, winner in ipairs(winners) do
+				--remove first so if it's a bot we don't have to double process it
+				table.RemoveByValue(losers, winner)
+				if winner:IsBot() then continue end
+
+				winner:AddScavStat(tie and SCAVSTAT_DRAWS or SCAVSTAT_WINS, 1)
+				winner:AddScavStat(SCAVSTAT_GAMESPLAYED, 1)
+			end
+			--womp womp
+			for _, loser in ipairs(losers) do
+				if loser:IsBot() then continue end
+				loser:AddScavStat(SCAVSTAT_LOSSES, 1)
+				loser:AddScavStat(SCAVSTAT_GAMESPLAYED, 1)
+			end
+		end,
+	}
+}
+
+function GM:EndRound(endcondition)
+	if not self:IsRoundInProgress() then end
+	gamemode.Call("OnRoundEnd", endcondition, enddata)
+
+	if endroundlogic[GM:GetMode()] and endroundlogic[GM:GetMode()][endcondition] then
+		endroundlogic[GM:GetMode()][endcondition]()
 	end
 end
 
 function GM:EndRoundTeam(winningteam, wincondition)
-	if self:IsRoundInProgress() then
-		gamemode.Call("OnRoundEnd")
+	if not self:IsRoundInProgress() then return end
+	gamemode.Call("OnRoundEnd")
+
+	local winners = team.GetPlayers(winningteam)
+	local losers = player.GetHumans()
+	for _, winner in ipairs(winners) do
+		table.RemoveByValue(losers, winner)
+		if winner:IsBot() then continue end
+		winner:AddScavStat(SCAVSTAT_GAMESPLAYED, 1)
+		winner:AddScavStat(SCAVSTAT_WINS, 1)
+	end
+
+	for _, loser in ipairs(losers) do
+		if loser:IsBot() then continue end
+		loser:AddScavStat(SCAVSTAT_GAMESPLAYED, 1)
+		loser:AddScavStat(SCAVSTAT_LOSSES, 1)
 	end
 end
 
 function GM:EndRoundPlayer(winningplayer, wincondition)
-	if self:IsRoundInProgress() then
-		gamemode.Call("OnRoundEnd")
+	if not self:IsRoundInProgress() then return end
+	gamemode.Call("OnRoundEnd")
+
+	winningplayer:AddScavStat(SCAVSTAT_GAMESPLAYED, 1)
+	winningplayer:AddScavStat(SCAVSTAT_WINS, 1)
+
+	local losers = player.GetHumans()
+	table.RemoveByValue(losers, winningplayer)
+	for _, loser in ipairs(losers) do
+		loser:AddScavStat(SCAVSTAT_GAMESPLAYED, 1)
+		loser:AddScavStat(SCAVSTAT_LOSSES, 1)
 	end
 end
 
@@ -109,7 +209,7 @@ function GM:IsRoundInProgress()
 end
 
 function GM:PreparePlayers()
-	for k, v in pairs(player.GetAll()) do	
+	for _, v in pairs(player.GetAll()) do	
 		v:SetFrags(0)
 		v:SetDeaths(0)
 		if not v:IsSpectator() then
@@ -176,11 +276,7 @@ end)
 
 if CLIENT then
 	net.Receive("sdm_roundstartend", function()
-		if net.ReadBool() then 
-			gamemode.Call("OnRoundStart")
-		else
-			gamemode.Call("OnRoundEnd")
-		end
+		gamemode.Call(net.ReadBool() and "OnRoundStart" or "OnRoundEnd")
 	end)
 
 	function GM:OnRoundStart()

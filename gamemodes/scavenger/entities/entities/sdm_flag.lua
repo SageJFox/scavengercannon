@@ -10,6 +10,7 @@ ENT.mins = Vector(-8, -8, 0)
 ENT.maxs = Vector(8, 8, 64)
 ENT.FallToGround = true
 ENT.DenyDrop = false
+ENT.value = 100
 
 function ENT:SetupDataTables()
 	self:NetworkVar("Entity", "Grabbed") --player carrying us
@@ -21,6 +22,8 @@ if SERVER then
 	util.AddNetworkString("sdm_flag")
 
 	local PLAYER_DIED = "1"
+	local PLAYER_DROPPED = "2"
+	local PLAYER_CAPPED = "3"
 
 	concommand.Add("sdm_drop_flag", function(pl)
 		if not IsValid(pl) then return end
@@ -28,7 +31,7 @@ if SERVER then
 		if not IsValid(self) or self.DenyDrop then return end
 
 		pl.sdmflagdropped = self
-		self:RemoveGrabber(pl)
+		self:RemoveGrabber(pl, PLAYER_DROPPED)
 	end)
 
 	function ENT:AcceptInput(name, activator, caller, data)
@@ -77,6 +80,8 @@ if SERVER then
 			self.Logic = logic[tonumber(value)]
 		elseif string.lower(key) == "denydrop" then
 			self.DenyDrop = tobool(value)
+		elseif string.lower(key) == "value" then
+			self.value = tonumber(value)
 		end
 
 		if table.HasValue(outputs, key) then
@@ -100,9 +105,6 @@ if SERVER then
 			tracep.endpos = pos
 			tracep.filter = filter
 		local tr = util.TraceEntity(tracep, self)
-		--local mins, maxs = self:GetCollisionBounds()
-		--debugoverlay.SweptBox(tracep.start, tracep.endpos, mins, maxs, angle_zero, 50, color_white)
-		--debugoverlay.Box(tr.HitPos, mins, maxs, 50, Color(255, 0, 0, 128))
 		if tr.StartSolid then return 0 end
 
 		self:SetPos(tr.HitPos)
@@ -150,10 +152,10 @@ if SERVER then
 		pl.sdmflag = nil
 	end
 
-	function ENT:Return(activator)
+	function ENT:Return(activator, reason)
 		self:TriggerOutput("OnReturned", activator)
 		local pl = self:GetGrabbed()
-		if IsValid(pl) then self:RemoveGrabber(pl) end
+		if IsValid(pl) then self:RemoveGrabber(pl, reason) end
 		self:SetPos(self.ReturnPos)
 		self:SetAngles(self.ReturnAng)
 		timer.Remove(tostring(self))
@@ -165,13 +167,22 @@ if SERVER then
 		end
 	end
 
+	function ENT:Capture()
+		local pl = self:GetGrabbed()
+		if not self:GetEnabled() or not pl then return end
+		local t = pl:Team()
+		pl:AddScore(self.value)
+		self:Return(pl, PLAYER_CAPPED)
+		self:TriggerOutput("OnCapped", pl)
+
+	end
+
 	function ENT:StartTouch(pl)
 		--handle respawn triggers (borrowing the entity name from TF2)
 		if pl:GetClass() == "func_respawnflag" then
 			self:Return(self:GetGrabbed())
 			return
 		end
-
 		--handle player pickup
 		if not self:GetEnabled() then return end
 		if not pl:IsPlayer() or not pl:Alive() then return end
@@ -248,7 +259,6 @@ function ENT:Initialize()
 	if SERVER then
 		self:SetEnabled(true)
 		self:SetTrigger(true)
-		--self:SetCollisionBounds(self:GetModelBounds())
 		self:SetCollisionBounds(self.mins, self.maxs)
 		self:UseTriggerBounds(true, 8)
 		self:ToGround()
@@ -319,6 +329,7 @@ net.Receive("sdm_flag", function()
 			self.carrymdl:SetNoDraw(true)
 			self.carrymdl:DrawShadow(false)
 			self.carrymdl:SetParent(pl)
+			self.carrymdl:SetSkin(self:GetSkin())
 	else
 		pl.sdmflag = nil
 		if IsValid(self.carrymdl) then
