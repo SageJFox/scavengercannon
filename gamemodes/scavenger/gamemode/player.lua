@@ -565,7 +565,7 @@ else
 	function PLAYER:AddScore(amt)
 		self:AddFrags(amt)
 		self:AddScavStat(SCAVSTAT_POINTS, amt)
-		if GAMEMODE:GetMode() == SDM_MODE_DM_TEAM then
+		if GAMEMODE:GetMode() == SDM_MODE_DM_TEAM or GAMEMODE:GetMode() == SDM_MODE_CTF then
 			local teamid = self:Team()
 			team.AddScore(teamid, amt)
 			local limit = team.GetScoreLimit(teamid)
