@@ -354,7 +354,7 @@ local setuphud = {
 		HUD.Elements["flagtracker"].Panel:SetupFlags()
 	end,
 }
-setmetatable(setuphud, {__index = function() return SDM_MODE_DM end})
+setmetatable(setuphud, {__index = function() return setuphud[SDM_MODE_DM] end})
 
 hook.Add("OnRoundStart", "sdm_flagtracker", function()
 	if not HUD.Elements["flagtracker"] then return end
