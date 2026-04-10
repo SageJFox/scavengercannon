@@ -217,7 +217,7 @@ local PANEL = {}
 	end
 	
 	function PANEL:Think()
-		self.ScoreLabel:SetText(ScavLocalize("scav.score", team.GetScore(self.team)))
+		self.ScoreLabel:SetText(ScavLocalize("scav.score", team.GetScore(self.team)) or 0)
 		self.ScoreLabel:SizeToContents()
 		self.TeamLabelBox:SetText(self.team == TEAM_UNASSIGNED and "#scav.score.unassigned" or ScavLocalize(team.GetScore(self.team) == 1 and "scav.score.team.point" or "scav.score.team.points", team.GetName(self.team), team.GetScore(self.team)))
 		self.m_bgColor = dkgray
