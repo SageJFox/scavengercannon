@@ -7,6 +7,7 @@ ENT.Base = "base_point"
 ENT.RoundStartDelay = 3
 ENT.RoundTime = 12*60
 ENT.PointLimit = 30
+ENT.TimeLimit = 20*60
 
 function GAMEMODE:GetInfoEnt()
 	return self.InfoEnt or NULL
@@ -27,19 +28,26 @@ local modetranslate = {
 	["custom"] = SDM_MODE_CUSTOM
 }
 
-function ENT:KeyValue(key,value)
-	key = string.lower(key)
+function ENT:KeyValue(key, value)
+	local key = string.lower(key)
+	local value = value
+	if key == "mode" then
+		GAMEMODE:SetGNWVar("mode", modetranslate[string.lower(value)] or 0)
+		return
+	end
+
+	value = tonumber(value)
+	if not value then return end
+
 	if key == "roundstartdelay" then
-		self.RoundStartDelay = tonumber(value)
+		self.RoundStartDelay = value
 	elseif key == "roundtime" then
-		self.RoundTime = tonumber(value)
-	elseif key == "mode" then
-		--GAMEMODE:SetGNWVar("mode",modetranslate[string.lower(value)] or 0)
+		self.RoundTime = value
 	elseif key == "timelimit" then
-		self.TimeLimit = tonumber(value)
-		--GAMEMODE:SetGNWFloat("TimeLimit",self.TimeLimit)
+		self.TimeLimit = value
+		GAMEMODE:SetGNWFloat("TimeLimit", self.TimeLimit)
 	elseif key == "pointlimit" or key == "maxpoints" then
-		self.PointLimit = tonumber(value)
+		self.PointLimit = value
 	end
 end
 
@@ -50,13 +58,13 @@ end
 function ENT:Input(name,value,activator)
 	name = string.lower(name)
 	if name == "startround" then
-		GAMEMODE:StartRound(self.RoundTime,self.RoundStartDelay)
+		GAMEMODE:StartRound(self.RoundTime, self.RoundStartDelay)
 	elseif name == "addroundtime" then
 		GAMEMODE:AddRoundTime(tonumber(value))
 	elseif name == "endroundplayer" then
-		GAMEMODE:EndRoundPlayer(value) --DEFINE THIS
+		GAMEMODE:EndRoundPlayer(value)
 	elseif name == "endroundteam" then
-		GAMEMODE:EndRoundTeam(value) --DEFINE THIS
+		GAMEMODE:EndRoundTeam(value)
 	end
 end
 
