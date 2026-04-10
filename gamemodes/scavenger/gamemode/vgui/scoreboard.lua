@@ -162,7 +162,7 @@ local PANEL = {}
 		self.TeamLabelBox.m_bgColor = col
 		self.ScoreLabel:SetVisible(teamid ~= TEAM_UNASSIGNED)
 		if self.ScoreLabel:IsVisible() then
-			self.ScoreLabel:SetText(team.GetScore(teamid))
+			self.ScoreLabel:SetText(team.GetScore(teamid) or 0)
 		end
 		local wins = team.GetWins(teamid)
 		self.TeamLabelBox:SetText(teamid == TEAM_UNASSIGNED and team.GetName(teamid) or ScavLocalize(wins == 1 and "scav.score.team.win" or "scav.score.team.wins", team.GetName(teamid), wins))
