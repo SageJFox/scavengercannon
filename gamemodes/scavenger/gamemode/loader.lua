@@ -94,7 +94,7 @@ function meta:Spawn(filter) --accepts TemplateID filter, TemplateID member is as
 							key = string.lower(key)
 							ent:SetKeyValue(key,value)
 							if key == "team" then
-								ent.team = ScavData.ColorNameToTeam(value)
+								ent.team = team.ToTeamID(value)
 							elseif key == "parentname" then
 								ent.parentname = value
 							elseif key == "modelname" then

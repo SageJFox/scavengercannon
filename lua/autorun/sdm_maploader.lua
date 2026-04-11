@@ -9,30 +9,26 @@ if SERVER then
 	CreateConVar("sdm_allowvote", 0, FCVAR_ARCHIVE)
 end
 	
-function ScavData.StartScavDM(map,settingsfile)
+function ScavData.StartScavDM(map, settingsfile)
 	RunConsoleCommand("sdm_settingsfile", settingsfile)
 	RunConsoleCommand("changegamemode", map, "scavenger_deathmatch")
 end
 	
 function ScavData.GetValidMaps()
-
 	if SERVER then
-	
-		local potentialmaps = file.Find("scavdata/maps/*","DATA")
+		local _, potentialmaps = file.Find("data/scavdata/maps/*", "GAME")
 		local maps = {}
 		
-		for _,v in pairs(potentialmaps) do
-			if file.Find("scavdata/maps/"..v.."*.txt","DATA") then
-				table.insert(maps,v)
+		for _, v in pairs(potentialmaps) do
+			local files, _ = file.Find("data/scavdata/maps/" .. v .. "/*.txt", "GAME")
+			for _, f in ipairs(files) do
+				table.insert(maps, v .. "/" .. f)
 			end
 		end
-		
 		return maps
-		
 	else
 		return ScavData.SettingsFilePaths
 	end
-	
 end
 
 local loader = {}
@@ -40,7 +36,7 @@ ScavData.AllSettingsFiles = {}
 
 function loader.New()
 	local newloader = {}
-	table.Inherit(newloader,loader)
+	table.Inherit(newloader, loader)
 	return newloader
 end
 
@@ -67,7 +63,7 @@ if SERVER then
 			net.WriteString(self:GetName())
 			net.WriteString(self:GetAuthor())
 			net.WriteString(self:GetMode())
-			net.WriteInt(self:GetPointLimit(),32)
+			net.WriteInt(self:GetPointLimit(), 32)
 			net.WriteFloat(self:GetTimeLimit())
 			net.WriteFloat(self:GetMaxTeams())
 			net.WriteBool(self:GetFriendlyFire())
@@ -88,35 +84,39 @@ if SERVER then
 	end
 	
 	function ScavData.CloseClientVoteMenus()
-		for _,v in ipairs(player.GetHumans()) do
+		for _, v in ipairs(player.GetHumans()) do
 			v:ConCommand("sdm_vote_close")
 		end
 	end
 	
-	concommand.Add("sdm_vote_requestfiles",function(pl,cmd,args)
+	concommand.Add("sdm_vote_requestfiles", function(pl, cmd, args)
 		if not pl.WasSentSDMSettingsList then --doing this so some wise guy can't force the server to constantly stream to him. This concommand can be overwritten if for some reason you're adding new settings files to the server in the middle of a game
 			ScavData.SendAllSettingsToClient(pl)
 			pl.WasSentSDMSettingsList = true
 		end
-	end)			
+	end)
 
-	concommand.Add("sdm_vote_requestmap",function(pl,cmd,args)
+	concommand.Add("sdm_vote_requestmap", function(pl, cmd, args)
 		local filename = args[1]
-		if string.find(filename,"..",nil,true) or not string.find(filename,"/") then
-			return false
+		if not filename then filename = game.GetMap() .. "/" .. GetConVar("sdm_settingsfile"):GetString() end
+		--not allowed to go back
+		if string.find(filename, "..", nil, true) then return false end
+		if not string.find(filename, "/") then
+			--todo: not just assume that they put a file in and want the current map
+			filename = game.GetMap() .. "/" .. filename
 		end
-		if file.Exists("scavdata/maps/"..tostring(filename)) then
-			local loader = ScavData.GetSettingsIO(filename)
-			loader:SendToClient(pl)
-		end
+		if not file.Exists("data/scavdata/maps/" .. tostring(filename), "GAME") then return false end
+
+		local loader = ScavData.GetSettingsIO(filename)
+		loader:SendToClient(pl)
 	end)
 	
 	local mapchangestarted = false
 	
 	function ScavData.SetVotingDeadline(time)
 		if mapchangestarted then return end
-		SetGlobalFloat("sdm_votedeadline",CurTime() + time)
-		PrintMessage(HUD_PRINTTALK,"SDM Map voting will end in "..tostring(time).." seconds!")
+		SetGlobalFloat("sdm_votedeadline", CurTime() + time)
+		PrintMessage(HUD_PRINTTALK, "SDM Map voting will end in " .. tostring(time) .. " seconds!")
 	end
 			
 	local function beginmapchange()
@@ -125,22 +125,22 @@ if SERVER then
 		mapchangestarted = true
 		
 		local vote = ScavData.GetWinningMapVote()
-		local mapandsetting = string.Explode("/",vote)
+		local mapandsetting = string.Explode("/", vote)
 		local map = mapandsetting[1]
 		local setting = mapandsetting[2]
 		
 		ScavData.CloseClientVoteMenus()
 		
-		timer.Simple(0.1, function() PrintMessage(HUD_PRINTTALK,"Voting has ended. \""..setting.."\" on "..map.." has won the map vote. Changing maps in 5..") end)
-		timer.Simple(5.1, function() ScavData.StartScavDM(map,setting) end)
-		timer.Simple(1.1, function() PrintMessage(HUD_PRINTTALK,"4..") end)
-		timer.Simple(2.1, function() PrintMessage(HUD_PRINTTALK,"3..") end)
-		timer.Simple(3.1, function() PrintMessage(HUD_PRINTTALK,"2..") end)
-		timer.Simple(4, function() PrintMessage(HUD_PRINTTALK,"1..") end)
+		timer.Simple(0.1, function() PrintMessage(HUD_PRINTTALK, "Voting has ended. \"" .. setting .. "\" on " .. map .. " has won the map vote. Changing maps in 5..") end)
+		timer.Simple(5.1, function() ScavData.StartScavDM(map, setting) end)
+		timer.Simple(1.1, function() PrintMessage(HUD_PRINTTALK, "4..") end)
+		timer.Simple(2.1, function() PrintMessage(HUD_PRINTTALK, "3..") end)
+		timer.Simple(3.1, function() PrintMessage(HUD_PRINTTALK, "2..") end)
+		timer.Simple(4, function() PrintMessage(HUD_PRINTTALK, "1..") end)
 		
 	end			
 			
-	hook.Add("Think","sdm_votetimer",function()
+	hook.Add("Think", "sdm_votetimer", function()
 		local deadline = GetGlobalFloat("sdm_votedeadline")
 		if deadline ~= 0 and deadline <= CurTime() then
 			beginmapchange()
@@ -150,21 +150,21 @@ if SERVER then
 	util.AddNetworkString("UpdateSDMVotes")
 	util.AddNetworkString("sdm_dispvote")
 	
-	concommand.Add("sdm_vote_submit",function(pl,cmd,args)
+	concommand.Add("sdm_vote_submit", function(pl, cmd, args)
 	
 		if not GetConVar("sdm_allowvote"):GetBool() and GAMEMODE.Name ~= "Scavenger Deathmatch" then
-			pl:PrintMessage(HUD_PRINTTALK,"Cannot vote on this server. sdm_allowvote must be set to 1")
+			pl:PrintMessage(HUD_PRINTTALK, "Cannot vote on this server. sdm_allowvote must be set to 1")
 			pl:ConCommand("sdm_vote_close")
 			return
 		end
 		
 		local filename = args[1]
 		
-		if string.find(filename,"..",nil,true) or not string.find(filename,"/") then
+		if string.find(filename, "..", nil, true) or not string.find(filename, "/") then
 			return false
 		end
 
-		if file.Exists("scavdata/maps/"..tostring(filename)) then
+		if file.Exists("data/scavdata/maps/" .. tostring(filename), "GAME") then
 		
 			net.Start("UpdateSDMVotes")
 				local rf = RecipientFilter()
@@ -174,9 +174,9 @@ if SERVER then
 			if pl.SDMMapVote ~= filename then
 			
 				pl.SDMMapVote = filename
-				pl:SetNWString("sdm_vote",filename)
+				pl:SetNWString("sdm_vote", filename)
 				
-				local mapandsetting = string.Explode("/",filename)
+				local mapandsetting = string.Explode("/", filename)
 				local map = mapandsetting[1]
 				local setting = mapandsetting[2]
 				
@@ -193,7 +193,7 @@ if SERVER then
 			local uncastvotecount = 0
 			local players = player.GetHumans()
 			
-			for _,v in pairs(players) do
+			for _, v in pairs(players) do
 				local vote = ScavData.GetPlayerMapVote(v)
 				if vote == "none" then
 					uncastvotecount = uncastvotecount + 1
@@ -203,19 +203,19 @@ if SERVER then
 			if uncastvotecount == 0 then
 				beginmapchange()
 			elseif uncastvotecount < math.floor(#players * 0.25) and GetGlobalFloat("sdm_votedeadline") == 0 then
-				PrintMessage(HUD_PRINTTALK,"A majority vote of at least 75% wishes to change the map at this time.")
-				for _,v in pairs(players) do
+				PrintMessage(HUD_PRINTTALK, "A majority vote of at least 75% wishes to change the map at this time.")
+				for _, v in pairs(players) do
 					v:ConCommand("sdm_vote")
 				end
 				ScavData.SetVotingDeadline(30)
 			end
 			
 		else
-			MsgAll("Error! Could not load mapsettings file S \"scavdata/maps/"..filename.."\"")
+			MsgAll("Error! Could not load mapsettings file S \"scavdata/maps/" .. filename .. "\"")
 		end
 	end)
 	
-	hook.Add("PlayerDisconnect","updatesdmvotes",function()
+	hook.Add("PlayerDisconnect", "updatesdmvotes", function()
 		net.Start("UpdateSDMVotes")
 			local rf = RecipientFilter()
 			rf:AddAllPlayers()
@@ -226,7 +226,7 @@ else
 
 	ScavData.SettingsFilePaths = {}
 	
-	net.Receive("scv_settingsfiles",function()
+	net.Receive("scv_settingsfiles", function()
 	
 		local tbl = net.ReadTable()
 		
@@ -240,18 +240,18 @@ else
 		
 	end)
 	
-	color_green = Color(0,255,0,255)
-	color_blue = Color(0,0,255,255)
+	color_green = Color(0, 255, 0, 255)
+	color_blue = Color(0, 0, 255, 255)
 	
-	net.Receive("sdm_dispvote",function()
+	net.Receive("sdm_dispvote", function()
 		local pl = net.ReadEntity()
-		local col = pl:GetPlayerColor() or pl:GetWeaponColor() or Color(255,255,255,255)
+		local col = pl:GetPlayerColor() or pl:GetWeaponColor() or color_white
 		local map = net.ReadString()
 		local setting = net.ReadString()
-		chat.AddText(col,pl:Nick(),color_white," has voted for the map ",color_green,map,color_white," with settings file ",color_green,setting,color_white,".")
+		chat.AddText(col, pl:Nick(), color_white, " has voted for the map ", color_green, map, color_white, " with settings file ", color_green, setting, color_white, ".")
 	end)
 	
-	net.Receive("scv_loader",function()
+	net.Receive("scv_loader", function()
 	
 		local filename = net.ReadString()
 		local obj = loader.New()
@@ -286,7 +286,7 @@ end
 		
 function loader:Read(filename)
 	self.filename = filename
-	local filecontents = file.Read("scavdata/maps/"..tostring(filename),"DATA")
+	local filecontents = file.Read("data/scavdata/maps/" .. tostring(filename), "GAME")
 	self.data = util.JSONToTable(filecontents)
 end
 
@@ -320,35 +320,20 @@ end
 
 function loader:GetMaxTeams()
 	if SERVER then
-	
-		local teams = 0
-		local teamplay = false
 		local foundteams = {}
 		
-		for _,v in ipairs(self.data.entities) do
-		
-			if (v.classname == "info_sdm_spawn") then
+		for _, v in ipairs(self.data.entities) do
+			if v.KeyValues.classname ~= "info_sdm_spawn" then continue end
 			
-				local teamid = ScavData.ColorNameToTeam(v.KeyValues.team)
-				
-				if teamid ~= TEAM_UNASSIGNED and teamid ~= TEAM_SPECTATOR and not foundteams[teamid] then
-					if not teamplay then
-						teams = 0
-						teamplay = true
-					end
-					foundteams[teamid] = true
-					teams = teams + 1
-				end
-				
-				if (teamid == TEAM_UNASSIGNED) and not teamplay then
-					teams = 0
-				end
-				
-			end
+			local teamid = team.ToTeamID(v.KeyValues.team)
 			
+			if not team.IsReal(teamid) then continue end
+			if table.HasValue(foundteams, teamid) then continue end
+				
+			table.insert(foundteams, teamid)
 		end
 		
-		self.data.gamevars.maxteams = teams
+		self.data.gamevars.maxteams = #foundteams
 		
 	end
 	
@@ -373,22 +358,22 @@ function loader:GetPlSpeed()
 end
 
 function loader:GetMod(name)
-	return self.data.gamevars["mod_"..name]
+	return self.data.gamevars["sdm_main_mod_" .. name]
 end
 
 function loader:GetModString()
 
 	if SERVER and not self.modstring then
-	
+		
 		local mods = {}
 		
-		for k,v in pairs(self.data.gamevars) do
-			if v and (string.Left(k,4) == "mod_") then
-				table.insert(mods,string.Right(k,#k-4))
+		for k, v in pairs(self.data.gamevars) do
+			if v and (string.Left(k, 13) == "sdm_main_mod_") then
+				table.insert(mods, string.Right(k, #k - 13))
 			end
 		end
 		
-		self.modstring = string.Implode(", ",mods)
+		self.modstring = string.Implode(", ", mods)
 		
 	end
 	
@@ -403,7 +388,7 @@ function loader:SetFileName(filename) --just to clarify, this should be in the f
 end
 
 function loader:Write(filename)
-	file.Write("scavdata/maps/"..filename,util.TableToJSON(self.data))
+	file.Write("data/scavdata/maps/" .. filename, util.TableToJSON(self.data))
 end
 
 function loader:SetName(name)
@@ -446,15 +431,15 @@ function loader:SetPlSpeed(speed)
 	self.data.gamevars.plspeed = speed
 end
 
-function loader:SetMod(name,on) --"mods" are boolean-only simple modifiers for the gamemode.
-	self.data.gamevars["mod_"..name] = on
+function loader:SetMod(name, on) --"mods" are boolean-only simple modifiers for the gamemode.
+	self.data.gamevars["sdm_main_mod_" .. name] = on
 end
 
 if SERVER then
 	util.AddNetworkString("sdm_voteset")
 end
 
-function ScavData.SetPlayerMapVote(pl,mapsetting,transmitto)
+function ScavData.SetPlayerMapVote(pl, mapsetting, transmitto)
 	 pl.SDMMapVote = mapsetting
 	 if SERVER then
 		util.AddNetworkString("scv_voteset")
@@ -473,7 +458,7 @@ function ScavData.GetWinningMapVote()
 
 	local votes = {}
 	
-	for _,v in pairs(player.GetHumans()) do
+	for _, v in pairs(player.GetHumans()) do
 		local name = ScavData.GetPlayerMapVote(v)
 		if name ~= "none" then
 			votes[name] = (votes[name] or 0) + 1
@@ -483,7 +468,7 @@ function ScavData.GetWinningMapVote()
 	local highvotename
 	local highvotecount = 0
 	
-	for votename,votecount in pairs(votes) do
+	for votename, votecount in pairs(votes) do
 	
 		if not highvotename then
 			highvotename = votename
@@ -504,17 +489,17 @@ function ScavData.GetWinningMapVote()
 	
 end
 
-hook.Add("PlayerInitialSpawn","NetworkSDMMapVotes",function(pl)
-	for _,v in pairs(player.GetHumans()) do
-		ScavData.SetPlayerMapVote(pl,ScavData.GetPlayerMapVote(v),pl)
+hook.Add("PlayerInitialSpawn", "NetworkSDMMapVotes", function(pl)
+	for _, v in pairs(player.GetHumans()) do
+		ScavData.SetPlayerMapVote(pl, ScavData.GetPlayerMapVote(v), pl)
 	end
 end)
 
 if CLIENT then
-	net.Receive("sdm_voteset",function()
+	net.Receive("sdm_voteset", function()
 		local pl = net.ReadEntity()
 		if IsValid(pl) then
-			ScavData.SetPlayerMapVote(pl,net.ReadString())
+			ScavData.SetPlayerMapVote(pl, net.ReadString())
 		end
 	end)
 end
