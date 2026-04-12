@@ -11,7 +11,8 @@ end
 	
 function ScavData.StartScavDM(map, settingsfile)
 	RunConsoleCommand("sdm_settingsfile", settingsfile)
-	RunConsoleCommand("changegamemode", map, "scavenger_deathmatch")
+	RunConsoleCommand("gamemode", "scavenger")
+	RunConsoleCommand("changelevel", map)
 end
 	
 function ScavData.GetValidMaps()
