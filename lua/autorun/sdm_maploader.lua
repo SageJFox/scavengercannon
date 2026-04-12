@@ -152,7 +152,7 @@ if SERVER then
 	
 	concommand.Add("sdm_vote_submit", function(pl, cmd, args)
 	
-		if not GetConVar("sdm_allowvote"):GetBool() and GAMEMODE.Name ~= "Scavenger Deathmatch" then
+		if not GetConVar("sdm_allowvote"):GetBool() and GetConVar("gamemode"):GetString() ~= "scavenger" then
 			pl:PrintMessage(HUD_PRINTTALK, "Cannot vote on this server. sdm_allowvote must be set to 1")
 			pl:ConCommand("sdm_vote_close")
 			return
@@ -325,11 +325,11 @@ function loader:GetMaxTeams()
 		for _, v in ipairs(self.data.entities) do
 			if v.KeyValues.classname ~= "info_sdm_spawn" then continue end
 			
-			local teamid = team.ToTeamID(v.KeyValues.team)
+			local teamid = ScavData.ColorNameToTeam(v.KeyValues.team)
 			
-			if not team.IsReal(teamid) then continue end
+			if teamid == TEAM_UNASSIGNED then continue end
 			if table.HasValue(foundteams, teamid) then continue end
-				
+			
 			table.insert(foundteams, teamid)
 		end
 		

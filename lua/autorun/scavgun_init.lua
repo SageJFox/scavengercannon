@@ -481,13 +481,15 @@ function ScavData.ColorNameToTeam(colorname)
 		error("Bad argument #1 to 'ColorNameToTeam'", 2)
 	end
 	
+	if tonumber(colorname) then return tonumber(colorname) end
+	
 	colorname = string.lower(colorname)
 	
 	local teamid = teams[colorname]
 	
 	if not teamid then
 		teamid = TEAM_UNASSIGNED
-		print("Warning! Bad team name " .. tostring(colorname) .. ". Using \"unassigned\" instead")
+		ErrorNoHaltWithStack("Warning! Bad team name '" .. tostring(colorname) .. "'. Using 'unassigned' instead")
 	end
 	
 	return teamid
