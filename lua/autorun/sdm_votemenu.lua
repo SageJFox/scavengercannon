@@ -9,11 +9,11 @@ local PANEL = {}
 		self:MakePopup()
 		self.VotedSettingsLabel = vgui.Create("DLabel", self)
 			self.VotedSettingsLabel:SetFont("Scav_MenuLarge")
-			self.VotedSettingsLabel:SetText("Settings with votes:")
+			self.VotedSettingsLabel:SetText("#scav.vote.settings.voted")
 			self.VotedSettingsLabel:SizeToContents()
 		self.FilesLabel = vgui.Create("DLabel", self)
 			self.FilesLabel:SetFont("Scav_MenuLarge")
-			self.FilesLabel:SetText("All available settings files:")
+			self.FilesLabel:SetText("#scav.vote.settings.all")
 			self.FilesLabel:SizeToContents()
 		self:Refresh()
 	end
@@ -80,9 +80,9 @@ local PANEL = {}
 			self.MapInfo:SetVisible(false)
 		self.VotedSettings = vgui.Create("DListView", self)
 			self.VotedSettings.OnRowSelected = votedrowselect
-			self.VotedSettings:AddColumn("Map")
-			self.VotedSettings:AddColumn("Setting Name")
-			self.VotedSettings:AddColumn("Votes")
+			self.VotedSettings:AddColumn("#scav.vote.map")
+			self.VotedSettings:AddColumn("#scav.vote.settings")
+			self.VotedSettings:AddColumn("#scav.vote.votes")
 			self.VotedSettings.Rebuild = RebuildVotedSettings
 			self.VotedSettings:Rebuild()
 		self.Files = vgui.Create("SDM_VoteMenuMapContainer", self)
@@ -97,7 +97,7 @@ local PANEL = {}
 		self.Files:SetPos(48, self:GetTall() / 2 + 32)
 		self.Files:SetSize(self:GetWide() / 3 - 64, self:GetTall() - 32 - self.Files.y)
 		self.MapInfo:SetSize(self:GetWide() - 64 - (self.Files.x + self.Files:GetWide()), self:GetTall() - 64 - 32)
-		self.MapInfo:SetPos((self.Files.x+self.Files:GetWide()) + 32, 64)
+		self.MapInfo:SetPos((self.Files.x + self.Files:GetWide()) + 32, 64)
 	end
 	
 	function PANEL:AutoSetup()
@@ -107,12 +107,12 @@ local PANEL = {}
 	end
 	
 	function PANEL:Think()
-		if self.LastRefreshTime+2 < CurTime() then
+		if self.LastRefreshTime + 2 < CurTime() then
 			self.VotedSettings:Rebuild()
 			self.LastRefreshTime = CurTime()
 		end
 		if GetGlobalFloat("sdm_votedeadline") ~= 0 then
-			self:SetTitle("Map Vote - " .. tostring(math.max(math.floor(CurTime() - GetGlobalFloat("sdm_votedeadline")), 0)) .. " seconds remaining to vote for the next map!")
+			self:SetTitle(ScavLocalize("scav.vote.deadline", tostring(math.max(math.floor(CurTime() - GetGlobalFloat("sdm_votedeadline")), 0))))
 		end
 	end
 
@@ -122,13 +122,10 @@ local PANEL = {}
 local PANEL = {}
 
 	function PANEL:Init()
-		self:AddColumn("Map")
-		self:AddColumn("Setting Name")
+		self:AddColumn("#scav.vote.map")
+		self:AddColumn("#scav.vote.settings")
 		local maps = ScavData.GetValidMaps()
 		for _, v in pairs(maps) do
-			--for i, j in pairs(file.Find("scavdata/maps/" .. v .. "/*", "DATA")) do
-			--	self:AddLine(v, j)
-			--end
 			local split = string.Split(v, "/")
 			self:AddLine(split[1], split[2])
 		end
@@ -213,7 +210,7 @@ local PANEL = {}
 		--	self.MapLabelBar:SetPos(0, self.MapLabel.y + self.MapLabel:GetTall())
 		self.VoteButton = vgui.Create("DButton", self)
 		self.VoteButton:SetFont("Scav_HUDNumber5")
-		self.VoteButton:SetText("VOTE!")
+		self.VoteButton:SetText("#scav.vote.button")
 		self.VoteButton.DoClick = votebuttonpress
 			--buttons/button5.wav
 		--self.initialized = true
@@ -261,12 +258,14 @@ local PANEL = {}
 	end
 
 	local modetranslate = {
-		["deathmatch"]		= "Deathmatch", 
-		["team_deathmatch"]	= "Team Deathmatch", 
-		["hoard"] 			= "Hoard", 
-		["cell_control"] 	= "Cell Control", 
-		["ctf"] 			= "Capture the Flag", 
-		["survival"] 		= "Survival"
+		["deathmatch"]		= "scav.mode.dm",
+		["team_deathmatch"]	= "scav.mode.tdm",
+		["ctf"] 			= "scav.mode.ctf",
+		["cell_control"] 	= "scav.mode.cell",
+		["hoard"] 			= "scav.mode.hoard",
+		["survival"] 		= "scav.mode.survive",
+		["capture"]			= "scav.mode.cap",
+		["custom"]			= "scav.mode.custom"
 	}
 	
 	function PANEL:SetMap(mapname, settingsfile)
@@ -275,7 +274,7 @@ local PANEL = {}
 		self.MapIcon:SetMaterial(mapicon)
 		
 		self.MapBG:SetMaterial(mapicon)
-		self.MapLabel:SetText(mapname .. ": " .. string.gsub(settingsfile, ".txt", ""))
+		self.MapLabel:SetText(ScavLocalize("scav.config.title", mapname, string.gsub(settingsfile, ".txt", "")))
 		self.MapLabel:SizeToContents()
 		self.FileName = mapname .. "/" .. settingsfile
 		--print(self.FileName)
@@ -283,68 +282,43 @@ local PANEL = {}
 		if mapinfo then
 			self.infovalid = true
 			--Setting Name
-			if (not mapinfo:GetName() or mapinfo:GetName() == "") then
-				self.SettingNameLabel:SetDesc("?")
-			else
-				self.SettingNameLabel:SetDesc(mapinfo:GetName())
-			end
-			
+			local sname = mapinfo:GetName()
+			self.SettingNameLabel:SetDesc((sname and sname ~= "") and sname or "#scav.config.unknown")
 			--Author Name
-			if (not mapinfo:GetAuthor() or mapinfo:GetAuthor() == "") then
-				self.AuthorNameLabel:SetDesc("Author: Anonymous")
-			else
-				self.AuthorNameLabel:SetDesc("Author: " .. mapinfo:GetAuthor())
-			end
-			
+			local author = mapinfo:GetAuthor()
+			self.AuthorNameLabel:SetDesc(ScavLocalize("scav.config.author", (author and author ~= "") and author or "scav.config.author.anon"))
 			--mode
-			self.ModeLabel:SetDesc("Mode: " .. modetranslate[mapinfo:GetMode()])
-			
+			self.ModeLabel:SetDesc(ScavLocalize("scav.config.mode", modetranslate[mapinfo:GetMode()]))
 			--teams
 			if mapinfo:GetMaxTeams() == 0 then
 				self.TeamsLabel:SetDesc("")
 				self.FriendlyFireLabel:SetDesc("")
 			else
-				self.TeamsLabel:SetDesc("Teams: " .. tostring(mapinfo:GetMaxTeams()))
-				if mapinfo:GetFriendlyFire() then
-					self.FriendlyFireLabel:SetDesc("Friendly Fire: On")
-				else
-					self.FriendlyFireLabel:SetDesc("Friendly Fire: Off")
-				end
+				self.TeamsLabel:SetDesc(ScavLocalize("scav.config.teams", mapinfo:GetMaxTeams()))
+				self.FriendlyFireLabel:SetDesc(ScavLocalize("scav.config.friendlyfire", "scav.config." .. tostring(mapinfo:GetFriendlyFire())))
 			end
-			
-			
-			
 			--point limit
-			if mapinfo:GetPointLimit() == 0 then
-				self.PointLimitLabel:SetDesc("Point Limit: None")
-			else
-				self.PointLimitLabel:SetDesc("Point Limit: " .. mapinfo:GetPointLimit())
-			end
-			
+			local plimit = mapinfo:GetPointLimit()
+			self.PointLimitLabel:SetDesc(ScavLocalize("scav.config.limit.points", plimit == 0 and "scav.config.0" or plimit))
 			--time limit
-			if mapinfo:GetTimeLimit() == 0 then
-				self.TimeLimitLabel:SetDesc("Time Limit: None")
-			else
-				local fillzero = ""
-				if mapinfo:GetTimeLimit()*60-math.floor(mapinfo:GetTimeLimit())*60 < 10 then
-					fillzero = "0"
-				end
-				self.TimeLimitLabel:SetDesc("Time Limit: " .. math.floor(mapinfo:GetTimeLimit()/60) .. ":" .. fillzero .. math.floor(mapinfo:GetTimeLimit()-math.floor(mapinfo:GetTimeLimit()/60)*60))
-			end
+			local tlimit = mapinfo:GetTimeLimit()
+			self.TimeLimitLabel:SetDesc(ScavLocalize("scav.config.limit.time", tlimit == 0 and "scav.config.0" or string.FormattedTime(tlimit, ScavLocalize("scav.score.time"))))
 			
 			--Damage Scale
-				if mapinfo:GetDamageScale() == 1 then
-					self.DamageScaleLabel:SetDesc("")
-				else
-					self.DamageScaleLabel:SetDesc("Damage Scale: " .. mapinfo:GetDamageScale())
-				end
-				
+			local dscale = mapinfo:GetDamageScale()
+			self.DamageScaleLabel:SetDesc(dscale == 1 and "" or ScavLocalize("scav.config.scale.damage", dscale))
 			--Mods
-				if mapinfo:GetModString() == "" then
-					self.ModifierLabel:SetDesc("")
-				else
-					self.ModifierLabel:SetDesc("Modifiers: " .. mapinfo:GetModString())
+			local modlist = mapinfo:GetModString()
+			if modlist == "" then
+				self.ModifierLabel:SetDesc("")
+			else
+				local tab = string.Explode(", ", modlist)
+				for k, v in ipairs(tab) do
+					tab[k] = ScavLocalize("scav.config.mod." .. v)
 				end
+				modlist = table.concat(tab, ScavLocalize("scav.config.mods.sep"))
+				self.ModifierLabel:SetDesc(ScavLocalize("scav.config.mods", modlist))
+			end
 		else
 			self.infovalid = false
 			self.waitingmapname = mapname

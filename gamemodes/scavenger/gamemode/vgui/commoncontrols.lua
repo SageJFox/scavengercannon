@@ -464,7 +464,7 @@ local PANEL = {}
 	
 	function PANEL:Think()
 		local timeleft = self.EndTime - CurTime()
-		self.TextLabel:SetText(string.FormattedTime(math.max(timeleft, 0), "%02i:%02i"))
+		self.TextLabel:SetText(string.FormattedTime(math.max(timeleft, 0), ScavLocalize("scav.score.time")))
 	end
 	
 	function PANEL:SetEndTime(when)
