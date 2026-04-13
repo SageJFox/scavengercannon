@@ -244,7 +244,7 @@ local PANEL = {}
 					v:SetSize(self:GetWide() - 64, v.ForcedY)
 				end
 				v:SetVisible(true)
-				accumulatedy = accumulatedy+math.Max(24, v:GetTall())
+				accumulatedy = accumulatedy + math.Max(24, v:GetTall())
 			else
 				v:SetVisible(false)
 			end
@@ -274,7 +274,7 @@ local PANEL = {}
 		self.MapIcon:SetMaterial(mapicon)
 		
 		self.MapBG:SetMaterial(mapicon)
-		self.MapLabel:SetText(ScavLocalize("scav.config.title", mapname, string.gsub(settingsfile, ".txt", "")))
+		self.MapLabel:SetText(ScavLocalize("scav.config.title", false, mapname, false, string.gsub(settingsfile, ".txt", "")))
 		self.MapLabel:SizeToContents()
 		self.FileName = mapname .. "/" .. settingsfile
 		--print(self.FileName)
@@ -286,7 +286,8 @@ local PANEL = {}
 			self.SettingNameLabel:SetDesc((sname and sname ~= "") and sname or "#scav.config.unknown")
 			--Author Name
 			local author = mapinfo:GetAuthor()
-			self.AuthorNameLabel:SetDesc(ScavLocalize("scav.config.author", (author and author ~= "") and author or "scav.config.author.anon"))
+			local anon = (not author or author == "")
+			self.AuthorNameLabel:SetDesc(ScavLocalize("scav.config.author", anon, anon and "scav.config.author.anon" or author))
 			--mode
 			self.ModeLabel:SetDesc(ScavLocalize("scav.config.mode", modetranslate[mapinfo:GetMode()]))
 			--teams
@@ -306,7 +307,7 @@ local PANEL = {}
 			
 			--Damage Scale
 			local dscale = mapinfo:GetDamageScale()
-			self.DamageScaleLabel:SetDesc(dscale == 1 and "" or ScavLocalize("scav.config.scale.damage", dscale))
+			self.DamageScaleLabel:SetDesc(dscale == 1 and "" or ScavLocalize("scav.config.scale.damage", false, dscale))
 			--Mods
 			local modlist = mapinfo:GetModString()
 			if modlist == "" then
@@ -317,7 +318,7 @@ local PANEL = {}
 					tab[k] = ScavLocalize("scav.config.mod." .. v)
 				end
 				modlist = table.concat(tab, ScavLocalize("scav.config.mods.sep"))
-				self.ModifierLabel:SetDesc(ScavLocalize("scav.config.mods", modlist))
+				self.ModifierLabel:SetDesc(ScavLocalize("scav.config.mods", false, modlist))
 			end
 		else
 			self.infovalid = false
