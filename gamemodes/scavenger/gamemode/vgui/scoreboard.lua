@@ -99,15 +99,15 @@ local PANEL = {}
 			self.ScoreLabel:SetFont("HUDHintTextLarge")
 			self.ScoreLabel:SizeToContents()
 		self.PointLabel = vgui.Create("DLabel", self)
-			self.PointLabel:SetText("Points")
+			self.PointLabel:SetText("#scav.score.points")
 			self.PointLabel:SetFont("DebugFixed")
 			self.PointLabel:SizeToContents()
 		self.DeathLabel = vgui.Create("DLabel", self)
-			self.DeathLabel:SetText("Deaths")
+			self.DeathLabel:SetText("#scav.score.deaths")
 			self.DeathLabel:SetFont("DebugFixed")
 			self.DeathLabel:SizeToContents()
 		self.PingLabel = vgui.Create("DLabel", self)
-			self.PingLabel:SetText("Ping")
+			self.PingLabel:SetText("#scav.score.ping")
 			self.PingLabel:SetFont("DebugFixed")
 			self.PingLabel:SizeToContents()
 		--self.List = vgui.Create("DForm", self)
@@ -334,7 +334,7 @@ local PANEL = {}
 
 		local timeleft = tostring(math.max(math.floor(GAMEMODE:GetGNWFloat("MapEndTime") or 0), 0))
 		--really messy but whatever
-		self.ServerInfo.ServerName:SetText(ScavLocalize("scav.score.header.time", ScavLocalize("scav.score.header", GAMEMODE:GetGNWVar("ServerName") or "My Marry's God Server", #player.GetAll(), game.MaxPlayers()), string.FormattedTime(timeleft, ScavLocalize("scav.score.time"))))
+		self.ServerInfo.ServerName:SetText(ScavLocalize("scav.score.header.time", ScavLocalize("scav.score.header", GAMEMODE:GetGNWVar("ServerName") or "My Marry's God Server", #player.GetAll(), game.MaxPlayers()), string.FormattedTime(timeleft, ScavLocalize("scav.score.time.format"))))
 		self:Refresh()
 		self.LastRefresh = CurTime()
 	end

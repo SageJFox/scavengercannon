@@ -303,7 +303,7 @@ local PANEL = {}
 			self.PointLimitLabel:SetDesc(ScavLocalize("scav.config.limit.points", plimit == 0 and "scav.config.0" or plimit))
 			--time limit
 			local tlimit = mapinfo:GetTimeLimit()
-			self.TimeLimitLabel:SetDesc(ScavLocalize("scav.config.limit.time", tlimit == 0 and "scav.config.0" or string.FormattedTime(tlimit, ScavLocalize("scav.score.time"))))
+			self.TimeLimitLabel:SetDesc(ScavLocalize("scav.config.limit.time", tlimit == 0 and "scav.config.0" or string.FormattedTime(tlimit, ScavLocalize("scav.score.time.format"))))
 			
 			--Damage Scale
 			local dscale = mapinfo:GetDamageScale()
