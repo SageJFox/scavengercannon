@@ -164,8 +164,8 @@ function GM:EndRound(endcondition)
 	if not self:IsRoundInProgress() then end
 	gamemode.Call("OnRoundEnd", endcondition, enddata)
 
-	if endroundlogic[GM:GetMode()] and endroundlogic[GM:GetMode()][endcondition] then
-		endroundlogic[GM:GetMode()][endcondition]()
+	if endroundlogic[self:GetMode()] and endroundlogic[self:GetMode()][endcondition] then
+		endroundlogic[self:GetMode()][endcondition]()
 	end
 end
 
