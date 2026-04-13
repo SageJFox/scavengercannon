@@ -47,6 +47,8 @@ ScavLocalizeColor = function(...)
 		if isbool(v) then
 			rep = v
 			continue
+		elseif IsColor(v) then
+			table.insert(inserttab, v)
 		else
 			i = i + 1
 		end
