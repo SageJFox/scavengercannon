@@ -348,6 +348,8 @@ SDM_VOTEMENU = NULL
 
 concommand.Add("sdm_vote", function(pl, cmd, args)
 	RunConsoleCommand("sdm_vote_requestfiles")
+	if SDM_VOTEMENU:IsValid() then return end
+	
 	local votemenu = vgui.Create("SDM_VoteMenu")
 	votemenu:SetSkin("sg_menu")
 	votemenu:AutoSetup()
