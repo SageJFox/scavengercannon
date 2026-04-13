@@ -562,7 +562,9 @@ local PANEL = {}
 	end
 
 	function PANEL:Think()
-		self:SetText(ScavLocalize("scav.points.format", IsValid(self.Player) and tostring(math.floor(self.Player:Frags())) or "0", GAMEMODE:GetGNWShort("PointLimit")))
+		local maxpoints = GAMEMODE:GetGNWShort("PointLimit")
+		local points =  IsValid(self.Player) and tostring(math.floor(self.Player:Frags())) or "0"
+		self:SetText(maxpoints ~= 0 and ScavLocalize("scav.points.format", points, maxpoints) or points)
 	end
 	
 	vgui.Register("sdm_fragpanel", PANEL, "sdm_healthpanel")
