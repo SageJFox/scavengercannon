@@ -7,6 +7,7 @@ AddCSLuaFile()
 if SERVER then
 	CreateConVar("sdm_settingsfile", "default.txt", FCVAR_ARCHIVE)
 	CreateConVar("sdm_allowvote", 0, FCVAR_ARCHIVE)
+	CreateConVar("sdm_vote_percentage", 0.75, FCVAR_ARCHIVE, "Minimum percentage of voters to force an early server vote and subsequent map change.", 0, 1)
 end
 	
 function ScavData.StartScavDM(map, settingsfile)
@@ -54,9 +55,28 @@ end
 		
 ScavData.GetSettingsIO = loader.Get --the filename argument is optional, it will automatically load the given file if supplied
 
+--saving net message strings, reusing one with different message codes (client will read the proper info after seeing this code)
+local SCAV_VOTE_ENDING = 0
+local SCAV_VOTE_ENDED = 1
+local SCAV_VOTE_NO = 2
+local SCAV_VOTE_CALLED = 3
+
+local SCAV_VOTE_BITS = 2
+
+--sending singular (here entirely U)Ints with as few bits as possible
+local function bitcount(num)
+	if isstring(num) then return (#num + 1) * 8 end
+	local bits = 1
+	while math.pow(2, bits) < math.abs(num) do
+		bits = bits + 1
+	end
+	return bits
+end
+
 if SERVER then
 		
 	util.AddNetworkString("scv_loader")
+	util.AddNetworkString("sdm_maploader_message")
 	
 	function loader:SendToClient(pl)
 		net.Start("scv_loader")
@@ -116,8 +136,12 @@ if SERVER then
 	
 	function ScavData.SetVotingDeadline(time)
 		if mapchangestarted then return end
+		if time < 0 then return end
 		SetGlobalFloat("sdm_votedeadline", CurTime() + time)
-		PrintMessage(HUD_PRINTTALK, "SDM Map voting will end in " .. tostring(time) .. " seconds!")
+		net.Start("sdm_maploader_message")
+			net.WriteUInt(SCAV_VOTE_ENDING, SCAV_VOTE_BITS)
+			net.WriteUInt(time, bitcount(time))
+		net.Broadcast()
 	end
 			
 	local function beginmapchange()
@@ -132,13 +156,15 @@ if SERVER then
 		
 		ScavData.CloseClientVoteMenus()
 		
-		timer.Simple(0.1, function() PrintMessage(HUD_PRINTTALK, "Voting has ended. \"" .. setting .. "\" on " .. map .. " has won the map vote. Changing maps in 5..") end)
+		net.Start("sdm_maploader_message")
+			net.WriteUInt(SCAV_VOTE_ENDED, SCAV_VOTE_BITS)
+			net.WriteString(map)
+			net.WriteString(setting)
+			--when we want our last chat message to show
+			local synctime = 4.1 + CurTime()
+			net.WriteFloat(synctime)
+		net.Broadcast()
 		timer.Simple(5.1, function() ScavData.StartScavDM(map, setting) end)
-		timer.Simple(1.1, function() PrintMessage(HUD_PRINTTALK, "4..") end)
-		timer.Simple(2.1, function() PrintMessage(HUD_PRINTTALK, "3..") end)
-		timer.Simple(3.1, function() PrintMessage(HUD_PRINTTALK, "2..") end)
-		timer.Simple(4, function() PrintMessage(HUD_PRINTTALK, "1..") end)
-		
 	end			
 			
 	hook.Add("Think", "sdm_votetimer", function()
@@ -154,7 +180,9 @@ if SERVER then
 	concommand.Add("sdm_vote_submit", function(pl, cmd, args)
 	
 		if not GetConVar("sdm_allowvote"):GetBool() and GetConVar("gamemode"):GetString() ~= "scavenger" then
-			pl:PrintMessage(HUD_PRINTTALK, "Cannot vote on this server. sdm_allowvote must be set to 1")
+			net.Start("sdm_maploader_message")
+				net.WriteUInt(SCAV_VOTE_NO, SCAV_VOTE_BITS)
+			net.Broadcast()
 			pl:ConCommand("sdm_vote_close")
 			return
 		end
@@ -191,21 +219,24 @@ if SERVER then
 				
 			end
 			
-			local uncastvotecount = 0
 			local players = player.GetHumans()
-			
+			local uncast = {}
+
 			for _, v in pairs(players) do
-				local vote = ScavData.GetPlayerMapVote(v)
-				if vote == "none" then
-					uncastvotecount = uncastvotecount + 1
-				end
+				if ScavData.GetPlayerMapVote(v) ~= "none" then continue end
+
+				table.insert(uncast, v)
 			end
-			
-			if uncastvotecount == 0 then
+
+			if #uncast == 0 then
 				beginmapchange()
-			elseif uncastvotecount < math.floor(#players * 0.25) and GetGlobalFloat("sdm_votedeadline") == 0 then
-				PrintMessage(HUD_PRINTTALK, "A majority vote of at least 75% wishes to change the map at this time.")
-				for _, v in pairs(players) do
+			elseif #uncast <= math.floor((#players + player.GetCountConnecting()) * (1 - GetConVar("sdm_vote_percentage"):GetFloat())) and GetGlobalFloat("sdm_votedeadline") == 0 then
+				net.Start("sdm_maploader_message")
+					net.WriteUInt(SCAV_VOTE_CALLED, SCAV_VOTE_BITS)
+					local displaypercent = math.Round(GetConVar("sdm_vote_percentage"):GetFloat() * 100)
+					net.WriteUInt(displaypercent, bitcount(displaypercent))
+				net.Broadcast()
+				for _, v in pairs(uncast) do
 					v:ConCommand("sdm_vote")
 				end
 				ScavData.SetVotingDeadline(30)
@@ -224,6 +255,44 @@ if SERVER then
 	end)
 
 else
+	--client message decoding
+	local messages = {
+		[SCAV_VOTE_ENDING] = function(len)
+			chat.AddText(ScavLocalizeColor("scav.vote.ending", net.ReadUInt(len)))
+		end,
+		[SCAV_VOTE_ENDED] = function(len)
+			local map = net.ReadString()
+			local setting = net.ReadString()
+			--in a perfect world this'll always be above 5, but we don't live in a perfect world
+			--so do our countdown with whatever we got left after latency ate its chunk
+			local synctime = net.ReadFloat() - CurTime()
+			--message took too long, we're basically just logging now
+			if synctime <= 1 then return chat.AddText(ScavLocalizeColor("scav.vote.ended.notime", false, setting, false, map)) end
+
+			--building the countdown in reverse, starting with the timer for 1 and going up
+			local countdown = 1
+ 			while synctime >= 1 do
+				local cdown = countdown
+				timer.Simple(synctime, function() chat.AddText(ScavLocalizeColor("scav.vote.ended.count", cdown)) end)
+				countdown = countdown + 1
+				synctime = synctime - 1
+			end
+			--the start, and soonest message
+			timer.Simple(synctime, function() chat.AddText(ScavLocalizeColor("scav.vote.ended", false, setting, false, map, false, countdown)) end)
+		end,
+		[SCAV_VOTE_NO] = function(len)
+			chat.AddText(ScavLocalizeColor("scav.vote.notallowed"))
+		end,
+		[SCAV_VOTE_CALLED] = function(len)
+			local percent = net.ReadUInt(len)
+			chat.AddText(ScavLocalizeColor(percent >= 50 and "scav.vote.called" or "scav.vote.called.minority", percent))
+		end,
+	}
+
+	net.Receive("sdm_maploader_message", function(len, pl)
+		messages[net.ReadUInt(SCAV_VOTE_BITS)](len - SCAV_VOTE_BITS)
+	end)
+
 
 	ScavData.SettingsFilePaths = {}
 	
@@ -243,13 +312,13 @@ else
 	
 	color_green = Color(0, 255, 0, 255)
 	color_blue = Color(0, 0, 255, 255)
-	
 	net.Receive("sdm_dispvote", function()
 		local pl = net.ReadEntity()
-		local col = pl:GetPlayerColor() or pl:GetWeaponColor() or color_white
+		local pcol = pl:GetPlayerColor()
+		local col = Color(pcol.r * 255, pcol.g * 255, pcol.b * 255)
 		local map = net.ReadString()
 		local setting = net.ReadString()
-		chat.AddText(col, pl:Nick(), color_white, " has voted for the map ", color_green, map, color_white, " with settings file ", color_green, setting, color_white, ".")
+		chat.AddText(ScavLocalizeColor("scav.vote.voted", pl:Nick(), map, setting, col))
 	end)
 	
 	net.Receive("scv_loader", function()
@@ -266,9 +335,7 @@ else
 		obj:SetFileName(filename)
 		obj:SetName(net.ReadString())
 		
-		local author = net.ReadString()
-		
-		obj:SetAuthor(author)
+		obj:SetAuthor(net.ReadString())
 		obj:SetMode(net.ReadString())
 		obj:SetPointLimit(net.ReadInt(32))
 		obj:SetTimeLimit(net.ReadFloat())
