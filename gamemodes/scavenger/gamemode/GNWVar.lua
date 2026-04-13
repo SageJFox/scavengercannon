@@ -132,9 +132,9 @@ end
 	
 --GET FUNCTIONS
 
-	function GM:GetGNWVar(key,hideerror) --hideerror is only meant for internal use by the GetGNW* functions, since they return a default value!
+	function GM:GetGNWVar(key, hideerror) --hideerror is only meant for internal use by the GetGNW* functions, since they return a default value!
 		local tab = GNWVars[key]
-		if not tab and hideerror then
+		if not tab and not hideerror then
 			print("WARNING! Access error: GNWVar \""..tostring(key).."\" is uninitialized!")
 		elseif tab then
 			return tab.value
