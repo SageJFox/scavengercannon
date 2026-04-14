@@ -90,7 +90,7 @@ end
 local endroundlogic = {
 	[SDM_MODE_DM] = {
 		[ENDCONDITION_TIME] = function()
-			local winners, highscore = {}, -50
+			local winners, highscore = {}, 0
 			local losers = player.GetHumans()
 			--find our winner(s)
 			for _, pl in ipairs(losers) do
@@ -109,24 +109,24 @@ local endroundlogic = {
 				table.insert(winners, pl)
 			end
 			--award a win, or draws
-			local tie = (#winners > 1)
+			local tie = (#winners > 1 or highscore <= 0)
 			for _, winner in ipairs(winners) do
 				winner:AddScavStat(tie and SCAVSTAT_DRAWS or SCAVSTAT_WINS, 1)
 				table.RemoveByValue(losers, winner)
 			end
 			--womp womp
 			for _, loser in ipairs(losers) do
-				loser:AddScavStat(SCAVSTAT_LOSSES, 1)
+				loser:AddScavStat(highscore <= 0 and SCAVSTAT_DRAWS or SCAVSTAT_LOSSES, 1)
 			end
 		end,
 	},
 	[SDM_MODE_DM_TEAM] = {
 		[ENDCONDITION_TIME] = function()
-			local winners, highscore = {}, -50
+			local winners, highscore = {}, 0
 			local losers = player.GetHumans()
 			local tie = false
 			--find our winner(s)
-			for t, v in pairs(team.GetAllTeams()) do
+			for t, _ in pairs(team.GetAllTeams()) do
 				if not team.IsReal(t, true) then continue end
 				
 				local score = team.GetScore(t)
@@ -154,12 +154,13 @@ local endroundlogic = {
 			--womp womp
 			for _, loser in ipairs(losers) do
 				if loser:IsBot() then continue end
-				loser:AddScavStat(SCAVSTAT_LOSSES, 1)
+				loser:AddScavStat(highscore <= 0 and SCAVSTAT_DRAWS or SCAVSTAT_LOSSES, 1)
 				loser:AddScavStat(SCAVSTAT_GAMESPLAYED, 1)
 			end
 		end,
 	}
 }
+endroundlogic[SDM_MODE_CTF][ENDCONDITION_TIME] = endroundlogic[SDM_MODE_DM_TEAM][ENDCONDITION_TIME]
 
 function GM:EndRound(endcondition)
 	if not self:IsRoundInProgress() then end
