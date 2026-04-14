@@ -15,6 +15,7 @@ if SERVER then
 	hook.Add("Think", "RoundManage", function()
 		local self = GAMEMODE
 		if not self:GetGNWVar("PreRound") and self:IsRoundInProgress() and (self:GetGNWVar("RoundEndTime") ~= 0) and (CurTime() > self:GetGNWVar("RoundEndTime")) then
+			self:SetGNWVar("RoundEndTime", 0)
 			self:EndRound(ENDCONDITION_TIME)
 		end
 	end)

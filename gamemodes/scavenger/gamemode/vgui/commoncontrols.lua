@@ -420,51 +420,19 @@ local PANEL = {}
 local PANEL = {}
 	PANEL.EndTime = 0
 	PANEL.Title = "#scav.score.time"
-	PANEL.Wide = 112
+	PANEL.Text = "#scav.scavcan.inf"
+	PANEL.Wide = 128
 	PANEL.Tall = 48
 
 	function PANEL:Init()
-		self.initialized = true
 		self:SetSize(self.Wide, self.Tall)
-		self.TitleLabel = vgui.Create("DLabel", self)
-			self.TitleLabel:SetText("#scav.score.time")
-			self.TitleLabel:SetFont("Scav_MenuLarge")
-			self.TitleLabel:SetPos(4, 4)
-			self.TitleLabel:SizeToContents()
-		self.TextLabel = vgui.Create("DLabel", self)
-			self.TextLabel:SetFont("Trebuchet24")
-			self.TextLabel:SetPos(24, 14)
-			self.TextLabel:SetText("00:00")
-		self:PlayerColor()
-	end
-
-	function PANEL:Paint()
-		SKIN:PaintFrame(self, self:GetWide(), self:GetTall())
-	end
-
-	function PANEL:PlayerColor()
-		local bgcol = Vector(0, 0, 0)
-		if IsValid(LocalPlayer()) then
-			if LocalPlayer():Team() == TEAM_UNASSIGNED then
-				bgcol = LocalPlayer():GetPlayerColor()
-				self.BGColor = Color(bgcol.r * 255, bgcol.g * 255, bgcol.b * 255, 255)
-			else
-				self.BGColor = team.GetColor(LocalPlayer():Team())
-			end
-			if (self.BGColor.r + self.BGColor.g + self.BGColor.b) / 3 < 150 then
-				self.TextColor = color_white
-			else
-				self.TextColor = color_black
-			end
-		end
-
-		self:SetBackgroundColor(self.BGColor)
-		self:SetFGColor(self.TextColor)
+		self:SetTitle(self.Title)
+		self:SetText(self.Text)
 	end
 	
 	function PANEL:Think()
-		local timeleft = self.EndTime - CurTime()
-		self.TextLabel:SetText(string.FormattedTime(math.max(timeleft, 0), ScavLocalize("scav.score.time.format")))
+		local timeleft = (self.EndTime or 0) - CurTime()
+		self:SetText(self.EndTime ~= 0 and string.FormattedTime(math.max(timeleft, 0), ScavLocalize("scav.score.time.format")) or "#scav.scavcan.inf")
 	end
 	
 	function PANEL:SetEndTime(when)
@@ -475,7 +443,7 @@ local PANEL = {}
 		return self.EndTime
 	end
 	
-	vgui.Register("sdm_timer", PANEL, "DPanel")
+	vgui.Register("sdm_timer", PANEL, "sdm_playercolorhudbox")
 	
 
 local function cap(c)
