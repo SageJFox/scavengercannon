@@ -4,8 +4,14 @@ if not CLIENT then return end
 
 local PANEL = {}
 	PANEL.LastRefreshTime = 0
+	PANEL.m_bgColor = Color(50, 50, 50, 255)
 	function PANEL:Init()
-		self:SetTitle("Map Vote")
+		self:SetTitle("")
+		self.Title = vgui.Create("DLabel", self)
+			self.Title:SetText("#scav.vote.title")
+			self.Title:SetFont("DermaLarge")
+			self.Title:SetTextColor(Color(210, 210, 210, 16))
+			self.Title:SizeToContents()
 		self:MakePopup()
 		self.VotedSettingsLabel = vgui.Create("DLabel", self)
 			self.VotedSettingsLabel:SetFont("Scav_MenuLarge")
@@ -90,6 +96,7 @@ local PANEL = {}
 	end
 
 	function PANEL:InvalidateLayout()
+		self.Title:SetPos(12, 10)
 		self.VotedSettingsLabel:SetPos(32, 48)
 		self.VotedSettings:SetPos(48, 64)
 		self.VotedSettings:SetSize(self:GetWide() / 3 - 64, self:GetTall() / 2 - 64)
