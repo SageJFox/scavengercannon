@@ -158,7 +158,8 @@ local endroundlogic = {
 				loser:AddScavStat(SCAVSTAT_GAMESPLAYED, 1)
 			end
 		end,
-	}
+	},
+	[SDM_MODE_CTF] = {},
 }
 endroundlogic[SDM_MODE_CTF][ENDCONDITION_TIME] = endroundlogic[SDM_MODE_DM_TEAM][ENDCONDITION_TIME]
 
