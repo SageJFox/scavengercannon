@@ -33,7 +33,7 @@ local function PlayerColor(self)
 		else
 			self.BGColor = team.GetColor(LocalPlayer():Team())
 		end
-		if (self.BGColor.r + self.BGColor.g + self.BGColor.b) / 3 < 150 then
+		if (self.BGColor.r + self.BGColor.g + self.BGColor.b) / 3 < 132 then
 			self.TextColor = Color(255,255,255,255)
 		else
 			self.TextColor = Color(0,0,0,255)

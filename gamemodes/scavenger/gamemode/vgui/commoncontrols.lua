@@ -228,7 +228,7 @@ local PANEL = {}
 			end
 		end
 
-		self.TextLight = ((self.BGColor.r + self.BGColor.g + self.BGColor.b) / 3 < 150)
+		self.TextLight = ((self.BGColor.r + self.BGColor.g + self.BGColor.b) / 3 < 132)
 
 		self:SetBackgroundColor(self.BGColor)
 		if IsValid(self.TitleLabel) then
@@ -322,7 +322,7 @@ local PANEL = {}
 			local t = pl:Team()
 			local col = team.GetColor(t)
 			if t == LocalPlayer():Team() then
-				col = (col.r + col.g + col.b) / 3 < 150 and color_white or color_black
+				col = (col.r + col.g + col.b) / 3 < 132 and color_white or color_black
 			end
 			if pl ~= LocalPlayer() and not team.IsReal(t) then
 				local c = pl:GetPlayerColor()

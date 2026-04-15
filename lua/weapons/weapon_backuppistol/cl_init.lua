@@ -68,7 +68,7 @@ function PANEL:PlayerColor()
 		else
 			self.BGColor = team.GetColor(LocalPlayer():Team())
 		end
-		if (self.BGColor.r + self.BGColor.g + self.BGColor.b) / 3 < 150 then
+		if (self.BGColor.r + self.BGColor.g + self.BGColor.b) / 3 < 132 then
 			self.TextColor = color_white
 		else
 			self.TextColor = color_black

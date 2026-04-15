@@ -156,12 +156,14 @@ function SWEP:Reskin(steamid)
 
 	vm:SetSubMaterial(0, reskin)
 end
-if CLIENT then
-function SWEP:GetPlayerColor()
-	--if not IsValid(self.Owner) then return end
 
-	return self.Owner:GetPlayerColor()
-end end
+if CLIENT then
+	function SWEP:GetPlayerColor()
+		if not IsValid(self.Owner) then return end
+
+		return self.Owner:GetPlayerColor()
+	end
+end
 
 function SWEP:Initialize()
 
@@ -1189,7 +1191,7 @@ if CLIENT then
 			else
 				self.BGColor = team.GetColor(LocalPlayer():Team())
 			end
-			if (self.BGColor.r + self.BGColor.g + self.BGColor.b) / 3 < 150 then
+			if (self.BGColor.r + self.BGColor.g + self.BGColor.b) / 3 < 132 then
 				self.TextColor = color_white
 			else
 				self.TextColor = color_black
@@ -1733,13 +1735,12 @@ if CLIENT then
 			local meffects = bit.bor(EF_BONEMERGE, EF_NODRAW, EF_NOSHADOW)
 			self.wmodel:AddEffects(meffects)
 			if IsValid(self.Owner) then
-				local steamid = self.Owner:AccountID()
-				local reskin = skins[steamid]
+				local reskin = skins[self.Owner:AccountID()]
 				--team skins
 				if not reskin then
 					reskin = skins[self.Owner:Team()]
 				end
-				if not reskin then
+				if reskin then
 					self.wmodel:SetSubMaterial(0, reskin)
 				end
 			end
