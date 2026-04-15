@@ -125,13 +125,27 @@ function SWEP:SetupDataTables()
 
 end
 
-devskins = {
+skins = {
 	[74124770] = "models/weapons/scavenger/skins/anya/scav", --Anya
 	[36401654] = "models/weapons/scavenger/skins/sierra/scav", --Sierra
 }
 
+for k, _ in pairs(team.GetAllTeams()) do
+	if k == TEAM_UNASSIGNED then continue end
+	if k == TEAM_CONNECTING then continue end
+	if k == TEAM_SPECTATOR then continue end
+	skins[k] = "models/weapons/scavenger/skins/scav_team"
+end
+
 function SWEP:Reskin(steamid)
-	if not devskins[steamid] then return end
+	local reskin = skins[steamid]
+	if not IsValid(self.Owner) then return end
+	--team skins
+	if not reskin then
+		reskin = skins[self.Owner:Team()]
+	end
+
+	if not reskin then return end
 
 	local vm = self.Owner:GetViewModel()
 	if not IsValid(vm) then return end
@@ -140,8 +154,14 @@ function SWEP:Reskin(steamid)
 	local sc = self.Owner:GetActiveWeapon()
 	if not IsValid(sc) or sc:GetClass() ~= "scav_gun" then return end
 
-	vm:SetSubMaterial(0, devskins[steamid])
+	vm:SetSubMaterial(0, reskin)
 end
+if CLIENT then
+function SWEP:GetPlayerColor()
+	--if not IsValid(self.Owner) then return end
+
+	return self.Owner:GetPlayerColor()
+end end
 
 function SWEP:Initialize()
 
@@ -1714,8 +1734,13 @@ if CLIENT then
 			self.wmodel:AddEffects(meffects)
 			if IsValid(self.Owner) then
 				local steamid = self.Owner:AccountID()
-				if devskins[steamid] ~= nil then
-					self.wmodel:SetSubMaterial(0, devskins[steamid])
+				local reskin = skins[steamid]
+				--team skins
+				if not reskin then
+					reskin = skins[self.Owner:Team()]
+				end
+				if not reskin then
+					self.wmodel:SetSubMaterial(0, reskin)
 				end
 			end
 		end

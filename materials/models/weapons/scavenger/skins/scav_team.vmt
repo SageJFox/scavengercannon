@@ -1,0 +1,47 @@
+VertexlitGeneric
+{
+	$basetexture		"models/weapons/scavenger/skins/scav_team"
+	
+	$detail				"models/weapons/scavenger/scav_detail"
+	$detailscale		1.0
+	$detailblendfactor	1.0
+	$detailblendmode	5
+	
+	$envmap				"env_cubemap"
+	$envmapmask			"models/weapons/scavenger/skins/scav_team_spec"
+	$envmaptint			"[0.625 0.625 0.625]"
+	$envmapsaturation	0.2
+	
+	$EmissiveBlendEnabled		1
+	$EmissiveBlendStrength		1
+	$EmissiveBlendTexture		"vgui/white"
+	$EmissiveBlendBaseTexture	"models/weapons/scavenger/scav_selfillum"
+	$EmissiveBlendFlowTexture	"tools/toolsblack"
+	$EmissiveBlendTint			"[0.84 1 0.47]"
+	$EmissiveBlendScrollVector	"[0 0]"
+	
+	$blendtintbybasealpha	1
+ 	$blendtintcoloroverbase	0
+	
+	$mul	1.5
+	
+	Proxies
+	{
+		PlayerWeaponColor
+		{
+			resultVar	$emissiveblendtint
+			default		0.84 1 0.47
+		}
+		PlayerColor
+		{
+			resultVar	$color2
+			default		0.84 1 0.47
+		}
+		Multiply
+		{
+			srcVar1 "$color2"
+			srcVar2 "$mul"
+			resultVar "$color2"
+		}
+	}
+}
