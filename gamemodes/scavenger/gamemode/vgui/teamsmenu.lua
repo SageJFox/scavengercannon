@@ -36,6 +36,7 @@ local PANEL = {}
 		self:SetTitle("#scav.team.select")
 		self.Form:SetName("")
 		self.initialized = true
+		--todo: should have some way of sorting teams in the config files
 		for k, v in pairs(GAMEMODE.Teams) do
 			if not v then continue end
 			self:AddTeam(k)
@@ -43,7 +44,7 @@ local PANEL = {}
 	end
 	
 	function PANEL:AutoSetup()
-		self:SetSize(300, 260)
+		self:SetSize(300, 300)
 		self:SetPos(ScrW() / 2 - self:GetWide() / 2, ScrH() / 2 - self:GetTall() / 2)
 	end
 
@@ -54,7 +55,7 @@ local PANEL = {}
 		self.Form:AddItem(button)
 		self.teams[teamid] = button
 		button.ColorSquare = vgui.Create("DImage", button)
-		button.ColorSquare:SetImage("vgui/sgskin/c_holo")
+		button.ColorSquare:SetImage("vgui/white")
 			button.ColorSquare:SetSize(12, 12)
 			button.ColorSquare:SetPos(4, button:GetTall() / 2 - button.ColorSquare:GetTall() / 2)
 			button.ColorSquare:SetImageColor(team.GetColor(teamid))
