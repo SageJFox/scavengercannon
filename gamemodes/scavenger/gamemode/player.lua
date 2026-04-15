@@ -451,6 +451,39 @@ function GM:PlayerFootstep(pl, pos, foot, sound, volume, rf)
 	return true
 end
 
+--this is specifically for our bloody meatchunk gib effect, so humanoids that it's reasonable to have red blood
+local npcgibs = {}
+	npcgibs.npc_combine_s = true
+	npcgibs.npc_metropolice = true
+	npcgibs.npc_citizen = true
+	npcgibs.npc_alyx = true
+	npcgibs.npc_barney = true
+	npcgibs.npc_eli = true
+	npcgibs.npc_kleiner = true
+	npcgibs.npc_magnusson = true
+	npcgibs.npc_breen = true
+	npcgibs.npc_monk = true
+	npcgibs.npc_stalker = true
+	npcgibs.npc_mossman = true
+	npcgibs.npc_zombie = true
+	npcgibs.npc_zombie_torso = true
+	npcgibs.npc_fastzombie = true
+	npcgibs.npc_fastzombie_torso = true
+	npcgibs.npc_poisonzombie = true
+	npcgibs.npc_zombine = true
+
+local shouldgib = function(victim, attacker, dmginfo)
+	if victim:IsNPC() and not npcgibs[victim:GetClass()] then return end
+	--never gib? no
+	if victim.nogib or dmginfo:IsDamageType(DMG_NEVERGIB) then return false end
+	--always gib, big damage, or moderate explosion? yes
+	if dmginfo:IsDamageType(DMG_ALWAYSGIB) then return true end
+	if dmginfo:GetDamage() > 200 then return true end
+	if dmginfo:GetDamage() > 30 and dmginfo:IsExplosionDamage() then return true end
+
+	return false
+end
+
 if CLIENT then
 	function GM:PlayerDeath(victim, killer, inflictor)
 		if IsValid(victim) then
@@ -502,6 +535,34 @@ if CLIENT then
 		return true
 	end
 
+	net.Receive("sdm_potentialclientgib", function()
+		local npc = net.ReadEntity()
+		if not IsValid(npc) then return end
+
+		npc.ScavLastDamage = net.ReadUInt(8)
+		npc.ScavLastDamageType = net.ReadUInt(32)
+		npc.ScavLastAttacker = net.ReadEntity()
+	end)
+
+	function GM:CreateClientsideRagdoll(npc, ragdoll)
+		local dmginfo = DamageInfo()
+			dmginfo:SetDamage(npc.ScavLastDamage or 0)
+			dmginfo:SetDamageType(npc.ScavLastDamageType or 0)
+			if npc.ScavLastAttacker then dmginfo:SetAttacker(npc.ScavLastAttacker) end
+		if not shouldgib(npc, npc.ScavLastAttacker, dmginfo) then return end
+		--there might be a ton of NPCs here, give a chance to not gib
+		if math.random(10) <= 3 then return end
+		
+		ragdoll:Remove()
+		local gib = ents.CreateClientside("scav_gib")
+			gib:SetOwner(npc)
+			gib:Spawn()
+		if npc.ScavLastAttacker ~= LocalPlayer() then return end
+		net.Start("sdm_potentialclientgib")
+			net.WritePlayer(npc.ScavLastAttacker)
+		net.SendToServer()
+
+	end
 else
 	util.AddNetworkString("sdm_disconnect")
 	util.AddNetworkString("sdm_playerdeath")
@@ -532,19 +593,65 @@ else
 		return true
 	end]]
 	
-	function GM:ScalePlayerDamage(pl, hitgroup, dmginfo) 
-		if hitgroup == HITGROUP_HEAD then
-			dmginfo:ScaleDamage(2)
-			if dmginfo:GetAttacker():IsPlayer() then
-				umsg.Start("sdm_headshot", dmginfo:GetAttacker())
-					umsg.Entity(pl)
-					umsg.Vector(dmginfo:GetDamagePosition())
-				umsg.End()
-			end
-		end
+	util.AddNetworkString("sdm_headshot")
+
+	function GM:ScalePlayerDamage(pl, hitgroup, dmginfo)
+		if hitgroup ~= HITGROUP_HEAD then return end
+
+		dmginfo:ScaleDamage(2)
+		local attacker = dmginfo:GetAttacker()
+		if not IsValid(attacker) or not attacker:IsPlayer() then return end
+		--effect (should *probably* also only be called once but ngl shotgun headshots are super funny with this)
+		net.Start("sdm_headshot")
+			net.WriteEntity(pl)
+			net.WriteVector(dmginfo:GetDamagePosition())
+		net.Send(attacker)
+		--if a weapon fires multiple bullets, only count one for stats
+		if pl.SDMHeadShotTime and pl.SDMHeadShotTime >= CurTime() then return end
+
+		pl.SDMHeadShotTime = CurTime()
+		attacker:AddScavStat(SCAVSTAT_HEADSHOTS, 1)
 	end
+
+	util.AddNetworkString("sdm_potentialclientgib")
 	
-	GM.ScaleNPCDamage = GM.ScalePlayerDamage
+	function GM:ScaleNPCDamage(npc, hitgroup, dmginfo)
+		self:ScalePlayerDamage(npc, hitgroup, dmginfo)
+		--OnNPCKilled doesn't have dmginfo, so let's store the info we need for potential gibbing here
+		npc.ScavLastDamage = dmginfo:GetDamage()
+		npc.ScavLastDamageType = dmginfo:GetDamageType()
+		npc.ScavLastAttacker = dmginfo:GetAttacker()
+		if npc:Health() > npc.ScavLastDamage or not shouldgib(npc, npc.ScavLastAttacker, dmginfo) then return end
+
+		net.Start("sdm_potentialclientgib")
+			net.WriteEntity(npc)
+			net.WriteUInt(math.min(255, npc.ScavLastDamage), 8)
+			net.WriteUInt(npc.ScavLastDamageType, 32)
+			net.WriteEntity(npc.ScavLastAttacker)
+		net.Broadcast()
+	end
+
+	net.Receive("sdm_potentialclientgib", function()
+		local pl = net.ReadPlayer()
+		if not IsValid(pl) then return end
+
+		pl:AddScavStat(SCAVSTAT_GIBS, 1)
+	end)
+
+	--record damage stat
+	function GM:PostEntityTakeDamage(ent, dmginfo, dmgdone)
+		if not dmgdone then return end
+		--no prop damage
+		if not (ent:IsPlayer() or ent:IsNextBot() or ent:IsNPC()) then return end
+		local attacker = dmginfo:GetAttacker()
+		if not IsValid(attacker) or not attacker:IsPlayer() then return end
+		--Attack damage at this point is properly adjusted from any weaknesses or resistances,
+		--but isn't clamped by the entity's remaining health
+		local healthleft = ent:Health()
+		local overkill = healthleft < 0 and healthleft or 0
+		attacker:AddScavStat(SCAVSTAT_DAMAGE, math.floor(dmginfo:GetDamage() + overkill))
+
+	end
 
 	function PLAYER:AddKills(amt)
 		self:AddFrags(amt)
@@ -645,10 +752,11 @@ else
 			end
 		end
 
-		if ((dmginfo:GetDamage() > 30) and dmginfo:IsExplosionDamage()) or (dmginfo:GetDamage() > 200) and not victim.nogib then
+		if shouldgib(victim, attacker, dmginfo) then
 			local gib = ents.Create("scav_gib")
-			gib:SetOwner(victim)
-			gib:Spawn()
+				gib:SetOwner(victim)
+				gib:Spawn()
+			attacker:AddScavStat(SCAVSTAT_GIBS, 1)
 		else
 			--victim:PlaySDMSound("Death", true)
 			victim:GetCharacter():HandleDeath(victim, attacker, dmginfo)
@@ -670,7 +778,7 @@ else
 		if IsValid(teamrules) then
 			--handle pooled lives
 			if teamrules:GetPooledLives() then
-				local teamlives = teamrules:GetLives() - 1
+				local teamlives = math.max(0, teamrules:GetLives() - 1)
 				teamrules:SetLives(teamlives)
 				livesleft = teamlives > 0
 			--player might have their lives being tracked from a previous team with lives, while this one doesn't actively use them
@@ -681,6 +789,25 @@ else
 		end
 
 		victim.NextSpawnTime = livesleft and (CurTime() + spawndelay) or math.huge
+	end
+
+	--scav gibbing for NPCs
+	function GM:CreateEntityRagdoll(npc, ragdoll)
+		local attacker = npc.ScavLastAttacker
+		local dmginfo = DamageInfo()
+			dmginfo:SetDamage(npc.ScavLastDamage or 0)
+			dmginfo:SetDamageType(npc.ScavLastDamageType or 0)
+			dmginfo:SetAttacker(attacker)
+		if not shouldgib(npc, nil, dmginfo) then return end
+		--there might be a ton of NPCs here, give a chance to not gib
+		if math.random(10) <= 3 then return end
+		
+		ragdoll:Remove()
+		local gib = ents.Create("scav_gib")
+			gib:SetOwner(npc)
+			gib:Spawn()
+		if not IsValid(attacker) or not attacker:IsPlayer() then return end
+		attacker:AddScavStat(SCAVSTAT_GIBS, 1)
 	end
 end
 
@@ -728,12 +855,13 @@ function player.GetByPlace()
 end
 
 if CLIENT then
-	usermessage.Hook("sdm_headshot", function(um)
-		local pl = um:ReadEntity()
-		local pos = um:ReadVector()
+	net.Receive("sdm_headshot", function()
+		local ent = net.ReadEntity()
+		if not IsValid(ent) then return end
+
 		local edata = EffectData()
-		edata:SetOrigin(pos)
-		edata:SetEntity(pl)
+			edata:SetEntity(ent)
+			edata:SetOrigin(net.ReadVector())
 		util.Effect("ef_sdm_headshot", edata)
 	end)
 end
