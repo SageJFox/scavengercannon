@@ -5,12 +5,13 @@ if not CLIENT then return end
 local PANEL = {}
 	PANEL.LastRefreshTime = 0
 	PANEL.m_bgColor = Color(50, 50, 50, 255)
+	PANEL.LabelColor = Color(210, 210, 210, 16)
 	function PANEL:Init()
 		self:SetTitle("")
 		self.Title = vgui.Create("DLabel", self)
 			self.Title:SetText("#scav.vote.title")
 			self.Title:SetFont("DermaLarge")
-			self.Title:SetTextColor(Color(210, 210, 210, 16))
+			self.Title:SetTextColor(self.LabelColor)
 			self.Title:SizeToContents()
 		self:MakePopup()
 		self.VotedSettingsLabel = vgui.Create("DLabel", self)
@@ -21,6 +22,11 @@ local PANEL = {}
 			self.FilesLabel:SetFont("Scav_MenuLarge")
 			self.FilesLabel:SetText("#scav.vote.settings.all")
 			self.FilesLabel:SizeToContents()
+		self.Time = vgui.Create("DLabel", self)
+			self.Time:SetText("")
+			self.Time:SetFont("Scav_MenuLarge")
+			--self.Time:SetTextColor(self.LabelColor)
+			self.Time:SizeToContents()
 		self:Refresh()
 	end
 	
@@ -105,6 +111,8 @@ local PANEL = {}
 		self.Files:SetSize(self:GetWide() / 3 - 64, self:GetTall() - 32 - self.Files.y)
 		self.MapInfo:SetSize(self:GetWide() - 64 - (self.Files.x + self.Files:GetWide()), self:GetTall() - 64 - 32)
 		self.MapInfo:SetPos((self.Files.x + self.Files:GetWide()) + 32, 64)
+		self.Time:AlignBottom(12)
+		self.Time:AlignRight(8)
 	end
 	
 	function PANEL:AutoSetup()
@@ -119,7 +127,8 @@ local PANEL = {}
 			self.LastRefreshTime = CurTime()
 		end
 		if GetGlobalFloat("sdm_votedeadline") ~= 0 then
-			self:SetTitle(ScavLocalize("scav.vote.deadline", tostring(math.max(math.floor(CurTime() - GetGlobalFloat("sdm_votedeadline")), 0))))
+			self.Time:SetText(ScavLocalize("scav.vote.deadline", tostring(math.max(math.floor(CurTime() - GetGlobalFloat("sdm_votedeadline")), 0))))
+			self.Time:SizeToContents()
 		end
 	end
 
