@@ -29,6 +29,7 @@ local PANEL = {}
 	vgui.Register("sdm_teamjoinbutton", PANEL, "DButton")
 
 local PANEL = {}
+	PANEL.m_bgColor = Color(50, 50, 50, 255)
 	
 	function PANEL:Init()
 		self.teams = {}
@@ -55,11 +56,22 @@ local PANEL = {}
 		self.Form:AddItem(button)
 		self.teams[teamid] = button
 		button.ColorSquare = vgui.Create("DImage", button)
+		local tcol = team.GetColor(teamid)
 		button.ColorSquare:SetImage("vgui/white")
-			button.ColorSquare:SetSize(12, 12)
-			button.ColorSquare:SetPos(4, button:GetTall() / 2 - button.ColorSquare:GetTall() / 2)
-			button.ColorSquare:SetImageColor(team.GetColor(teamid))
+			button.ColorSquare:SetSize(16, 16)
+			button.ColorSquare:SetPos(3, button:GetTall() / 2 - button.ColorSquare:GetTall() / 2)
+			button.ColorSquare:SetImageColor(tcol)
 			button.ColorSquare:SetVisible(true)
+		--team icon
+		local t = string.match(team.GetName(teamid), "scav%.team%.([%a]+)")
+		if t then
+			button.TeamIcon = vgui.Create("DImage", button)
+			button.TeamIcon:SetImage(t and ("hud/sdm/" .. t .. "_icon.png"))
+				button.TeamIcon:SetSize(16, 16)
+				button.TeamIcon:SetPos(3, button:GetTall() / 2 - button.TeamIcon:GetTall() / 2)
+				button.TeamIcon:SetImageColor((tcol.r + tcol.g + tcol.b) / 3 < 132 and color_white or color_black)
+				button.TeamIcon:SetVisible(true)
+		end
 		button.Menu = self
 		button:SetTeam(teamid)
 		button:SetText(team.GetName(teamid))
