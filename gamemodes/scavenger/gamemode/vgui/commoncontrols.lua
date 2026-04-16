@@ -201,6 +201,7 @@ local PANEL = {}
 	PANEL.BGColor = Color(50, 50, 50, 255)
 	PANEL.Flipped = false
 
+	--the effects of this stick for any child panels, so if you want derived panels unflipped you gotta flip'em again
 	function PANEL:Flip()
 		self.Flipped = (not self.Flipped)
 		self.TitleLabel:SetX(self.TitleLabel:GetX() + (self.Flipped and 8 or -8))
@@ -459,21 +460,19 @@ local function camelCaseLocalize(token)
 end
 
 local PANEL = {}
-	PANEL.Player = NULL
-	PANEL.Title = "#health"
-	PANEL.Wide = 112
+	PANEL.Title = "#armor"
+	PANEL.Wide = 96
 	PANEL.Tall = 48
-	
+
 	function PANEL:Init()
 		self:SetSize(self.Wide, self.Tall)
-		self:SetTitle(camelCaseLocalize("#health"))
-		self:Flip() --so apparently the effects of this stick for the future panels, so if you want derived panels unflipped you gotta flip'em again
+		self:SetTitle(camelCaseLocalize("#armor"))
 	end
 	
 	function PANEL:Think()
-		self:SetText(IsValid(self.Player) and self.Player:Health() or "0")
+		self:SetText(IsValid(self.Player) and math.floor(self.Player:Armor()) or "0")
 	end
-	
+
 	function PANEL:SetPlayer(pl)
 		self.Player = pl
 		self:PlayerColor()
@@ -483,24 +482,52 @@ local PANEL = {}
 		return self.Player
 	end
 	
-	vgui.Register("sdm_healthpanel", PANEL, "sdm_playercolorhudbox")
+	vgui.Register("sdm_armorpanel", PANEL, "sdm_playercolorhudbox")
 
 local PANEL = {}
-	PANEL.Title = "#armor"
-	PANEL.Wide = 96
+	PANEL.Player = NULL
+	PANEL.Title = "#health"
+	PANEL.Wide = 112
 	PANEL.Tall = 48
+	PANEL.Team = nil
+	
+	local white_bkg = Color(255, 255, 255, 24)
+	local black_bkg = Color(0, 0, 0, 72)
 
 	function PANEL:Init()
 		self:SetSize(self.Wide, self.Tall)
-		self:SetTitle(camelCaseLocalize("#armor"))
+		self:SetTitle(camelCaseLocalize("#health"))
 		self:Flip()
 	end
 	
 	function PANEL:Think()
-		self:SetText(IsValid(self.Player) and math.floor(self.Player:Armor()) or "0")
+		self:SetText(IsValid(self.Player) and self.Player:Health() or "0")
+		if not IsValid(self.Player) or self.Player:Team() == self.Team then return end
+		self.Team = self.Player:Team()
+		--delay a frame so we don't flash another color out of sync with every other panel
+		timer.Simple(0, function() if self then self:SetPlayer(self.Player) end end)
 	end
 	
-	vgui.Register("sdm_armorpanel", PANEL, "sdm_healthpanel")
+	function PANEL:SetPlayer(pl)
+		self.Player = pl
+		self:PlayerColor()
+		if not team.IsReal(self.Team) then return end
+
+		if self.TeamIcon then self.TeamIcon:Remove() end
+		local t = string.match(team.GetName(self.Team), "scav%.team%.([%a]+)")
+		if not t then return end
+		local tcol = team.GetColor(self.Team)
+		
+		self.TeamIcon = vgui.Create("DImage", self)
+		self.TeamIcon:SetImage(t and ("hud/sdm/" .. t .. "_icon.png"))
+			self.TeamIcon:SetSize(48, 48)
+			self.TeamIcon:SetPos(11, 4 + self:GetTall() / 2 - self.TeamIcon:GetTall() / 2)
+			self.TeamIcon:SetImageColor((tcol.r + tcol.g + tcol.b) / 3 < 132 and white_bkg or black_bkg)
+			self.TeamIcon:SetVisible(true)
+	end
+	
+	vgui.Register("sdm_healthpanel", PANEL, "sdm_armorpanel")
+
 
 local PANEL = {}
 	PANEL.Title = "#energy"
@@ -510,14 +537,13 @@ local PANEL = {}
 	function PANEL:Init()
 		self:SetSize(self.Wide, self.Tall)
 		self:SetTitle(camelCaseLocalize("#energy"))
-		self:Flip()
 	end
 	
 	function PANEL:Think()
 		self:SetText(IsValid(self.Player) and math.floor(self.Player:GetEnergy()) or "0")
 	end
 	
-	vgui.Register("sdm_energypanel", PANEL, "sdm_healthpanel")
+	vgui.Register("sdm_energypanel", PANEL, "sdm_armorpanel")
 	
 local PANEL = {}
 	PANEL.Title = "#score"
@@ -526,7 +552,6 @@ local PANEL = {}
 
 	function PANEL:Init()
 		self:SetTitle(ScavLocalize("#scav.score", ""))
-		self:Flip()
 	end
 
 	function PANEL:Think()
@@ -535,7 +560,7 @@ local PANEL = {}
 		self:SetText(maxpoints ~= 0 and ScavLocalize("scav.points.format", points, maxpoints) or points)
 	end
 	
-	vgui.Register("sdm_fragpanel", PANEL, "sdm_healthpanel")
+	vgui.Register("sdm_fragpanel", PANEL, "sdm_armorpanel")
 	
 local PANEL = {}
 	PANEL.Title = "#paginate.next"
@@ -544,6 +569,7 @@ local PANEL = {}
 
 	function PANEL:Init()
 		self:SetTitle("#scav.points.next")
+		self:Flip()
 	end
 
 	function PANEL:Think()
@@ -573,7 +599,7 @@ local PANEL = {}
 		end
 	end
 	
-	vgui.Register("sdm_dm_fragsbehind", PANEL, "sdm_healthpanel")
+	vgui.Register("sdm_dm_fragsbehind", PANEL, "sdm_armorpanel")
 	
 	team.GetSortedPlayers(teamnum)
 	
