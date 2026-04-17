@@ -19,8 +19,9 @@ local function CleanUpNulls(tab)
 	end
 end
 
+--unfilled indices return and empty table instead of nil
 local meta = {}
-meta.__index = meta --????????????
+meta.__index = meta
 
 function NewGLoader(path)
 	local gloader = {}
@@ -30,12 +31,31 @@ function NewGLoader(path)
 	return gloader
 end
 
-function meta:LoadFile(path)
+--only first argument necessary, others are just to speed up subsequent calls if we encounter a problem
+function meta:LoadFile(path, map, config)
+	local map = map or string.match(path, "^data/scavdata/maps/([^/]+)/")
+	local config = config or string.match(path, "^data/scavdata/maps/[^/]+/([^/]+)")
+	local default = config == "default.txt"
 	self.filepath = path
 	local read = file.Read(path, "GAME")
 	local tab = {}
+	if not read and not default then
+		ErrorNoHalt("Warning! Config file '", path, "' not found! Attempting to load 'default.txt' for ", map, "!\n") 
+		return self:LoadFile("data/scavdata/maps/" .. map .. "/default.txt", map, "default.txt")
+	end
 	if read then
 		tab = util.JSONToTable(read)
+	else
+		ErrorNoHalt("Warning! No default config present for ", map, "!\n")
+		--todo: actually handle this lmao
+	end
+	if not tab then
+		ErrorNoHalt("Warning! Could not parse '", path, "'! File may be corrupted!", not default and "" or " Attempting to load 'default.txt'!\n")
+		if not default then
+			return self:LoadFile("data/scavdata/maps/" .. map .. "/default.txt", map, "default.txt")
+		end
+		--todo: actually handle this lmao
+		tab = {}
 	end
 	self.data = tab
 	self.templates = tab.entities
