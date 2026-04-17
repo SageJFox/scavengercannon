@@ -252,13 +252,32 @@ local PANEL = {}
 	local flagtex = surface.GetTextureID("HUD/sdm/dot")
 	local flagtex2 = surface.GetTextureID("HUD/sdm/dot2")
 	local flagtex3 = surface.GetTextureID("HUD/sdm/dot3")
+	local flagtex4 = surface.GetTextureID("HUD/sdm/dot4")
+	local teamicon = {}
+	for k, v in pairs(team.GetAllTeams()) do
+		if not team.IsReal(k) then continue end
+
+		local t = string.match(team.GetName(k), "scav%.team%.([%a]+)")
+		if not t then return end
+
+		teamicon[k] = Material("hud/sdm/" .. t .. "_icon.png", "smooth 0 mips 0")
+	end
 	
 	function PANEL:Init()
+		 
 		--self.Color = Color(255, 255, 255, 255)
 	end
 	
 	function PANEL:SetEntity(ent)
 		self.Ent = ent
+		if not IsValid(self.Ent) then return end
+		local yaw = EyeAngles().y
+		local pos1 = EyePos()
+		local pos2 = self.Ent:GetPos()
+		
+		self.CompassRot = -(math.deg(math.atan2((pos2.y - pos1.y), (pos2.x - pos1.x))) - yaw)
+		self.LastRot = self.CompassRot
+		self.CompassSpeed = 0
 	end
 	
 	function PANEL:GetEntity()
@@ -278,10 +297,14 @@ local PANEL = {}
 	end
 	
 	function PANEL:Paint(pw, ph)
+		if not IsValid(self.Ent) then return end
+
 		local yaw = EyeAngles().y
 		local pos1 = EyePos()
-		if not IsValid(self.Ent) then return end
+		--circle color
 		local r, g, b, a = 255, 255, 255, 255
+		--pointer color
+		local r2, g2, b2 = 0, 0, 0
 		if self.Color then
 			r, g, b, a = self.Color.r, self.Color.g, self.Color.b, self.Color.a
 		elseif self.Ent.GetTeam then
@@ -291,46 +314,63 @@ local PANEL = {}
 		local pl = self.Ent:GetOwner()
 
 		--make sure the flag icon isn't matching the panel color
-		--TODO: colorblind support!
-		if not IsValid(pl) then
-			local teamcol, light = self:GetParent():GetSDMColor()
-			if math.abs(r + g + b - teamcol.r - teamcol.g - teamcol.b) < 16 then
-				if light then
-					r = 255
-				else
-					r = 72 --brighter than the usual of black so we can still see the arrow
-				end
-				g = r
-				b = r
-			end
+		local teamcol, light = self:GetParent():GetSDMColor()
+		local flaglight = (r + g + b) / 3 < 132
+		--if it's basically the same color as the panel and not being carried, flip the colors
+		if not IsValid(pl) and math.abs(r + g + b - teamcol.r - teamcol.g - teamcol.b) < 16 then
+			r2 = r
+			g2 = g
+			b2 = b
+			r = flaglight and 255 or 0
+			g = r
+			b = r
+		else
+			r2 = flaglight and 255 or 0
+			b2 = r2
+			g2 = r2
 		end
 
 		local w, h = self:GetSize()
 		local dia = math.min(w, h)
 
-		if pl == GetViewEntity() then
-			surface.SetTexture(flagtex2)
-		else
-			surface.SetTexture(flagtex)
-		end
 		local pos2 = self.Ent:GetPos()
 		surface.SetDrawColor(r, g, b, a)
-		local dist = pos2:Distance(pos1)
-		surface.DrawTexturedRectRotated(w / 2, h / 2, dia, dia, math.deg(math.atan2((pos2.y - pos1.y), (pos2.x - pos1.x))) - yaw)
-
+		--local dist = pos2:Distance(pos1)
+		surface.SetTexture(flagtex2)
+		surface.DrawTexturedRectRotated(w / 2, h / 4, dia, dia, 0)
+		--draw team icon below tracker
+		if self.Ent.GetTeam and teamicon[self.Ent:GetTeam()] then
+			surface.SetMaterial(teamicon[self.Ent:GetTeam()])
+			surface.SetDrawColor(light and color_white or color_black)
+			surface.DrawTexturedRect(w / 2 - dia / 4, h * 0.75 - dia / 2 + 1, dia / 2, dia / 2)
+		end
+		--draw arrow (we're not carrying it)
+		if pl ~= GetViewEntity() then
+			surface.SetDrawColor(r2, g2, b2, a)
+			surface.SetTexture(flagtex)
+			surface.DrawTexturedRectRotated(w / 2, h / 4, dia, dia, math.deg(math.atan2((pos2.y - pos1.y), (pos2.x - pos1.x))) - yaw)
+		end
+		--player is carrying flag, give it a border
 		if pl:IsPlayer() then
 			surface.SetTexture(flagtex3)
 			local t = pl:Team()
 			local col = team.GetColor(t)
+			--our team, make it a highlight border
 			if t == LocalPlayer():Team() then
-				col = (col.r + col.g + col.b) / 3 < 132 and color_white or color_black
+				col = math.max(col.r + col.g + col.b) / 3 < 132 and color_white or color_black
 			end
+			--enemy team, give it their color
 			if pl ~= LocalPlayer() and not team.IsReal(t) then
 				local c = pl:GetPlayerColor()
 				col = Color(c.r * 255, c.g * 255, c.b * 255, 255)
 			end
 			surface.SetDrawColor(col.r, col.g, col.b, col.a)
-			surface.DrawTexturedRect(w / 2 - dia / 2, h / 2 - dia / 2, dia, dia)
+			surface.DrawTexturedRect(w / 2 - dia / 2, h / 4 - dia / 2, dia, dia)
+			--inner ring (in case colors are opposites this inner ring will make sure things pop)
+			surface.SetTexture(flagtex4)
+			local c = flaglight and color_white or color_black
+			surface.SetDrawColor(c, c, c, a)
+			surface.DrawTexturedRect(w / 2 - dia / 2, h / 4 - dia / 2, dia, dia)
 		end
 
 		surface.SetDrawColor(255, 255, 255, 255)
@@ -370,8 +410,8 @@ local PANEL = {}
 	function PANEL:AutoSize()
 		local mul = self.PointerHorizontalSpacing + self.PointerDiameter
 		for k, v in ipairs(self.Items) do
-			v:SetPos(self.PointerHorizontalSpacing + (k - 1) * mul, self.PointerVerticalSpacing)
-			v:SetSize(self.PointerDiameter, self.PointerDiameter)
+			v:SetPos(self.PointerHorizontalSpacing + (k - 1) * mul, self.PointerVerticalSpacing / 2)
+			v:SetSize(self.PointerDiameter, self.PointerDiameter * 2)
 		end
 		self:SetSize(self.PointerHorizontalSpacing + #self.Items * mul, self.PointerVerticalSpacing * 2 + self.PointerDiameter)
 	end
@@ -396,7 +436,7 @@ local PANEL = {}
 	
 	function PANEL:AddFlag(ent)
 		local panel = vgui.Create("sdm_entpointer", self)
-		panel:SetSize(self.PointerDiameter, self.PointerDiameter)
+		panel:SetSize(self.PointerDiameter, self.PointerDiameter * 2)
 		panel:SetEntity(ent)
 		if ent.dt then
 			panel:SetColor(team.GetColor(ent.dt.Team))
@@ -517,7 +557,7 @@ local PANEL = {}
 		local t = string.match(team.GetName(self.Team), "scav%.team%.([%a]+)")
 		if not t then return end
 		local tcol = team.GetColor(self.Team)
-		
+
 		self.TeamIcon = vgui.Create("DImage", self)
 		self.TeamIcon:SetImage(t and ("hud/sdm/" .. t .. "_icon.png"))
 			self.TeamIcon:SetSize(48, 48)
