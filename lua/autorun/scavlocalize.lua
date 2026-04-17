@@ -41,7 +41,6 @@ ScavLocalizeColor = function(...)
 	end
 	--handle the rest of our arguments
 	local inserttab = {}
-	local i = 0
 	local rep = true
 	for _, v in ipairs(arg) do
 		if isbool(v) then
@@ -49,8 +48,7 @@ ScavLocalizeColor = function(...)
 			continue
 		elseif IsColor(v) then
 			table.insert(inserttab, v)
-		else
-			i = i + 1
+			continue
 		end
 		table.insert(inserttab, rep and language.GetPhrase(tostring(v)) or tostring(v))
 		rep = true
