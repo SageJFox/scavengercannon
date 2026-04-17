@@ -164,8 +164,8 @@ local PANEL = {}
 		if self.ScoreLabel:IsVisible() then
 			self.ScoreLabel:SetText(team.GetScore(teamid) or 0)
 		end
-		local wins = team.GetWins(teamid)
-		self.TeamLabelBox:SetText(teamid == TEAM_UNASSIGNED and team.GetName(teamid) or ScavLocalize(wins == 1 and "scav.score.team.win" or "scav.score.team.wins", team.GetName(teamid), wins))
+		local wins = team.GetWins(teamid) or 0
+		self.TeamLabelBox:SetText(teamid == TEAM_UNASSIGNED and team.PrintName(teamid) or ScavLocalize(wins == 1 and "scav.score.team.win" or "scav.score.team.wins", team.PrintName(teamid), wins))
 		self.TeamLabelBox:InvalidateLayout()
 		self.team = teamid
 		self:Rebuild()
@@ -219,7 +219,7 @@ local PANEL = {}
 	function PANEL:Think()
 		self.ScoreLabel:SetText(ScavLocalize("scav.score", team.GetScore(self.team)) or 0)
 		self.ScoreLabel:SizeToContents()
-		self.TeamLabelBox:SetText(self.team == TEAM_UNASSIGNED and "#scav.score.unassigned" or ScavLocalize(team.GetScore(self.team) == 1 and "scav.score.team.point" or "scav.score.team.points", team.GetName(self.team), team.GetScore(self.team)))
+		self.TeamLabelBox:SetText(self.team == TEAM_UNASSIGNED and "#scav.score.unassigned" or ScavLocalize(team.GetScore(self.team) == 1 and "scav.score.team.point" or "scav.score.team.points", team.PrintName(self.team), team.GetScore(self.team) or 0))
 		self.m_bgColor = dkgray
 	end
 	

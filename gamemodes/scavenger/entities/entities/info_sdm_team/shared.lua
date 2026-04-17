@@ -9,6 +9,13 @@ function team.GetInfoEnt(teamnumber)
 	return TeamEnts[teamnumber] or NULL
 end
 
+function team.PrintName(teamnumber)
+	local self = team.GetInfoEnt(teamnumber)
+	local name = IsValid(self) and self:GetTeamName() or ""
+	if not name or name == "" then name = team.GetName(teamnumber) end
+	return ScavLocalize(name)
+end
+
 function ENT:Initialize()
 	TeamEnts[self:GetTeam()] = self
 end
@@ -30,6 +37,7 @@ function ENT:SetupDataTables()
 	self:NetworkVar("Float",	"EnergyRegen")
 	self:NetworkVar("Int",		"Lives")
 	self:NetworkVar("Bool",		"PooledLives")
+	self:NetworkVar("String",	"TeamName")
 end
 
 if CLIENT then return end
@@ -70,6 +78,8 @@ function ENT:KeyValue(key, value)
 		self:SetLives(tonumber(value))
 	elseif key == "pooledlives" then
 		self:SetPooledLives(tobool(value))
+	elseif key == "teamname" then
+		self:SetTeamName(string.Trim(string.Left(value, 255)))
 	end
 end
 

@@ -285,7 +285,7 @@ if SERVER then
 		--[[A player having negative lives means they aren't using the lives system on their current team.
 		However, players could be switching to a team that does use lives, or from one that does to one that doesn't.
 		Players could also switch from a team that doesn't use pooled lives to one that does, or vice versa.
-		There's a lot of potential permutations. Generally, we don't want players gaming the system for more lives than they should had.]]
+		There's a lot of potential permutations. Generally, we don't want players gaming the system for more lives than they should'a had.]]
 
 		local playerlives = pl:Lives()
 		--player has no lives, it's always a no
@@ -346,28 +346,30 @@ else
 		local oldteam = net.ReadUInt(10)
 		local newteam = net.ReadUInt(10)
 		local swapped = net.ReadUInt(3)
-		local oldteamname = team.GetName(oldteam)
-		local newteamname = team.GetName(newteam)
+		local oldteamname = team.PrintName(oldteam)
+		local newteamname = team.PrintName(newteam)
 
 		if swapped == SWAPPED then
 			if newteam == TEAM_SPECTATOR then
-				LocalPlayer():PrintMessage(HUD_PRINTTALK, ScavLocalize("scav.team.select.spectate", pl:Name()))
+				chat.AddText(ScavLocalizeColor("scav.team.select.spectate", pl:Name(), team.GetColor(oldteam)))
 			elseif oldteam == TEAM_SPECTATOR then
-				LocalPlayer():PrintMessage(HUD_PRINTTALK, ScavLocalize(newteam == TEAM_UNASSIGNED and "scav.team.select.dm" or "scav.team.select.join", pl:Name(), newteamname))
+				local dm = (newteam == TEAM_UNASSIGNED)
+				chat.AddText(ScavLocalizeColor(dm and "scav.team.select.dm" or "scav.team.select.join", pl:Name(), dm and pl:GetPlayerColor():ToColor() or newteamname, team.GetColor(newteam)))
 			else
-				LocalPlayer():PrintMessage(HUD_PRINTTALK, ScavLocalize("scav.team.select.switch", pl:Name(), newteamname, oldteamname))
+				chat.AddText(ScavLocalizeColor("scav.team.select.switch", pl:Name(), newteamname, oldteamname, team.GetColor(newteam), team.GetColor(oldteam)))
 			end
 			
 			gamemode.Call("OnPlayerChangedTeam", pl, oldteam, newteam)
 		--Rest of these are failure messages
 		elseif swapped == NO_COOLDOWN then
-			LocalPlayer():PrintMessage(HUD_PRINTTALK, ScavLocalize("scav.team.select.cooldown", oldteam))
+			chat.AddText(ScavLocalizeColor("scav.team.select.cooldown", oldteam, team.GetColor(oldteam)))
 		elseif swapped == NO_UNJOINABLE then
-			LocalPlayer():PrintMessage(HUD_PRINTTALK, ScavLocalize("scav.team.select.nojoin", newteamname))
+			chat.AddText(ScavLocalizeColor("scav.team.select.nojoin", newteamname, team.GetColor(newteam)))
 		elseif swapped == NO_YOURLIVES then
-			LocalPlayer():PrintMessage(HUD_PRINTTALK, ScavLocalize("scav.team.select.nolives"))
+			chat.AddText(ScavLocalizeColor("scav.team.select.nolives"))
 		else
-			LocalPlayer():PrintMessage(HUD_PRINTTALK, ScavLocalize("scav.team.select.nolives.team", swapped == NO_TEAMLIVES and oldteamname or newteamname))
+			local t = (swapped == NO_TEAMLIVES)
+			chat.AddText(ScavLocalizeColor("scav.team.select.nolives.team", t and oldteamname or newteamname, team.GetColor(t and oldteam or newteam)))
 		end
 	end)
 end

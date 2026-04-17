@@ -74,7 +74,7 @@ local PANEL = {}
 		end
 		button.Menu = self
 		button:SetTeam(teamid)
-		button:SetText(team.GetName(teamid))
+		button:SetText(team.PrintName(teamid))
 	end
 	
 	function PANEL:InvalidateLayout()
