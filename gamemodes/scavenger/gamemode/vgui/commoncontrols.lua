@@ -601,6 +601,94 @@ local PANEL = {}
 	end
 	
 	vgui.Register("sdm_fragpanel", PANEL, "sdm_armorpanel")
+
+local PANEL = {}
+	PANEL.Title = "#scav.lives"
+	PANEL.Wide = 84
+	PANEL.Tall = 36
+	PANEL.TotalHearts = 0
+	PANEL.Hearts = {}
+	--PANEL.StartingLives = 0
+
+	function PANEL:Init()
+		self:SetTitle(ScavLocalize("#scav.lives"))
+	end
+
+	local heartfull = Material("hud/sdm/lives")
+	local heartempty = Material("hud/sdm/lives_empty")
+	local spacing = 4
+
+	function PANEL:SetPlayer(pl)
+		self.Player = pl
+		self:PlayerColor()
+		local lives = self.Player:Lives()
+		local teament = team.GetInfoEnt(self.Player:Team())
+		if IsValid(teament) then
+			self.StartingLives = teament:GetLives()
+		end
+		self.StartingLives = self.StartingLives or lives
+		self.TotalHearts = math.min(3, self.StartingLives)
+		for _, v in ipairs(self.Hearts) do
+			v:Remove()
+		end
+		self.Hearts = {}
+		for i = 1, self.TotalHearts do
+			local heart = vgui.Create("DImage", self)
+				heart:SetMaterial(heartfull)
+				heart:SetSize(24, 24)
+			local tcol = team.GetColor(self.Team)
+				heart:SetImageColor((tcol.r + tcol.g + tcol.b) / 3 < 132 and color_white or color_black)
+				heart:SetVisible(lives <= 3)
+			table.insert(self.Hearts, heart)
+		end
+		self:ShouldHide()
+		self:InvalidateLayout(true)
+	end
+
+	function PANEL:ShouldHide()
+		self.hide = self.StartingLives < 2
+		return self.hide
+	end
+	
+	function PANEL:InvalidateLayout()
+		if not self.initialized then return false end
+
+		for i, heart in ipairs(self.Hearts) do
+			if not heart then 
+				timer.Simple(RealFrameTime(), function() if self then self:InvalidateLayout() end end)
+				break
+			end
+
+			local x = self:GetWide() / 2 - heart:GetWide() / 2 -- center of panel
+				local heartoffset = i - 0.5 - self.TotalHearts / 2
+				x = x + heart:GetWide() * heartoffset --adjusted to position (-total/2 to +total/2)
+				--can't math right now (and we don't really have the room on the panel anyway)
+				--x = x - (self.TotalHearts - 1) * spacing --add spacing requirements
+				--x = x + spacing * (i - 1) --spacing
+				heart:SetX(x)
+				heart:SetY(4 + self:GetTall() / 2 - heart:GetTall() / 2)
+		end
+	end
+
+	function PANEL:Think()
+		local lives = self.Player:Lives()
+		local showhearts = (lives <= 3)
+		self:SetText(showhearts and "" or lives)
+		for k, v in ipairs(self.Hearts) do
+			if not IsValid(v) then continue end
+
+			v:SetVisible(showhearts)
+			if not showhearts then continue end
+
+			v:SetMaterial((k <= lives) and heartfull or heartempty)
+		end
+		if not IsValid(self.Player) or self.Player:Team() == self.Team then return end
+		self.Team = self.Player:Team()
+		--delay a frame so we don't flash another color out of sync with every other panel
+		timer.Simple(0, function() if self then self:SetPlayer(self.Player) end end)
+	end
+	
+	vgui.Register("sdm_livespanel", PANEL, "sdm_armorpanel")
 	
 local PANEL = {}
 	PANEL.Title = "#paginate.next"

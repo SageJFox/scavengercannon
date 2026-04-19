@@ -52,7 +52,7 @@ function HUD.BuildFromInfo(info)
 		info.LastHUDUpdate = 0
 		info.HUDUpdateInterval = info.HUDUpdateInterval or 1
 	end
-	panel:SetVisible(ElementIsVisible(info))
+	panel:SetVisible(ElementIsVisible(info) and not panel.hide)
 	return panel
 end
 
@@ -94,9 +94,17 @@ end
 local function SetupBottomLeft(elements)
 	local h = ScrH()
 	local totalx = 0
+	local panelh = -1
 	for _, v in pairs(elements) do
 		v.Panel:SetPos(v.x + totalx, h - v.Panel:GetTall() + v.y)
-		totalx = totalx + v.Panel:GetWide() + 6
+		--will this break down if we wanna add anything else? have you considered shut up
+		if panelh < 0 or math.abs(v.y) < panelh then
+			totalx = totalx + v.Panel:GetWide() + 6
+		else
+			v.Panel:SetX(v.x)
+			panelh = panelh + v.Panel:GetTall() + 6
+		end
+		panelh = math.max(panelh, v.Panel:GetTall())
 	end
 end
 
@@ -151,13 +159,14 @@ hook.Add("Think", "HUDThink", function()
 			if (spawned and v.HideOnAlive) or (died and playing and v.HideOnDead) or (startedspec and v.HideOnSpectate) or (startedplaying and v.HideOnPlaying) then
 				v.Panel:SetVisible(false)
 			else
-				v.Panel:SetVisible(ElementIsVisible(v))
+				if v.StateChange then v.StateChange(v.Panel, v) end
+				v.Panel:SetVisible(ElementIsVisible(v) and not v.Panel.hide)
 			end
 		end
 		HUD.PerformLayout()
 	end
 	for _, v in pairs(HUD.Elements) do
-		if v.OnHUDUpdate and v.Panel:IsVisible() and (ctime - v.LastHUDUpdate > v.HUDUpdateInterval) then
+		if v.OnHUDUpdate and (v.Panel:IsVisible() or v.Panel.Hide) and (ctime - v.LastHUDUpdate > v.HUDUpdateInterval) then
 			v.OnHUDUpdate(v.Panel, v)
 			v.LastHUDUpdate = ctime
 		end
@@ -285,7 +294,7 @@ armor.tall = 64
 armor.anchor = "bottomleft"
 armor.centerx = true
 armor.centery = false
-armor.sortpriority = 1
+armor.sortpriority = 2
 armor.Skin = "sg_menu"
 armor.HideOnSpectate = true
 armor.HideOnDead = true
@@ -302,12 +311,33 @@ energy.tall = 48
 energy.anchor = "bottomleft"
 energy.centerx = true
 energy.centery = false
-energy.sortpriority = 2
+energy.sortpriority = 3
 energy.Skin = "sg_menu"
 energy.HideOnSpectate = true
 energy.HideOnDead = true
 
 energy.OnInit = fragcounter.OnInit
+
+local lives = {}
+lives.Type = "sdm_livespanel"
+lives.Name = "Lives"
+lives.x = 36
+lives.y = -94
+lives.wide = 84
+lives.tall = 54
+lives.anchor = "bottomleft"
+lives.centerx = true
+lives.centery = false
+lives.sortpriority = 1
+lives.Skin = "sg_menu"
+lives.HideOnSpectate = true
+lives.HideOnDead = true
+
+lives.OnInit = fragcounter.OnInit
+
+lives.StateChange = function(panel, info)
+	panel:SetPlayer(panel.Player)
+end
 
 local flagtracker = {}
 flagtracker.Type = "sdm_flagtracker"
@@ -335,6 +365,7 @@ local function standardhud()
 	HUD.AddElement(health)
 	HUD.AddElement(armor)
 	HUD.AddElement(energy)
+	HUD.AddElement(lives)
 end
 
 local setuphud = {
