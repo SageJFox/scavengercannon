@@ -67,16 +67,18 @@ function ENT:Initialize()
 		local center = owner:GetPos() + owner:OBBCenter()
 		local vel = owner:GetVelocity()
 		local edata = EffectData()
-		for k,v in pairs(bonetranslate) do
-			local bonepos,boneang = owner:GetBonePosition(owner:LookupBone(k))
-			if bonepos then
-				edata:SetOrigin(bonepos)
-				edata:SetAngles(boneang)
-				edata:SetScale(v)
-				edata:SetStart((bonepos - center):GetNormalized() * 600 + vel)
-				edata:SetAttachment(0)
-				util.Effect("ef_scav_gib",edata)
-			end
+		for k, v in pairs(bonetranslate) do
+			local lookupbone = owner:LookupBone(k)
+			if not lookupbone then continue end
+
+			local bonepos, boneang = owner:GetBonePosition(lookupbone)
+			if not bonepos then continue end
+			edata:SetOrigin(bonepos)
+			edata:SetAngles(boneang)
+			edata:SetScale(v)
+			edata:SetStart((bonepos - center):GetNormalized() * 600 + vel)
+			edata:SetAttachment(0)
+			util.Effect("ef_scav_gib", edata)
 		end
 		
 	else
