@@ -273,13 +273,15 @@ function meta:VerifyGame()
 
 		return false
 	end
-	
+	--some maps, like 2fort, have info_player_starts sprinkled in too, and we should remove those
+	local remdefaults = false
 	local team_locales = {}
 	for _, v in ents.Iterator() do
 		local classname = v:GetClass()
 
 		if spawnpoints[classname] then
 			local t = spawnpoints[classname].Team(v)
+			if t ~= "unassigned" then remdefaults = true end
 			needteams[t] = true
 			team_locales[t] = team_locales[t] or v
 			team_locales[1] = team_locales[1] or v
@@ -304,6 +306,17 @@ function meta:VerifyGame()
 		end
 
 	end
+
+	if remdefaults then
+		needteams["unassigned"] = nil
+		for k, v in ipairs(spawns) do
+			if v.KeyValues.team == "unassigned" then
+				table.remove(spawns, k)
+				table.remove(self.templates, k)
+			end
+		end
+	end
+
 	--making our teams
 	for k, _ in pairs(needteams) do
 		local template = {}
