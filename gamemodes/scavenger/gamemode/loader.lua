@@ -3,6 +3,8 @@ if file.Exists("data/scavdata/gloader_blacklist.txt", "GAME") then
 	table.Add(blacklist, string.Split(file.Read("data/scavdata/gloader_blacklist.txt", "GAME"), "\n"))
 end
 
+local sdm_save_generated = CreateConVar("sdm_save_generated", 0, FCVAR_ARCHIVE, "Save Scavenger Deathmatch config files generated on maps without them.", 0, 1)
+
 local oneof = {}
 oneof["env_fog_controller"] = true
 
@@ -326,7 +328,7 @@ function meta:VerifyGame()
 				template.KeyValues.team = k
 				template.KeyValues.joinable = 1
 		teams[k] = copytotemplate(team_locales[1], template)
-		table.insert(self.templates, template)
+		table.insert(self.templates, 1, template)
 	end
 
 	if not self.data.gamevars then
@@ -367,8 +369,19 @@ function meta:VerifyGame()
 			template.KeyValues.modelname = "models/props_lab/monitor01a.mdl"
 			template.KeyValues.timelimit = timelimit
 			template.KeyValues.maxpoints = maxpoints
-	table.insert(self.templates, copytotemplate(team_locales[1], template))
+	table.insert(self.templates, 1, copytotemplate(team_locales[1], template))
 
+	if not sdm_save_generated:GetBool() then return end
+	local fname = "scavdata/maps/" .. game.GetMap() .. "/default.txt"
+	if file.Exists("data/" .. fname, "GAME") then return end
+
+	file.CreateDir("scavdata/maps/" .. game.GetMap())
+	local jsontable = {}
+		jsontable.gamevars = self.data.gamevars
+		if not jsontable.gamevars.author then jsontable.gamevars.author = "SDM" end
+		if not jsontable.gamevars.name then jsontable.gamevars.name = "Automated Config File" end
+		jsontable.entities = self.templates
+	file.Write(fname, util.TableToJSON(jsontable, true))
 end
 
 function meta:ParseGameVars()
