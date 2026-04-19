@@ -756,7 +756,9 @@ else
 			local gib = ents.Create("scav_gib")
 				gib:SetOwner(victim)
 				gib:Spawn()
-			attacker:AddScavStat(SCAVSTAT_GIBS, 1)
+			if IsValid(attacker) and attacker:IsPlayer() then
+				attacker:AddScavStat(SCAVSTAT_GIBS, 1)
+			end
 		else
 			--victim:PlaySDMSound("Death", true)
 			victim:GetCharacter():HandleDeath(victim, attacker, dmginfo)
