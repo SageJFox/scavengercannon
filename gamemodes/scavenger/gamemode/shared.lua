@@ -2,7 +2,7 @@ DEFINE_BASECLASS("gamemode_base")
 
 --GAMEMODE INFO
 
-GM.Name		= "#scav.dm"
+GM.Name		= "Scavenger Deathmatch"
 GM.Author	= "Ghor"
 
 --EXTERNAL FILES
