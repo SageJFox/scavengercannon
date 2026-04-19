@@ -21,6 +21,8 @@ if CLIENT then
 	["ValveBiped.Bip01_Spine4"] = 4,
 	["ValveBiped.Bip01_Spine2"] = 3,
 	["ValveBiped.Bip01_Head1"] = 2,
+	["ValveBiped.HC_Rear_Bone"] = 2,
+	["ValveBiped.Headcrab_Cube1"] = 2,
 	["ValveBiped.Bip01_R_Clavicle"] = 1,
 	["ValveBiped.Bip01_L_Clavicle"] = 1,
 	["ValveBiped.Bip01_R_UpperArm"] = 5,
@@ -82,7 +84,7 @@ function ENT:Initialize()
 		end
 		
 	else
-		self:Fire("Kill",nil,1)
+		self:Fire("Kill", nil, 1)
 	end
 	
 end
@@ -105,14 +107,14 @@ if CLIENT then
 		self:GetPhysicsObject():SetVelocity(edata:GetStart())
 		self:GetPhysicsObject():SetMaterial("watermelon")
 		self:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
-		ParticleEffectAttach("scav_gib_chunk_blood",PATTACH_ABSORIGIN_FOLLOW,self,0)
+		ParticleEffectAttach("scav_gib_chunk_blood", PATTACH_ABSORIGIN_FOLLOW, self, 0)
 	end
 
 	function EFFECT:Think()
 		if self.Created + 15 < CurTime() then
 			return false
 		elseif self.Created + 13 < CurTime() then
-			self:SetColor(Color(255,255,255,127 * (15 - (CurTime() - self.Created))))
+			self:SetColor(Color(255, 255, 255, 127 * (15 - (CurTime() - self.Created))))
 			self:SetRenderMode(RENDERMODE_TRANSALPHA)
 		end
 		return true
@@ -123,6 +125,6 @@ if CLIENT then
 		return true
 	end
 	
-	effects.Register(EFFECT,"ef_scav_gib",true)
+	effects.Register(EFFECT, "ef_scav_gib", true)
 	
 end
