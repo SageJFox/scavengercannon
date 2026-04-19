@@ -478,6 +478,7 @@ local shouldgib = function(victim, attacker, dmginfo)
 	if victim.nogib or dmginfo:IsDamageType(DMG_NEVERGIB) then return false end
 	--always gib, big damage, or moderate explosion? yes
 	if dmginfo:IsDamageType(DMG_ALWAYSGIB) then return true end
+	if dmginfo:IsDamageType(DMG_FALL) and attacker:GetClass() == "trigger_hurt" then return false end
 	if dmginfo:GetDamage() > 200 then return true end
 	if dmginfo:GetDamage() > 30 and dmginfo:IsExplosionDamage() then return true end
 
