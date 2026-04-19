@@ -279,7 +279,7 @@ function meta:VerifyGame()
 		local classname = v:GetClass()
 
 		if spawnpoints[classname] then
-			local t = spawnpoints[classname].Team()
+			local t = spawnpoints[classname].Team(v)
 			needteams[t] = true
 			team_locales[t] = team_locales[t] or v
 			team_locales[1] = team_locales[1] or v
