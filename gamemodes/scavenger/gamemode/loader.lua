@@ -1,6 +1,6 @@
 local blacklist = {}
-if file.Exists("gloader_blacklist.txt","DATA") then
-	blacklist = util.KeyValuesToTable(file.Read("gloader_blacklist.txt","DATA"))
+if file.Exists("data/scavdata/gloader_blacklist.txt", "GAME") then 
+	table.Add(blacklist, string.Split(file.Read("data/scavdata/gloader_blacklist.txt", "GAME"), "\n"))
 end
 
 local oneof = {}
