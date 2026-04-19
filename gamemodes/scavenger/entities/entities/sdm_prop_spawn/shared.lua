@@ -92,7 +92,7 @@ function ENT:SpawnEntity()
 	end
 	self.sent = ents.Create(self.spawnclass)
 		self.sent:SetModel(self.modelname)
-		self.sent:SetSkin(self.skin)
+		self.sent:SetSkin(self.skin or 0)
 		self.sent:SetPos(self:GetPos())
 		self.sent:SetAngles(self:GetAngles())
 		self.sent:Spawn()
