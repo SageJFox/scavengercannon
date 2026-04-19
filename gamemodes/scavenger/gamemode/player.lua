@@ -797,7 +797,7 @@ else
 		local dmginfo = DamageInfo()
 			dmginfo:SetDamage(npc.ScavLastDamage or 0)
 			dmginfo:SetDamageType(npc.ScavLastDamageType or 0)
-			dmginfo:SetAttacker(attacker)
+			if IsValid(attacker) then dmginfo:SetAttacker(attacker) end
 		if not shouldgib(npc, nil, dmginfo) then return end
 		--there might be a ton of NPCs here, give a chance to not gib
 		if math.random(10) <= 3 then return end
