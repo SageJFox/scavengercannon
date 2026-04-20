@@ -18,7 +18,7 @@ local outputs =
 }
 
 function ENT:KeyValue(key, value)
-	key = string.lower(key)
+	local key = string.lower(key)
 	if key == "radius" then
 		self.Radius = tonumber(value)
 	elseif key == "startdisabled" then
