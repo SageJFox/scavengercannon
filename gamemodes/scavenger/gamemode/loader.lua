@@ -90,13 +90,14 @@ local copytotemplate = function(ent, template)
 	return template
 end
 
+local needteams = {}
+
 function meta:VerifyGame()
 	--most of this isn't properly hooked up for now, just sorta thoughts for the future
 	--for now, we're working on just making a game spawnable (and maybe even fun!) when a config file is completely absent
 	local spawns = {}
 	--local needspawns = {}
 	local teams = {}
-	local needteams = {}
 	local control = {}
 	local props = {}
 	--gather base info
@@ -165,19 +166,19 @@ function meta:VerifyGame()
 				if t == 3 then return "red" end --Insurgents
 			end
 		},
-		["dys_spawn_point"] = {
+		--okay these just don't have the keyvalues they're supposed to?
+		--[[["dys_spawn_point"] = {
 			["Team"] = function(spawn)
 				local kv = spawn:GetKeyValues()
-				if not kv.Team then return end
-
-				if not kv.Team then return "unassigned" end
-				local t = tonumber(kv.Team)
-				if not t then return "unassigned" end
-				if t == 0 then return "unassigned" end
-				if t == 2 then return "red" end --Punks
-				if t == 3 then return "blue" end --Corps
+				PrintTable(kv)
+				
+				--[[if not kv.SpawnID then return "unassigned" end
+				local sid = tonumber(kv.SpawnID)
+				if sid == 1 then return "red" end --Punks
+				dysspawnmax = math.max(dysspawnmax, sid)
+				return sid] ]
 			end
-		},
+		},]]
 	}
 
 	--neutral spawnpoints, possibly ideal for DM
@@ -191,6 +192,7 @@ function meta:VerifyGame()
 		--misc.
 		"aoc_spawnpoint",
 		"info_player_coop",
+		"dys_spawn_point",
 		--L4D/2
 		"info_survivor_position",
 		"info_survivor_rescue",
