@@ -94,8 +94,8 @@ SKIN.tex.Button_Dead			= GWEN.CreateTextureBorder(480, 64, 31, 31, 8, 8, 8, 8)
 SKIN.tex.Button_Down			= GWEN.CreateTextureBorder(480, 96, 31, 31, 8, 8, 8, 8)
 SKIN.tex.Shadow					= GWEN.CreateTextureBorder(448, 0, 31, 31, 8, 8, 8, 8)
 
-SKIN.tex.Tree					= GWEN.CreateTextureBorder(256, 128, 127, 127, 16, 16, 16, 16)
-SKIN.tex.TreeFlipped			= GWEN.CreateTextureBorder(0, 256, 127, 127, 16, 16, 16, 16)
+SKIN.tex.Tree					= GWEN.CreateTextureBorder(352, 288, 32, 32, 16, 16, 16, 16)
+SKIN.tex.TreeFlipped			= GWEN.CreateTextureBorder(352, 320, 32, 32, 16, 16, 16, 16)
 SKIN.tex.Checkbox_Checked		= GWEN.CreateTextureNormal(448, 32, 15, 15)
 SKIN.tex.Checkbox				= GWEN.CreateTextureNormal(464, 32, 15, 15)
 SKIN.tex.CheckboxD_Checked		= GWEN.CreateTextureNormal(448, 48, 15, 15)
@@ -111,8 +111,8 @@ SKIN.tex.TextBox_Focus			= GWEN.CreateTextureBorder(0, 172, 127, 21, 4, 4, 4, 4)
 SKIN.tex.TextBox_Disabled		= GWEN.CreateTextureBorder(0, 194, 127, 21, 4, 4, 4, 4)
 SKIN.tex.MenuBG_Column			= GWEN.CreateTextureBorder(128, 128, 127, 63, 24, 8, 8, 8)
 SKIN.tex.MenuBG					= GWEN.CreateTextureBorder(128, 192, 127, 63, 8, 8, 8, 8)
-SKIN.tex.MenuBG_Hover			= GWEN.CreateTextureBorder(128, 256, 127, 31, 8, 8, 8, 8)
-SKIN.tex.MenuBG_Spacer			= GWEN.CreateTextureNormal(128, 288, 127, 3)
+SKIN.tex.MenuBG_Hover			= GWEN.CreateTextureBorder(0, 224, 127, 31, 8, 8, 8, 8)
+SKIN.tex.MenuBG_Spacer			= GWEN.CreateTextureNormal(128, 472, 127, 3)
 SKIN.tex.Menu_Strip				= GWEN.CreateTextureBorder(0, 128, 127, 21, 8, 8, 8, 8)
 SKIN.tex.Menu_Check				= GWEN.CreateTextureNormal(448, 112, 15, 15)
 SKIN.tex.Tab_Control			= GWEN.CreateTextureBorder(0, 0, 127, 127, 16, 16, 16, 16)
@@ -124,7 +124,7 @@ SKIN.tex.TabL_Active			= GWEN.CreateTextureBorder(64,		384, 31, 63, 8, 8, 8, 8)
 SKIN.tex.TabL_Inactive			= GWEN.CreateTextureBorder(64 + 128, 384, 31, 63, 8, 8, 8, 8)
 SKIN.tex.TabR_Active			= GWEN.CreateTextureBorder(96,		384, 31, 63, 8, 8, 8, 8)
 SKIN.tex.TabR_Inactive			= GWEN.CreateTextureBorder(96 + 128, 384, 31, 63, 8, 8, 8, 8)
-SKIN.tex.Tab_Bar				= GWEN.CreateTextureBorder(128, 352, 127, 31, 4, 4, 4, 4)
+SKIN.tex.Tab_Bar				= GWEN.CreateTextureBorder(384, 464, 127, 31, 4, 4, 4, 4)
 
 SKIN.tex.Window = {}
 
@@ -189,7 +189,7 @@ SKIN.tex.Input = {}
 
 SKIN.tex.Input.ComboBox = {}
 SKIN.tex.Input.ComboBox.Normal		= GWEN.CreateTextureBorder(384, 336,	127, 31, 8, 8, 32, 8)
-SKIN.tex.Input.ComboBox.Hover		= GWEN.CreateTextureBorder(384, 336 + 32, 127, 31, 8, 8, 32, 8)
+SKIN.tex.Input.ComboBox.Hover		= GWEN.CreateTextureBorder(384, 336,	127, 31, 8, 8, 32, 8)
 SKIN.tex.Input.ComboBox.Down		= GWEN.CreateTextureBorder(384, 336 + 64, 127, 31, 8, 8, 32, 8)
 SKIN.tex.Input.ComboBox.Disabled	= GWEN.CreateTextureBorder(384, 336 + 96, 127, 31, 8, 8, 32, 8)
 
