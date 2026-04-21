@@ -3,9 +3,21 @@ ENT.Base = "base_point"
 ENT.Disabled = false
 --default values
 ENT.Radius = 100
+ENT.target = nil
+ENT.excludetarget = false
 
 function ENT:Initialize()
 	self.TouchingEnts = {}
+end
+
+function ENT:AcceptInput(name, activator, caller, data)
+	if name == "Enable" then self:SetEnabled(true) return true end
+
+	if name == "Disable" then self:SetEnabled(false) return true end
+
+	if name == "Toggle" then self:Toggle() return true end
+
+	return false
 end
 
 local outputs =
@@ -21,8 +33,14 @@ function ENT:KeyValue(key, value)
 	local key = string.lower(key)
 	if key == "radius" then
 		self.Radius = tonumber(value)
+	elseif key == "enabled" then
+		self:SetEnabled(tobool(value))
 	elseif key == "startdisabled" then
 		self:SetEnabled(not tobool(value))
+	elseif k == "target" then
+		self.target = #value > 0 and value or nil
+	elseif k == "excludetarget" then
+		self.excludetarget = tobool(value)
 	end
 
 	if table.HasValue(outputs, key) then
@@ -36,11 +54,29 @@ function ENT:SetEnabled(state)
 	self.TouchingEnts = disabled and {} or self.TouchingEnts
 end
 
+function ENT:GetEnabled()
+	return not self.Disabled
+end
+
+function ENT:Enable()
+	self:SetEnabled(true)
+end
+
+function ENT:Disable()
+	self:SetEnabled(false)
+end
+
+function ENT:Toggle()
+	self:SetEnabled(not self:GetEnabled())
+end
+
 function ENT:EntPassesFilter(ent)
 	if not IsValid(ent) then return false end
 	if ent:IsPlayer() and not ent:Alive() then return false end
-	if IsValid(ent:GetParent()) then return false end
 
+	if self.target then return targetname(ent, self.target) ~= self.excludetarget end
+
+	if IsValid(ent:GetParent()) then return false end
 	return ent:GetSolid() ~= 0
 end
 
@@ -83,16 +119,5 @@ function ENT:TouchTest()
 
 	for _, v in ipairs(self.TouchingEnts) do
 		self:TriggerOutput("OnTouching", v, self)
-	end
-end
-
-function ENT:Input(name, value, activator)
-	local name = string.lower(name)
-	if name == "enable" then
-		self:SetEnabled(true)
-	elseif name == "disable" then
-		self:SetEnabled(false)
-	elseif name == "toggle" then
-		self:SetEnabled(self.Disabled)
 	end
 end
