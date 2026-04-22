@@ -60,8 +60,9 @@ local SCAV_VOTE_ENDING = 0
 local SCAV_VOTE_ENDED = 1
 local SCAV_VOTE_NO = 2
 local SCAV_VOTE_CALLED = 3
+local SCAV_VOTE_NONECAST = 4
 
-local SCAV_VOTE_BITS = 2
+local SCAV_VOTE_BITS = 3
 
 --sending singular (here entirely U)Ints with as few bits as possible
 local function bitcount(num)
@@ -143,13 +144,26 @@ if SERVER then
 			net.WriteUInt(time, bitcount(time))
 		net.Broadcast()
 	end
-			
+
 	local function beginmapchange()
 	
 		if mapchangestarted then return end
 		mapchangestarted = true
 		
 		local vote = ScavData.GetWinningMapVote()
+
+		if vote == "none" then
+			net.Start("sdm_maploader_message")
+				net.WriteUInt(SCAV_VOTE_NONECAST, SCAV_VOTE_BITS)
+			net.Broadcast()
+			mapchangestarted = false
+			ScavData.SetVotingDeadline(90)
+			for _, pl in ipairs(player.GetHumans()) do
+				pl:ConCommand("sdm_vote")
+			end
+			return
+		end
+
 		local mapandsetting = string.Explode("/", vote)
 		local map = mapandsetting[1]
 		local setting = mapandsetting[2]
@@ -286,6 +300,9 @@ else
 		[SCAV_VOTE_CALLED] = function(len)
 			local percent = net.ReadUInt(len)
 			chat.AddText(ScavLocalizeColor(percent >= 50 and "scav.vote.called" or "scav.vote.called.minority", percent))
+		end,
+		[SCAV_VOTE_NONECAST] = function(len)
+			chat.AddText(ScavLocalizeColor("scav.vote.ended.none"))
 		end,
 	}
 
