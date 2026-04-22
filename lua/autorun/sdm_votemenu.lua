@@ -40,15 +40,17 @@ local PANEL = {}
 		surface.PlaySound("buttons/button9.wav")
 	end
 	
+	local deadline = 0
 	
 	local function RebuildVotedSettings(panel)
+		deadline = GetGlobalFloat("sdm_votedeadline", 0)
 		panel.settings = panel.settings or {}
 		local settingswithvotes = {}
 		local players = player.GetHumans()
 		for _, pl in ipairs(players) do
 			local filename = pl:GetNWString("sdm_vote")
 			if filename ~= "" then
-				settingswithvotes[pl:GetNWString("sdm_vote")] = true
+				settingswithvotes[filename] = true
 			end
 		end
 		for k, v in pairs(panel.settings) do
@@ -126,10 +128,11 @@ local PANEL = {}
 			self.VotedSettings:Rebuild()
 			self.LastRefreshTime = CurTime()
 		end
-		if GetGlobalFloat("sdm_votedeadline") ~= 0 then
-			self.Time:SetText(ScavLocalize("scav.vote.deadline", tostring(math.max(math.floor(CurTime() - GetGlobalFloat("sdm_votedeadline")), 0))))
-			self.Time:SizeToContents()
-		end
+
+		self.Time:SetText(deadline == 0 and "" or ScavLocalize("scav.vote.deadline", tostring(math.max(math.floor(deadline - CurTime()), 0))))
+		if deadline == 0 then return end
+		self.Time:SizeToContents()
+		self.Time:AlignRight(8)
 	end
 
 	vgui.Register("SDM_VoteMenu", PANEL, "DFrame")
