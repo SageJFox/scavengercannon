@@ -189,7 +189,7 @@ SKIN.tex.Input = {}
 
 SKIN.tex.Input.ComboBox = {}
 SKIN.tex.Input.ComboBox.Normal		= GWEN.CreateTextureBorder(384, 336,	127, 31, 8, 8, 32, 8)
-SKIN.tex.Input.ComboBox.Hover		= GWEN.CreateTextureBorder(384, 336,	127, 31, 8, 8, 32, 8)
+SKIN.tex.Input.ComboBox.Hover		= GWEN.CreateTextureBorder(384, 336 + 32, 127, 31, 8, 8, 32, 8)
 SKIN.tex.Input.ComboBox.Down		= GWEN.CreateTextureBorder(384, 336 + 64, 127, 31, 8, 8, 32, 8)
 SKIN.tex.Input.ComboBox.Disabled	= GWEN.CreateTextureBorder(384, 336 + 96, 127, 31, 8, 8, 32, 8)
 
@@ -542,7 +542,7 @@ function SKIN:PaintPropertySheet(panel, w, h)
 	if ActiveTab then Offset = ActiveTab:GetTall() - 8 end
 
 	self.tex.Tab_Control(0, Offset, w, h-Offset)
-	self.tex.tex.Tree(0, Offset, w, h-Offset, self.bgTab)
+	self.tex.Tree(0, Offset, w, h-Offset, self.bgTab)
 end
 
 --[[---------------------------------------------------------
