@@ -202,17 +202,72 @@ local PANEL = {}
 		--print(panel:GetParent().FileName)
 	end
 	
+	local clearcache_instructions = "Clear the cache of generated map backgrounds. Specify a map name(s) or leave blank to clear all."
+	local clearcache_instructions_displayed = false
+
+	concommand.Add("sdm_vote_clearcache", function(ply, cmd, args, argstr)
+		local has_args = #args > 0
+		--if they're giving us arguments they *probably* know how this works, otherwise...
+		clearcache_instructions_displayed = clearcache_instructions_displayed or has_args
+
+		--...for our first call, give them instructions, rather than just do it (maybe they're just trying console stuff out)
+		if not clearcache_instructions_displayed then
+			print(clearcache_instructions)
+			clearcache_instructions_displayed = true
+			return
+		end
+
+		--track files deleted to report to user at the end
+		local files = 0
+		local size = 0
+
+		local _, dirs = file.Find("scavdata/maps/*", "DATA")
+		--if user gave us their list of maps, use that instead
+		dirs = has_args and args or dirs
+		for _, dir in ipairs(dirs) do
+			local dir = "scavdata/maps/" .. dir .. "/bkg.png"
+
+			if file.Exists(dir, "DATA") then
+				size = size + file.Size(dir, "DATA")
+				file.Delete(dir)
+				files = files + 1
+			end
+		end
+		print("Cleared " .. files .. " files, freeing " .. string.NiceSize(size) .. "!")
+	end, nil, clearcache_instructions)
+
 	function PANEL:Init() --before I'M visible there should be some sort of label instructing the player to select a map
 		self.MapBG = vgui.Create("DImage", self)
 			self.MapBG:SetImageColor(Color(128, 128, 128, 255))
+			--override map background material. if we get a map thumbnail, generate a background or use a cached one
 			self.MapBG.SetMaterial = function(self, mat)
 				if isstring(mat) then return end
-
 				self.m_Material = mat
+				--find our map name
+				local map = string.Split(mat:GetName(), "/")[3]
+
+				local bkg_path = "scavdata/maps/" .. (map or "?")
+				local full_path = "data/" .. bkg_path .. "/bkg.png"
+				local bkg_exists = file.Exists(full_path, "GAME")
+				--we have a cached background, use it
+				if bkg_exists then
+					self.m_Material = Material(full_path, "ignorez smooth 1")
+				end
+
 				if not self.m_Material then return end
 
 				local Texture = self.m_Material:GetTexture("$basetexture")
-				if Texture then
+
+				--no map found in provided material (must be missing thumbnail, use default)
+				if not map then
+					self.m_Material = Material("gui/noicon.png", "ignorez smooth 1")
+					--we don't want it thinking this is a valid thumbnail texture
+					Texture = false
+				end
+
+				--valid thumbnail that hasn't been made into a background yet
+				if Texture and not bkg_exists then
+					--settings for saving out generated file
 					local cap = {}
 						cap.format = "png"
 						cap.x = 0
@@ -223,15 +278,22 @@ local PANEL = {}
 					self.ActualWidth = cap.w
 					self.ActualHeight = cap.h
 
+					--actual processing of the thumbnail, give it a moderate blur
 					render.BlurRenderTarget(Texture, 8, 8, 0)
+
+					--annoyingly, having console open causes render.Capture to return nil
 					local bkg_gen = render.Capture(cap)
-					if bkg_gen then 
-						file.Write("scavdata/bkg.png", bkg_gen)
-						self.m_Material = Material("data/scavdata/bkg.png", "ignorez smooth 1")
+					if bkg_gen then
+						--successful generation, cache and use it
+						--note if it failed, that we still use the raw thumbnail as a background
+						file.CreateDir(bkg_path)
+						file.Write(bkg_path .. "/bkg.png", bkg_gen)
+						self.m_Material = Material(full_path, "ignorez smooth 1")
 					end
 				else
-					self.ActualWidth = self.m_Material:Width()
-					self.ActualHeight = self.m_Material:Height()
+					--generation failed or wasn't needed, we still want our SetMaterial call to properly update our internal vars
+					self.ActualWidth = Texture and Texture:Width() or self.m_Material:Width()
+					self.ActualHeight = Texture and Texture:Height() or self.m_Material:Height()
 				end
 			end
 		self.DescriptionLabels = {}
