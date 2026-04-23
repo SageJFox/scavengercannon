@@ -205,6 +205,35 @@ local PANEL = {}
 	function PANEL:Init() --before I'M visible there should be some sort of label instructing the player to select a map
 		self.MapBG = vgui.Create("DImage", self)
 			self.MapBG:SetImageColor(Color(128, 128, 128, 255))
+			self.MapBG.SetMaterial = function(self, mat)
+				if isstring(mat) then return end
+
+				self.m_Material = mat
+				if not self.m_Material then return end
+
+				local Texture = self.m_Material:GetTexture("$basetexture")
+				if Texture then
+					local cap = {}
+						cap.format = "png"
+						cap.x = 0
+						cap.y = 0
+						cap.w = Texture:Width()
+						cap.h = Texture:Height()
+					
+					self.ActualWidth = cap.w
+					self.ActualHeight = cap.h
+
+					render.BlurRenderTarget(Texture, 8, 8, 0)
+					local bkg_gen = render.Capture(cap)
+					if bkg_gen then 
+						file.Write("scavdata/bkg.png", bkg_gen)
+						self.m_Material = Material("data/scavdata/bkg.png", "ignorez smooth 1")
+					end
+				else
+					self.ActualWidth = self.m_Material:Width()
+					self.ActualHeight = self.m_Material:Height()
+				end
+			end
 		self.DescriptionLabels = {}
 		self.MapLabel = vgui.Create("DLabel", self)
 			self.MapLabel:SetFont("Scav_HUDNumber3")
@@ -291,9 +320,9 @@ local PANEL = {}
 		local mapicon = Material("maps/thumb/" .. mapname .. ".png", "ignorez smooth 1")
 		if mapicon:IsError() then mapicon = Material("vgui/nomapicon") end
 		self.MapIcon:SetMaterial(mapicon)
-		
 		self.MapBG:SetMaterial(mapicon)
-		self.MapLabel:SetText(ScavLocalize("scav.config.title", false, mapname, false, string.gsub(settingsfile, ".txt", "")))
+
+		self.MapLabel:SetText(ScavLocalize("scav.config.title", false, mapname, false, string.gsub(settingsfile, "%.txt", "")))
 		self.MapLabel:SizeToContents()
 		self.FileName = mapname .. "/" .. settingsfile
 		--print(self.FileName)
