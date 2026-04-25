@@ -94,12 +94,14 @@ local PANEL = {}
 			self.MapInfo:SetVisible(false)
 		self.VotedSettings = vgui.Create("DListView", self)
 			self.VotedSettings.OnRowSelected = votedrowselect
-			self.VotedSettings:AddColumn("#scav.vote.map")
-			self.VotedSettings:AddColumn("#scav.vote.settings")
-			self.VotedSettings:AddColumn("#scav.vote.votes")
+				self.VotedSettings.ColMap = self.VotedSettings:AddColumn("#scav.vote.map")
+				self.VotedSettings.ColSetting = self.VotedSettings:AddColumn("#scav.vote.settings")
+				self.VotedSettings.ColVotes = self.VotedSettings:AddColumn("#scav.vote.votes")
+			self.VotedSettings:SetMultiSelect(false)
 			self.VotedSettings.Rebuild = RebuildVotedSettings
 			self.VotedSettings:Rebuild()
 		self.Files = vgui.Create("SDM_VoteMenuMapContainer", self)
+			self.Files:SetMultiSelect(false)
 		self:InvalidateLayout()
 	end
 
@@ -107,9 +109,12 @@ local PANEL = {}
 		self.Title:SetPos(12, 10)
 		self.VotedSettingsLabel:SetPos(32, 48)
 		self.VotedSettings:SetPos(48, 64)
-		self.VotedSettings:SetSize(self:GetWide() / 3 - 64, self:GetTall() / 2 - 64)
-		self.FilesLabel:SetPos(32, self:GetTall() / 2 + 16)
-		self.Files:SetPos(48, self:GetTall() / 2 + 32)
+		local votedsettingwidth = self:GetWide() / 3 - 64
+		self.VotedSettings:SetSize(votedsettingwidth, self:GetTall() / 3 - 64)
+			self.VotedSettings.ColVotes:SizeToChildren(true, false)
+			self.VotedSettings.ColVotes:SetMaxWidth(self.VotedSettings.ColVotes:GetWide() + 1)
+		self.FilesLabel:SetPos(32, self:GetTall() / 3 + 16)
+		self.Files:SetPos(48, self:GetTall() / 3 + 32)
 		self.Files:SetSize(self:GetWide() / 3 - 64, self:GetTall() - 32 - self.Files.y)
 		self.MapInfo:SetSize(self:GetWide() - 64 - (self.Files.x + self.Files:GetWide()), self:GetTall() - 64 - 32)
 		self.MapInfo:SetPos((self.Files.x + self.Files:GetWide()) + 32, 64)
@@ -141,13 +146,49 @@ local PANEL = {}
 local PANEL = {}
 
 	function PANEL:Init()
+		self:SetSize(16, 16)
+		self:SetText("")
+		self.Star = true
+	end
+
+	function PANEL:TestHover(x, y)
+		local w, h = self:GetWide() / 2, self:GetTall() / 2
+		local r = math.min(w, h)
+		local x, y = self:ScreenToLocal(x, y)
+		local x1, y1 = w - r, h - r
+		local x2, y2 = w + r, h + r
+		if x < x1 or y < y1 or x > x2 or y > y2 then return false end
+	end
+
+	vgui.Register("DStar", PANEL, "DCheckBox")
+
+
+local PANEL = {}
+
+	function PANEL:Init()
 		self:AddColumn("#scav.vote.map")
 		self:AddColumn("#scav.vote.settings")
+		local faves = self:AddColumn("#scav.vote.favorite")
+		
 		local maps = ScavData.GetValidMaps()
 		for _, v in pairs(maps) do
 			local split = string.Split(v, "/")
-			self:AddLine(split[1], split[2])
+			local box = vgui.Create("DStar")
+				--todo: real system lawl
+				box:SetChecked(math.random(0, 1))
+				box:SetSkin("sg_menu")
+				--re-sort
+				box.OnChange = function(self, check)
+					local parent = self:GetParent()
+					if not IsValid(parent) then return end
+					parent:SetSortValue(3, check and -1 or 1)
+				end
+			local line = self:AddLine(split[1], split[2], box)
+				--initial sort
+				line:SetSortValue(3, box:GetChecked() and -1 or 1)
 		end
+		faves:SizeToChildren(true, false)
+		faves:SetMaxWidth(faves:GetWide() + 1)
 	end
 
 	function PANEL:OnRowSelected(line)
@@ -238,6 +279,7 @@ local PANEL = {}
 
 	function PANEL:Init() --before I'M visible there should be some sort of label instructing the player to select a map
 		self.MapBG = vgui.Create("DImage", self)
+			self.Paint = function() return end
 			self.MapBG:SetImageColor(Color(128, 128, 128, 255))
 			--override map background material. if we get a map thumbnail, generate a background or use a cached one
 			self.MapBG.SetMaterial = function(self, mat)
@@ -260,7 +302,7 @@ local PANEL = {}
 
 				--no map found in provided material (must be missing thumbnail, use default)
 				if not map then
-					self.m_Material = Material("gui/noicon.png", "ignorez smooth 1")
+					self.m_Material = Material("gui/noicon.png", "ignorez smooth 1 noclamp")
 					--we don't want it thinking this is a valid thumbnail texture
 					Texture = false
 				end
@@ -296,14 +338,96 @@ local PANEL = {}
 					self.ActualHeight = Texture and Texture:Height() or self.m_Material:Height()
 				end
 			end
+			--and override drawing, too. as a treat
+			--todo: make this its own function for the derma?
+			self.MapBG.Paint = function(self, w, h)
+				--todo maybe: paint alpha with the tree so we don't have to worry about changes to the skin?
+				--self:PaintAt(0, 0, w or self:GetWide(), h or self:GetTall())
+				--self.tex.Tree(0, 0, w, h, self.m_bgColor)
+
+				self:LoadMaterial()
+
+				if not self.m_Material then return true end
+
+				surface.SetMaterial(self.m_Material)
+				surface.SetDrawColor(self.m_Color.r, self.m_Color.g, self.m_Color.b, self.m_Color.a)
+				local R = 3 --border's 4 pixels, ensure we don't have a gap
+				local TL, BL, TR, BR = 2, 7, 10, 3
+				local x, y = 0, 0
+				local u, v = 1, 1
+				--set up tiling for generic background
+				if string.find(self.m_Material:GetName(), "gui/noicon") then
+					u, v = w / 128, h / 128
+				end
+				surface.DrawPoly({
+					{
+						["x"] = x + R,
+						["y"] = y + R + TL,
+						["u"] = 0,
+						["v"] = 0 + TL / h * v
+					},
+					{
+						["x"] = x + R + TL,
+						["y"] = y + R,
+						["u"] = 0 + TL / w * u,
+						["v"] = 0
+					},
+					{
+						["x"] = x + w - R - TR,
+						["y"] = y + R,
+						["u"] = u - TR / w * u,
+						["v"] = 0
+					},
+					{
+						["x"] = x + w - R,
+						["y"] = y + R + TR,
+						["u"] = u,
+						["v"] = 0 + TR / h * v
+					},
+					{
+						["x"] = x + w - R,
+						["y"] = y + h - R - BR,
+						["u"] = u,
+						["v"] = v - BR / h * v
+					},
+					{
+						["x"] = x + w - R - BR,
+						["y"] = y + h - R,
+						["u"] = u - BR / h * u,
+						["v"] = v
+					},
+					{
+						["x"] = x + R + BL,
+						["y"] = y + h - R,
+						["u"] = 0 + BL / h * u,
+						["v"] = v
+					},
+					{
+						["x"] = x + R,
+						["y"] = y + h - R - BL,
+						["u"] = 0,
+						["v"] = v - BL / h * v
+					}
+				})
+				--if CurTime() % 2 <= 1 then surface.DrawTexturedRect(x + R, y + R, w - 2 * R, h - 2 * R) end
+
+				SKIN.tex.Window.Normal(0, 0, w, h)
+				SKIN.tex.Tree_Shadow(0, 0, w, h, color_white)
+			end
 		self.DescriptionLabels = {}
 		self.MapLabel = vgui.Create("DLabel", self)
 			self.MapLabel:SetFont("Scav_HUDNumber3")
 			self.MapLabel:SetPos(32, 16)
 			self.MapLabel:SizeToContents()
 		self.MapIcon = vgui.Create("DImage", self)
-			self.MapIcon:SetSize(192, 192)
+			self.MapIcon:SetSize(200, 200)
 			self.MapIcon:SetPos(32, 64)
+		--what the hell, here too
+		self.MapIcon.Paint = function(self, w, h)
+			local R = 4
+			self:PaintAt(R, R, (w or self:GetWide()) - 2 * R, (h or self:GetTall()) - 2 * R)
+			SKIN.tex.Panels.Preview(0, 0, w, h)
+		end
 		self.SettingNameLabel = self:AddDescriptionLabel()
 		self.AuthorNameLabel = self:AddDescriptionLabel()
 		self.ModeLabel = self:AddDescriptionLabel()
@@ -340,10 +464,10 @@ local PANEL = {}
 	end
 	
 	function PANEL:DoSetup()
-		self.VoteButton:SetPos(32, self:GetTall() - 64)
+		self.VoteButton:SetPos(32, self:GetTall() - 52)
 		self.VoteButton:SetSize(self:GetWide() - 64, 48)
-		self.MapBG:SetPos(16, 16)
-		self.MapBG:SetSize(self:GetWide() - 32, self:GetTall() - 32)
+		self.MapBG:SetPos(0, 0)
+		self.MapBG:SetSize(self:GetWide(), self:GetTall())
 		local accumulatedy = 0
 		for k, v in ipairs(self.DescriptionLabels) do
 			if v:GetDesc() ~= "" then

@@ -86,7 +86,7 @@ SKIN.tex.Panels.Normal			= GWEN.CreateTextureBorder(256,	0, 63, 63, 16, 16, 16, 
 SKIN.tex.Panels.Bright			= GWEN.CreateTextureBorder(256 + 64, 0, 63, 63, 16, 16, 16, 16)
 SKIN.tex.Panels.Dark			= GWEN.CreateTextureBorder(256,	64, 63, 63, 16, 16, 16, 16)
 SKIN.tex.Panels.Highlight		= GWEN.CreateTextureBorder(256 + 64, 64, 63, 63, 16, 16, 16, 16)
-SKIN.tex.Panels.Preview			= GWEN.CreateTextureBorder(320,	448, 63, 63, 16, 16, 16, 16)
+SKIN.tex.Panels.Preview			= GWEN.CreateTextureBorder(320,	448, 63, 63, 31, 31, 31, 31)
 
 SKIN.tex.Button					= GWEN.CreateTextureBorder(480, 0, 31, 31, 8, 8, 8, 8)
 SKIN.tex.Button_Hovered			= GWEN.CreateTextureBorder(480, 32, 31, 31, 8, 8, 8, 8)
@@ -96,16 +96,18 @@ SKIN.tex.Shadow					= GWEN.CreateTextureBorder(448, 0, 31, 31, 8, 8, 8, 8)
 
 SKIN.tex.Tree					= GWEN.CreateTextureBorder(352, 288, 32, 32, 16, 16, 16, 16)
 SKIN.tex.TreeFlipped			= GWEN.CreateTextureBorder(352, 320, 32, 32, 16, 16, 16, 16)
-SKIN.tex.Checkbox_Checked		= GWEN.CreateTextureNormal(448, 32, 15, 15)
-SKIN.tex.Checkbox				= GWEN.CreateTextureNormal(464, 32, 15, 15)
-SKIN.tex.CheckboxD_Checked		= GWEN.CreateTextureNormal(448, 48, 15, 15)
-SKIN.tex.CheckboxD				= GWEN.CreateTextureNormal(464, 48, 15, 15)
-SKIN.tex.RadioButton_Checked	= GWEN.CreateTextureNormal(448, 64, 15, 15)
-SKIN.tex.RadioButton			= GWEN.CreateTextureNormal(464, 64, 15, 15)
-SKIN.tex.RadioButtonD_Checked	= GWEN.CreateTextureNormal(448, 80, 15, 15)
-SKIN.tex.RadioButtonD			= GWEN.CreateTextureNormal(464, 80, 15, 15)
-SKIN.tex.TreePlus				= GWEN.CreateTextureNormal(448, 96, 15, 15)
-SKIN.tex.TreeMinus				= GWEN.CreateTextureNormal(464, 96, 15, 15)
+SKIN.tex.Tree_Shadow			= GWEN.CreateTextureBorder(256, 64, 64, 64, 32, 32, 32, 32)
+SKIN.tex.TreeFlipped_Shadow		= GWEN.CreateTextureBorder(256 + 64, 64, 64, 64, 32, 32, 32, 32)
+SKIN.tex.Checkbox_Checked		= GWEN.CreateTextureCentered(448, 32, 15, 15)
+SKIN.tex.Checkbox				= GWEN.CreateTextureCentered(464, 32, 15, 15)
+SKIN.tex.CheckboxD_Checked		= GWEN.CreateTextureCentered(448, 48, 15, 15)
+SKIN.tex.CheckboxD				= GWEN.CreateTextureCentered(464, 48, 15, 15)
+SKIN.tex.RadioButton_Checked	= GWEN.CreateTextureCentered(448, 64, 15, 15)
+SKIN.tex.RadioButton			= GWEN.CreateTextureCentered(464, 64, 15, 15)
+SKIN.tex.RadioButtonD_Checked	= GWEN.CreateTextureCentered(448, 80, 15, 15)
+SKIN.tex.RadioButtonD			= GWEN.CreateTextureCentered(464, 80, 15, 15)
+SKIN.tex.TreePlus				= GWEN.CreateTextureCentered(448, 96, 15, 15)
+SKIN.tex.TreeMinus				= GWEN.CreateTextureCentered(464, 96, 15, 15)
 SKIN.tex.TextBox				= GWEN.CreateTextureBorder(0, 150, 127, 21, 4, 4, 4, 4)
 SKIN.tex.TextBox_Focus			= GWEN.CreateTextureBorder(0, 172, 127, 21, 4, 4, 4, 4)
 SKIN.tex.TextBox_Disabled		= GWEN.CreateTextureBorder(0, 194, 127, 21, 4, 4, 4, 4)
@@ -242,6 +244,13 @@ SKIN.tex.CategoryList.Outer		= GWEN.CreateTextureBorder(256, 384, 63, 63, 8, 8, 
 SKIN.tex.CategoryList.InnerH	= GWEN.CreateTextureBorder(320, 384, 63, 20, 8, 8, 8, 8)
 SKIN.tex.CategoryList.Inner		= GWEN.CreateTextureBorder(320, 384 + 21, 63, 63 - 21, 8, 0, 8, 8)
 SKIN.tex.CategoryList.Header	= GWEN.CreateTextureBorder(320, 352, 63, 31, 8, 8, 8, 8)
+
+SKIN.tex.Star = {}
+SKIN.tex.Star.Normal	= GWEN.CreateTextureCentered(400, 96, 16, 16)
+SKIN.tex.Star.Hover		= GWEN.CreateTextureCentered(400 + 16, 96, 16, 16)
+SKIN.tex.Star.Down		= GWEN.CreateTextureCentered(400 + 32, 96, 16, 16)
+SKIN.tex.Star.EHover	= GWEN.CreateTextureCentered(416, 96 + 16, 16, 16)
+SKIN.tex.Star.Empty		= GWEN.CreateTextureCentered(416 + 16, 96 + 16, 16, 16)
 
 SKIN.tex.Tooltip = GWEN.CreateTextureBorder(384, 64, 31, 31, 8, 8, 8, 8)
 
@@ -410,6 +419,7 @@ end
 	CheckBox
 -----------------------------------------------------------]]
 function SKIN:PaintCheckBox(panel, w, h)
+	if panel.Star then return self:PaintStar(panel, w, h) end
 	if panel:GetChecked() then
 		if panel:GetDisabled() then
 			self.tex.CheckboxD_Checked(0, 0, w, h)
@@ -422,6 +432,26 @@ function SKIN:PaintCheckBox(panel, w, h)
 		else
 			self.tex.Checkbox(0, 0, w, h)
 		end
+	end
+end
+--[[---------------------------------------------------------
+	Star
+-----------------------------------------------------------]]
+function SKIN:PaintStar(panel, w, h)
+	if panel:IsEditing() then
+		return self.tex.Star.Down(0, 0, w, h)
+	end
+
+	if panel:GetChecked() then
+		if panel:IsHovered() then
+			return self.tex.Star.Hover(0, 0, w, h)
+		end
+		self.tex.Star.Normal(0, 0, w, h)
+	else
+		if panel:IsHovered() then
+			return self.tex.Star.EHover(0, 0, w, h)
+		end
+		self.tex.Star.Empty(0, 0, w, h)
 	end
 end
 
