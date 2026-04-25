@@ -140,6 +140,11 @@ local PANEL = {}
 		self.Time:AlignRight(8)
 	end
 
+	function PANEL:OnClose()
+		--run our favorites saving
+		concommand.Run(LocalPlayer(), "sdm_vote_close")
+	end
+
 	vgui.Register("SDM_VoteMenu", PANEL, "DFrame")
 
 
@@ -163,6 +168,22 @@ local PANEL = {}
 	vgui.Register("DStar", PANEL, "DCheckBox")
 
 
+--grab player's favorites
+local ITEMDIR = "scavdata"
+local ITEMFILE = "favorites.txt"
+local read = file.Read(ITEMDIR .. "/" .. ITEMFILE, "DATA")
+local favorites = {}
+
+if read then
+	for _, v in ipairs(string.Split(read, "\n")) do
+		if v == "" then continue end
+		favorites[v] = true
+	end
+else
+	file.CreateDir(ITEMDIR)
+end
+
+
 local PANEL = {}
 
 	function PANEL:Init()
@@ -173,19 +194,22 @@ local PANEL = {}
 		local maps = ScavData.GetValidMaps()
 		for _, v in pairs(maps) do
 			local split = string.Split(v, "/")
+			-- setup favorites star (reskinned checkbox)
 			local box = vgui.Create("DStar")
-				--todo: real system lawl
-				box:SetChecked(math.random(0, 1))
+				box.SettingFile = v
+				box:SetChecked(favorites[v])
 				box:SetSkin("sg_menu")
 				--re-sort
 				box.OnChange = function(self, check)
 					local parent = self:GetParent()
 					if not IsValid(parent) then return end
-					parent:SetSortValue(3, check and -1 or 1)
+					--flipped because the first sort goes ascending
+					parent:SetSortValue(3, check and 0 or 1)
+					favorites[box.SettingFile] = check or nil
 				end
 			local line = self:AddLine(split[1], split[2], box)
 				--initial sort
-				line:SetSortValue(3, box:GetChecked() and -1 or 1)
+				line:SetSortValue(3, box:GetChecked() and 0 or 1)
 		end
 		faves:SizeToChildren(true, false)
 		faves:SetMaxWidth(faves:GetWide() + 1)
@@ -591,6 +615,13 @@ concommand.Add("sdm_vote", function(pl, cmd, args)
 end)
 
 concommand.Add("sdm_vote_close", function(pl, cmd, args)
+	--save out our favorites
+	local save = ""
+	for k, _ in pairs(favorites) do
+		save = save .. k .. "\n"
+	end
+	file.Write(ITEMDIR .. "/" .. ITEMFILE, save)
+
 	if SDM_VOTEMENU:IsValid() then
 		SDM_VOTEMENU:Close()
 	end
