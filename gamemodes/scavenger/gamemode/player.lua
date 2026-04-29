@@ -567,6 +567,7 @@ if CLIENT then
 else
 	util.AddNetworkString("sdm_disconnect")
 	util.AddNetworkString("sdm_playerdeath")
+	util.AddNetworkString("sdm_killfeed")
 
 	hook.Add("PlayerDisconnected", "SDMTeamDisconnect", function(pl)
 		local plteam = pl:Team()
@@ -724,6 +725,15 @@ else
 			net.WriteEntity(victim)
 			net.WriteEntity(attacker)
 			--net.WriteEntity(inflictor)
+		net.Broadcast()
+
+		--send to killfeed
+		net.Start("sdm_killfeed")
+			net.WriteBool(true)
+			net.WriteEntity(victim)
+			net.WriteEntity(inflictor)
+			net.WriteEntity(attacker)
+			net.WriteUInt(dmginfo:GetDamageType(), 32)
 		net.Broadcast()
 
 		if (IsValid(attacker) and attacker:IsPlayer()) then

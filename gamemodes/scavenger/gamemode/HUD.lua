@@ -19,6 +19,8 @@ function HUD.AddElement(refinfo)
 	HUD.BuildFromInfo(info)
 	HUD.Elements[info.Name] = info
 	HUD.PerformLayout()
+
+	return HUD.Elements[info.Name].Panel
 end
 
 local lastteam = TEAM_CONNECTING
@@ -72,7 +74,7 @@ function HUD.Rebuild()
 	HUD.PerformLayout()
 end
 
-local anchors = {"top", "none", "bottomleft"}
+local anchors = {"top", "none", "bottomleft", "topright"}
 
 local function SortTop(elements)
 	if not elements then
@@ -108,6 +110,15 @@ local function SetupBottomLeft(elements)
 	end
 end
 
+local function SetupTopRight(elements)
+	local w = ScrW()
+	local totaly = 0
+	for _, v in pairs(elements) do
+		v.Panel:SetPos(w - v.Panel:GetWide() + v.x, totaly + v.Panel:GetTall() + v.y)
+		totaly = totaly + v.Panel:GetTall() + 6
+	end
+end
+
 local function sortascend(a, b)
 	return a > b
 end
@@ -126,6 +137,7 @@ function HUD.PerformLayout()
 	end
 	SortTop(elementsbyanchor["top"])
 	SetupBottomLeft(elementsbyanchor["bottomleft"])
+	SetupTopRight(elementsbyanchor["topright"])
 end
 
 hook.Add("Think", "HUDThink", function()
@@ -184,7 +196,7 @@ local DefaultHUDElements = {
 	["CHudChat"] = true,
 	["CHudCloseCaption"] = true,
 	["CHudCredits"] = true,
-	["CHudDeathNotice"] = true,
+	["CHudDeathNotice"] = false,
 	["CHudTrain"] = true,
 	["CHudMessage"] = true,
 	["CHudMenu"] = true,
@@ -357,6 +369,53 @@ flagtracker.DoAutoPos = false
 
 flagtracker.OnInit = fragcounter.OnInit
 
+local killfeed = {}
+killfeed.Type = "sdm_killfeed_entry"
+killfeed.x = -24
+killfeed.y = -16
+--killfeed.wide = 72
+killfeed.tall = 64
+killfeed.anchor = "topright"
+killfeed.centerx = true
+killfeed.centery = false
+killfeed.sortpriority = 1
+killfeed.Skin = "sg_menu"
+killfeed.HideOnSpectate = false
+killfeed.HideOnDead = false
+
+function HUD.AddKillfeed(info)
+	killfeed.Name = "killfeed" .. tostring(killfeed.sortpriority)
+	local panel = HUD.AddElement(killfeed)
+		panel:SetInfo(info)
+		panel.HUDID = killfeed.Name
+	killfeed.sortpriority = killfeed.sortpriority + 1
+end
+
+net.Receive("sdm_killfeed", function()
+	local victim = nil
+	local victimname = ""
+	if net.ReadBool() then
+		victim = net.ReadEntity()
+	else
+		victimname = net.ReadString()
+	end
+	local inflictor = net.ReadEntity()
+	local attacker = net.ReadEntity()
+	local damage = net.ReadUInt(32)
+	--based on how often we're converting the info to and from them to ultimately get it to the panel,
+	--I'm beginning to think basing this off of a DamageInfo was a bad idea
+	local dmginfo = DamageInfo()
+		dmginfo:SetInflictor(inflictor)
+		dmginfo:SetAttacker(attacker)
+		dmginfo:SetDamageType(damage)
+		
+	local info = {}
+	info.dmginfo = dmginfo
+	info.victim = victim
+
+	HUD.AddKillfeed(info)
+end)
+
 local function standardhud()
 	HUD.Clear()
 	if GAMEMODE:GetGNWFloat("TimeLimit") ~= 0 then
@@ -366,6 +425,7 @@ local function standardhud()
 	HUD.AddElement(armor)
 	HUD.AddElement(energy)
 	HUD.AddElement(lives)
+	--HUD.AddElement(killfeed)
 end
 
 local setuphud = {
@@ -388,8 +448,8 @@ local setuphud = {
 setmetatable(setuphud, {__index = function() return setuphud[SDM_MODE_DM] end})
 
 hook.Add("OnRoundStart", "sdm_flagtracker", function()
-	if not HUD.Elements["flagtracker"] then return end
-	HUD.Elements["flagtracker"].Panel:SetupFlags()
+	if not HUD.Elements.flagtracker then return end
+	HUD.Elements.flagtracker.Panel:SetupFlags()
 end)
 
 --You'd think there'd be a saner way to do this

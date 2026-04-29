@@ -86,7 +86,7 @@ SKIN.tex.Panels.Normal			= GWEN.CreateTextureBorder(256,	0, 63, 63, 16, 16, 16, 
 SKIN.tex.Panels.Bright			= GWEN.CreateTextureBorder(256 + 64, 0, 63, 63, 16, 16, 16, 16)
 SKIN.tex.Panels.Dark			= GWEN.CreateTextureBorder(256,	64, 63, 63, 16, 16, 16, 16)
 SKIN.tex.Panels.Highlight		= GWEN.CreateTextureBorder(256 + 64, 64, 63, 63, 16, 16, 16, 16)
-SKIN.tex.Panels.Preview			= GWEN.CreateTextureBorder(320,	448, 63, 63, 31, 31, 31, 31)
+SKIN.tex.Panels.Preview			= GWEN.CreateTextureBorder(320, 448, 63, 63, 31, 31, 31, 31)
 
 SKIN.tex.Button					= GWEN.CreateTextureBorder(480, 0, 31, 31, 8, 8, 8, 8)
 SKIN.tex.Button_Hovered			= GWEN.CreateTextureBorder(480, 32, 31, 31, 8, 8, 8, 8)
@@ -252,6 +252,10 @@ SKIN.tex.Star.Down		= GWEN.CreateTextureCentered(400 + 32, 96, 16, 16)
 SKIN.tex.Star.EHover	= GWEN.CreateTextureCentered(416, 96 + 16, 16, 16)
 SKIN.tex.Star.Empty		= GWEN.CreateTextureCentered(416 + 16, 96 + 16, 16, 16)
 
+--SKIN.tex.Killfeed = {}
+--SKIN.tex.Killfeed.Center = GWEN.CreateTextureCentered(256, 128, 63, 63)
+SKIN.tex.Killfeed = GWEN.CreateTextureCentered(256, 128, 63, 63)
+
 SKIN.tex.Tooltip = GWEN.CreateTextureBorder(384, 64, 31, 31, 8, 8, 8, 8)
 
 SKIN.Colours = {}
@@ -325,6 +329,58 @@ SKIN.Colours.Category.LineAlt.Button_Hover		= GWEN.TextureColor(4 + 8 * 24, 500)
 SKIN.Colours.Category.LineAlt.Button_Selected	= GWEN.TextureColor(4 + 8 * 25, 500)
 
 SKIN.Colours.TooltipText = GWEN.TextureColor(4 + 8 * 26, 500)
+
+local damage_rings = Material("hud/sdm/damage_types.png", "ignorez")
+local dmggridspace = 80 / 512
+
+local dmgpaint = function(x, y, col)
+	local col = col or color_white
+	return function(panel, w, h)
+		surface.SetMaterial(damage_rings)
+		surface.SetDrawColor(col)
+		surface.DrawTexturedRectUV(0, -16, w, h, x, y, x + dmggridspace, y + dmggridspace)
+	end
+end
+
+SKIN.Damage = {}
+SKIN.Damage[DMG_GENERIC] = dmgpaint(0, 0)
+SKIN.Damage[DMG_CRUSH] = dmgpaint(dmggridspace, 0)
+SKIN.Damage[DMG_BULLET] = dmgpaint(dmggridspace * 2, 0, Color(157, 157, 157))
+SKIN.Damage[DMG_SLASH] = dmgpaint(dmggridspace * 3, 0, Color(157, 157, 157))
+SKIN.Damage[DMG_BURN] = dmgpaint(dmggridspace * 4, 0, Color(255, 69, 16))
+SKIN.Damage[DMG_VEHICLE] = dmgpaint(dmggridspace * 5, 0)
+
+SKIN.Damage[DMG_FALL] = dmgpaint(0, dmggridspace)
+SKIN.Damage[DMG_BLAST] = dmgpaint(dmggridspace, dmggridspace, Color(255, 69, 16))
+SKIN.Damage[DMG_CLUB] = dmgpaint(dmggridspace * 2, dmggridspace, Color(219, 171, 107))
+SKIN.Damage[DMG_SHOCK] = dmgpaint(dmggridspace * 3, dmggridspace)
+SKIN.Damage[DMG_SONIC] = dmgpaint(dmggridspace * 4, dmggridspace)
+SKIN.Damage[DMG_ENERGYBEAM] = dmgpaint(dmggridspace * 5, dmggridspace)
+
+SKIN.Damage[DMG_PREVENT_PHYSICS_FORCE] = dmgpaint(0, dmggridspace * 2)
+SKIN.Damage[DMG_NEVERGIB] = dmgpaint(dmggridspace, dmggridspace * 2)
+SKIN.Damage[DMG_ALWAYSGIB] = dmgpaint(dmggridspace * 2, dmggridspace * 2)
+SKIN.Damage[DMG_DROWN] = dmgpaint(dmggridspace * 3, dmggridspace * 2, Color(54, 159, 219))
+SKIN.Damage[DMG_PARALYZE] = dmgpaint(dmggridspace * 4, dmggridspace * 2)
+SKIN.Damage[DMG_NERVEGAS] = dmgpaint(dmggridspace * 5, dmggridspace * 2)
+
+SKIN.Damage[DMG_POISON] = dmgpaint(0, dmggridspace * 3)
+SKIN.Damage[DMG_RADIATION] = dmgpaint(dmggridspace, dmggridspace * 3, Color(85, 224, 30))
+SKIN.Damage[DMG_DROWNRECOVER] = SKIN.Damage[DMG_DROWN]
+SKIN.Damage[DMG_ACID] = dmgpaint(dmggridspace * 3, dmggridspace * 3)
+SKIN.Damage[DMG_SLOWBURN] = dmgpaint(dmggridspace * 4, dmggridspace * 3)
+SKIN.Damage[DMG_REMOVENORAGDOLL] = dmgpaint(dmggridspace * 5, dmggridspace * 3)
+
+
+SKIN.Damage[DMG_PHYSGUN] = dmgpaint(0, dmggridspace * 4)
+SKIN.Damage[DMG_PLASMA] = dmgpaint(dmggridspace, dmggridspace * 4)
+SKIN.Damage[DMG_AIRBOAT] = dmgpaint(dmggridspace * 2, 0, Color(28, 192, 241))
+SKIN.Damage[DMG_DISSOLVE] = dmgpaint(dmggridspace * 3, dmggridspace * 4)
+SKIN.Damage[DMG_BLAST_SURFACE] = SKIN.Damage[DMG_BLAST]
+SKIN.Damage[DMG_DIRECT] = SKIN.Damage[DMG_BURN]
+
+SKIN.Damage[DMG_BUCKSHOT] = dmgpaint(0, dmggridspace * 4, Color(238, 34, 79))
+SKIN.Damage[DMG_SNIPER] = dmgpaint(dmggridspace, dmggridspace * 4, Color(255, 69, 16))
 
 --[[---------------------------------------------------------
 	Preview

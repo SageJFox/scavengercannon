@@ -728,9 +728,167 @@ local PANEL = {}
 	end
 	
 	vgui.Register("sdm_dm_fragsbehind", PANEL, "sdm_armorpanel")
+
+--KILLFEED PANELS
+
+local PANEL = {}
+	function PANEL:Init()
+		self:SetMouseInputEnabled(false)
+		self.TitleLabel:Remove()
+		self.TextLabel:SetPos(8, 8)
+		self:SetText(self.Text)
+		self:PlayerColor()
+		if self.TeamIcon then
+			self.TeamIcon:SetSize(16, 16)
+		end
+		self:InvalidateLayout(true)
+		self:SizeToChildren(true, true)
+	end
 	
-	team.GetSortedPlayers(teamnum)
-	
+	function PANEL:SetPlayer(pl)
+		self.Player = pl
+		self:PlayerColor()
+		self:SetText(pl:Nick())
+	end
+
+	function PANEL:SetText(text)
+		self.Text = text
+		self.TextLabel:SetText(self.Text)
+		self.TextLabel:SizeToContents()
+		self:InvalidateLayout()
+	end
+
+	function PANEL:Think()
+	end
+
+	vgui.Register("sdm_killfeed_side", PANEL, "sdm_healthpanel")
+
+local PANEL = {}
+
+	function PANEL:Init()
+		self:SetMouseInputEnabled(false)
+		self:SetSize(64, 64)
+	end
+
+	function PANEL:Paint(w, h)
+		SKIN.tex.Killfeed(0, 0, w, h)
+		if self.Damage then
+			local wasEnabled = DisableClipping(true)
+			SKIN.Damage[self.Damage](self, w * 1.25, h * 1.25)
+			DisableClipping(wasEnabled)
+		end
+	end
+
+	vgui.Register("sdm_killfeed_center", PANEL, "DPanel")
+
+local PANEL = {}
+
+	function PANEL:Init()
+		self:SetMouseInputEnabled(false)
+		self.DieTime = UnPredictedCurTime() + 5
+		
+		self.parts = {}
+		self.parts.Victim = vgui.Create("sdm_killfeed_side", self)
+			self.parts.Victim:Flip()
+			self.parts.Victim:SetText("VICTIM")
+		self.parts.Attacker = vgui.Create("sdm_killfeed_side", self)
+			self.parts.Attacker:SetText("ATTACKER")
+		self.parts.Inflictor = vgui.Create("sdm_killfeed_center", self)
+		self.parts.Inflictor.Damage = DMG_BURN
+	end
+
+	function PANEL:Paint(w, h)
+		return
+	end
+
+	function PANEL:Think()
+		if self.DieTime < UnPredictedCurTime() then
+			HUD.Elements[self.HUDID] = nil
+			HUD.PerformLayout()
+			self:Remove()
+		end
+	end
+
+	function PANEL:InvalidateLayout()
+		local cx = -8
+		if self.parts.Attacker then
+			self.parts.Attacker:SizeToChildren(true, true)
+			self.parts.Attacker:SetPos(0, 0)
+			cx = cx + self.parts.Attacker:GetWide()
+		end
+		if self.parts.Inflictor then
+			self.parts.Inflictor:SetPos(cx, 0)
+		end
+		if self.parts.Victim then
+			self.parts.Victim:SizeToChildren(true, true)
+			self.parts.Victim:SetPos(cx + 53, 0)
+		end
+		self:SizeToChildren(true, true)
+	end
+
+	local displaydamage = bit.bnot(bit.bor(DMG_DROWNRECOVER, DMG_ALWAYSGIB, DMG_NEVERGIB, DMG_PREVENT_PHYSICS_FORCE, DMG_REMOVENORAGDOLL))
+
+	--translate a death event to our panel info
+	function PANEL:DamageInfo(victim, dmginfo)
+		--handle attacker panel
+		local attacker = dmginfo:GetAttacker()
+		if self.parts.Attacker then
+			local suicide = attacker == victim
+			local world = attacker:IsWorld()
+			--remove attacker panel if we killed ourself, or the world did it (falling, drowning, etc)
+			if suicide or world then
+				self.parts.Attacker:Remove()
+			elseif attacker:IsPlayer() then
+				self.parts.Attacker:SetPlayer(attacker)
+			else
+				local attackername = attacker:GetClass()
+				--todo: display name for NPCs
+				self.parts.Attacker.Text = attackername
+			end
+		end
+		--handle victim panel
+		if self.parts.Victim then
+			if victim:IsPlayer() then
+				self.parts.Victim:SetPlayer(victim)
+			else
+				local victimname = victim:GetClass()
+				--todo: display name for NPCs
+				self.parts.Victim.Text = victimname
+			end
+		end
+		--handle inflictor (center) panel
+		if self.parts.Inflictor then
+			--grab one type of damage, preferably one that's nice for display
+			local damage = dmginfo:GetDamageType()
+			local damages = {}
+			local cleaneddamage = bit.band(damage, displaydamage)
+			if cleaneddamage ~= 0 then damage = cleaneddamage end
+
+			if damage > 0 then
+				for i = 0, 31 do
+					local dmg = math.pow(2, i)
+					if bit.band(damage, dmg) > 0 then table.insert(damages, dmg) end
+				end
+				if #damages > 1 then
+					damage = damages[math.random(#damages)]
+				end
+			end
+			self.parts.Inflictor.Damage = damage
+
+			--todo: killicon, or prop for scav cannon
+		end
+		self:InvalidateLayout(true)
+	end
+
+	function PANEL:SetInfo(info)
+		if info.victim and info.dmginfo then
+			self:DamageInfo(info.victim, info.dmginfo)
+		end
+		--todo: handle other stuff lawl
+	end
+
+	vgui.Register("sdm_killfeed_entry", PANEL, "DPanel")
+
 local PANEL = {}
 	PANEL.TitleString = "Title"
 	PANEL.TextString = "Text"
