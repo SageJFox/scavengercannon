@@ -76,6 +76,9 @@ else --include client files
 	net.Receive("scav_gm_vote", function()
 		LocalPlayer():PrintMessage(HUD_PRINTTALK, ScavLocalize("scav.map.timeup"))
 	end)
+
+	function GM:AddDeathNotice(attacker, attackerteam, inflictor, victim, victimteam) return end
+	function GM:DrawDeathNotice(x, y) return end
 end
 
 function GM:Think()

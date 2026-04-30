@@ -389,6 +389,7 @@ function HUD.AddKillfeed(info)
 		panel:SetInfo(info)
 		panel.HUDID = killfeed.Name
 	killfeed.sortpriority = killfeed.sortpriority + 1
+	HUD.PerformLayout()
 end
 
 net.Receive("sdm_killfeed", function()
@@ -400,9 +401,9 @@ net.Receive("sdm_killfeed", function()
 		victimname = net.ReadString()
 	end
 	local inflictor = net.ReadEntity()
-	if not IsValid(inflictor) then inflictor = Entity(0) end
 	local attacker = net.ReadEntity()
 	if not IsValid(attacker) then attacker = Entity(0) end
+	if not IsValid(inflictor) then inflictor = attacker end
 	local damage = net.ReadUInt(32)
 	--based on how often we're converting the info to and from them to ultimately get it to the panel,
 	--I'm beginning to think basing this off of a DamageInfo was a bad idea
@@ -413,7 +414,7 @@ net.Receive("sdm_killfeed", function()
 		
 	local info = {}
 	info.dmginfo = dmginfo
-	info.victim = victim
+	info.victim = victim or victimname
 	local model = inflictor:GetModel()
 	if model then
 		info.model = model
@@ -431,7 +432,6 @@ local function standardhud()
 	HUD.AddElement(armor)
 	HUD.AddElement(energy)
 	HUD.AddElement(lives)
-	--HUD.AddElement(killfeed)
 end
 
 local setuphud = {

@@ -633,6 +633,17 @@ else
 		net.Broadcast()
 	end
 
+	hook.Add("OnNPCKilled", "sdm_killfeed", function(npc, attacker, inflictor)
+		--send to killfeed
+		net.Start("sdm_killfeed")
+			net.WriteBool(true)
+			net.WriteEntity(npc)
+			net.WriteEntity(inflictor)
+			net.WriteEntity(attacker)
+			net.WriteUInt(npc.ScavLastDamageType or 0, 32)
+		net.Broadcast()
+	end)
+
 	net.Receive("sdm_potentialclientgib", function()
 		local pl = net.ReadPlayer()
 		if not IsValid(pl) then return end

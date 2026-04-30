@@ -799,7 +799,7 @@ local PANEL = {}
 
 	function PANEL:Init()
 		self:SetMouseInputEnabled(false)
-		self.DieTime = UnPredictedCurTime() + 65
+		self.DieTime = UnPredictedCurTime() + 7
 		
 		self.parts = {}
 		self.parts.Victim = vgui.Create("sdm_killfeed_side", self)
@@ -862,10 +862,10 @@ local PANEL = {}
 		end
 		--handle victim panel
 		if self.parts.Victim then
-			if victim:IsPlayer() then
+			if IsValid(victim) and victim:IsPlayer() then
 				self.parts.Victim:SetPlayer(victim)
 			else
-				local victimname = victim:GetClass()
+				local victimname = isstring(victim) and victim or victim:GetClass()
 				--todo: display name for NPCs
 				self.parts.Victim:SetText(ScavLocalize(victimname))
 			end
