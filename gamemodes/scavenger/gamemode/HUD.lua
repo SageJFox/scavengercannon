@@ -400,7 +400,9 @@ net.Receive("sdm_killfeed", function()
 		victimname = net.ReadString()
 	end
 	local inflictor = net.ReadEntity()
+	if not IsValid(inflictor) then inflictor = Entity(0) end
 	local attacker = net.ReadEntity()
+	if not IsValid(attacker) then attacker = Entity(0) end
 	local damage = net.ReadUInt(32)
 	--based on how often we're converting the info to and from them to ultimately get it to the panel,
 	--I'm beginning to think basing this off of a DamageInfo was a bad idea
@@ -412,6 +414,10 @@ net.Receive("sdm_killfeed", function()
 	local info = {}
 	info.dmginfo = dmginfo
 	info.victim = victim
+	local model = inflictor:GetModel()
+	if model then
+		info.model = model
+	end
 
 	HUD.AddKillfeed(info)
 end)

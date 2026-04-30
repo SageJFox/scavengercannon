@@ -735,14 +735,14 @@ local PANEL = {}
 	function PANEL:Init()
 		self:SetMouseInputEnabled(false)
 		self.TitleLabel:Remove()
-		self.TextLabel:SetPos(8, 8)
+		self.TextLabel:SetPos(24, 8)
 		self:SetText(self.Text)
 		self:PlayerColor()
 		if self.TeamIcon then
 			self.TeamIcon:SetSize(16, 16)
 		end
+		self.initialized = true
 		self:InvalidateLayout(true)
-		self:SizeToChildren(true, true)
 	end
 	
 	function PANEL:SetPlayer(pl)
@@ -755,6 +755,8 @@ local PANEL = {}
 		self.Text = text
 		self.TextLabel:SetText(self.Text)
 		self.TextLabel:SizeToContents()
+		self:SetWide(self.TextLabel:GetWide() + 32)
+		self:SetTall(math.max(48, self.TextLabel:GetTall()))
 		self:InvalidateLayout()
 	end
 
@@ -764,6 +766,7 @@ local PANEL = {}
 	vgui.Register("sdm_killfeed_side", PANEL, "sdm_healthpanel")
 
 local PANEL = {}
+	PANEL.Model = ""
 
 	function PANEL:Init()
 		self:SetMouseInputEnabled(false)
@@ -771,12 +774,23 @@ local PANEL = {}
 	end
 
 	function PANEL:Paint(w, h)
+		local wasEnabled = DisableClipping(true)
 		SKIN.tex.Killfeed(0, 0, w, h)
 		if self.Damage then
-			local wasEnabled = DisableClipping(true)
 			SKIN.Damage[self.Damage](self, w * 1.25, h * 1.25)
-			DisableClipping(wasEnabled)
 		end
+		DisableClipping(wasEnabled)
+	end
+
+	function PANEL:SetModel(model, mskin, bodygroups)
+		if not model or model == "" then return end
+		self.Model = model
+		if not self.Icon then
+			self.Icon = vgui.Create("SpawnIcon", self)
+				self.Icon:SetSize(48, 48)
+				self.Icon:SetPos(7, 7)
+		end
+		self.Icon:SetModel(self.Model, mskin, bodygroups)
 	end
 
 	vgui.Register("sdm_killfeed_center", PANEL, "DPanel")
@@ -785,7 +799,7 @@ local PANEL = {}
 
 	function PANEL:Init()
 		self:SetMouseInputEnabled(false)
-		self.DieTime = UnPredictedCurTime() + 5
+		self.DieTime = UnPredictedCurTime() + 65
 		
 		self.parts = {}
 		self.parts.Victim = vgui.Create("sdm_killfeed_side", self)
@@ -794,7 +808,6 @@ local PANEL = {}
 		self.parts.Attacker = vgui.Create("sdm_killfeed_side", self)
 			self.parts.Attacker:SetText("ATTACKER")
 		self.parts.Inflictor = vgui.Create("sdm_killfeed_center", self)
-		self.parts.Inflictor.Damage = DMG_BURN
 	end
 
 	function PANEL:Paint(w, h)
@@ -811,22 +824,23 @@ local PANEL = {}
 
 	function PANEL:InvalidateLayout()
 		local cx = -8
-		if self.parts.Attacker then
-			self.parts.Attacker:SizeToChildren(true, true)
-			self.parts.Attacker:SetPos(0, 0)
+		if IsValid(self.parts.Attacker) then
+			self.parts.Attacker:InvalidateLayout(true)
+			self.parts.Attacker:SetPos(0, 8)
 			cx = cx + self.parts.Attacker:GetWide()
 		end
-		if self.parts.Inflictor then
+		if IsValid(self.parts.Inflictor) then
+			self.parts.Inflictor:InvalidateLayout(true)
 			self.parts.Inflictor:SetPos(cx, 0)
 		end
-		if self.parts.Victim then
-			self.parts.Victim:SizeToChildren(true, true)
-			self.parts.Victim:SetPos(cx + 53, 0)
+		if IsValid(self.parts.Victim) then
+			self.parts.Victim:InvalidateLayout(true)
+			self.parts.Victim:SetPos(cx + 53, 8)
 		end
 		self:SizeToChildren(true, true)
 	end
 
-	local displaydamage = bit.bnot(bit.bor(DMG_DROWNRECOVER, DMG_ALWAYSGIB, DMG_NEVERGIB, DMG_PREVENT_PHYSICS_FORCE, DMG_REMOVENORAGDOLL))
+	local displaydamage = bit.bnot(bit.bor(DMG_DROWNRECOVER, DMG_ALWAYSGIB, DMG_NEVERGIB, DMG_PREVENT_PHYSICS_FORCE, DMG_REMOVENORAGDOLL, DMG_PHYSGUN))
 
 	--translate a death event to our panel info
 	function PANEL:DamageInfo(victim, dmginfo)
@@ -843,7 +857,7 @@ local PANEL = {}
 			else
 				local attackername = attacker:GetClass()
 				--todo: display name for NPCs
-				self.parts.Attacker.Text = attackername
+				self.parts.Attacker:SetText(ScavLocalize(attackername))
 			end
 		end
 		--handle victim panel
@@ -853,7 +867,7 @@ local PANEL = {}
 			else
 				local victimname = victim:GetClass()
 				--todo: display name for NPCs
-				self.parts.Victim.Text = victimname
+				self.parts.Victim:SetText(ScavLocalize(victimname))
 			end
 		end
 		--handle inflictor (center) panel
@@ -874,8 +888,22 @@ local PANEL = {}
 				end
 			end
 			self.parts.Inflictor.Damage = damage
-
-			--todo: killicon, or prop for scav cannon
+			--prop what killed us
+			local inflictor = dmginfo:GetInflictor() or dmginfo:GetWeapon() or attacker
+			--todo: get model from scav gun if it was a non-projectile mode
+			if IsValid(inflictor) then
+				local bodygroups = "000000000"
+				for k, v in pairs(inflictor:GetBodyGroups()) do
+					local str = inflictor:GetBodygroup(v.id)
+					if str < 10 then
+						str = tostring(str)
+					else
+						str = string.char(31 + str) -- 10 = A, 11 = B, etc.
+					end
+					bodygroups = bodygroups:SetChar( v.id + 1, str)
+				end
+				self.parts.Inflictor:SetModel(inflictor:GetModel(), inflictor:GetSkin(), bodygroups)
+			end
 		end
 		self:InvalidateLayout(true)
 	end
