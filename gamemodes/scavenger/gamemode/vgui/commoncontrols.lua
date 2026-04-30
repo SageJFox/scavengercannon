@@ -887,7 +887,6 @@ local PANEL = {}
 					damage = damages[math.random(#damages)]
 				end
 			end
-			self.parts.Inflictor.Damage = damage
 			--prop what killed us
 			local inflictor = dmginfo:GetInflictor() or dmginfo:GetWeapon() or attacker
 			--todo: get model from scav gun if it was a non-projectile mode
@@ -903,7 +902,10 @@ local PANEL = {}
 					bodygroups = bodygroups:SetChar( v.id + 1, str)
 				end
 				self.parts.Inflictor:SetModel(inflictor:GetModel(), inflictor:GetSkin(), bodygroups)
+				--hacky alternatives for damage icons
+				if damage == DMG_FREEZE and inflictor:IsVehicle() then damage = damage + 1 end
 			end
+			self.parts.Inflictor.Damage = damage
 		end
 		self:InvalidateLayout(true)
 	end
