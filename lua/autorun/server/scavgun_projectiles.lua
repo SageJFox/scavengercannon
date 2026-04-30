@@ -83,6 +83,11 @@ function Projectile:GetOwner()
 	return self.Owner
 end
 
+function Projectile:GetWeapon(wep)
+	if not IsValid(self.Owner) then return NULL end
+	return self.Owner:GetWeapon(wep or "scav_gun")
+end
+
 function Projectile:SetInflictor(ent)
 	if ent == NULL then
 		error("Tried to use a NULL entity!",2)
