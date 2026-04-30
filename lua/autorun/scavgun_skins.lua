@@ -348,7 +348,7 @@ SKIN.Damage[DMG_CRUSH] = dmgpaint(dmggridspace, 0, Color(236, 223, 186))
 SKIN.Damage[DMG_BULLET] = dmgpaint(dmggridspace * 2, 0, Color(157, 157, 157))
 SKIN.Damage[DMG_SLASH] = dmgpaint(dmggridspace * 3, 0, Color(157, 157, 157))
 SKIN.Damage[DMG_BURN] = dmgpaint(dmggridspace * 4, 0, Color(255, 69, 16))
-SKIN.Damage[DMG_FREEZE] = dmgpaint(dmggridspace * 5, 0)
+SKIN.Damage[DMG_VEHICLE] = dmgpaint(dmggridspace * 5, 0) --DMG_FREEZE
 
 SKIN.Damage[DMG_FALL] = dmgpaint(0, dmggridspace)
 SKIN.Damage[DMG_BLAST] = dmgpaint(dmggridspace, dmggridspace, Color(255, 69, 16))
