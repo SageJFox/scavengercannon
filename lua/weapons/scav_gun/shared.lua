@@ -853,8 +853,7 @@ if SERVER then
 		if effect then
 			local rf = RecipientFilter()
 			rf:AddAllPlayers()
-			util.AddNetworkString( "scv_elc" )
-			net.Start("scv_elc")
+			net.Start("scv_elec")
 				net.WriteVector(position)
 				net.WriteFloat(radius)
 			net.Send(rf)

@@ -585,7 +585,7 @@ if SERVER then
 
 else
 
-	net.Receive("scv_elc", function()
+	net.Receive("scv_elec", function()
 	
 		local pos = net.ReadVector()
 		local radius = net.ReadFloat()
