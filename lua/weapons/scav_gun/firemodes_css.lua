@@ -146,6 +146,8 @@
 			tab.ChargeAttack = function(self, item)
 				if self.Owner:KeyDown(IN_ATTACK) then
 					local bullet = {}
+						bullet.Inflictor = self
+						bullet.Weapon = self
 						bullet.Num = 1
 						bullet.AccuracyOffset = Vector(0.045, 0.045, 0)
 						bullet.Tracer = 1
@@ -202,6 +204,8 @@
 			tab.ChargeAttack = function(self, item)
 				if self.Owner:KeyDown(IN_ATTACK) then
 					local bullet = {}
+						bullet.Inflictor = self
+						bullet.Weapon = self
 						bullet.Num = 1
 						bullet.AccuracyOffset = Vector(0.035, 0.035, 0)
 						bullet.Tracer = 1
@@ -258,6 +262,8 @@
 			tab.ChargeAttack = function(self, item)
 				if self.Owner:KeyDown(IN_ATTACK) then
 					local bullet = {}
+						bullet.Inflictor = self
+						bullet.Weapon = self
 						bullet.Num = 1
 						bullet.AccuracyOffset = Vector(0.03, 0.03, 0)
 						bullet.Tracer = 1
@@ -313,6 +319,8 @@
 			tab.MaxAmmo = 40
 			
 				local bullet = {}
+						bullet.Inflictor = self
+						bullet.Weapon = self
 						bullet.Num = 1
 						bullet.Spread = Vector(0.00, 0.00, 0)
 						bullet.Tracer = 1
@@ -358,6 +366,8 @@
 			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			tab.MaxAmmo = 42
 			local bullet = {}
+					bullet.Inflictor = self
+					bullet.Weapon = self
 					bullet.Num = 1
 					bullet.AccuracyOffset = Vector(0.015, 0.015, 0)
 					bullet.Tracer = 1
@@ -403,6 +413,8 @@
 			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			tab.MaxAmmo = 150
 			local bullet = {}
+					bullet.Inflictor = self
+					bullet.Weapon = self
 					bullet.Num = 1
 					bullet.AccuracyOffset = Vector(0.0, 0.0, 0)
 					bullet.Tracer = 1
@@ -461,6 +473,8 @@
 			tab.ChargeAttack = function(self, item)
 				if self.Owner:KeyDown(IN_ATTACK) then
 					local bullet = {}
+						bullet.Inflictor = self
+						bullet.Weapon = self
 						bullet.Num = 1
 						bullet.AccuracyOffset = Vector(0.03, 0.03, 0)
 						bullet.Tracer = 1
@@ -513,6 +527,8 @@
 			tab.Level = 2
 			tab.MaxAmmo = 120
 			local bullet = {}
+					bullet.Inflictor = self
+					bullet.Weapon = self
 					bullet.Num = 1
 					bullet.AccuracyOffset = Vector(0.0, 0.0, 0)
 					bullet.Tracer = 1
@@ -558,6 +574,8 @@
 			tab.ChargeAttack = function(self, item)
 				if self.Owner:KeyDown(IN_ATTACK) then
 					local bullet = {}
+						bullet.Inflictor = self
+						bullet.Weapon = self
 						bullet.Num = 1
 						bullet.AccuracyOffset = Vector(0.035, 0.035, 0)
 						bullet.Tracer = 1
@@ -612,6 +630,8 @@
 			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			tab.MaxAmmo = 140
 			local bullet = {}
+					bullet.Inflictor = self
+					bullet.Weapon = self
 					bullet.Num = 1
 					bullet.AccuracyOffset = Vector(0.0, 0.0, 0)
 					bullet.Tracer = 1
@@ -659,6 +679,8 @@
 			tab.Level = 2
 			tab.MaxAmmo = 40
 			local bullet = {}
+					bullet.Inflictor = self
+					bullet.Weapon = self
 					bullet.Num = 9
 					bullet.Spread = Vector(0.1, 0.1, 0)
 					bullet.Tracer = 1
@@ -700,6 +722,8 @@
 			tab.ChargeAttack = function(self, item)
 				if self.Owner:KeyDown(IN_ATTACK) then
 					local bullet = {}
+						bullet.Inflictor = self
+						bullet.Weapon = self
 						bullet.Num = 1
 						bullet.AccuracyOffset = Vector(0.03, 0.03, 0)
 						bullet.Tracer = 1
@@ -756,6 +780,8 @@
 			tab.ChargeAttack = function(self, item)
 				if self.Owner:KeyDown(IN_ATTACK) then
 					local bullet = {}
+						bullet.Inflictor = self
+						bullet.Weapon = self
 						bullet.Num = 1
 						bullet.AccuracyOffset = Vector(0.03, 0.03, 0)
 						bullet.Tracer = 1
@@ -812,6 +838,8 @@
 			tab.ChargeAttack = function(self, item)
 				if self.Owner:KeyDown(IN_ATTACK) then
 					local bullet = {}
+						bullet.Inflictor = self
+						bullet.Weapon = self
 						bullet.Num = 1
 						bullet.AccuracyOffset = Vector(0.04, 0.04, 0)
 						bullet.Tracer = 1
@@ -872,6 +900,8 @@
 			tab.ChargeAttack = function(self, item)
 				if self.Owner:KeyDown(IN_ATTACK) then
 					local bullet = {}
+						bullet.Inflictor = self
+						bullet.Weapon = self
 						bullet.Num = 1
 						bullet.AccuracyOffset = Vector(0.06, 0.06, 0)
 						bullet.Tracer = 1
@@ -930,6 +960,8 @@
 			tab.ChargeAttack = function(self, item)
 				if self.Owner:KeyDown(IN_ATTACK) then
 					local bullet = {}
+						bullet.Inflictor = self
+						bullet.Weapon = self
 						bullet.Num = 1
 						bullet.AccuracyOffset = Vector(0.045, 0.045, 0)
 						bullet.Tracer = 1
@@ -991,6 +1023,8 @@
 			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			tab.MaxAmmo = 65
 			local bullet = {}
+					bullet.Inflictor = self
+					bullet.Weapon = self
 					bullet.Num = 1
 					bullet.AccuracyOffset = Vector(0.0, 0.0, 0)
 					bullet.Tracer = 1
@@ -1037,6 +1071,8 @@
 			tab.MaxAmmo = 100
 			
 				local bullet = {}
+						bullet.Inflictor = self
+						bullet.Weapon = self
 						bullet.Num = 1
 						bullet.Spread = Vector(0.0, 0.0, 0)
 						bullet.Tracer = 1
@@ -1084,6 +1120,8 @@
 			tab.ChargeAttack = function(self, item)
 				if self.Owner:KeyDown(IN_ATTACK) then
 					local bullet = {}
+						bullet.Inflictor = self
+						bullet.Weapon = self
 						bullet.Num = 1
 						bullet.AccuracyOffset = Vector(0.0, 0.0, 0)
 						bullet.Tracer = 1
@@ -1142,6 +1180,8 @@
 			tab.ChargeAttack = function(self, item)
 				if self.Owner:KeyDown(IN_ATTACK) then
 					local bullet = {}
+						bullet.Inflictor = self
+						bullet.Weapon = self
 						bullet.Num = 1
 						bullet.AccuracyOffset = Vector(0.03, 0.03, 0)
 						bullet.Tracer = 1
@@ -1198,6 +1238,8 @@
 			tab.ChargeAttack = function(self, item)
 				if self.Owner:KeyDown(IN_ATTACK) then
 					local bullet = {}
+						bullet.Inflictor = self
+						bullet.Weapon = self
 						bullet.Num = 1
 						bullet.AccuracyOffset = Vector(0.055, 0.055, 0)
 						bullet.Tracer = 1
@@ -1254,6 +1296,8 @@
 			tab.ChargeAttack = function(self, item)
 				if self.Owner:KeyDown(IN_ATTACK) then
 					local bullet = {}
+						bullet.Inflictor = self
+						bullet.Weapon = self
 						bullet.Num = 1
 						bullet.AccuracyOffset = Vector(0.055, 0.055, 0)
 						bullet.Tracer = 1
@@ -1306,6 +1350,8 @@
 			tab.Level = 2
 			tab.MaxAmmo = 112
 			local bullet = {}
+					bullet.Inflictor = self
+					bullet.Weapon = self
 					bullet.Num = 1
 					bullet.AccuracyOffset = Vector(0.0, 0.0, 0)
 					bullet.Tracer = 1
@@ -1347,6 +1393,8 @@
 			tab.Level = 2
 			tab.MaxAmmo = 112
 			local bullet = {}
+					bullet.Inflictor = self
+					bullet.Weapon = self
 					bullet.Num = 1
 					bullet.AccuracyOffset = Vector(0.0, 0.0, 0)
 					bullet.Tracer = 1
@@ -1400,6 +1448,8 @@
 			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			tab.MaxAmmo = 39
 			local bullet = {}
+					bullet.Inflictor = self
+					bullet.Weapon = self
 					bullet.Num = 6
 					bullet.Spread = Vector(0.1, 0.1, 0)
 					bullet.Tracer = 1
@@ -1447,6 +1497,8 @@
 			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			tab.MaxAmmo = 420
 				local bullet = {}
+					bullet.Inflictor = self
+					bullet.Weapon = self
 					bullet.Num = 1
 					bullet.Spread = Vector(0.015, 0.015, 0)
 					bullet.Tracer = 1

@@ -1427,6 +1427,8 @@ end
 		end
 		tab.FireFunc = function(self, item)
 			self.Owner:ScavViewPunch(Angle(-10, math.Rand(-0.1, 0.1), 0), 0.3)
+			bullet.Inflictor = self
+			bullet.Weapon = self
 			bullet.Src = self.Owner:GetShootPos()
 			bullet.Dir = self:GetAimVector()
 			bullet.Callback = function(attacker, tr, dmginfo)
@@ -1879,6 +1881,8 @@ end
 					if CurTime() - self.sniperzoomstart <= 0.5 or not self.Owner:KeyDown(IN_ATTACK2) then
 						local tab = ScavData.models[item.ammo]
 						local ident = tab.Identify[item.ammo]
+						bullet.Inflictor = self
+						bullet.Weapon = self
 						bullet.Src = self.Owner:GetShootPos()
 						bullet.Dir = self:GetAimVector()
 						if SERVER or not game.SinglePlayer() then
@@ -1996,6 +2000,9 @@ PrecacheParticleSystem("scav_exp_plasma")
 						if IsValid(self:GetInflictor()) then
 							dmg:SetInflictor(self:GetInflictor())
 						end
+						if IsValid(self:GetWeapon()) then
+							dmg:SetWeapon(self:GetWeapon())
+						end
 						dmg:SetDamageType(DMG_PLASMA)
 						tr.Entity:TakeDamageInfo(dmg)
 						--tr.Entity:TakeDamage(15, self.Owner, self.Owner)
@@ -2098,6 +2105,8 @@ PrecacheParticleSystem("scav_exp_plasma")
 			end
 			tab.FireFunc = function(self, item)
 				local tab = ScavData.models[item.ammo]
+				tab.bullet.Inflictor = self
+				tab.bullet.Weapon = self
 				tab.bullet.Src = self.Owner:GetShootPos()
 				tab.bullet.Dir = self:GetAimVector()
 				if SERVER or not game.SinglePlayer() then
@@ -2140,6 +2149,9 @@ PrecacheParticleSystem("scav_exp_plasma")
 					end
 					if IsValid(self:GetInflictor()) then
 						dmg:SetInflictor(self:GetInflictor())
+					end
+					if IsValid(self:GetWeapon()) then
+						dmg:SetWeapon(self:GetWeapon())
 					end
 					tr.Entity:TakeDamageInfo(dmg)
 				end
@@ -2786,6 +2798,9 @@ PrecacheParticleSystem("scav_exp_plasma")
 						if IsValid(self:GetInflictor()) then
 							dmg:SetInflictor(self:GetInflictor())
 						end
+						if IsValid(self:GetWeapon()) then
+							dmg:SetWeapon(self:GetWeapon())
+						end
 						dmg:SetDamageType(DMG_DIRECT)
 						ent:TakeDamageInfo(dmg)
 					end
@@ -2878,6 +2893,9 @@ PrecacheParticleSystem("scav_exp_plasma")
 								end
 								if IsValid(self:GetInflictor()) then
 									dmg:SetInflictor(self:GetInflictor())
+								end
+								if IsValid(self:GetWeapon()) then
+									dmg:SetWeapon(self:GetWeapon())
 								end
 							local reduced = self.Owner:GetWeapon("scav_gun").nextfire - tab.Cooldown / 3
 							if self.hits == 0 then
@@ -3145,6 +3163,9 @@ PrecacheParticleSystem("scav_exp_plasma")
 							if IsValid(self:GetInflictor()) then
 								dmg:SetInflictor(self:GetInflictor())
 							end
+							if IsValid(self:GetWeapon()) then
+								dmg:SetWeapon(self:GetWeapon())
+							end
 							dmg:SetDamage(1)
 							dmg:SetDamageForce(vector_origin)
 							dmg:SetDamagePosition(tr.HitPos)
@@ -3291,6 +3312,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 							dmg:SetDamagePosition(tr.HitPos)
 							dmg:SetAttacker(self.Owner)
 							dmg:SetInflictor(self)
+							dmg:SetWeapon(self)
 							dmg:SetDamageForce(tr.Normal * 900)
 							tr.Entity:TakeDamageInfo(dmg)
 						end
@@ -3472,6 +3494,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 						dmg:SetDamagePosition(tr.HitPos)
 						dmg:SetAttacker(self.Owner)
 						dmg:SetInflictor(self)
+						dmg:SetWeapon(self)
 						-- Break down doors
 						if string.find(tr.Entity:GetClass(), "door") then
 							dmg:SetDamage(10)
@@ -3616,6 +3639,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 							dmg:SetDamagePosition(tr.HitPos)
 							dmg:SetAttacker(self.Owner)
 							dmg:SetInflictor(self)
+							dmg:SetWeapon(self)
 							if not game.SinglePlayer() and SERVER then
 								if IsValid(tr.Entity) and tr.Entity.Health then
 									if not (tr.Entity:IsPlayer() or tr.Entity:IsNPC() or tr.Entity:IsNextBot()) and tr.Entity:Health() ~= 0 and tr.Entity:Health() <= 5 then
@@ -3766,7 +3790,6 @@ PrecacheParticleSystem("scav_exp_plasma")
 			tab.MaxAmmo = 10
 			tab.vmin = Vector(-4, -4, -4)
 			tab.vmax = Vector(4, 4, 4)
-			tab.dmginfo = DamageInfo()
 			if SERVER then
 				tab.OnArmed = function(self, item, olditemname)
 					if item.ammo ~= olditemname then
@@ -3835,9 +3858,10 @@ PrecacheParticleSystem("scav_exp_plasma")
 						if IsValid(ent) and not ent:IsWorld() then
 							if not ent:IsFriendlyToPlayer(self.Owner) then
 								ent:InflictStatusEffect("Radiation", 10 / i, 3, self.Owner)
-								local dmg = tab.dmginfo
+								local dmg = DamageInfo()
 								dmg:SetAttacker(self.Owner)
 								dmg:SetInflictor(self)
+								dmg:SetWeapon(self)
 								dmg:SetDamage(30)
 								dmg:SetDamageForce(vector_origin)
 								dmg:SetDamagePosition(tr.HitPos)
@@ -3930,7 +3954,6 @@ PrecacheParticleSystem("scav_exp_plasma")
 			tab.anim = ACT_VM_PRIMARYATTACK
 			tab.chargeanim = ACT_VM_PRIMARYATTACK
 			tab.Level = 4
-			local dmg = DamageInfo()
 			local tracep = {}
 			tracep.mask = MASK_SHOT
 			tracep.mins = Vector(-2, -2, -2)
@@ -3946,8 +3969,10 @@ PrecacheParticleSystem("scav_exp_plasma")
 						ParticleEffect("scav_exp_phazon_1", tr.HitPos, angle_zero, Entity(0))
 					end
 					if IsValid(tr.Entity) then
+						local dmg = DamageInfo()
 						dmg:SetAttacker(self.Owner)
 						dmg:SetInflictor(self)
+						dmg:SetWeapon(self)
 						dmg:SetDamagePosition(tr.HitPos)
 						if string.find(tr.Entity:GetClass(), "npc_antlion") then
 							dmg:SetDamageType(bit.bor(DMG_BUCKSHOT, DMG_ALWAYSGIB)) --TODO: figure out what god damn combination of damage types make all the different types of antlions die how they're supposed to
@@ -4023,6 +4048,8 @@ PrecacheParticleSystem("scav_exp_plasma")
 				if self.Owner:KeyDown(IN_ATTACK) then
 					local tab = ScavData.models[item.ammo]
 					local bullet = {}
+						bullet.Inflictor = self
+						bullet.Weapon = self
 						bullet.Num = 2
 						bullet.Src = self.Owner:GetShootPos()
 						bullet.Dir = self:GetAimVector()

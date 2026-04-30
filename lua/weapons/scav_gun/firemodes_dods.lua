@@ -23,6 +23,8 @@ end
 			tab.ChargeAttack = function(self, item)
 				if self.Owner:KeyDown(IN_ATTACK) then
 					local bullet = {}
+						bullet.Inflictor = self
+						bullet.Weapon = self
 						bullet.Num = 1
 						if self.Owner:GetVelocity():LengthSqr() < WALK_SPEED then
 							if self.Owner:Crouching() and self.Owner:GetVelocity():LengthSqr() < PRONE_SPEED then 
@@ -90,6 +92,8 @@ end
 			tab.ChargeAttack = function(self, item)
 				if self.Owner:KeyDown(IN_ATTACK) then
 					local bullet = {}
+						bullet.Inflictor = self
+						bullet.Weapon = self
 						bullet.Num = 1
 						if self.Owner:GetVelocity():LengthSqr() < WALK_SPEED then
 							if self.Owner:Crouching() and self.Owner:GetVelocity():LengthSqr() < PRONE_SPEED then
@@ -152,6 +156,8 @@ end
 			tab.ChargeAttack = function(self, item)
 				if self.Owner:KeyDown(IN_ATTACK) then
 					local bullet = {}
+						bullet.Inflictor = self
+						bullet.Weapon = self
 						bullet.Num = 1
 						bullet.Spread = self.Owner:GetVelocity():LengthSqr() < WALK_SPEED and Vector(0.065, 0.065, 0) or Vector(0.165, 0.165, 0)
 						bullet.Tracer = 1
@@ -205,6 +211,8 @@ end
 			tab.MaxAmmo = 15
 			tab.FireFunc = function(self, item)
 				local bullet = {}
+					bullet.Inflictor = self
+					bullet.Weapon = self
 					bullet.Num = 1
 					bullet.Spread = self.Owner:GetVelocity():LengthSqr() < WALK_SPEED and Vector(0.014, 0.014, 0) or Vector(0.164, 0.164, 0)
 					bullet.Tracer = 1
@@ -248,6 +256,8 @@ end
 			tab.MaxAmmo = 45
 			tab.FireFunc = function(self, item)
 				local bullet = {}
+					bullet.Inflictor = self
+					bullet.Weapon = self
 					bullet.Num = 1
 					bullet.Spread = self.Owner:GetVelocity():LengthSqr() < WALK_SPEED and Vector(0.019, 0.019, 0) or Vector(0.119, 0.119, 0)
 					bullet.Tracer = 1
@@ -285,6 +295,8 @@ end
 			tab.MaxAmmo = 24
 			tab.FireFunc = function(self, item)
 				local bullet = {}
+						bullet.Inflictor = self
+						bullet.Weapon = self
 						bullet.Num = 1
 						bullet.Spread = self.Owner:GetVelocity():LengthSqr() < WALK_SPEED and Vector(0.014, 0.014, 0) or Vector(0.114, 0.114, 0)
 						bullet.Tracer = 1
@@ -356,6 +368,8 @@ end
 			tab.MaxAmmo = 15
 			tab.FireFunc = function(self, item)
 				local bullet = {}
+					bullet.Inflictor = self
+					bullet.Weapon = self
 					bullet.Num = 1
 					bullet.Spread = self.Owner:GetVelocity():LengthSqr() < WALK_SPEED and Vector(0.06, 0.06, 0) or Vector(0.16, 0.16, 0)
 					bullet.Tracer = 1
@@ -400,6 +414,8 @@ end
 			tab.MaxAmmo = 21
 			tab.FireFunc = function(self, item)
 				local bullet = {}
+						bullet.Inflictor = self
+						bullet.Weapon = self
 						bullet.Num = 1
 						bullet.Spread = self.Owner:GetVelocity():LengthSqr() < WALK_SPEED and Vector(0.055, 0.055, 0) or Vector(0.155, 0.155, 0)
 						bullet.Tracer = 1
@@ -504,6 +520,8 @@ end
 					if not self.Overheated then
 						self.Heat = math.min(100, (self.Heat or 0) + 1)
 						local bullet = {}
+							bullet.Inflictor = self
+							bullet.Weapon = self
 							bullet.Num = 1
 							if self.Owner:GetVelocity():LengthSqr() < WALK_SPEED then
 								if self.Owner:Crouching() and self.Owner:GetVelocity():LengthSqr() < PRONE_SPEED then
@@ -631,6 +649,8 @@ end
 			tab.ChargeAttack = function(self, item)
 				if self.Owner:KeyDown(IN_ATTACK) then
 					local bullet = {}
+						bullet.Inflictor = self
+						bullet.Weapon = self
 						bullet.Num = 1
 						bullet.Spread = self.Owner:GetVelocity():LengthSqr() < WALK_SPEED and Vector(0.055, 0.055, 0) or Vector(0.155, 0.155, 0)
 						bullet.Tracer = 1
@@ -684,6 +704,8 @@ end
 			tab.ChargeAttack = function(self, item)
 				if self.Owner:KeyDown(IN_ATTACK) then
 					local bullet = {}
+						bullet.Inflictor = self
+						bullet.Weapon = self
 						bullet.Num = 1
 						bullet.Spread = self.Owner:GetVelocity():LengthSqr() < WALK_SPEED and Vector(0.025, 0.025, 0) or Vector(0.125, 0.125, 0)
 						bullet.Tracer = 1
@@ -735,6 +757,8 @@ end
 			tab.MaxAmmo = 24
 			tab.FireFunc = function(self, item)
 				local bullet = {}
+					bullet.Inflictor = self
+					bullet.Weapon = self
 					bullet.Num = 1
 					bullet.Spread = self.Owner:GetVelocity():LengthSqr() < WALK_SPEED and Vector(0.055, 0.055, 0) or Vector(0.155, 0.155, 0)
 					bullet.Tracer = 1
@@ -773,6 +797,8 @@ end
 			tab.ChargeAttack = function(self, item)
 				if self.Owner:KeyDown(IN_ATTACK) then
 					local bullet = {}
+						bullet.Inflictor = self
+						bullet.Weapon = self
 						bullet.Num = 1
 						bullet.Spread = self.Owner:GetVelocity():LengthSqr() < WALK_SPEED and Vector(0.055, 0.055, 0) or Vector(0.155, 0.155, 0)
 						bullet.Tracer = 1

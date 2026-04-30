@@ -160,6 +160,8 @@ local bullet = {}
 		else
 			bullet.Spread = Vector(0.01 * shots, 0.01 * shots, 0)
 		end
+		bullet.Inflictor = self
+		bullet.Weapon = self
 		bullet.Num = shots
 		bullet.Dir = self.Owner:GetAimVector()
 		bullet.Src = self.Owner:GetShootPos()

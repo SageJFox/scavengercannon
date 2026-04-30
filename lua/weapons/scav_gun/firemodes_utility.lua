@@ -2303,6 +2303,7 @@ end
 										local dmg = DamageInfo()
 										dmg:SetAttacker(self.Owner)
 										dmg:SetInflictor(self)
+										dmg:SetWeapon(self)
 										dmg:SetDamage(1)
 										dmg:SetDamageForce(vector_origin)
 										dmg:SetDamagePosition(tr.HitPos)

@@ -157,6 +157,8 @@ end
 			tab.MaxAmmo = 11
 			local accuracy = {0.006, 0.008, 0.022, 0.03, 0.04, 0.03}
 			local bullet = {}
+					bullet.Inflictor = self
+					bullet.Weapon = self
 					bullet.Num = 1
 					bullet.Tracer = 1
 					bullet.Force = 7
@@ -226,6 +228,8 @@ end
 			tab.MaxAmmo = 40
 			local accuracy = {0.005, 0.005, 0.008, 0.02, 0.025, 0.033}
 			local bullet = {}
+					bullet.Inflictor = self
+					bullet.Weapon = self
 					bullet.Num = 12
 					bullet.Tracer = 1
 					bullet.Force = 1
@@ -327,6 +331,8 @@ end
 			tab.MaxAmmo = 150
 			local accuracy = {0.002, 0.0022, 0.004, 0.019, 0.035, 0.045}
 			local bullet = {}
+					bullet.Inflictor = self
+					bullet.Weapon = self
 					bullet.Num = 1
 					bullet.Tracer = 1
 					bullet.Force = 5

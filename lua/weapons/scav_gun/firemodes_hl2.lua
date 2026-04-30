@@ -41,6 +41,8 @@
 					end
 					self.Owner:SetAnimation(PLAYER_ATTACK1)
 					local bullet = {}
+						bullet.Inflictor = self
+						bullet.Weapon = self
 						bullet.Num = 1
 						bullet.Src = self.Owner:GetShootPos()
 						bullet.Dir = dir
@@ -358,7 +360,7 @@
 				tracep.mins = Vector(-4, -4, -4)
 				tracep.maxs = Vector(4, 4, 4)
 				
-				function ScavData.PostDissolveDamage(ent, attacker, inflictor, impactpos)
+				function ScavData.PostDissolveDamage(ent, attacker, inflictor, impactpos, weapon)
 					if not IsValid(ent) then
 						return
 					end
@@ -366,6 +368,7 @@
 					dmg:SetDamage(1000)
 					dmg:SetAttacker(attacker)
 					dmg:SetInflictor(inflictor)
+					dmg:SetWeapon(weapon or inflictor)
 					dmg:SetDamageForce((impactpos - ent:GetPos()):GetNormalized() * 5000)
 					dmg:SetDamagePosition(impactpos)
 					dmg:SetDamageType(DMG_DISSOLVE)
@@ -401,6 +404,7 @@
 						dmg:SetDamage(350)
 						dmg:SetAttacker(self.Owner)
 						dmg:SetInflictor(self)
+						dmg:SetWeapon(self)
 						dmg:SetDamageForce((tr.HitPos-ent:GetPos()):GetNormalized() * 5000)
 						dmg:SetDamagePosition(tr.HitPos)
 						dmg:SetDamageType(bit.bor(DMG_BLAST, DMG_DISSOLVE))
@@ -574,7 +578,6 @@
 			tab.Level = 7
 			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			tab.anim = ACT_VM_RECOIL3
-			tab.dmginfo = DamageInfo()
 			tab.vmin = Vector(-8, -8, -8)
 			tab.vmax = Vector(8, 8, 8)
 			tab.FireFunc = function(self, item)
@@ -604,11 +607,12 @@
 					if SERVER then
 						local forcemult = super and 3000000 or 200000
 						tr.Entity:GetPhysicsObject():ApplyForceOffset(tr.Normal * forcemult, tr.HitPos)
-						local dmg = tab.dmginfo
+						local dmg = DamageInfo()
 							dmg:SetDamage(super and 75 or 1)
 							dmg:SetDamageForce(tr.Normal * forcemult)
 							dmg:SetAttacker(self.Owner)
 							dmg:SetInflictor(self)
+							dmg:SetWeapon(self)
 							dmg:SetDamagePosition(tr.HitPos)
 							dmg:SetDamageType(DMG_PHYSGUN)
 						tr.Entity:TakeDamageInfo(dmg)
@@ -969,6 +973,8 @@
 			tab.FireFunc = function(self, item)
 				local tab = ScavData.models[item.ammo]
 				self.Owner:ScavViewPunch(Angle(-10, math.Rand(-0.1, 0.1), 0), 0.3)
+				bullet.Inflictor = self
+				bullet.Weapon = self
 				bullet.Src = self.Owner:GetShootPos()
 				bullet.Dir = self:GetAimVector()
 				if SERVER or not game.SinglePlayer() then
@@ -1182,6 +1188,8 @@
 			tab.FireFunc = function(self, item)
 				local tab = ScavData.models[item.ammo]
 				local bullet = {}
+					bullet.Inflictor = self
+					bullet.Weapon = self
 					bullet.Num = 1
 					bullet.Spread = Vector(0.01, 0.01, 0)
 					bullet.Tracer = 1
@@ -1281,6 +1289,8 @@
 			tab.ChargeAttack = function(self, item)
 				if self.Owner:KeyDown(IN_ATTACK) then
 					local bullet = {}
+						bullet.Inflictor = self
+						bullet.Weapon = self
 						bullet.Num = 1
 						bullet.Tracer = 1
 						bullet.Force = 5
@@ -1368,6 +1378,8 @@
 					if CLIENT then
 						self.Owner:ScavViewPunch(Angle(math.Rand(0, -scale1), math.Rand(-scale1, scale1), 0), 0.5)
 					end
+					bullet.Inflictor = self
+					bullet.Weapon = self
 					bullet.Spread = Vector(0.02 * scale1, 0.02 * scale1, 0)
 					bullet.Src = self.Owner:GetShootPos()
 					bullet.Dir = self:GetAimVector()
@@ -1449,6 +1461,8 @@
 			
 			tab.ChargeAttack = function(self, item)
 				local bullet = {}
+					bullet.Inflictor = self
+					bullet.Weapon = self
 					bullet.Num = 3
 					bullet.Spread = Vector(0.01, 0.01, 0)
 					bullet.Tracer = 3
@@ -1573,6 +1587,8 @@
 			tab.MaxAmmo = 100
 			tab.ChargeAttack = function(self, item)
 				local bullet = {}
+					bullet.Inflictor = self
+					bullet.Weapon = self
 					bullet.Num = 5
 					bullet.Src = self.Owner:GetShootPos()
 					bullet.Dir = self:GetAimVector()
@@ -1944,6 +1960,8 @@ end
 				local tab = ScavData.models[self.inv.items[1].ammo]
 				local ident = tab.Identify[item.ammo]
 				local bullet = {}
+				bullet.Inflictor = self
+				bullet.Weapon = self
 				bullet.Num = 1
 				bullet.Src = self.Owner:GetShootPos()
 				bullet.Dir = self:GetAimVector()
@@ -2079,6 +2097,8 @@ end
 				if self.Owner:KeyDown(IN_ATTACK) then
 					self.Owner:ScavViewPunch(Angle(math.Rand(-0.2, 0.2), math.Rand(-0.2, 0.2), 0), 0.1)
 					local bullet = {}
+						bullet.Inflictor = self
+						bullet.Weapon = self
 						bullet.Num = 1
 						bullet.Src = self.Owner:GetShootPos()
 						bullet.Dir = self:GetAimVector()
@@ -2336,7 +2356,6 @@ end
 			}
 			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			tab.MaxAmmo = 10
-			local dmg = DamageInfo()
 			local tracep = {}
 			tracep.mask = MASK_SHOT
 			tracep.mins = Vector(-2, -2, -2)
@@ -2354,8 +2373,10 @@ end
 				if SERVER then
 					util.ParticleTracerEx("vortigaunt_beam", self:GetAttachment(self:LookupAttachment("muzzle")).Pos, tr.HitPos, false, self:EntIndex(), 1)
 					if IsValid(tr.Entity) then
+						local dmg = DamageInfo()
 						dmg:SetAttacker(self.Owner)
 						dmg:SetInflictor(self)
+						dmg:SetWeapon(self)
 						dmg:SetDamagePosition(tr.HitPos)
 						dmg:SetDamageType(DMG_SHOCK)
 						dmg:SetDamage(50)

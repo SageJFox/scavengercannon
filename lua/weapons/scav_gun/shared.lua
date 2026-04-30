@@ -823,11 +823,10 @@ if SERVER then
 	tracep.mins = Vector(-5, -5, -5)
 	tracep.maxs = Vector(5, 5, 5)
 
-	local dmg = DamageInfo()
 
 	util.AddNetworkString("scv_elec")
 
-	function ScavData.Electrocute(inflictor, attacker, position, radius, damage, effect) --works like util.blast damage but only damages entities in the water and uses shock damage
+	function ScavData.Electrocute(inflictor, attacker, position, radius, damage, effect, weapon) --works like util.blast damage but only damages entities in the water and uses shock damage
 
 		for _, v in ipairs(ents.FindInSphere(position, radius)) do
 			if v:WaterLevel() > 0 then --waterlevel is acting strange..
@@ -838,12 +837,14 @@ if SERVER then
 				local tr = util.TraceHull(tracep)
 
 				if not tr.Hit then
+					local dmg = DamageInfo()
 					dmg:SetDamageType(DMG_SHOCK)
 					dmg:SetDamage(math.max(1, (1 - (tracep.endpos:Distance(position) / radius)) * damage))
 					dmg:SetDamagePosition(tracep.endpos)
 					dmg:SetAttacker(attacker)
 					dmg:SetInflictor(inflictor)
 					dmg:SetDamageForce(tr.Normal*damage*100)
+					dmg:SetWeapon(weapon or inflictor)
 					v:TakeDamageInfo(dmg)
 				end
 

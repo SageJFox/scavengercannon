@@ -100,6 +100,11 @@ if CLIENT then
 	return
 end
 
+function ENT:GetWeapon(wep)
+	if not IsValid(self.Owner) then return NULL end
+	return self.Owner:GetWeapon(wep or "scav_gun")
+end
+
 --[[---------------------------------------------------------------------------
 		SERVER
 ---------------------------------------------------------------------------]]--

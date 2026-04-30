@@ -51,8 +51,9 @@ function ENT:Think()
 			end
 		end
 	else
+		local scav = self.Owner:GetWeapon("scav_gun")
 		if self:WaterLevel() > 0 then
-			ScavData.Electrocute(self, self.Owner, self:GetPos(), 500, 500, true)
+			ScavData.Electrocute(self, self.Owner, self:GetPos(), 500, 500, true, scav)
 			ParticleEffect("scav_exp_elec", self:GetPos(), angle_zero, game.GetWorld())
 			self.electrocuted = true
 			self:DelayedDeath(0.2)
@@ -64,7 +65,7 @@ function ENT:Think()
 		local tr = util.TraceHull(tracep)
 		if tr.HitWorld then
 			if (tr.MatType == MAT_SLOSH) and not self.electrocuted then
-				ScavData.Electrocute(self, self.Owner, tr.HitPos, 500, 500, true)
+				ScavData.Electrocute(self, self.Owner, tr.HitPos, 500, 500, true, scav)
 				ParticleEffect("scav_exp_elec", tr.HitPos, angle_zero, game.GetWorld())
 				self.electrocuted = true
 				self:DelayedDeath(0.2)

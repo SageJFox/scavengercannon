@@ -80,6 +80,9 @@ if SERVER then
 		else
 			dmginfo:SetInflictor(game.GetWorld())
 		end
+		if IsValid(gun) then
+			dmginfo:SetWeapon(gun)
+		end
 		if IsValid(owner) then
 			dmginfo:SetAttacker(owner)
 		else
