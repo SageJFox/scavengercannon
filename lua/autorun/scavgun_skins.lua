@@ -343,8 +343,8 @@ local dmgpaint = function(x, y, col)
 end
 
 SKIN.Damage = {}
-SKIN.Damage[DMG_GENERIC] = dmgpaint(0, 0)
-SKIN.Damage[DMG_CRUSH] = dmgpaint(dmggridspace, 0)
+SKIN.Damage[DMG_GENERIC] = dmgpaint(0, 0, Color(240, 108, 24))
+SKIN.Damage[DMG_CRUSH] = dmgpaint(dmggridspace, 0, Color(236, 223, 186))
 SKIN.Damage[DMG_BULLET] = dmgpaint(dmggridspace * 2, 0, Color(157, 157, 157))
 SKIN.Damage[DMG_SLASH] = dmgpaint(dmggridspace * 3, 0, Color(157, 157, 157))
 SKIN.Damage[DMG_BURN] = dmgpaint(dmggridspace * 4, 0, Color(255, 69, 16))
@@ -353,19 +353,19 @@ SKIN.Damage[DMG_VEHICLE] = dmgpaint(dmggridspace * 5, 0)
 SKIN.Damage[DMG_FALL] = dmgpaint(0, dmggridspace)
 SKIN.Damage[DMG_BLAST] = dmgpaint(dmggridspace, dmggridspace, Color(255, 69, 16))
 SKIN.Damage[DMG_CLUB] = dmgpaint(dmggridspace * 2, dmggridspace, Color(219, 171, 107))
-SKIN.Damage[DMG_SHOCK] = dmgpaint(dmggridspace * 3, dmggridspace)
+SKIN.Damage[DMG_SHOCK] = dmgpaint(dmggridspace * 3, dmggridspace, Color(51, 210, 250))
 SKIN.Damage[DMG_SONIC] = dmgpaint(dmggridspace * 4, dmggridspace)
 SKIN.Damage[DMG_ENERGYBEAM] = dmgpaint(dmggridspace * 5, dmggridspace)
 
-SKIN.Damage[DMG_PREVENT_PHYSICS_FORCE] = dmgpaint(0, dmggridspace * 2)
-SKIN.Damage[DMG_NEVERGIB] = dmgpaint(dmggridspace, dmggridspace * 2)
-SKIN.Damage[DMG_ALWAYSGIB] = dmgpaint(dmggridspace * 2, dmggridspace * 2)
+SKIN.Damage[DMG_PREVENT_PHYSICS_FORCE] = SKIN.Damage[DMG_GENERIC]
+SKIN.Damage[DMG_NEVERGIB] = SKIN.Damage[DMG_GENERIC]
+SKIN.Damage[DMG_ALWAYSGIB] = SKIN.Damage[DMG_GENERIC]
 SKIN.Damage[DMG_DROWN] = dmgpaint(dmggridspace * 3, dmggridspace * 2, Color(54, 159, 219))
 SKIN.Damage[DMG_PARALYZE] = dmgpaint(dmggridspace * 4, dmggridspace * 2)
 SKIN.Damage[DMG_NERVEGAS] = dmgpaint(dmggridspace * 5, dmggridspace * 2)
 
-SKIN.Damage[DMG_POISON] = dmgpaint(0, dmggridspace * 3)
-SKIN.Damage[DMG_RADIATION] = dmgpaint(dmggridspace, dmggridspace * 3, Color(85, 224, 30))
+SKIN.Damage[DMG_POISON] = dmgpaint(0, dmggridspace * 3, Color(85, 224, 30))
+SKIN.Damage[DMG_RADIATION] = dmgpaint(dmggridspace, dmggridspace * 3, Color(32, 255, 32))
 SKIN.Damage[DMG_DROWNRECOVER] = SKIN.Damage[DMG_DROWN]
 SKIN.Damage[DMG_ACID] = dmgpaint(dmggridspace * 3, dmggridspace * 3)
 SKIN.Damage[DMG_SLOWBURN] = dmgpaint(dmggridspace * 4, dmggridspace * 3)
@@ -379,8 +379,8 @@ SKIN.Damage[DMG_DISSOLVE] = dmgpaint(dmggridspace * 3, dmggridspace * 4)
 SKIN.Damage[DMG_BLAST_SURFACE] = SKIN.Damage[DMG_BLAST]
 SKIN.Damage[DMG_DIRECT] = SKIN.Damage[DMG_BURN]
 
-SKIN.Damage[DMG_BUCKSHOT] = dmgpaint(0, dmggridspace * 4, Color(238, 34, 79))
-SKIN.Damage[DMG_SNIPER] = dmgpaint(dmggridspace, dmggridspace * 4, Color(255, 69, 16))
+SKIN.Damage[DMG_BUCKSHOT] = dmgpaint(0, dmggridspace * 5, Color(238, 34, 79))
+SKIN.Damage[DMG_SNIPER] = dmgpaint(dmggridspace, dmggridspace * 5, Color(255, 69, 16))
 
 --[[---------------------------------------------------------
 	Preview
