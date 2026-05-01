@@ -215,18 +215,24 @@ local PANEL = {}
 		end
 	end
 
-	function PANEL:PlayerColor()
+	function PANEL:PlayerColor(col)
 		local bgcol = Vector(0, 0, 0)
-		local pl = LocalPlayer()
-		if self.GetPlayer then pl = self:GetPlayer() end
+		if not col then
+			local pl = LocalPlayer()
+			if self.GetPlayer then pl = self:GetPlayer() end
 
-		if IsValid(pl) then
-			if team.IsReal(pl:Team()) then
-				self.BGColor = team.GetColor(pl:Team())
-			else
-				bgcol = pl:GetPlayerColor()
-				self.BGColor = Color(bgcol.r * 255, bgcol.g * 255, bgcol.b * 255, 255)
+			if IsValid(pl) then
+				if team.IsReal(pl:Team()) then
+					self.BGColor = team.GetColor(pl:Team())
+				else
+					bgcol = pl:GetPlayerColor()
+					self.BGColor = bgcol:ToColor()
+				end
 			end
+		elseif IsColor(col) then
+			self.BGColor = col
+		elseif isvector(col) then
+			self.BGColor = col:ToColor()
 		end
 
 		self.TextLight = ((self.BGColor.r + self.BGColor.g + self.BGColor.b) / 3 < 132)
@@ -438,7 +444,9 @@ local PANEL = {}
 		local panel = vgui.Create("sdm_entpointer", self)
 		panel:SetSize(self.PointerDiameter, self.PointerDiameter * 2)
 		panel:SetEntity(ent)
-		if ent.dt then
+		if ent.GetPlayerColor then
+			panel:SetColor(ent:GetPlayerColor():ToColor())
+		elseif ent.dt then
 			panel:SetColor(team.GetColor(ent.dt.Team))
 		end
 		table.insert(self.Items, panel)
@@ -926,11 +934,84 @@ local PANEL = {}
 		self:InvalidateLayout(true)
 	end
 
+	--translate arbitrary info to our panel
+		--attacker: left name
+		--inflictor: center panel *and right panel info*!
+		--victimname: text for right panel
+		--todo--
+		--important: give panel center more emphasis, linger for longer (play sound?)
+		--long: use smaller text
+	function PANEL:MessageInfo(info)
+		--handle attacker panel
+		local attacker = info.attacker
+		if self.parts.Attacker then
+			--remove attacker panel if it's unneeded
+			if not IsValid(attacker) or attacker:IsWorld() then
+				self.parts.Attacker:Remove()
+			elseif attacker:IsPlayer() then
+				self.parts.Attacker:SetPlayer(attacker)
+			else
+				local attackername = attacker:GetClass()
+				--todo: display name for NPCs
+				self.parts.Attacker:SetText(ScavLocalize(attackername))
+			end
+			--print("attacker:", attacker)
+		end
+		--handle victim panel
+		local victim = info.victim
+		if self.parts.Victim then
+			if IsValid(victim) and victim:IsPlayer() then
+				self.parts.Victim:SetPlayer(victim)
+			else
+				self.parts.Victim:SetText(info.victimname or ScavLocalize(IsValid(victim) and victim:GetClass() or ""))
+				self.parts.Victim:PlayerColor(info.inflictor:GetPlayerColor())
+			end
+			--print("victimname:", info.victimname)
+		end
+		--handle inflictor (center) panel
+		if self.parts.Inflictor then
+			--prop to display
+			local inflictor = info.inflictor
+			if IsValid(inflictor) then
+				--get model from scav gun if it was a non-projectile mode
+				local fake = false
+				if inflictor:GetClass() == "scav_gun" and inflictor:GetCurrentItem() then
+					--print("inflictor:", inflictor)
+					inflictor = ClientsideModel(inflictor:GetCurrentItem().ammo)
+					fake = true
+				end
+				local bodygroups = "000000000"
+				for k, v in pairs(inflictor:GetBodyGroups()) do
+					local str = inflictor:GetBodygroup(v.id)
+					if str < 10 then
+						str = tostring(str)
+					else
+						str = string.char(31 + str) -- 10 = A, 11 = B, etc.
+					end
+					bodygroups = bodygroups:SetChar( v.id + 1, str)
+				end
+				self.parts.Inflictor:SetModel(inflictor:GetModel(), inflictor:GetSkin(), bodygroups)
+				--print("inflictor:", fake and inflictor:GetModel() or inflictor, fake and "(fake)" or "")
+				if fake then inflictor:Remove() end
+			end
+		end
+		--extend message lives that involve us
+		if attacker == LocalPlayer() or victim == LocalPlayer() then
+			self.DieTime = self.DieTime + 5
+		end
+
+		self:InvalidateLayout(true)
+	end
+
 	function PANEL:SetInfo(info)
 		if info.victim and info.dmginfo then
 			self:DamageInfo(info.victim, info.dmginfo)
+			return
 		end
-		--todo: handle other stuff lawl
+		if info.inflictor and info.victimname then
+			self:MessageInfo(info)
+			return
+		end
 	end
 
 	vgui.Register("sdm_killfeed_entry", PANEL, "DPanel")

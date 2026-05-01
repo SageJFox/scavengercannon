@@ -16,14 +16,18 @@ function ENT:SetupDataTables()
 	self:NetworkVar("Entity", "Grabbed") --player carrying us
 	self:NetworkVar("Int", "Team")
 	self:NetworkVar("Bool", "Enabled")
+	self:NetworkVar("String", "FlagName")
+	self:NetworkVar("Vector", "FlagColor")
 end
+
+local PLAYER_NOREASON = 0
+local PLAYER_DIED = 1
+local PLAYER_DROPPED = 2
+local PLAYER_CAPPED = 3
+local PLAYER_BITS = 2
 
 if SERVER then
 	util.AddNetworkString("sdm_flag")
-
-	local PLAYER_DIED = "1"
-	local PLAYER_DROPPED = "2"
-	local PLAYER_CAPPED = "3"
 
 	concommand.Add("sdm_drop_flag", function(pl)
 		if not IsValid(pl) then return end
@@ -70,17 +74,22 @@ if SERVER then
 	ENT.Logic = logic[LOGIC_OTHER]
 
 	function ENT:KeyValue(key, value)
-		if string.lower(key) == "model" or string.lower(key) == "modelname" then
+		local key = string.lower(key)
+		if key == "model" or key == "modelname" then
 			self.Model = value
-		elseif string.lower(key) == "returntime" then
+		elseif key == "flagname" then
+			self:SetFlagName(value)
+		elseif key == "flagcolor" then
+			self:SetFlagColor(Vector(value))
+		elseif key == "returntime" then
 			self.ReturnTime = tonumber(value)
-		elseif string.lower(key) == "team" then
+		elseif key == "team" then
 			self:SetTeam(team.ToTeamID(value))
-		elseif string.lower(key) == "rules" then
+		elseif key == "rules" then
 			self.Logic = logic[tonumber(value)]
-		elseif string.lower(key) == "denydrop" then
+		elseif key == "denydrop" then
 			self.DenyDrop = tobool(value)
-		elseif string.lower(key) == "value" then
+		elseif key == "value" then
 			self.value = tonumber(value)
 		end
 
@@ -127,6 +136,7 @@ if SERVER then
 			net.WriteEntity(self)
 			net.WriteBool(false)
 			net.WritePlayer(pl)
+			net.WriteUInt(reason or PLAYER_NOREASON, PLAYER_BITS)
 		net.Broadcast()
 
 		local ang = self:GetAngles()
@@ -148,7 +158,7 @@ if SERVER then
 			end)
 		end
 
-		self:TriggerOutput("OnDropped", pl, reason)
+		self:TriggerOutput("OnDropped", pl, tostring(reason))
 		pl.sdmflag = nil
 	end
 
@@ -208,6 +218,7 @@ if SERVER then
 			net.WriteEntity(self)
 			net.WriteBool(true)
 			net.WritePlayer(pl)
+			net.WriteUInt(PLAYER_NOREASON, PLAYER_BITS)
 		net.Broadcast()
 
 		self:TriggerOutput("OnGrabbed", pl)
@@ -245,6 +256,7 @@ if SERVER then
 				net.WriteEntity(v)
 				net.WriteBool(true)
 				net.WritePlayer(carrier)
+				net.WriteUInt(PLAYER_NOREASON, PLAYER_BITS)
 			net.Broadcast()
 		end
 	end)
@@ -284,6 +296,26 @@ function ENT:SetVisible(set)
 	self:DrawShadow(set)
 end
 
+function ENT:Team()
+	return self:GetTeam()
+end
+
+local default_color = Color(50, 50, 50):ToVector()
+
+
+function ENT:GetPlayerColor()
+	local col = self:GetFlagColor()
+	--default color, use a different one
+	if col:IsEqualTol(vector_origin, 0.0001) then
+		local t = self:Team()
+		--no team, use default color
+		if not team.IsReal(t) then return default_color end
+		--use team color
+		col = team.GetColor(t):ToVector()
+	end
+	return col
+end
+
 if SERVER then return end
 
 local offset = {}
@@ -313,11 +345,18 @@ function ENT:UpdateHUD()
 	end
 end
 
+function ENT:FlagName()
+	local name = self:GetFlagName()
+	if not name or name == "" then name = ScavLocalize("scav.feed.flag", false, team.PrintName(self:Team(), true)) end
+	return name
+end
+
 --We've been picked up or dropped
 net.Receive("sdm_flag", function()
 	local self = net.ReadEntity()
 	local pickup = net.ReadBool()
 	local pl = net.ReadPlayer()
+	local reason = net.ReadUInt(PLAYER_BITS)
 	if not IsValid(self) then return end
 	self:SetVisible(not pickup)
 	if not IsValid(pl) then return end
@@ -330,12 +369,24 @@ net.Receive("sdm_flag", function()
 			self.carrymdl:DrawShadow(false)
 			self.carrymdl:SetParent(pl)
 			self.carrymdl:SetSkin(self:GetSkin())
+			self.carrymdl.GetPlayerColor = function(carrymdl) return self:GetPlayerColor() end
 	else
 		pl.sdmflag = nil
 		if IsValid(self.carrymdl) then
 			self.carrymdl:Remove()
 		end
 	end
+
+	if not pickup and (not reason or reason == PLAYER_NOREASON) then return end
+
+	local info = {}
+		info.attacker = pl
+		info.inflictor = self
+		info.victimname = ScavLocalize(pickup and "scav.feed.flag.pickup" or (reason == PLAYER_CAPPED and "scav.feed.flag.cap" or "scav.feed.flag.drop"), self:FlagName())
+		info.important = true
+		info.long = true
+	--todo: flag setting for informing only our team, only enemy team(s), or no one
+	HUD.AddKillfeed(info)
 end)
 
 hook.Add("PrePlayerDraw", "sdm_flagdraw", function(pl, studio)
