@@ -859,6 +859,7 @@ local PANEL = {}
 				--todo: display name for NPCs
 				self.parts.Attacker:SetText(ScavLocalize(attackername))
 			end
+			--print("attacker:", attacker)
 		end
 		--handle victim panel
 		if self.parts.Victim then
@@ -869,6 +870,7 @@ local PANEL = {}
 				--todo: display name for NPCs
 				self.parts.Victim:SetText(ScavLocalize(victimname))
 			end
+			--print("victim:", victim)
 		end
 		--handle inflictor (center) panel
 		if self.parts.Inflictor then
@@ -889,8 +891,14 @@ local PANEL = {}
 			end
 			--prop what killed us
 			local inflictor = dmginfo:GetInflictor() or dmginfo:GetWeapon() or attacker
-			--todo: get model from scav gun if it was a non-projectile mode
 			if IsValid(inflictor) then
+				--get model from scav gun if it was a non-projectile mode
+				local fake = false
+				if inflictor:GetClass() == "scav_gun" and inflictor:GetCurrentItem() then
+					--print("inflictor:", inflictor)
+					inflictor = ClientsideModel(inflictor:GetCurrentItem().ammo)
+					fake = true
+				end
 				local bodygroups = "000000000"
 				for k, v in pairs(inflictor:GetBodyGroups()) do
 					local str = inflictor:GetBodygroup(v.id)
@@ -904,9 +912,17 @@ local PANEL = {}
 				self.parts.Inflictor:SetModel(inflictor:GetModel(), inflictor:GetSkin(), bodygroups)
 				--hacky alternatives for damage icons
 				if damage == DMG_FREEZE and inflictor:IsVehicle() then damage = damage + 1 end
+				--print("inflictor:", fake and inflictor:GetModel() or inflictor, fake and "(fake)" or "")
+				if fake then inflictor:Remove() end
 			end
 			self.parts.Inflictor.Damage = damage
+			--print("damagetype:", damage)
 		end
+		--extend message lives that involve us
+		if attacker == LocalPlayer() or victim == LocalPlayer() then
+			self.DieTime = self.DieTime + 5
+		end
+
 		self:InvalidateLayout(true)
 	end
 
