@@ -707,8 +707,12 @@ local STATUS = {}
 				self.Owner:CapabilitiesAdd(CAP_TURN_HEAD)
 				self.Owner:CapabilitiesAdd(CAP_AIM_GUN)
 				local dmg = DamageInfo()
-				dmg:SetAttacker(self.Attacker)
-				dmg:SetInflictor(self.Inflictor)
+				if IsValid(self.Attacker) then
+					dmg:SetAttacker(self.Attacker)
+				end
+				if IsValid(self.Inflictor) then
+					dmg:SetInflictor(self.Inflictor)
+				end
 				dmg:SetDamage(1)
 				dmg:SetDamageForce(vector_origin)
 				dmg:SetDamagePosition(self.Owner:GetPos())
