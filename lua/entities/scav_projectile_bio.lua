@@ -53,7 +53,7 @@ function ENT:OnImpact(hitent)
 		if not (v:IsPlayer() or v:IsNPC() or v:IsNextBot()) or v:IsFriendlyToPlayer(self.Owner) then continue end
 
 		local intensity = (300 - pos:Distance(v:GetPos() + v:OBBCenter())) / 15
-		v:InflictStatusEffect("Disease", intensity, 2)
+		v:InflictStatusEffect("Disease", intensity, 2, self.Owner, false, self.Weapon)
 	end
 	return true
 end

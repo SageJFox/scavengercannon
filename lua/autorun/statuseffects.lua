@@ -21,7 +21,7 @@ if SERVER then
 	for _,v in ipairs(files) do
 		resource.AddSingleFile(string.lower("materials/hud/status/"..v))
 	end
-	hook.Add("PlayerInitialSpawn", "SendStatus", function(pl) for _,v in ipairs(Status2.GetAll()) do Status2.Inflict(v.Owner,v.Name,v.EndTime - CurTime(),v.Value,v.Inflictor) end end)
+	hook.Add("PlayerInitialSpawn", "SendStatus", function(pl) for _, v in ipairs(Status2.GetAll()) do Status2.Inflict(v.Owner, v.Name, v.EndTime - CurTime(), v.Value, v.Attacker, v.Infinite, v.Inflictor) end end)
 end
 
 local STATUS_ENT = FindMetaTable("Entity")
@@ -100,7 +100,7 @@ if SERVER then
 	util.AddNetworkString("StatusInflict")
 end
 
-function Status2.Inflict(ent, statustype, duration, value, inflictor, infinite) --entity, string, number, number, entity (whether or not this is needed depends on the effect)
+function Status2.Inflict(ent, statustype, duration, value, attacker, infinite, inflictor) --entity, string, number, number, entity (whether or not this is needed depends on the effect)
 
 	if not IsValid(ent) or (SERVER and ent:IsPlayer() and not ent:Alive()) or (ent.StatusImmunities and ent.StatusImmunities[statustype]) then return end
 	
@@ -115,7 +115,8 @@ function Status2.Inflict(ent, statustype, duration, value, inflictor, infinite) 
 	tab.statustype = statustype
 	tab.duration = duration
 	tab.value = value
-	tab.inflictor = inflictor
+	tab.attacker = attacker
+	tab.inflictor = inflictor or attacker
 	tab.infinite = infinite
 	
 	if gamemode.Call("OnStatusInflicted", tab) then return end --I'm passing a table as an argument here so the gamemode has a shot at changing the values
@@ -124,7 +125,8 @@ function Status2.Inflict(ent, statustype, duration, value, inflictor, infinite) 
 	statustype = tab.statustype
 	duration = tab.duration
 	value = tab.value
-	inflictor = tab.inflictor
+	attacker = tab.attacker
+	inflictor = tab.inflictor or attacker
 	infinite = tab.infinite
 	
 	if SERVER then
@@ -135,6 +137,7 @@ function Status2.Inflict(ent, statustype, duration, value, inflictor, infinite) 
 			net.WriteString(statustype)
 			net.WriteFloat(duration)
 			net.WriteFloat(value)
+			net.WriteEntity(attacker)
 			net.WriteEntity(inflictor)
 			net.WriteBool(infinite)
 		net.Send(rf)
@@ -158,7 +161,8 @@ function Status2.Inflict(ent, statustype, duration, value, inflictor, infinite) 
 		newstat.StartTime = CurTime()
 		newstat.EndTime = CurTime() + duration
 		newstat.Value = value
-		newstat.Inflictor = inflictor or Entity(0)
+		newstat.Attacker = attacker or Entity(0)
+		newstat.Inflictor = inflictor or attacker
 		newstat.Infinite = infinite
 		table.insert(tab, newstat)
 		table.insert(Status2.AllInstances, newstat)
@@ -242,7 +246,7 @@ if CLIENT then
 	local trans_dk_gray = Color(100, 100, 100, 200)
 	em = ParticleEmitter(vector_origin)
 	
-	net.Receive("StatusInflict", function() Status2.Inflict(net.ReadEntity(), net.ReadString(), net.ReadFloat(), net.ReadFloat(), net.ReadEntity(), net.ReadBool()) end)
+	net.Receive("StatusInflict", function() Status2.Inflict(net.ReadEntity(), net.ReadString(), net.ReadFloat(), net.ReadFloat(), net.ReadEntity(), net.ReadBool(), net.ReadEntity()) end)
 	net.Receive("StatusPurge", function() Status2.PurgeEnt(net.ReadEntity()) end)
 	
 	hook.Add("HUDPaint", "StatusHUD", function()
@@ -311,10 +315,10 @@ if not STATUS_PLY.SetWalkSpeedOld then
 		
 	if not vFireInstalled then --vFire breaks this so let's make sure it doesnt init if vFire exists
 		STATUS_ENT.IgniteOld = STATUS_ENT.Ignite
-		function STATUS_ENT:Ignite(duration, radius, inflictor)
+		function STATUS_ENT:Ignite(duration, radius, attacker)
 			if not radius then radius = 0 end
-			if not inflictor then inflictor = self end
-			self:InflictStatusEffect("Burning", duration, radius, inflictor)
+			if not attacker then attacker = self end
+			self:InflictStatusEffect("Burning", duration, radius, attacker)
 		end
 		
 		STATUS_ENT.ExtinguishOld = STATUS_ENT.Extinguish
@@ -703,7 +707,7 @@ local STATUS = {}
 				self.Owner:CapabilitiesAdd(CAP_TURN_HEAD)
 				self.Owner:CapabilitiesAdd(CAP_AIM_GUN)
 				local dmg = DamageInfo()
-				dmg:SetAttacker(self.Inflictor)
+				dmg:SetAttacker(self.Attacker)
 				dmg:SetInflictor(self.Inflictor)
 				dmg:SetDamage(1)
 				dmg:SetDamageForce(vector_origin)
@@ -833,7 +837,7 @@ local STATUS = {}
 		if SERVER then
 			self.Owner:IgniteOld(self.EndTime - CurTime(), self.value)
 		end
-		self.Owner.ignitedby = self.Inflictor
+		self.Owner.ignitedby = self.Attacker
 	end
 	
 	function STATUS:Think()
@@ -904,12 +908,16 @@ local STATUS = {}
 	function STATUS:Think()
 		if SERVER then
 			local dmg = DamageInfo()
-			if IsValid(self.Inflictor) then
-				dmg:SetAttacker(self.Inflictor)
+			if IsValid(self.Attacker) then
+				dmg:SetAttacker(self.Attacker)
 			else
 				dmg:SetAttacker(game.GetWorld())
 			end
-			dmg:SetInflictor(dmg:GetAttacker())
+			if IsValid(self.Inflictor) then
+				dmg:SetInflictor(self.Inflictor)
+			else
+				dmg:SetInflictor(dmg:GetAttacker())
+			end
 			dmg:SetDamage(self.Value)
 			self.Owner:EmitSound("ambient/levels/canals/toxic_slime_sizzle" .. math.random(2, 4) .. ".wav")
 			dmg:SetDamageForce(vector_origin)
@@ -1076,7 +1084,7 @@ local STATUS = {}
 	if SERVER then
 		hook.Add("EntityTakeDamage", "StatusDamageX", function(ent, dmginfo)
 			local attacker = dmginfo:GetAttacker()
-			local inflictor = dmginfo:GetAttacker()
+			local inflictor = dmginfo:GetInflictor() or attacker
 			if attacker:GetStatusEffect("DamageX") then
 				dmginfo:ScaleDamage(attacker:GetStatusEffect("DamageX").Value)
 				sound.Play("player/crit_hit" .. math.random(2, 5) .. ".wav", dmginfo:GetDamagePosition())
@@ -1258,8 +1266,11 @@ local STATUS = {}
 			self:NextThink(CurTime() + 1 / self.Value)
 			local dmg = DamageInfo()
 			dmg:SetInflictor(self.Owner)
+			if self.Attacker then
+				dmg:SetAttacker(self.Attacker)
+			end
 			if self.Inflictor then
-				dmg:SetAttacker(self.Inflictor)
+				dmg:SetInflictor(self.Inflictor)
 			end
 			dmg:SetDamageForce(vector_origin)
 			dmg:SetDamageType(DMG_RADIATION)
@@ -1398,7 +1409,7 @@ local STATUS = {}
 		if nextThink < CurTime() then
 			if self.Owner:Health() <= 1.1 then --Make sure we're removed if player is at 1 health (with a little extra for precision error)
 				self.Value = self.MaxDrain
-				self.Owner:InflictStatusEffect("TemporaryHealth", -self.EndTime, 1, self.Inflictor) --make sure we end
+				self.Owner:InflictStatusEffect("TemporaryHealth", -self.EndTime, 1, self.Attacker, false, self.Inflictor) --make sure we end
 			elseif self.Value < self.MaxDrain then
 				self.Owner:SetHealth(math.max(1, self.Owner:Health() - 1)) --Max 1 failsafe to make sure we don't kill the player
 				self.Value = self.Value + 1

@@ -76,7 +76,7 @@ if SERVER then
 		if hitent.Status_frozen then
 			statusduration = math.min(10 - (hitent.Status_frozen.EndTime - CurTime()), 10)
 		end
-		hitent:InflictStatusEffect("Frozen", statusduration, 0, self:GetOwner())
+		hitent:InflictStatusEffect("Frozen", statusduration, 0, self:GetOwner(), false, self:GetWeapon())
 		return true
 	end
 
