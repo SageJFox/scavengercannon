@@ -9,10 +9,10 @@ function team.GetInfoEnt(teamnumber)
 	return TeamEnts[teamnumber] or NULL
 end
 
-function team.PrintName(teamnumber)
+function team.PrintName(teamnumber, short)
 	local self = team.GetInfoEnt(teamnumber)
 	local name = IsValid(self) and self:GetTeamName() or ""
-	if not name or name == "" then name = team.GetName(teamnumber) end
+	if not name or name == "" then name = team.GetName(teamnumber) .. (short and ".short" or "") end
 	return ScavLocalize(name)
 end
 

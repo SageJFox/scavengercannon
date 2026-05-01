@@ -50,7 +50,7 @@ local PANEL = {}
 	end
 	
 	function PANEL:SetTeam(teamid)
-		self.NameLabel:SetText(ScavLocalize("scav.round.winner.announce", team.GetName(teamid)))
+		self.NameLabel:SetText(ScavLocalize("scav.round.winner.announce", team.PrintName(teamid)))
 		self.NameLabel:SizeToContents()
 		self.TeamBox:Clear()
 		local w = self:GetWide()
