@@ -264,7 +264,7 @@ if SERVER then
 end
 
 function ENT:Initialize()
-	self:SetModel(self.Model)
+	if SERVER then self:SetModel(self.Model) end
 	self.ReturnPos = self:GetPos()
 	self.ReturnAng = self:GetAngles()
 
