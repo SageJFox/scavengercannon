@@ -658,12 +658,13 @@ else
 		if not (ent:IsPlayer() or ent:IsNextBot() or ent:IsNPC()) then return end
 		local attacker = dmginfo:GetAttacker()
 		if not IsValid(attacker) or not attacker:IsPlayer() then return end
+		--no self damage
+		if attacker == ent then return end
 		--Attack damage at this point is properly adjusted from any weaknesses or resistances,
 		--but isn't clamped by the entity's remaining health
 		local healthleft = ent:Health()
 		local overkill = healthleft < 0 and healthleft or 0
 		attacker:AddScavStat(SCAVSTAT_DAMAGE, math.floor(dmginfo:GetDamage() + overkill))
-
 	end
 
 	function PLAYER:AddKills(amt)
