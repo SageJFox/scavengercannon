@@ -17,6 +17,17 @@ SCAVSTAT_HEALING = 13
 SCAVSTAT_KILLSTREAK = 14
 SCAVSTAT_POINTSTREAK = 15
 
+--we need to handle streaks a little differently, as we don't want to add to past streaks
+local SCAVSTAT_STREAK = {
+	[SCAVSTAT_KILLSTREAK] = true,
+	[SCAVSTAT_POINTSTREAK] = true,
+}
+--average streaks just need to count an existing stat, so when we add to that stat, also add to its associated streak
+local SCAVSTAT_TRACKSTREAK = {
+	[SCAVSTAT_FRAGS] = SCAVSTAT_KILLSTREAK,
+	[SCAVSTAT_POINTS] = SCAVSTAT_POINTSTREAK,
+}
+
 ScavStats = {}
 ScavStats.Stats = {}
 ScavStats.Awards = {}
@@ -86,12 +97,20 @@ if SERVER then
 			end
 	end
 
-	function PLAYER:AddScavStat(name, amt)
+	function PLAYER:AddScavStat(name, amt, nostreak)
 		self.ScavStats[name] = (self.ScavStats[name] or 0) + amt
+
+		if nostreak then return end
+		local streak = SCAVSTAT_TRACKSTREAK[name]
+		if not streak then return end
+
+		self.ScavStats[streak] = (self.ScavStats[streak] or 0) + amt
 	end
 
-	function PLAYER:GetScavStat(name, amt)
-		return self.ScavStats[name] or 0
+	function PLAYER:GetScavStat(name, showBestStreak)
+		local beststreak = self.ScavStreaks[name] or 0
+		if not showBestStreak then beststreak = 0 end
+		return math.max(self.ScavStats[name] or 0, beststreak)
 	end
 	
 	function PLAYER:AddScavAward(name, amt)
@@ -130,6 +149,7 @@ if SERVER then
 		local id = self.ScavStatsID
 		--local id = sql.SQLStr(self:SteamID())
 		self.ScavStats = {}
+		self.ScavStreaks = {}
 		self.ScavAwards = {}
 		self.ScavAchievements = {}
 		--Darv's stuff
@@ -142,7 +162,12 @@ if SERVER then
 			for k, v in pairs(result) do
 				local index = tonumber(v['StatID'])
 				self.ScavStats[index] = 0
-				self:AddScavStat(index, tonumber(v['Value']))
+				if SCAVSTAT_STREAK[index] then
+					self.ScavStreaks[index] = tonumber(v['Value'])
+					continue
+				end
+
+				self:AddScavStat(index, tonumber(v['Value']), true)
 			end
 		end
 		--Now awards.... 
@@ -179,9 +204,10 @@ if SERVER then
 		local nick = self.ScavStatsNick
 		--local id = sql.SQLStr(self:SteamID())
 		sql.Begin()
-		-- Let's force the bastard into the players table/update his nick while we're commiting.
-		sql.Query([[REPLACE INTO ScavPlayers (SteamID, PlayerName) VALUES ("]] .. id .. [[", "]] .. nick .. [[");]])
+			-- Let's force the bastard into the players table/update his nick while we're commiting.
+			sql.Query([[REPLACE INTO ScavPlayers (SteamID, PlayerName) VALUES ("]] .. id .. [[", "]] .. nick .. [[");]])
 			for k, v in pairs(self.ScavStats) do
+				local v = math.max(v, self.ScavStreaks[k] or 0)
 				sql.Query([[REPLACE INTO ScavPlayerStats (SteamID, StatID, Value) VALUES("]] .. id .. [[", ]] .. k .. [[, ]] .. v .. [[);]])
 			end
 			for k, v in pairs(self.ScavAwards) do
@@ -205,6 +231,14 @@ if SERVER then
 		pl:CallOnRemove("CommitScavStats", commitonremove, pl)
 	end)
 	
+	--Reset streaks on death
+	hook.Add("PostPlayerDeath", "ScavStats_StreakEnd", function(pl)
+		for k, _ in pairs(SCAVSTAT_STREAK) do
+			pl.ScavStreaks[k] = math.max(pl.ScavStreaks[k] or 0, pl.ScavStats[k] or 0)
+			pl.ScavStats[k] = 0
+		end
+	end)
+
 	--[[
 	hook.Add("PlayerDisconnected", "ScavStats", function(pl)
 		pl:CommitScavStats()
