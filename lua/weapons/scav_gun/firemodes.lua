@@ -2137,7 +2137,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 			local callback = function(self, tr)
 				if IsValid(tr.Entity) then
 					if tr.Entity:IsPlayer() or tr.Entity:IsNPC() or tr.Entity:IsNextBot() then
-						tr.Entity:InflictStatusEffect("Disease", 5, 1)
+						tr.Entity:InflictStatusEffect("Disease", 5, 1, self.Owner, nil, self)
 					end
 					local dmg = DamageInfo()
 						dmg:SetDamage(1)
@@ -3055,7 +3055,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 					local function callback(self, tr)
 						local ent = tr.Entity
 						if IsValid(ent) and (not ent:IsPlayer() or gamemode.Call("PlayerShouldTakeDamage", ent, self.Owner)) then
-							ent:InflictStatusEffect("Acid", 100, (self.deathtime - CurTime()) / 2, self:GetOwner(), false, self:GetOwner():GetActiveWeapon())
+							ent:InflictStatusEffect("Acid", 100, (self.deathtime - CurTime()) / 2, self:GetOwner(), nil, self:GetOwner():GetActiveWeapon())
 							ent:EmitSound("ambient/levels/canals/toxic_slime_sizzle" .. math.random(2, 4) .. ".wav")
 						end
 						if not (tr.Entity:IsPlayer() or tr.Entity:IsNPC() or tr.Entity:IsNextBot()) then
@@ -3176,13 +3176,13 @@ PrecacheParticleSystem("scav_exp_plasma")
 							if slowstatus then
 								slowfactor = slowstatus.Value * 0.8
 							end
-							ent:InflictStatusEffect("Slow", 0.35, slowfactor, self:GetOwner(), false, self)
+							ent:InflictStatusEffect("Slow", 0.35, slowfactor, self:GetOwner(), nil, self)
 							local slow = ent:GetStatusEffect("Slow")
 							if slow then
 								if ent:IsPlayer() and (slow.Value < 0.3) then
-									ent:InflictStatusEffect("Frozen", 0.1, 0, self:GetOwner(), false, self)
+									ent:InflictStatusEffect("Frozen", 0.1, 0, self:GetOwner(), nil, self)
 								elseif not ent:IsPlayer() and ((ent:IsNPC() and ((ent:Health() < 10) or (slow.EndTime > CurTime() + 3))) or not ent:IsNPC()) then
-									ent:InflictStatusEffect("Frozen", 0.2, 0, self:GetOwner(), false, self)
+									ent:InflictStatusEffect("Frozen", 0.2, 0, self:GetOwner(), nil, self)
 								end
 							end
 						end
@@ -3841,7 +3841,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 								ent:SetName("ScavGun_GammaRay_WorldSpot")
 								timer.Simple(0, function()
 									if not IsValid(ent) then return end
-									ent:InflictStatusEffect("Radiation", 5, 3, self.Owner, false, self)
+									ent:InflictStatusEffect("Radiation", 5, 3, self.Owner, nil, self)
 									--prevent other statuses from affecting the spot
 									hook.Add("OnStatusInflicted", ent, function(_, t)
 										if t.ent ~= ent then return end
@@ -3857,7 +3857,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 						--note that this explicitly could be our previously created world spot
 						if IsValid(ent) and not ent:IsWorld() then
 							if not ent:IsFriendlyToPlayer(self.Owner) then
-								ent:InflictStatusEffect("Radiation", 10 / i, 3, self.Owner, false, self)
+								ent:InflictStatusEffect("Radiation", 10 / i, 3, self.Owner, nil, self)
 								local dmg = DamageInfo()
 								dmg:SetAttacker(self.Owner)
 								dmg:SetInflictor(self)

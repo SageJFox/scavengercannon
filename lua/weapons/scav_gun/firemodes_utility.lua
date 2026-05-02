@@ -2039,7 +2039,7 @@ end
 							self.Owner:InflictStatusEffect("Drunk", -(drunk.EndTime - CurTime()) * sandwichheal[ScavData.models[item.ammo].Identify[item.ammo]] / 100, -0.125 )
 						end
 						if ScavData.models[item.ammo].Identify[item.ammo] == SCAV_SANDWICH_BANANA then
-							self.Owner:InflictStatusEffect("Radiation", 0.25, 0.01, self.Owner, false, self)
+							self.Owner:InflictStatusEffect("Radiation", 0.25, 0.01, self.Owner, nil, self)
 						end
 						self.Owner:SetHealth(math.min(self.Owner:GetMaxHealth(), self.Owner:Health() + sandwichheal[ScavData.models[item.ammo].Identify[item.ammo]]))
 						self.Owner:EmitSound(TF2 and "vo/SandwichEat09.mp3" or "physics/flesh/flesh_squishy_impact_hard" .. math.random(1, 4) .. ".wav", 75, 100, 1, CHAN_VOICE)
