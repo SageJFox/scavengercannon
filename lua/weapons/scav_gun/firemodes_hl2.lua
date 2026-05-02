@@ -1705,7 +1705,7 @@
 						self.soundloops.healthCharger = CreateSound(self.Owner, "items/medcharge4.wav")
 						self.soundloops.healthCharger:Play()
 					end
-					target:SetHealth(math.min(target:GetMaxHealth(), target:Health() + 1))
+					target:Heal(1, self.Owner)
 					if SERVER then self:TakeSubammo(item, 1) end
 				elseif SERVER then --our target is full health, switch over to beep loop
 					self.StopBeep = false

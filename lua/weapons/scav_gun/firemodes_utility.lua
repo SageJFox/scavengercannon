@@ -1543,83 +1543,95 @@ setmetatable(hacksuccess, {__index = function() return hacksuccessdefault end})
 ==============================================================================================]]--
 	
 		medkit = {
-			[0] = function(healent, noheal)
+			[SCAV_MEDKIT_HL2] = function(healent, noheal, pl)
+				local amt = 25
 				if SERVER and IsValid(healent) and not noheal then
-					healent:SetHealth(math.min(healent:GetMaxHealth(), healent:Health() + 25))
+					healent:Heal(amt, pl)
 					healent:EmitSound("items/smallmedkit1.wav")
 				end
-				return 2, 25
+				return 2, amt
 			end,
-			[1] = function(healent, noheal)
+			[SCAV_MEDKIT_VIAL] = function(healent, noheal, pl)
+				local amt = 10
 				if SERVER and IsValid(healent) and not noheal then
-					healent:SetHealth(math.min(healent:GetMaxHealth(), healent:Health() + 10))
+					healent:Heal(amt, pl)
 					healent:EmitSound("items/smallmedkit1.wav")
 				end
-				return 1, 10
+				return 1, amt
 			end,
-			[2] = function(healent, noheal)
+			[SCAV_MEDKIT_TF2S] = function(healent, noheal, pl)
+				local amt = IsValid(healent) and (healent:GetMaxHealth() * 0.205) or 20.5 --20.5%
 				if SERVER and IsValid(healent) and not noheal then
-					healent:SetHealth(math.min(healent:GetMaxHealth(), healent:Health() + healent:GetMaxHealth() * 0.205)) --20.5%
+					healent:Heal(amt, pl)
 					healent:EmitSound("items/smallmedkit1.wav")
 				end
-				return 1, IsValid(healent) and (healent:GetMaxHealth() * 0.205) or 20.5
+				return 1, amt
 			end,
-			[3] = function(healent, noheal)
+			[SCAV_MEDKIT_TF2M] = function(healent, noheal, pl)
+				local amt = IsValid(healent) and (healent:GetMaxHealth() * 0.5) or 50 --50%
 				if SERVER and IsValid(healent) and not noheal then
-					healent:SetHealth(math.min(healent:GetMaxHealth(), healent:Health() + healent:GetMaxHealth() * 0.5))
+					healent:Heal(amt, pl)
 					healent:EmitSound("items/smallmedkit1.wav")
 				end
-				return 2, IsValid(healent) and (healent:GetMaxHealth() * 0.5) or 50
+				return 2, amt
 			end,
-			[4] = function(healent, noheal)
+			[SCAV_MEDKIT_TF2L] = function(healent, noheal, pl)
+				local amt = IsValid(healent) and healent:GetMaxHealth() or 100 --100%
 				if SERVER and IsValid(healent) and not noheal then
-					healent:SetHealth(healent:GetMaxHealth())
+					healent:Heal(amt, pl)
 					healent:EmitSound("items/smallmedkit1.wav")
 				end
-				return 3, IsValid(healent) and healent:GetMaxHealth() or 100
+				return 3, amt
 			end,
-			[5] = function(healent, noheal)
+			[SCAV_MEDKIT_L4D] = function(healent, noheal, pl)
+				local amt = IsValid(healent) and (math.max(1, math.floor((healent:GetMaxHealth() - healent:Health()) * 0.8))) or 80 --heal 80% of our current damage (at least 1 health)
 				if SERVER and IsValid(healent) and not noheal then
-					healent:SetHealth(math.min(healent:GetMaxHealth(), healent:Health() + math.max(1, math.floor((healent:GetMaxHealth() - healent:Health()) * 0.8)))) --heal 80% of our current damage (or at least 1 health)
+					healent:Heal(amt, pl)
 					healent:EmitSound("items/smallmedkit1.wav")
 				end
-				return 2, IsValid(healent) and (math.max(1, math.floor((healent:GetMaxHealth() - healent:Health()) * 0.8))) or 80
+				return 2, amt
 			end,
-			[6] = function(healent, noheal)
+			--TODO: Make this revive?
+			[SCAV_MEDKIT_DEFIB] = function(healent, noheal, pl)
+				local amt = 50
 				if SERVER and IsValid(healent) and not noheal then
-					healent:SetHealth(math.min(healent:GetMaxHealth(), healent:Health() + 50)) --TODO: Make this revive?
+					healent:Heal(amt, pl)
 					healent:EmitSound("weapons/defibrillator/defibrillator_use.wav")
 				end
-				return 2, 50
+				return 2, amt
 			end,
-			[7] = function(healent, noheal)
+			[SCAV_MEDKIT_GRUBS] = function(healent, noheal, pl)
+				local amt = 1
 				if SERVER and IsValid(healent) and not noheal then
-					healent:SetHealth(math.min(healent:GetMaxHealth(), healent:Health() + 6))
+					healent:Heal(amt, pl)
 					healent:EmitSound("items/smallmedkit1.wav")
 				end
-				return .5, 6
+				return .5, amt
 			end,
-			[8] = function(healent, noheal)
+			[SCAV_MEDKIT_GRUBM] = function(healent, noheal, pl)
+				local amt = 4
 				if SERVER and IsValid(healent) and not noheal then
-					healent:SetHealth(math.min(healent:GetMaxHealth(), healent:Health() + 4))
+					healent:Heal(amt, pl)
 					healent:EmitSound("items/smallmedkit1.wav")
 				end
-				return .5, 4
+				return .5, amt
 			end,
-			[9] = function(healent, noheal)
+			[SCAV_MEDKIT_GRUBL] = function(healent, noheal, pl)
+				local amt = 6
 				if SERVER and IsValid(healent) and not noheal then
-					healent:SetHealth(math.min(healent:GetMaxHealth(), healent:Health() + 1))
+					healent:Heal(amt, pl)
 					healent:EmitSound("items/smallmedkit1.wav")
 				end
-				return .5, 1
+				return .5, amt
 			end,
-			[10] = function(healent, noheal)
+			[SCAV_MEDKIT_ASW] = function(healent, noheal, pl)
+				local amt = 50
 				if SERVER and IsValid(healent) and not noheal then
-					healent:SetHealth(math.min(healent:GetMaxHealth(), healent:Health() + 50))
+					healent:Heal(amt, pl)
 					healent:InflictStatusEffect("Disease", -5, 1)
 					healent:EmitSound("items/smallmedkit1.wav")
 				end
-				return 2, 50
+				return 2, amt
 			end,
 		}
 
@@ -1629,24 +1641,24 @@ setmetatable(hacksuccess, {__index = function() return hacksuccessdefault end})
 			tab.Level = 1
 			local identify = {
 				--[Default +25] = 0,
-				--[[Vial +10]]["models/healthvial.mdl"] = 1,
-				--[[TF2 Small +20.5%]]["models/items/medkit_small.mdl"] = 2,
-				["models/items/medkit_small_bday.mdl"] = 2,
-				["models/props_halloween/halloween_medkit_small.mdl"] = 2,
-				--[[TF2 Medium +50%]]["models/items/medkit_medium.mdl"] = 3,
-				["models/items/medkit_medium_bday.mdl"] = 3,
-				["models/props_halloween/halloween_medkit_medium.mdl"] = 3,
-				--[[TF2 Large +100%]]["models/items/medkit_large.mdl"] = 4,
-				["models/items/medkit_large_bday.mdl"] = 4,
-				["models/props_halloween/halloween_medkit_large.mdl"] = 4,
-				--[[L4D/2 -80% Damage]]["models/w_models/weapons/w_eq_medkit.mdl"] = 5,
-				--[[L4D/2 Defib +50]]["models/w_models/weapons/w_eq_defibrillator.mdl"] = 6,
-				--[[Large Grub Nugget +6]]["models/grub_nugget_large.mdl"] = 7,
-				--[[Medium Grub Nugget +4]]["models/grub_nugget_medium.mdl"] = 8,
-				--[[Small Grub Nugget +1]]["models/grub_nugget_small.mdl"] = 9,
-				--[[ASW +50, -5 Disease]]["models/items/personalmedkit/personalmedkit.mdl"] = 10,
+				["models/healthvial.mdl"] = SCAV_MEDKIT_VIAL,
+				["models/items/medkit_small.mdl"] = SCAV_MEDKIT_TF2S,
+				["models/items/medkit_small_bday.mdl"] = SCAV_MEDKIT_TF2S,
+				["models/props_halloween/halloween_medkit_small.mdl"] = SCAV_MEDKIT_TF2S,
+				["models/items/medkit_medium.mdl"] = SCAV_MEDKIT_TF2M,
+				["models/items/medkit_medium_bday.mdl"] = SCAV_MEDKIT_TF2M,
+				["models/props_halloween/halloween_medkit_medium.mdl"] = SCAV_MEDKIT_TF2M,
+				["models/items/medkit_large.mdl"] = SCAV_MEDKIT_TF2L,
+				["models/items/medkit_large_bday.mdl"] = SCAV_MEDKIT_TF2L,
+				["models/props_halloween/halloween_medkit_large.mdl"] = SCAV_MEDKIT_TF2L,
+				["models/w_models/weapons/w_eq_medkit.mdl"] = SCAV_MEDKIT_L4D,
+				["models/w_models/weapons/w_eq_defibrillator.mdl"] = SCAV_MEDKIT_DEFIB,
+				["models/grub_nugget_small.mdl"] = SCAV_MEDKIT_GRUBS,
+				["models/grub_nugget_medium.mdl"] = SCAV_MEDKIT_GRUBM,
+				["models/grub_nugget_large.mdl"] = SCAV_MEDKIT_GRUBL,
+				["models/items/personalmedkit/personalmedkit.mdl"] = SCAV_MEDKIT_ASW,
 			}
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
+			tab.Identify = setmetatable(identify, {__index = function() return SCAV_MEDKIT_DEFAULT end})
 			tab.MaxAmmo = 4
 			tab.vmin = Vector(-12, -12, -12)
 			tab.vmax = Vector(12, 12, 12)
@@ -1671,7 +1683,7 @@ setmetatable(hacksuccess, {__index = function() return hacksuccessdefault end})
 					return false
 				end
 				local starthealth = healent:Health()
-				tab.Cooldown = medkit[ScavData.models[item.ammo].Identify[item.ammo]](healent)
+				tab.Cooldown = medkit[ScavData.models[item.ammo].Identify[item.ammo]](healent, false, self.Owner)
 				local ef = EffectData()
 				ef:SetRadius(math.max(2, healent:Health() - starthealth))
 				ef:SetOrigin(self.Owner:GetPos())
@@ -2041,7 +2053,7 @@ end
 						if ScavData.models[item.ammo].Identify[item.ammo] == SCAV_SANDWICH_BANANA then
 							self.Owner:InflictStatusEffect("Radiation", 0.25, 0.01, self.Owner, nil, self)
 						end
-						self.Owner:SetHealth(math.min(self.Owner:GetMaxHealth(), self.Owner:Health() + sandwichheal[ScavData.models[item.ammo].Identify[item.ammo]]))
+						self.Owner:Heal(sandwichheal[ScavData.models[item.ammo].Identify[item.ammo]])
 						self.Owner:EmitSound(TF2 and "vo/SandwichEat09.mp3" or "physics/flesh/flesh_squishy_impact_hard" .. math.random(1, 4) .. ".wav", 75, 100, 1, CHAN_VOICE)
 						return self:TakeSubammo(item, 1)
 					end

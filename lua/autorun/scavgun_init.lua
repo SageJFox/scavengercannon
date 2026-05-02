@@ -38,6 +38,19 @@ FOF		= IsMounted(265630)
 	SCAV_HORNET_DEFAULT	= 0
 	SCAV_HORNET_ASW		= 1
 	SCAV_HORNET_BMS		= 2
+	--Medkit
+	SCAV_MEDKIT_HL2		= 0
+	SCAV_MEDKIT_VIAL	= 1
+	SCAV_MEDKIT_TF2S	= 2
+	SCAV_MEDKIT_TF2M	= 3
+	SCAV_MEDKIT_TF2L	= 4
+	SCAV_MEDKIT_L4D		= 5
+	SCAV_MEDKIT_DEFIB	= 6
+	SCAV_MEDKIT_GRUBS	= 7
+	SCAV_MEDKIT_GRUBM	= 8
+	SCAV_MEDKIT_GRUBL	= 9
+	SCAV_MEDKIT_ASW		= 10
+	SCAV_MEDKIT_DEFAULT = SCAV_MEDKIT_HL2
 	--Plasma Gun
 	SCAV_PLASMA_DEFAULT	= 0
 	SCAV_PLASMA_XEN		= 1
@@ -993,6 +1006,22 @@ function PLAYER:ScavEmitSound(sound, vol, pitch)
 end
 
 local ENTITY = FindMetaTable("Entity")
+
+--There's no "healing" hooks, so run healing through here to report for SDM
+--returns if we actually healed
+function ENTITY:Heal(amt, pl)
+	if not self.Health or not self.GetMaxHealth then return false end
+	if not pl then pl = self end
+	local health, max = self:Health(), self:GetMaxHealth()
+	local missing = max - health
+	if max == 0 or missing <= 0 then return false end
+
+	self:SetHealth(math.min(max, health + amt))
+
+	if not PLAYER.AddScavStat or not pl:IsPlayer() then return true end
+	pl:AddScavStat(13, math.min(amt, missing)) -- SCAVSTAT_HEALING
+	return true
+end
 
 function ENTITY:IsFriendlyToPlayer(pl)
 	if self:IsPlayer() then

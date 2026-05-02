@@ -26,7 +26,7 @@
 						tab.Cooldown = .5
 						return false
 					else]]if SERVER then
-						self.Owner:SetHealth(math.min(self.Owner:GetMaxHealth(), self.Owner:Health() + 15))
+						self.Owner:Heal(15)
 						self.Owner:InflictStatusEffect("Radiation", -5, -1, self.Owner)
 						self.Owner:EmitSound(tab.Identify[item.ammo] == SCAV_WHISKEY_FOF and "player/whiskey_glug" .. math.random(1, 4) .. ".wav" or "ambient/levels/canals/toxic_slime_gurgle4.wav", 75, 100, 1, CHAN_VOICE)
 						self.Owner:InflictStatusEffect("Drunk", 20, 0.5)

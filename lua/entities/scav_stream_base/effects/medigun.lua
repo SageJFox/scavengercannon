@@ -86,7 +86,7 @@ if SERVER then
 			else
 				if self.LastHeal + 0.1 < ctime then
 					local dmg = DamageInfo()
-					ent:SetHealth(math.min(ent:Health() + 22.5 * (ctime - self.LastHeal), ent:GetMaxHealth()))
+					ent:Heal(22.5 * (ctime - self.LastHeal), self:GetOwner().Owner)
 					self.LastHeal = CurTime()
 				end
 			end

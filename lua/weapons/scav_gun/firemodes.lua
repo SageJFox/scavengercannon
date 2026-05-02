@@ -2161,7 +2161,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 				if not (tr.Entity:IsPlayer() or tr.Entity:IsNPC() or tr.Entity:IsNextBot()) then return end
 				if not IsValid(self.Owner) or self.Owner:Health() >= self.Owner:GetMaxHealth() then return end
 
-				self.Owner:SetHealth(math.min(self.Owner:Health() + 1, self.Owner:GetMaxHealth()))
+				self.Owner:Heal(1)
 			end
 			if SERVER then
 				tab.proj = GProjectile()
