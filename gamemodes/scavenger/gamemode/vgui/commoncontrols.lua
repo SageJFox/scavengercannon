@@ -795,9 +795,10 @@ local PANEL = {}
 		self.Model = model
 		if not self.Icon then
 			self.Icon = vgui.Create("SpawnIcon", self)
-				self.Icon:SetSize(48, 48)
-				self.Icon:SetPos(7, 7)
 		end
+		local size, offset = self.important and 72 or 48, self.important and -4 or 7
+		self.Icon:SetSize(size, size)
+		self.Icon:SetPos(offset, offset)
 		self.Icon:SetModel(self.Model, mskin, bodygroups)
 	end
 
@@ -938,7 +939,6 @@ local PANEL = {}
 		--attacker: left name
 		--inflictor: center panel *and right panel info*!
 		--victimname: text for right panel
-		--todo--
 		--important: give panel center more emphasis, linger for longer (play sound?)
 		--long: use smaller text
 	function PANEL:MessageInfo(info)
@@ -960,6 +960,9 @@ local PANEL = {}
 		--handle victim panel
 		local victim = info.victim
 		if self.parts.Victim then
+			if info.long then
+				self.parts.Victim.TextLabel:SetFont("Scav_MenuLarge")
+			end
 			if IsValid(victim) and victim:IsPlayer() then
 				self.parts.Victim:SetPlayer(victim)
 			else
@@ -990,6 +993,7 @@ local PANEL = {}
 					end
 					bodygroups = bodygroups:SetChar( v.id + 1, str)
 				end
+				self.parts.Inflictor.important = info.important
 				self.parts.Inflictor:SetModel(inflictor:GetModel(), inflictor:GetSkin(), bodygroups)
 				--print("inflictor:", fake and inflictor:GetModel() or inflictor, fake and "(fake)" or "")
 				if fake then inflictor:Remove() end
@@ -997,6 +1001,10 @@ local PANEL = {}
 		end
 		--extend message lives that involve us
 		if attacker == LocalPlayer() or victim == LocalPlayer() then
+			self.DieTime = self.DieTime + 5
+		end
+		--extend message lives that are important
+		if info.important then
 			self.DieTime = self.DieTime + 5
 		end
 
