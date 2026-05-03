@@ -196,7 +196,7 @@ if SERVER then
 		return BaseClass:PlayerDeathThink(pl)
 	end
 	
-	local spawnpoints
+	local spawnpoints = {}
 	
 	function GM:GenerateSpawnPointList()
 		spawnpoints = ents.FindByClass("info_sdm_spawn")
@@ -204,6 +204,10 @@ if SERVER then
 	
 	hook.Add("OnGLoaderSpawn", "RefreshSpawnPoints", function()
 		gamemode.Call("GenerateSpawnPointList")
+		for _, pl in ipairs(player.GetAll()) do
+			if pl:Alive() then continue end
+			gamemode.Call("PlayerSelectSpawn", pl)
+		end
 	end)
 	
 	function GM:ShuffleSpawnPointList()
@@ -211,7 +215,7 @@ if SERVER then
 	end
 	
 	function GM:PlayerSelectSpawn(pl)
-		table.Shuffle(spawnpoints)
+		self:ShuffleSpawnPointList()
 		for _, v in pairs(spawnpoints) do
 			if v:PlayerCanSpawn(pl) then
 				return v
