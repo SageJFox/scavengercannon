@@ -16,16 +16,24 @@ SCAVSTAT_DAMAGE = 12
 SCAVSTAT_HEALING = 13
 SCAVSTAT_KILLSTREAK = 14
 SCAVSTAT_POINTSTREAK = 15
+SCAVSTAT_DAMAGESTREAK = 16
+SCAVSTAT_HEALINGSTREAK = 17
+SCAVSTAT_LONGESTLIFE = 18
 
 --we need to handle streaks a little differently, as we don't want to add to past streaks
 local SCAVSTAT_STREAK = {
 	[SCAVSTAT_KILLSTREAK] = true,
 	[SCAVSTAT_POINTSTREAK] = true,
+	[SCAVSTAT_DAMAGESTREAK] = true,
+	[SCAVSTAT_HEALINGSTREAK] = true,
+	[SCAVSTAT_LONGESTLIFE] = true,
 }
 --average streaks just need to count an existing stat, so when we add to that stat, also add to its associated streak
 local SCAVSTAT_TRACKSTREAK = {
 	[SCAVSTAT_FRAGS] = SCAVSTAT_KILLSTREAK,
 	[SCAVSTAT_POINTS] = SCAVSTAT_POINTSTREAK,
+	[SCAVSTAT_DAMAGE] = SCAVSTAT_DAMAGESTREAK,
+	[SCAVSTAT_HEALING] = SCAVSTAT_HEALINGSTREAK,
 }
 
 ScavStats = {}
@@ -219,8 +227,17 @@ if SERVER then
 		sql.Commit()
 	end
 
+	--track player's total time alive this life
+	local function countplayerlife(pl)
+		if not pl.ScavSpawnTime then return end
+
+		pl.ScavStats[SCAVSTAT_LONGESTLIFE] = math.Round(CurTime() - pl.ScavSpawnTime)
+		pl.ScavSpawnTime = nil
+	end
+
 	local function commitonremove(pl)
 		print("committing scav stats for " .. pl.ScavStatsNick .. " (" .. pl.ScavStatsID .. ")...")
+		countplayerlife(pl)
 		pl:CommitScavStats()
 		print("committed.")
 	end
@@ -230,9 +247,14 @@ if SERVER then
 		pl.StartTime = CurTime()
 		pl:CallOnRemove("CommitScavStats", commitonremove, pl)
 	end)
+
+	hook.Add("PlayerSpawn", "ScavStats_LongestLife", function(pl, transition)
+		pl.ScavSpawnTime = team.IsReal(pl:Team(), true) and CurTime() or nil
+	end)
 	
 	--Reset streaks on death
 	hook.Add("PostPlayerDeath", "ScavStats_StreakEnd", function(pl)
+		countplayerlife(pl)
 		for k, _ in pairs(SCAVSTAT_STREAK) do
 			pl.ScavStreaks[k] = math.max(pl.ScavStreaks[k] or 0, pl.ScavStats[k] or 0)
 			pl.ScavStats[k] = 0
@@ -299,6 +321,8 @@ sql.Begin()
 	RegisterStat(SCAVSTAT_HEALING, "Healing", "#scav.stats.heal")
 	RegisterStat(SCAVSTAT_KILLSTREAK, "KillStreak", "#scav.stats.kills.onelife")
 	RegisterStat(SCAVSTAT_POINTSTREAK, "PointStreak", "#scav.stats.points.onelife")
+	RegisterStat(SCAVSTAT_DAMAGESTREAK, "DamageStreak", "#scav.stats.dmg.onelife")
+	RegisterStat(SCAVSTAT_HEALINGSTREAK, "HealingStreak", "#scav.stats.heal.onelife")
 
 	SCAVACHIEVEMENT_TRIPLEGIB = 1
 
