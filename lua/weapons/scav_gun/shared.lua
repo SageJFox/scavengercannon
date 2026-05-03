@@ -2697,9 +2697,7 @@ if SERVER then
 		self.BarrelRestSpeed = 0
 		self.BarrelRotation = 0
 
-		if game.SinglePlayer() then
-			self:CallOnClient("Deploy")
-		end
+		self:CallOnClient("Deploy")
 
 		return true
 
