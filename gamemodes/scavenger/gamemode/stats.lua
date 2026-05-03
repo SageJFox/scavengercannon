@@ -248,17 +248,27 @@ if SERVER then
 		pl:CallOnRemove("CommitScavStats", commitonremove, pl)
 	end)
 
+	local function streak_reset(pl, dontrecord)
+		local record = not dontrecord
+		for k, _ in pairs(SCAVSTAT_STREAK) do
+			if record then pl.ScavStreaks[k] = math.max(pl.ScavStreaks[k] or 0, pl.ScavStats[k] or 0) end
+			pl.ScavStats[k] = 0
+		end
+	end
+
 	hook.Add("PlayerSpawn", "ScavStats_LongestLife", function(pl, transition)
 		pl.ScavSpawnTime = team.IsReal(pl:Team(), true) and CurTime() or nil
+		streak_reset(pl, true)
 	end)
 	
 	--Reset streaks on death
 	hook.Add("PostPlayerDeath", "ScavStats_StreakEnd", function(pl)
 		countplayerlife(pl)
-		for k, _ in pairs(SCAVSTAT_STREAK) do
-			pl.ScavStreaks[k] = math.max(pl.ScavStreaks[k] or 0, pl.ScavStats[k] or 0)
-			pl.ScavStats[k] = 0
-		end
+		--delay a frame so we can for-sure get credit for any suicide kills
+		timer.Create("ScavStats_StreakEnd-" .. pl.ScavStatsNick, 0, 1, function()
+			if not IsValid(pl) then return end
+			streak_reset(pl)
+		end)
 	end)
 
 	--[[
