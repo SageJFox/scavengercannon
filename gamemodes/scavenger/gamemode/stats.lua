@@ -338,7 +338,10 @@ sql.Begin()
 	RegisterStat(SCAVSTAT_HEALINGSTREAK, "HealingStreak", "#scav.stats.heal.onelife")
 
 	SCAVACHIEVEMENT_TRIPLEGIB = 1
+	SCAVACHIEVEMENT_GRAVEROBBER = 2
 
 	RegisterAchievement(SCAVACHIEVEMENT_TRIPLEGIB, "TripleGib", "#scav.achievement.triplegib", icon)
+
+	RegisterAchievement(SCAVACHIEVEMENT_GRAVEROBBER, "Graverobber", "#scav.achievement.graverobber", icon)
 
 sql.Commit()

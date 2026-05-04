@@ -235,8 +235,11 @@ if SERVER then
 	local function flagdropdead(pl, inflictor, attacker)
 		local self = pl.sdmflag
 		if not IsValid(self) then return end
-		
+
 		self:RemoveGrabber(pl, PLAYER_DIED)
+
+		if attacker == pl or not IsValid(attacker) or not attacker:IsPlayer() or attacker:Alive() then return end
+		attacker:AddScavAchievement(SCAVACHIEVEMENT_GRAVEROBBER)
 	end
 
 	hook.Add("PlayerDeath", "sdm_flag", flagdropdead)
