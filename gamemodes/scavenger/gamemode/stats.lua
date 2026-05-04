@@ -41,6 +41,8 @@ ScavStats.Stats = {}
 ScavStats.Awards = {}
 ScavStats.Achievements = {}
 
+ACHIEVEMENT_BITS = 2 --3 max
+
 local PLAYER = FindMetaTable("Player")
 
 local function RegisterStat(index, name, printname)
@@ -99,7 +101,7 @@ if SERVER then
 					CREATE INDEX "playerStatIndex" ON "ScavPlayerStats" ("SteamID" DESC, "StatID" DESC);]])
 			sql.Commit()
 			if success == false then
-				print("Scav DM Database initialization error! " .. tostring(sql.LastError()))
+				print("Scav DM Database initialization error! " .. sql.LastError())
 			elseif success then
 				print("Scav DM Database successfully initialized!")
 			end
@@ -130,6 +132,7 @@ if SERVER then
 	end
 
 	function PLAYER:AddScavAchievement(name, amt, noannounce)
+		local amt = amt or 1
 		local amttoachieve = ScavStats.Achievements[name].amttoachieve
 		local progress = self:GetScavAchievementProgress(name)
 		if progress >= amttoachieve then
@@ -301,7 +304,7 @@ if SERVER then
 		pl:EmitSound("weapons/fx/rics/ric2.wav")
 		net.Start("sdm_achievement")
 			net.WritePlayer(pl)
-			net.WriteUInt(index, 7) -- !!!IMPORTANT!!! This gives a max of 127 achievements, should we ever pass that, this needs changing!
+			net.WriteUInt(index, ACHIEVEMENT_BITS)
 			net.Broadcast()
 		print(pl:Nick() .. " has achieved " .. ScavStats.Achievements[index].printname .. "!")
 	end
@@ -310,8 +313,8 @@ else
 	net.Receive("sdm_achievement", function()
 		local pl = net.ReadPlayer()
 		if not IsValid(pl) then return end
-		local index = net.ReadUInt(7)
-		chat.AddText(ScavLocalize("#scav.achievement", pl:Nick(), ScavStats.Achievements[index].printname))
+		local index = net.ReadUInt(ACHIEVEMENT_BITS)
+		chat.AddText(ScavLocalize("#scav.achievement", false, pl:Nick(), ScavStats.Achievements[index].printname))
 	end)
 end
 

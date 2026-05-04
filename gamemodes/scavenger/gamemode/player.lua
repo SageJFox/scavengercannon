@@ -773,7 +773,7 @@ else
 				if dmginfo:IsDamageType(DMG_BLAST) and IsValid(inflictor) then
 					inflictor.BlastKills = (inflictor.BlastKills or 0) + 1
 					if inflictor.BlastKills > 2 then
-						attacker:AddScavAchievement(SCAVACHIEVEMENT_TRIPLEGIB, 1)
+						attacker:AddScavAchievement(SCAVACHIEVEMENT_TRIPLEGIB)
 					end
 				end
 			end
