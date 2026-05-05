@@ -1269,11 +1269,10 @@ local STATUS = {}
 		if SERVER then
 			self:NextThink(CurTime() + 1 / self.Value)
 			local dmg = DamageInfo()
-			dmg:SetInflictor(self.Owner)
-			if self.Attacker then
+			if IsValid(self.Attacker) then
 				dmg:SetAttacker(self.Attacker)
 			end
-			if self.Inflictor then
+			if IsValid(self.Inflictor) then
 				dmg:SetInflictor(self.Inflictor)
 			end
 			dmg:SetDamageForce(vector_origin)
