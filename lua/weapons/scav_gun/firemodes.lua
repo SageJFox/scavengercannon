@@ -10,6 +10,9 @@ local PLAYER = FindMetaTable("Player")
 local SWEP = SWEP
 local ScavData = ScavData
 
+--give us a prop-agnostic way to access firemodes
+SCAV_FIREMODES = {}
+
 --damage fix
 DMG_FREEZE = 16
 DMG_CHEMICAL = 1048576
@@ -58,7 +61,7 @@ end
 --[[==============================================================================================
 	--Scav Rockets
 ==============================================================================================]]--
-	
+
 		local tab = {}
 			tab.Name = "#scav.scavcan.rocket"
 			tab.anim = ACT_VM_SECONDARYATTACK
@@ -204,11 +207,13 @@ end
 		ScavData.RegisterFiremode(tab, "models/swarm/minirocket/minirocket.mdl")
 		--BMS
 		ScavData.RegisterFiremode(tab, "models/weapons/w_rpg_projectile.mdl")
+		
+		SCAV_FIREMODES["ROCKET"] = tab
 
 --[[==============================================================================================
 	--Ice Beam
 ==============================================================================================]]--
-	
+
 		local tab = {}
 			tab.Name = "#scav.scavcan.icebeam"
 			tab.anim = ACT_VM_SECONDARYATTACK
@@ -260,21 +265,22 @@ end
 		ScavData.RegisterFiremode(tab, "models/props_urban/plastic_icechest001_static.mdl", 2)
 		ScavData.RegisterFiremode(tab, "models/props_urban/plastic_icechest002.mdl", 2)
 
+		SCAV_FIREMODES["ICEBEAM"] = tab
+
 --[[==============================================================================================
 	--Flares
 ==============================================================================================]]--
-	
+
 		local tab = {}
 			tab.Name = "#scav.scavcan.flare"
 			tab.anim = ACT_VM_SECONDARYATTACK
 			tab.Level = 2
 			tab.MaxAmmo = 16
 			local identify = {
-				--[HL2/Default] = 0,
-				--[[TF2]]["models/weapons/w_models/w_flaregun_shell.mdl"] = 1,
-				--[[ASW]]["models/swarm/flare/flareweapon.mdl"] = 2,
+				["models/weapons/w_models/w_flaregun_shell.mdl"] = SCAV_FLARE_TF2,
+				["models/swarm/flare/flareweapon.mdl"] = SCAV_FLARE_ASW,
 			}
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
+			tab.Identify = setmetatable(identify, {__index = function() return SCAV_FLARE_HL2 end})
 			if SERVER then
 				tab.FireFunc = function(self, item)
 						--local proj = self:CreateEnt("scav_projectile_flare")
@@ -317,8 +323,6 @@ end
 				ScavData.CollectFuncs["models/props_fairgrounds/mortar_rack.mdl"] = function(self, ent) return {{"models/items/flare.mdl", 7, ent:GetSkin()}} end --7 flares from the L4D2 Pyrotechnics Mortar
 				---ASW
 				ScavData.CollectFuncs["models/swarm/flare/flarebox.mdl"] = function(self, ent) return {{"models/swarm/flare/flareweapon.mdl", 5, ent:GetSkin()}} end --5 flares from the TF2 flaregun
-			else
-				tab.fov = 10
 			end
 			tab.Cooldown = 1
 		ScavData.RegisterFiremode(tab, "models/items/flare.mdl")
@@ -331,10 +335,12 @@ end
 		--HL:S
 		ScavData.RegisterFiremode(tab, "models/w_flare.mdl")
 
+		SCAV_FIREMODES["FLARE"] = tab
+
 --[[==============================================================================================
 	--Arrows and Bolts (Impaler)
 ==============================================================================================]]--
-	
+
 		local tab = {}
 			tab.Name = "#scav.scavcan.impaler"
 			tab.anim = ACT_VM_SECONDARYATTACK
@@ -422,8 +428,6 @@ end
 				ScavData.CollectFuncs["models/weapons/w_crossbow_mp.mdl"] = function(self, ent) return {{"models/weapons/crossbow_bolt.mdl", 1, 0}} end
 				ScavData.CollectFuncs["models/weapons/w_crossbow_clip.mdl"] = function(self, ent) return {{"models/weapons/crossbow_bolt.mdl", 5, 0}} end
 				ScavData.CollectFuncs["models/weapons/w_crossbow_clip_mp.mdl"] = ScavData.CollectFuncs["models/weapons/w_crossbow_clip.mdl"]
-			else
-				tab.fov = 10
 			end
 			tab.Cooldown = 1
 		ScavData.RegisterFiremode(tab, "models/crossbow_bolt.mdl")
@@ -500,10 +504,12 @@ end
 		ScavData.RegisterFiremode(tab, "models/props_junk/scissors.mdl")
 		ScavData.RegisterFiremode(tab, "models/props_canteen/spork.mdl")
 
+		SCAV_FIREMODES["IMPALER"] = tab
+
 --[[==============================================================================================
 	--Scav Grenade
 ==============================================================================================]]--
-		
+
 		local tab = {}
 			tab.Name = "#scav.scavcan.nadelauncher"
 			tab.anim = ACT_VM_SECONDARYATTACK
@@ -608,10 +614,12 @@ end
 		ScavData.RegisterFiremode(tab, "models/props_junk/drinkcan01.mdl")
 		ScavData.RegisterFiremode(tab, "models/props_junk/popcan_wormjuice.mdl")
 
+		SCAV_FIREMODES["GRENADE"] = tab
+
 --[[==============================================================================================
 	--Payload Gun
 ==============================================================================================]]--
-		
+
 		local tab = {}
 			tab.Name = "#scav.scavcan.payload"
 			tab.anim = ACT_VM_SECONDARYATTACK
@@ -665,24 +673,25 @@ end
 		ScavData.RegisterFiremode(tab, "models/props_xen/xen_cart_w.mdl")
 		ScavData.RegisterFiremode(tab, "models/props_xen/xen_cart_w_nohandle.mdl")
 
+		SCAV_FIREMODES["PAYLOAD"] = tab
+
 --[[==============================================================================================
 	--Proximity Mine
 ==============================================================================================]]--
-		
+
 		local tab = {}
 			tab.Name = "#scav.scavcan.proxmine"
 			tab.anim = ACT_VM_SECONDARYATTACK
 			tab.Level = 5
 			tab.MaxAmmo = 6
 			local identify = {
-				--[sticky] = 0,
-				--[[non-sticky]]["models/weapons/w_models/w_stickybomb2.mdl"] = 1,
-				["models/props_c17/doll01.mdl"] = 1,
-				["models/props_unique/doll01.mdl"] = 1,
-				["models/props_buildables/mine_02.mdl"] = 1,
+				["models/weapons/w_models/w_stickybomb2.mdl"] = SCAV_PROXMINE_NONSTICKY,
+				["models/props_c17/doll01.mdl"] = SCAV_PROXMINE_NONSTICKY,
+				["models/props_unique/doll01.mdl"] = SCAV_PROXMINE_NONSTICKY,
+				["models/props_buildables/mine_02.mdl"] = SCAV_PROXMINE_NONSTICKY,
 			}
 			--Still want them unique when collected, so use different table
-			tab.Identify2 = setmetatable(identify, {__index = function() return 0 end})
+			tab.Identify2 = setmetatable(identify, {__index = function() return SCAV_PROXMINE_STICKY end})
 			if SERVER then
 				tab.FireFunc = function(self, item)
 						self.Owner:ViewPunch(Angle(-5, math.Rand(-0.1, 0.1), 0))
@@ -742,11 +751,13 @@ end
 		ScavData.RegisterFiremode(tab, "models/props_buildables/mine_02.mdl")
 		--ASW
 		--ScavData.RegisterFiremode(tab, "models/items/mine/mine.mdl") -- physics are screwy
+		
+		SCAV_FIREMODES["PROXMINE"] = tab
 
 --[[==============================================================================================
 	--Tripmines
 ==============================================================================================]]--
-		
+
 		local tab = {}
 			tab.Name = "#scav.scavcan.tripmine"
 			tab.anim = ACT_VM_MISSCENTER
@@ -809,6 +820,8 @@ end
 		ScavData.RegisterFiremode(tab, "models/weapons/w_tripmine.mdl")
 		ScavData.RegisterFiremode(tab, "models/weapons/w_tripmine_mp.mdl")
 		ScavData.RegisterFiremode(tab, "models/props_marines/triplaser.mdl")
+		
+		SCAV_FIREMODES["TRIPMINE"] = tab
 
 --[[==============================================================================================
 	--Proximity, Tripmine, and Hopper screen adjust
@@ -854,7 +867,7 @@ end
 --[[==============================================================================================
 	--Nailgun
 ==============================================================================================]]--
-		
+
 		local tab = {}
 			tab.Name = "#scav.scavcan.nailgun"
 			tab.anim = ACT_VM_PRIMARYATTACK
@@ -904,11 +917,13 @@ end
 			tab.Cooldown = 0.075
 		ScavData.RegisterFiremode(tab, "models/scav/nail.mdl")
 		ScavData.RegisterFiremode(tab, "models/scav/nailsmall.mdl")
+		
+		SCAV_FIREMODES["NAILGUN"] = tab
 
 --[[==============================================================================================
 	--Shurikens
 ==============================================================================================]]--
-		
+
 		local tab = {}
 			tab.Name = "#scav.scavcan.shuriken"
 			tab.anim = ACT_VM_PRIMARYATTACK
@@ -951,11 +966,13 @@ end
 		ScavData.RegisterFiremode(tab, "models/props_gameplay/laser_disc.mdl")
 		--BMS
 		ScavData.RegisterFiremode(tab, "models/props_office/cd_music.mdl")
+		
+		SCAV_FIREMODES["SHURIKEN"] = tab
 
 --[[==============================================================================================
 	--Tank shell
 ==============================================================================================]]--
-		
+
 		local tab = {}
 			tab.Name = "#scav.scavcan.tankshell"
 			tab.anim = ACT_VM_SECONDARYATTACK
@@ -965,7 +982,7 @@ end
 			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			PrecacheParticleSystem("scav_exp_fireball3_a")
 			if SERVER then
-				for i=3, 7 do
+				for i = 3, 7 do
 					util.PrecacheModel("models/props_combine/breenbust_Chunk0" .. i .. ".mdl")
 				end
 				tab.FireFunc = function(self, item)
@@ -1023,6 +1040,8 @@ end
 		ScavData.RegisterFiremode(tab, "models/props_vehicles/abrams.mdl")
 		ScavData.RegisterFiremode(tab, "models/props_vehicles/abrams_phys.mdl")
 		ScavData.RegisterFiremode(tab, "models/gibs/m1a1_abrams_gibs/m1_gib_turret.mdl")
+		
+		SCAV_FIREMODES["TANKSHELL"] = tab
 
 --[[==============================================================================================
 	--Electricity beam
@@ -1109,6 +1128,8 @@ end
 		ScavData.RegisterFiremode(tab, "models/props_powerup/power_up_transformer_relay_box.mdl", 15)
 		ScavData.RegisterFiremode(tab, "models/props_industrial/powerbox_large_01.mdl", 15)
 		ScavData.RegisterFiremode(tab, "models/props_industrial/service_terminal.mdl", 15)
+		
+		SCAV_FIREMODES["SHOCKBEAM"] = tab
 
 --[[==============================================================================================
 	--Hyper beam
@@ -1146,6 +1167,8 @@ end
 			
 		ScavData.RegisterFiremode(tab, "models/metroid.mdl", SCAV_SHORT_MAX)
 		ScavData.RegisterFiremode(tab, "models/props_combine/introomarea.mdl", SCAV_SHORT_MAX)
+		
+		SCAV_FIREMODES["HYPERBEAM"] = tab
 
 --[[==============================================================================================
 	--I just couldn't resist: The BFG9000
@@ -1276,10 +1299,13 @@ end
 		ScavData.RegisterFiremode(tab, "models/props_vehicles/floodlight_generator_pose02_static.mdl", 4)
 		--DoD:S
 		ScavData.RegisterFiremode(tab, "models/props_vehicles/generator.mdl", 4)
+		
+		SCAV_FIREMODES["BFG9000"] = tab
 
 --[[==============================================================================================
 	--..Or this..
 ==============================================================================================]]--
+
 		local tab = {}
 			tab.Name = "#scav.scavcan.cannon"
 			tab.anim = ACT_VM_FIDGET
@@ -1361,6 +1387,8 @@ end
 		ScavData.RegisterFiremode(tab, "models/props_unique/airport/atlas_break_ball.mdl")
 		--FoF
 		ScavData.RegisterFiremode(tab, "models/weapons/cannon_ball.mdl")
+		
+		SCAV_FIREMODES["CANNONBALL"] = tab
 
 --[[==============================================================================================
 	--Conference Call (Crossfire Shotgun)
@@ -1372,12 +1400,11 @@ end
 		tab.anim = ACT_VM_SECONDARYATTACK
 		tab.Level = 4
 		local identify = {
-			--[HL2/Default] = 0,
-			--[[TF2]]["models/props_2fort/telephone001.mdl"] = 1,
-			["models/props_spytech/control_room_console01.mdl"] = 1,
-			["models/props_spytech/control_room_console03.mdl"] = 1,
+			["models/props_2fort/telephone001.mdl"] = SCAV_SG_TF2,
+			["models/props_spytech/control_room_console01.mdl"] = SCAV_SG_TF2,
+			["models/props_spytech/control_room_console03.mdl"] = SCAV_SG_TF2,
 		}
-		tab.Identify = setmetatable(identify, {__index = function() return 0 end})
+		tab.Identify = setmetatable(identify, {__index = function() return SCAV_SG_DEFAULT end})
 		tab.MaxAmmo = 125
 		local bullet = {}
 			bullet.Num = 5
@@ -1417,10 +1444,10 @@ end
 			tab.OnArmed = function(self, item, olditemname)
 				if olditemname ~= "" and ScavData.models[olditemname] and ScavData.models[item.ammo].Name == ScavData.models[olditemname].Name then return end
 				local tab = ScavData.models[item.ammo]
-				if tab.Identify[item.ammo] == 1 then --TF2
+				if tab.Identify[item.ammo] == SCAV_SG_TF2 then
 					self.Owner:EmitSound("weapons/shotgun_cock_back.wav")
 					timer.Simple(0.25, function() if IsValid(self) and IsValid(self.Owner) then self.Owner:EmitSound("weapons/shotgun_cock_forward.wav") end end)
-				else --HL2
+				else
 					self.Owner:EmitSound("weapons/shotgun/shotgun_cock.wav")
 				end
 			end
@@ -1541,6 +1568,8 @@ end
 		ScavData.RegisterFiremode(tab, "models/props_generic/phone01_headset.mdl", 4)
 		ScavData.RegisterFiremode(tab, "models/props_industrial/desk_console1.mdl", 10)
 		ScavData.RegisterFiremode(tab, "models/props_industrial/desk_console1a.mdl", 6)
+		
+		SCAV_FIREMODES["CONFERENCECALL"] = tab
 
 --[[==============================================================================================
 	--Supersonic Shockwave
@@ -1551,24 +1580,24 @@ end
 			tab.anim = ACT_VM_SECONDARYATTACK
 			tab.Level = 4
 			local identify = {
-				--[Default] = 0,
-				--[[Beans]]["models/props/food_can/food_can.mdl"] = 1, --this one's just for you, Anya
-				["models/props_junk/garbage_beancan01a.mdl"] = 1,
-				["models/props_junk/garbage_beancan01a_fullsheet.mdl"] = 1,
-				--[[CSS Bell]]["models/props/de_inferno/bell_large.mdl"] = 2,
-				["models/props/de_inferno/bell_largeb.mdl"] = 2,
-				["models/props/de_inferno/bell_small.mdl"] = 2,
-				["models/props/de_inferno/bell_smallb.mdl"] = 2,
-				--[[DoD:S Bell]]["models/props_italian/anzio_bell.mdl"] = 3,
-				--[[FoF Bell]]["models/monastery/bell_large.mdl"] = 4,
+				["models/props/food_can/food_can.mdl"] = SCAV_SONIC_BEANS, --this one's just for you, Anya
+				["models/props_junk/garbage_beancan01a.mdl"] = SCAV_SONIC_BEANS,
+				["models/props_junk/garbage_beancan01a_fullsheet.mdl"] = SCAV_SONIC_BEANS,
+				["models/props/de_inferno/bell_large.mdl"] = SCAV_SONIC_CSS,
+				["models/props/de_inferno/bell_largeb.mdl"] = SCAV_SONIC_BELL_CSS,
+				["models/props/de_inferno/bell_small.mdl"] = SCAV_SONIC_BELL_CSS,
+				["models/props/de_inferno/bell_smallb.mdl"] = SCAV_SONIC_BELL_CSS,
+				["models/props_italian/anzio_bell.mdl"] = SCAV_SONIC_BELL_DOD,
+				["models/monastery/bell_large.mdl"] = SCAV_SONIC_BELL_FOF,
 				--TODO: More unique sounds for these. Guitar, piano, klaxon, Houndeye, radio, gramophone, etc. etc.
 			}
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
+			tab.Identify = setmetatable(identify, {__index = function() return SCAV_SONIC_DEFAULT end})
 			tab.MaxAmmo = 10
 			if SERVER then
 				tab.FireFunc = function(self, item)
 					local tab = ScavData.models[item.ammo]
 					local proj = self:CreateEnt("scav_projectile_shockwave")
+					if not IsValid(proj) then return end
 					proj.Owner = self.Owner
 					proj:SetPos(self:GetProjectileShootPos())
 					--proj:SetPos(self.Owner:GetShootPos() - self:GetAimVector() * 15 + self:GetAimVector():Angle():Right() * 6 - self:GetAimVector():Angle():Up() * 8)
@@ -1578,11 +1607,11 @@ end
 					self.Owner:SetAnimation(PLAYER_ATTACK1)
 					self.Owner:ViewPunch(Angle(math.Rand(-4, -3), math.Rand(-0.1, 0.1), 0))
 					local soundfx = {
-						[0] = function(self, proj)
+						[SCAV_SONIC_DEFAULT] = function(self, proj)
 							self.Owner:EmitSound("ambient/explosions/explode_9.wav", 75, 100, 0.66, CHAN_WEAPONS, SND_NOFLAGS, 0)
 							self.Owner:EmitSound("npc/env_headcrabcanister/launch.wav", 75, 100, 0.33, CHAN_WEAPONS, SND_NOFLAGS, 0)
 						end,
-						[1] = function(self, proj)
+						[SCAV_SONIC_BEANS] = function(self, proj)
 							local drop = self:GetProjectileShootPos()
 							drop.z = drop.z - 12
 							proj:SetPos(drop)
@@ -1590,17 +1619,17 @@ end
 							self.Owner:EmitSound("ambient/explosions/explode_9.wav", 75, 100, 0.66, CHAN_WEAPONS, SND_NOFLAGS, 0)
 							self.Owner:EmitSound("npc/antlion_guard/shove1.wav", 75, 100, 0.5, CHAN_WEAPONS, SND_NOFLAGS, 0)
 						end,
-						[2] = function(self, proj)
+						[SCAV_SONIC_BELL_CSS] = function(self, proj)
 							self.Owner:EmitSound("ambient/explosions/explode_9.wav", 75, 100, 0.33, CHAN_WEAPONS, SND_NOFLAGS, 0)
 							self.Owner:EmitSound("ambient/misc/brass_bell_c.wav", 75, 100, 0.33, CHAN_WEAPONS, SND_NOFLAGS, 0)
 							self.Owner:EmitSound("npc/env_headcrabcanister/launch.wav", 75, 100, 0.33, CHAN_WEAPONS, SND_NOFLAGS, 0)
 						end,
-						[3] = function(self, proj)
+						[SCAV_SONIC_BELL_DOD] = function(self, proj)
 							self.Owner:EmitSound("ambient/explosions/explode_9.wav", 75, 100, 0.33, CHAN_WEAPONS, SND_NOFLAGS, 0)
 							self.Owner:EmitSound("physics/bigbell.wav", 75, 100, 0.66, CHAN_WEAPONS, SND_NOFLAGS, 0)
 							self.Owner:EmitSound("npc/env_headcrabcanister/launch.wav", 75, 100, 0.33, CHAN_WEAPONS, SND_NOFLAGS, 0)
 						end,
-						[4] = function(self, proj)
+						[SCAV_SONIC_BELL_FOF] = function(self, proj)
 							self.Owner:EmitSound("ambient/explosions/explode_9.wav", 75, 100, 0.33, CHAN_WEAPONS, SND_NOFLAGS, 0)
 							self.Owner:EmitSound("monastery/bell.wav", 75, 100, 0.66, CHAN_WEAPONS, SND_NOFLAGS, 0)
 							self.Owner:EmitSound("npc/env_headcrabcanister/launch.wav", 75, 100, 0.33, CHAN_WEAPONS, SND_NOFLAGS, 0)
@@ -1682,6 +1711,8 @@ end
 		ScavData.RegisterFiremode(tab, "models/gibs/props_office/stereosystem_p3.mdl", 2)
 		ScavData.RegisterFiremode(tab, "models/props_generic/hand_dryer.mdl", 10)
 		ScavData.RegisterFiremode(tab, "models/props_industrial/aircompressor.mdl", 10)
+		
+		SCAV_FIREMODES["SONICBLAST"] = tab
 
 --[[==============================================================================================
 	--Gas Canister 
@@ -1691,11 +1722,6 @@ end
 			tab.Name = "#scav.scavcan.canister"
 			tab.anim = ACT_VM_SECONDARYATTACK
 			tab.Level = 4
-			--local identify = {
-				--[Default] = 0,
-			--	--[[Beans]]["models/props/food_can/food_can.mdl"] = 1,
-			--}
-			--tab.Identify = setmetatable(identify, {__index = function() return 0 end})
 			tab.MaxAmmo = 3
 			if SERVER then
 				tab.FireFunc = function(self, item)
@@ -1733,6 +1759,8 @@ end
 		ScavData.RegisterFiremode(tab, "models/br_debris/deb_gas_canister.mdl")
 		--BMS
 		ScavData.RegisterFiremode(tab, "models/props_industrial/chloride_tank01.mdl")
+		
+		SCAV_FIREMODES["CANISTER"] = tab
 
 --[[==============================================================================================
 	--Disease Shot
@@ -1743,12 +1771,11 @@ end
 			tab.anim = ACT_VM_SECONDARYATTACK
 			tab.Level = 4
 			local identify = {
-				--[Default] = 0,
-				--[[Jarate]]["models/weapons/c_models/urinejar.mdl"] = 1,
-				["models/weapons/c_models/c_xms_urinejar.mdl"] = 1,
-				["models/weapons/c_models/c_breadmonster/c_breadmonster.mdl"] = 1,
+				["models/weapons/c_models/urinejar.mdl"] = SCAV_DISEASE_JARATE,
+				["models/weapons/c_models/c_xms_urinejar.mdl"] = SCAV_DISEASE_JARATE,
+				["models/weapons/c_models/c_breadmonster/c_breadmonster.mdl"] = SCAV_DISEASE_JARATE,
 			}
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
+			tab.Identify = setmetatable(identify, {__index = function() return SCAV_DISEASE_DEFAULT end})
 			tab.MaxAmmo = 10
 			if SERVER then
 				tab.FireFunc = function(self, item)
@@ -1823,6 +1850,8 @@ end
 		--BMS
 		ScavData.RegisterFiremode(tab, "models/props_generic/toilet.mdl")
 		ScavData.RegisterFiremode(tab, "models/props_lab/chemjar01.mdl")
+		
+		SCAV_FIREMODES["DISEASESHOT"] = tab
 
 --[[==============================================================================================
 	--sniper rifle
@@ -1846,14 +1875,13 @@ end
 			tab.anim = ACT_VM_IDLE
 			tab.Level = 6
 			local identify = {
-				--[[Default]]["models/weapons/rifleshell.mdl"] = 0,
-				["models/weapons/w_combine_sniper.mdl"] = 0,
-				["models/swarm/railgun/railgun.mdl"] = 0,
-				["models/weapons/marksmanrifle/marksmanrifle.mdl"] = 0,
-				["models/weapons/railgun/railgun.mdl"] = 0,
-				--[TF2] = 1
+				["models/weapons/rifleshell.mdl"] = SCAV_SNIPER_HL2,
+				["models/weapons/w_combine_sniper.mdl"] = SCAV_SNIPER_HL2,
+				["models/swarm/railgun/railgun.mdl"] = SCAV_SNIPER_HL2,
+				["models/weapons/marksmanrifle/marksmanrifle.mdl"] = SCAV_SNIPER_HL2,
+				["models/weapons/railgun/railgun.mdl"] = SCAV_SNIPER_HL2,
 			}
-			tab.Identify = setmetatable(identify, {__index = function() return 1 end})
+			tab.Identify = setmetatable(identify, {__index = function() return SCAV_SNIPER_TF2 end})
 			tab.MaxAmmo = 25
 			tab.Cooldown = 0.01
 			tab.fov = 5
@@ -1968,6 +1996,8 @@ end
 			ScavData.RegisterFiremode(tab, "models/swarm/railgun/railgun.mdl", 5)
 			ScavData.RegisterFiremode(tab, "models/weapons/marksmanrifle/marksmanrifle.mdl", 5)
 			ScavData.RegisterFiremode(tab, "models/weapons/railgun/railgun.mdl", 5)
+		
+			SCAV_FIREMODES["SNIPERRIFLE"] = tab
 		end
 
 --[[==============================================================================================
@@ -2072,6 +2102,8 @@ PrecacheParticleSystem("scav_exp_plasma")
 		ScavData.RegisterFiremode(tab, "models/props_junk/battery.mdl", 5)
 		ScavData.RegisterFiremode(tab, "models/props_junk/capacitor.mdl", 5)
 		ScavData.RegisterFiremode(tab, "models/props_equipment/portablebattery01.mdl", 100)
+		
+		SCAV_FIREMODES["PLASMAGUN"] = tab
 
 --[[==============================================================================================
 	--Frag 12 High-Explosive round
@@ -2120,6 +2152,8 @@ PrecacheParticleSystem("scav_exp_plasma")
 		ScavData.RegisterFiremode(tab, "models/items/ammo/frag12round.mdl")
 		--L4D2
 		ScavData.RegisterFiremode(tab, "models/w_models/weapons/w_eq_explosive_ammopack.mdl", 40)
+		
+		SCAV_FIREMODES["FRAG12"] = tab
 
 --[[==============================================================================================
 	--Syringe Gun
@@ -2221,6 +2255,8 @@ PrecacheParticleSystem("scav_exp_plasma")
 		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_syringegun/c_syringegun.mdl", 40)
 		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_leechgun/c_leechgun.mdl", 40)
 		ScavData.RegisterFiremode(tab, "models/weapons/c_models/c_proto_syringegun/c_proto_syringegun.mdl", 40)
+		
+		SCAV_FIREMODES["SYRINGEGUN"] = tab
 
 --[[==============================================================================================
 	--Physics Super Shotgun
@@ -2467,6 +2503,8 @@ end
 		ScavData.RegisterFiremode(tab, "models/props_office/partition_36x60.mdl")
 		ScavData.RegisterFiremode(tab, "models/props_office/partition_48x48.mdl")
 		ScavData.RegisterFiremode(tab, "models/props_office/partition_48x60.mdl")
+		
+		SCAV_FIREMODES["PHYSSSG"] = tab
 
 --[[==============================================================================================
 	--Physics Shotgun
@@ -2722,6 +2760,8 @@ end
 			ScavData.RegisterFiremode(tab, "models/props_blackmesa/bms_vent_break.mdl")
 			ScavData.RegisterFiremode(tab, "models/props_industrial/vent4040.mdl")
 			ScavData.RegisterFiremode(tab, "models/props_industrial/vent4040_2.mdl")
+		
+			SCAV_FIREMODES["PHYSSG"] = tab
 
 --[[==============================================================================================
 	--Flamethrower
@@ -2878,6 +2918,8 @@ end
 			ScavData.RegisterFiremode(tab, "models/props_junk/oil_can.mdl", 25)
 			ScavData.RegisterFiremode(tab, "models/props_industrial/gascanister01.mdl", 50)
 			ScavData.RegisterFiremode(tab, "models/props_industrial/gascanister02.mdl", 100)
+		
+			SCAV_FIREMODES["FLAMETHROWER"] = tab
 
 --[[==============================================================================================
 	--Fireball
@@ -3023,6 +3065,8 @@ end
 			ScavData.RegisterFiremode(tab, "models/props_interiors/stove04_industrial.mdl", 40)
 			--FoF
 			ScavData.RegisterFiremode(tab, "models/props/forest/furnace_2.mdl", 40)
+		
+			SCAV_FIREMODES["FIREBALL"] = tab
 
 --[[==============================================================================================
 	--Acid Sprayer
@@ -3122,6 +3166,8 @@ end
 			ScavData.RegisterFiremode(tab, "models/props_junk/plasticcontainer02.mdl", 50)
 			ScavData.RegisterFiremode(tab, "models/props_junk/plasticcontainer03.mdl", 50)
 			ScavData.RegisterFiremode(tab, "models/props_junk/plasticcontainer04.mdl", 50)
+		
+			SCAV_FIREMODES["ACIDSPRAYER"] = tab
 		end
 
 --[[==============================================================================================
@@ -3286,6 +3332,8 @@ end
 			ScavData.RegisterFiremode(tab, "models/props_industrial/nitrogentank_l.mdl", 175)
 			ScavData.RegisterFiremode(tab, "models/props_industrial/nitrogentank_m.mdl", 125)
 			ScavData.RegisterFiremode(tab, "models/props_industrial/nitrogentank_s.mdl", 100)
+		
+			SCAV_FIREMODES["FREEZEGAS"] = tab
 		end
 
 --[[==============================================================================================
@@ -3373,6 +3421,8 @@ end
 				ScavData.RegisterFiremode(tab, "models/props_phx2/garbage_metalcan001a.mdl", SCAV_SHORT_MAX)
 				--TF2
 				ScavData.RegisterFiremode(tab, "models/workshop/weapons/c_models/c_invasion_bat/c_invasion_bat.mdl", SCAV_SHORT_MAX)
+		
+			SCAV_FIREMODES["PLASMABLADE"] = tab
 		end
 
 --[[==============================================================================================
@@ -3627,6 +3677,8 @@ end
 				ScavData.RegisterFiremode(tab, "models/props_junk/junk_hacksaw.mdl", 200)
 				ScavData.RegisterFiremode(tab, "models/props_inbound/radial_saw.mdl", SCAV_SHORT_MAX)
 				ScavData.RegisterFiremode(tab, "models/props_questionableethics/qe_necropsy_machine.mdl", SCAV_SHORT_MAX)
+		
+				SCAV_FIREMODES["BUZZSAW"] = tab
 		end
 
 --[[==============================================================================================
@@ -3710,6 +3762,8 @@ end
 				ScavData.RegisterFiremode(tab, "models/props_am/am_lasertube.mdl", 200)
 				ScavData.RegisterFiremode(tab, "models/props_questionableethics/qe_auxlaser.mdl", 300)
 				ScavData.RegisterFiremode(tab, "models/props_questionableethics/qe_primarylaser.mdl", SCAV_SHORT_MAX)
+		
+				SCAV_FIREMODES["LASERBEAM"] = tab
 		end
 
 --[[==============================================================================================
@@ -3792,6 +3846,8 @@ end
 				ScavData.RegisterFiremode(tab, "models/props_xen/power_box/xen_power_box_opendown.mdl", 200)
 				ScavData.RegisterFiremode(tab, "models/props_xen/power_box/xen_power_box_opentop.mdl", 200)
 				ScavData.RegisterFiremode(tab, "models/props_equipment/powergenerator01.mdl", SCAV_SHORT_MAX)
+		
+				SCAV_FIREMODES["ARCBEAM"] = tab
 		end
 
 --[[==============================================================================================
@@ -3962,6 +4018,8 @@ end
 		ScavData.RegisterFiremode(tab, "models/weapons/w_egon_pickup.mdl", 10)
 		ScavData.RegisterFiremode(tab, "models/weapons/w_egon_pickup_mp.mdl", 10)
 		ScavData.RegisterFiremode(tab, "models/props_blackmesa/barrel01.mdl")
+		
+		SCAV_FIREMODES["GAMMABEAM"] = tab
 
 --[[==============================================================================================
 	--Phazon Beam
@@ -4044,6 +4102,8 @@ end
 			tab.Cooldown = 0.025 --40/sec
 
 			ScavData.RegisterFiremode(tab, "models/dav0r/hoverball.mdl", SCAV_SHORT_MAX)
+		
+			SCAV_FIREMODES["PHAZONBEAM"] = tab
 
 --[[==============================================================================================
 	--Minigun
@@ -4055,12 +4115,11 @@ end
 			tab.chargeanim = ACT_VM_RECOIL1
 			tab.Level = 5
 			local identify = {
-				--[[Default]]["models/w_models/weapons/50cal.mdl"] = 0,
-				["models/w_models/weapons/w_minigun.mdl"] = 0,
-				["models/weapons/gatling_top.mdl"] = 0,
-				--[TF2] = 1,
+				["models/w_models/weapons/50cal.mdl"] = SCAV_MINIGUN_DEFAULT,
+				["models/w_models/weapons/w_minigun.mdl"] = SCAV_MINIGUN_DEFAULT,
+				["models/weapons/gatling_top.mdl"] = SCAV_MINIGUN_DEFAULT,
 			}
-			tab.Identify = setmetatable(identify, {__index = function() return 1 end})
+			tab.Identify = setmetatable(identify, {__index = function() return SCAV_MINIGUN_TF2 end})
 			tab.MaxAmmo = 200
 			tab.BarrelRestSpeed = 1000
 			tab.ChargeAttack = function(self, item)
@@ -4093,10 +4152,10 @@ end
 					timer.Simple(0.025, function()
 						if not IsValid(self) then return end
 						local brass = {
-							[0] = function(attach)
+							[SCAV_MINIGUN_DEFAULT] = function(attach)
 								self:EjectShell("RifleShellEject", false)
 							end,
-							[1] = function(attach)
+							[SCAV_MINIGUN_TF2] = function(attach)
 								self:EjectShellTF2("minigun")
 							end,
 						}
@@ -4158,6 +4217,8 @@ end
 		ScavData.RegisterFiremode(tab, "models/swarm/autogun/autogun.mdl", 200)
 		--FoF
 		ScavData.RegisterFiremode(tab, "models/weapons/gatling_top.mdl", 200)
+		
+		SCAV_FIREMODES["MINIGUN"] = tab
 
 --splitting up into smaller files				
 include("firemodes_hl2.lua")

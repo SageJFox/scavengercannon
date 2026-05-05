@@ -120,6 +120,8 @@
 		ScavData.RegisterFiremode(tab, "models/props_industrial/wall_console2.mdl", SCAV_SHORT_MAX)
 		ScavData.RegisterFiremode(tab, "models/props_industrial/wall_console_sm.mdl", SCAV_SHORT_MAX)
 		
+		SCAV_FIREMODES["AUTOTARGETING"] = tab
+		
 --[[==============================================================================================
 	--Energy Drink/Stim Pack
 ==============================================================================================]]--
@@ -130,36 +132,35 @@
 			tab.Level = 6
 			tab.MaxAmmo = 6
 			local identify = {
-				--[Coffee] = 0,
-				--[[Drink]]["models/props_junk/garbage_energydrinkcan001a.mdl"] = 1,
-				["models/mechanics/various/211.mdl"] = 1,
-				["models/weapons/c_models/c_energy_drink/c_energy_drink.mdl"] = 1,
-				["models/weapons/c_models/c_xms_energy_drink/c_xms_energy_drink.mdl"] = 1,
-				["models/swarmprops/miscdeco/synupcan.mdl"] = 1,
-				--[[Needle]]["models/props_junk/garbage_syringeneedle001a.mdl"] = 2,
-				["models/w_models/weapons/w_eq_adrenaline.mdl"] = 2,
-				["models/swarm/stim/stim.mdl"] = 2,
-				["models/humans/props/scientist_syringe.mdl"] = 2,
-				--[[Disciplinary Action]]["models/weapons/c_models/c_riding_crop/c_riding_crop.mdl"] = 3,
-				["models/workshop/weapons/c_models/c_riding_crop/c_riding_crop.mdl"] = 3,
-				--[[MannUp Agility]]["models/pickups/pickup_powerup_agility.mdl"] = 4,
-				--[[MannUp Haste]]["models/pickups/pickup_powerup_haste.mdl"] = 5,
-				--[[Boot]]["models/items/powerup_speed.mdl"] = 6,
-				["models/props_junk/shoe001a.mdl"] = 6,
-				["models/props_questionableethics/smoking_boots_left.mdl"] = 6,
-				["models/props_questionableethics/smoking_boots_right.mdl"] = 6,
+				["models/props_junk/garbage_energydrinkcan001a.mdl"] = SCAV_STIM_DRINK,
+				["models/mechanics/various/211.mdl"] = SCAV_STIM_DRINK,
+				["models/weapons/c_models/c_energy_drink/c_energy_drink.mdl"] = SCAV_STIM_DRINK,
+				["models/weapons/c_models/c_xms_energy_drink/c_xms_energy_drink.mdl"] = SCAV_STIM_DRINK,
+				["models/swarmprops/miscdeco/synupcan.mdl"] = SCAV_STIM_DRINK,
+				["models/props_junk/garbage_syringeneedle001a.mdl"] = SCAV_STIM_NEEDLE,
+				["models/w_models/weapons/w_eq_adrenaline.mdl"] = SCAV_STIM_NEEDLE,
+				["models/swarm/stim/stim.mdl"] = SCAV_STIM_NEEDLE,
+				["models/humans/props/scientist_syringe.mdl"] = SCAV_STIM_NEEDLE,
+				["models/weapons/c_models/c_riding_crop/c_riding_crop.mdl"] = SCAV_STIM_WHIP,
+				["models/workshop/weapons/c_models/c_riding_crop/c_riding_crop.mdl"] = SCAV_STIM_WHIP,
+				["models/pickups/pickup_powerup_agility.mdl"] = SCAV_STIM_MANN_AGILITY,
+				["models/pickups/pickup_powerup_haste.mdl"] = SCAV_STIM_MANN_HASTE,
+				["models/items/powerup_speed.mdl"] = SCAV_STIM_BOOT,
+				["models/props_junk/shoe001a.mdl"] = SCAV_STIM_BOOT,
+				["models/props_questionableethics/smoking_boots_left.mdl"] = SCAV_STIM_BOOT,
+				["models/props_questionableethics/smoking_boots_right.mdl"] = SCAV_STIM_BOOT,
 			}
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
+			tab.Identify = setmetatable(identify, {__index = function() return SCAV_STIM_COFFEE end})
 			if SERVER then
 				tab.FireFunc = function(self, item)
 					local tab = ScavData.models[item.ammo]
 					local statfunction = {
-						[0] = function(self)
+						[SCAV_STIM_COFFEE] = function(self)
 							self.Owner:InflictStatusEffect("Shock", 30, 40)
 							self.Owner:InflictStatusEffect("Speed", 20, 3)
 							self.Owner:EmitSound("npc/scanner/scanner_nearmiss1.wav")
 						end,
-						[1] = function(self)
+						[SCAV_STIM_DRINK] = function(self)
 							self.Owner:InflictStatusEffect("Shock", 30, 40)
 							self.Owner:InflictStatusEffect("Speed", 20, 3)
 							if TF2 then
@@ -170,7 +171,7 @@
 								self.Owner:EmitSound("ambient/levels/canals/toxic_slime_gurgle4.wav")
 							end
 						end,
-						[2] = function(self)
+						[SCAV_STIM_NEEDLE] = function(self)
 							if self.Owner:GetStatusEffect("TemporaryHealth") then
 								self.Owner:EmitSound("buttons/button11.wav")
 								tab.Cooldown = 0.2
@@ -186,23 +187,23 @@
 								self.Owner:InflictStatusEffect("TemporaryHealth", 25, 1)
 							end
 						end,
-						[3] = function(self)
+						[SCAV_STIM_WHIP] = function(self)
 							self.Owner:InflictStatusEffect("Shock", 2, 40)
 							self.Owner:InflictStatusEffect("Speed", 5, 3)
 							self.Owner:EmitSound("weapons/discipline_device_impact_01.wav")
 							self.Owner:EmitSound("weapons/discipline_device_power_up.wav")
 						end,
-						[4] = function(self)
+						[SCAV_STIM_MANN_AGILITY] = function(self)
 							self.Owner:InflictStatusEffect("Shock", 30, 40)
 							self.Owner:InflictStatusEffect("Speed", 20, 3)
 							self.Owner:EmitSound("items/powerup_pickup_agility.wav")
 						end,
-						[5] = function(self)
+						[SCAV_STIM_MANN_HASTE] = function(self)
 							self.Owner:InflictStatusEffect("Shock", 30, 40)
 							self.Owner:InflictStatusEffect("Speed", 20, 3)
 							self.Owner:EmitSound("items/powerup_pickup_haste.wav")
 						end,
-						[6] = function(self)
+						[SCAV_STIM_BOOT] = function(self)
 							self.Owner:InflictStatusEffect("Speed", 20, 3)
 							self.Owner:EmitSound("npc/metropolice/gear" .. math.random(1, 6) .. ".wav")
 						end
@@ -285,6 +286,8 @@
 		ScavData.RegisterFiremode(tab, "models/props_canteen/vacuumflask01b.mdl")
 		ScavData.RegisterFiremode(tab, "models/props_canteen/vacuumflask01b_cup.mdl")
 		ScavData.RegisterFiremode(tab, "models/props_canteen/vacuumflask01b_phyicsversion.mdl")
+		
+		SCAV_FIREMODES["STIMPACK"] = tab
 		
 --[[==============================================================================================
 	--Cloaking Watch
@@ -379,6 +382,8 @@
 		ScavData.RegisterFiremode(tab, "models/humans/hassassin.mdl", 30)
 		ScavData.RegisterFiremode(tab, "models/player/hassassin.mdl", 30)
 		
+		SCAV_FIREMODES["CLOAK"] = tab
+		
 	
 
 --[[==============================================================================================
@@ -441,6 +446,8 @@
 		--BMS
 		ScavData.RegisterFiremode(tab, "models/props_blackmesa/alarmbox.mdl")
 		ScavData.RegisterFiremode(tab, "models/props_blackmesa/wallconsole.mdl")
+		
+		SCAV_FIREMODES["KEY"] = tab
 
 --[[==============================================================================================
 	--Remote
@@ -648,16 +655,16 @@ setmetatable(hacksuccess, {__index = function() return hacksuccessdefault end})
 			tab.Cooldown = hackthinktime
 			local identify = {
 				--[Remote] = 0,
-				--[[keyboard]]["models/props_c17/computer01_keyboard.mdl"] = 1,
-				["models/props/cs_office/computer_keyboard.mdl"] = 1,
-				["models/props/kb_mouse/keyboard.mdl"] = 1,
-				["models/props_office/computer_keyboard01.mdl"] = 1,
-				["models/props_office/computer_keyboard02.mdl"] = 1,
-				--[[wheatley]]["models/weapons/c_models/c_p2rec/c_p2rec.mdl"] = 2,
-				["models/npcs/personality_sphere/personality_sphere.mdl"] = 2,
-				["models/npcs/personality_sphere/personality_sphere_skins.mdl"] = 2,
+				--[[keyboard]]["models/props_c17/computer01_keyboard.mdl"] = SCAV_HACK_KB,
+				["models/props/cs_office/computer_keyboard.mdl"] = SCAV_HACK_KB,
+				["models/props/kb_mouse/keyboard.mdl"] = SCAV_HACK_KB,
+				["models/props_office/computer_keyboard01.mdl"] = SCAV_HACK_KB,
+				["models/props_office/computer_keyboard02.mdl"] = SCAV_HACK_KB,
+				--[[wheatley]]["models/weapons/c_models/c_p2rec/c_p2rec.mdl"] = SCAV_HACK_WHEATLEY,
+				["models/npcs/personality_sphere/personality_sphere.mdl"] = SCAV_HACK_WHEATLEY,
+				["models/npcs/personality_sphere/personality_sphere_skins.mdl"] = SCAV_HACK_WHEATLEY,
 			}
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
+			tab.Identify = setmetatable(identify, {__index = function() return SCAV_HACK_DEFAULT end})
 			local tracep = {}
 			tracep.mins = Vector(-2, -2, -2)
 			tracep.maxs = Vector(2, 2, 2)
@@ -1164,6 +1171,8 @@ setmetatable(hacksuccess, {__index = function() return hacksuccessdefault end})
 		ScavData.RegisterFiremode(tab, "models/props_st/radar_dish.mdl", SCAV_SHORT_MAX)
 		ScavData.RegisterFiremode(tab, "models/props_office/computer_keyboard01.mdl", SCAV_SHORT_MAX)
 		ScavData.RegisterFiremode(tab, "models/props_office/computer_keyboard02.mdl", SCAV_SHORT_MAX)
+		
+		SCAV_FIREMODES["UNIVERSALREMOTE"] = tab
 	end
 		
 --[[==============================================================================================
@@ -1186,7 +1195,7 @@ setmetatable(hacksuccess, {__index = function() return hacksuccessdefault end})
 				["models/buildables/teleporter.mdl"] = SCAV_TELE_TF2,
 
 			}
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
+			tab.Identify = setmetatable(identify, {__index = function() return SCAV_TELE_DEFAULT end})
 			if SERVER then
 			
 				util.AddNetworkString("scv_sfl")
@@ -1291,6 +1300,8 @@ setmetatable(hacksuccess, {__index = function() return hacksuccessdefault end})
 		--TF2
 		ScavData.RegisterFiremode(tab, "models/buildables/teleporter_light.mdl", SCAV_SHORT_MAX)
 		ScavData.RegisterFiremode(tab, "models/buildables/teleporter.mdl", SCAV_SHORT_MAX)
+		
+		SCAV_FIREMODES["TELEPORTER"] = tab
 		
 --[[==============================================================================================
 	--Grappling Beam
@@ -1487,6 +1498,8 @@ setmetatable(hacksuccess, {__index = function() return hacksuccessdefault end})
 		ScavData.RegisterFiremode(tab, "models/infected/smoker_tongue_attach.mdl", SCAV_SHORT_MAX)
 		--Portal/2
 		ScavData.RegisterFiremode(tab, "models/props/claw/claw.mdl", SCAV_SHORT_MAX)
+		
+		SCAV_FIREMODES["GRAPPLINGBEAM"] = tab
 
 --[[==============================================================================================
 	-- Combine Binoculars
@@ -1537,6 +1550,8 @@ setmetatable(hacksuccess, {__index = function() return hacksuccessdefault end})
 			ScavData.RegisterFiremode(tab, "models/props_c17/light_magnifyinglamp02.mdl", SCAV_SHORT_MAX)
 			ScavData.RegisterFiremode(tab, "models/gibs/gunship_gibs_eye.mdl", SCAV_SHORT_MAX)
 			ScavData.RegisterFiremode(tab, "models/gibs/gunship_gibs_sensorarray.mdl", SCAV_SHORT_MAX)
+		
+		SCAV_FIREMODES["BINOCULARS"] = tab
 		
 --[[==============================================================================================
 	-- Medkits
@@ -1640,7 +1655,6 @@ setmetatable(hacksuccess, {__index = function() return hacksuccessdefault end})
 			tab.anim = ACT_VM_IDLE
 			tab.Level = 1
 			local identify = {
-				--[Default +25] = 0,
 				["models/healthvial.mdl"] = SCAV_MEDKIT_VIAL,
 				["models/items/medkit_small.mdl"] = SCAV_MEDKIT_TF2S,
 				["models/items/medkit_small_bday.mdl"] = SCAV_MEDKIT_TF2S,
@@ -1748,6 +1762,8 @@ setmetatable(hacksuccess, {__index = function() return hacksuccessdefault end})
 		--BMS
 		ScavData.RegisterFiremode(tab, "models/weapons/w_medkit_classic.mdl")
 		ScavData.RegisterFiremode(tab, "models/weapons/w_medkit_stiff.mdl")
+		
+		SCAV_FIREMODES["MEDKIT"] = tab
 
 --[[==============================================================================================
 	-- Pain Pills (temporary health)
@@ -1818,6 +1834,8 @@ setmetatable(hacksuccess, {__index = function() return hacksuccessdefault end})
 		ScavData.RegisterFiremode(tab, "models/scav/pill_bottle.mdl")
 		--L4D/2
 		ScavData.RegisterFiremode(tab, "models/w_models/weapons/w_eq_painpills.mdl")
+		
+		SCAV_FIREMODES["PILLS"] = tab
 
 --[[==============================================================================================
 	-- Blast Shower
@@ -1973,6 +1991,8 @@ end
 		ScavData.RegisterFiremode(tab, "models/props_generic/safetyshower.mdl", 30)
 		ScavData.RegisterFiremode(tab, "models/props_industrial/fire_buckets.mdl", 30)
 		ScavData.RegisterFiremode(tab, "models/props_junk/mopbucket01.mdl", 30)
+		
+		SCAV_FIREMODES["BLASTSHOWER"] = tab
 
 --[[==============================================================================================
 	-- Sandwich
@@ -2176,6 +2196,8 @@ end
 		ScavData.RegisterFiremode(tab, "models/gibs/props_canteen/vm_snack29.mdl")
 		ScavData.RegisterFiremode(tab, "models/gibs/props_canteen/vm_snack30.mdl")
 		ScavData.RegisterFiremode(tab, "models/props_blackmesa/carcass_whole.mdl")
+		
+		SCAV_FIREMODES["SANDWICH"] = tab
 
 --[[==============================================================================================
 	-- Crit Boost
@@ -2186,20 +2208,18 @@ end
 			tab.anim = ACT_VM_IDLE
 			tab.Level = 1
 			local identify = {
-				--[Default] = 0,
-				--[Drink]] = 1,
-				--[[Steroid Keg]]["models/props_island/steroid_drum.mdl"] = 2,
+				["models/props_island/steroid_drum.mdl"] = SCAV_CRIT_STEROIDS,
 			}
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
+			tab.Identify = setmetatable(identify, {__index = function() return SCAV_CRIT_DEFAULT end})
 			if SERVER then
 				tab.FireFunc = function(self, item)
 					local tab = ScavData.models[item.ammo]
 					local itemfx = { --TODO: add sounds, etc. for ones where appropriate
-						[0] = function(self)
+						[SCAV_CRIT_DEFAULT] = function(self)
 							self.Owner:InflictStatusEffect("DamageX", 7, 1.5)
 							self.Owner:EmitSound(TF2 and "weapons/buffed_on.wav" or "beams/beamstart5.wav")
 						end,
-						[1] = function(self)
+						[SCAV_CRIT_DRINK] = function(self)
 							self.Owner:InflictStatusEffect("DamageX", 7, 1.5)
 							if TF2 then
 								self.Owner:EmitSound("player/pl_scout_dodge_can_open.wav")
@@ -2209,7 +2229,7 @@ end
 								self.Owner:EmitSound("ambient/levels/canals/toxic_slime_gurgle4.wav")
 							end
 						end,
-						[2] = function(self)
+						[SCAV_CRIT_STEROIDS] = function(self)
 							self.Owner:InflictStatusEffect("DamageX", 15, 1.5)
 							self.Owner:EmitSound("ambient/lair/yeti_statue_growl" .. math.random(1, 6) .. ".wav", 75, 100, 1, CHAN_VOICE)
 						end,
@@ -2240,6 +2260,8 @@ end
 		ScavData.RegisterFiremode(tab, "models/props_island/steroid_drum.mdl")
 		--Portal
 		ScavData.RegisterFiremode(tab, "models/props/food_can/food_can_open.mdl")
+		
+		SCAV_FIREMODES["DAMAGEBOOST"] = tab
 
 --[[==============================================================================================
 	-- Invulnerability
@@ -2250,19 +2272,18 @@ end
 			tab.anim = ACT_VM_IDLE
 			tab.Level = 1
 			local identify = {
-				--[Default] = 0,
-				--[[MannPower Uber]]["models/pickups/pickup_powerup_uber.mdl"] = 1,
+				["models/pickups/pickup_powerup_uber.mdl"] = SCAV_INVULN_MANN_UBER,
 			}
-			tab.Identify = setmetatable(identify, {__index = function() return 0 end})
+			tab.Identify = setmetatable(identify, {__index = function() return SCAV_INVULN_DEFAULT end})
 			if SERVER then
 				tab.FireFunc = function(self, item)
 					if not IsValid(self.Owner) then return end
 					local tab = ScavData.models[item.ammo]
 					local itemfx = { --TODO: Sounds, etc. where appropriate
-						[0] = function(self)
+						[SCAV_INVULN_DEFAULT] = function(self)
 							self.Owner:InflictStatusEffect("Invuln", 10, 1)
 						end,
-						[1] = function(self)
+						[SCAV_INVULN_MANN_UBER] = function(self)
 							self.Owner:InflictStatusEffect("Invuln", 15, 1)
 						end,
 					}
@@ -2275,6 +2296,8 @@ end
 		ScavData.RegisterFiremode(tab, "models/props/de_tides/vending_turtle.mdl")
 		--TF2
 		ScavData.RegisterFiremode(tab, "models/pickups/pickup_powerup_uber.mdl")
+		
+		SCAV_FIREMODES["INVULN"] = tab
 
 --[[==============================================================================================
 	--Fire Extinguisher
@@ -2297,7 +2320,7 @@ end
 				tracep.maxs = vmax
 				tracep.mask = MASK_SHOT
 				function tab.ChargeAttack(self, item)
-					if SERVER then --SERVER
+					if SERVER then
 						tracep.start = self.Owner:GetShootPos()
 						tracep.endpos = self.Owner:GetShootPos() + self:GetAimVector() * 150
 						tracep.filter = self.Owner
@@ -2375,6 +2398,8 @@ end
 			ScavData.RegisterFiremode(tab, "models/swarm/fireext/fireextpickup.mdl", 100)
 			--BMS
 			ScavData.RegisterFiremode(tab, "models/props_blackmesa/fireextinguisher.mdl", 100)
+		
+			SCAV_FIREMODES["FIREEXTINGUISHER"] = tab
 		end
 
 --[[==============================================================================================
@@ -2427,6 +2452,8 @@ end
 					return true
 				end
 				ScavData.RegisterFiremode(tab, "models/props_italian/ava_stained_glass.mdl")
+		
+			SCAV_FIREMODES["SHIELD"] = tab
 		end
 
 --[[==============================================================================================
@@ -2647,6 +2674,8 @@ end
 			ScavData.RegisterFiremode(tab, "models/buildables/dispenser_lvl3_light.mdl", SCAV_SHORT_MAX)
 			--ASW
 			ScavData.RegisterFiremode(tab, "models/weapons/healgun/healgun.mdl", SCAV_SHORT_MAX)
+		
+			SCAV_FIREMODES["MEDIGUN"] = tab
 		end
 
 --[[==============================================================================================
@@ -2729,6 +2758,8 @@ end
 		ScavData.RegisterFiremode(tab, "models/props_canteen/canteenbin.mdl", SCAV_SHORT_MAX)
 		ScavData.RegisterFiremode(tab, "models/props_junk/refusebin.mdl", SCAV_SHORT_MAX)
 		ScavData.RegisterFiremode(tab, "models/props_office/metalbin01.mdl", SCAV_SHORT_MAX)
+		
+		SCAV_FIREMODES["RECYCLEBIN"] = tab
 
 --[[==============================================================================================
 	-- Punish Prop Virus
@@ -2822,6 +2853,8 @@ end
 		ScavData.RegisterFiremode(tab, "models/workshop_partner/buildables/gibs/sd_sapper_gib002.mdl")
 		ScavData.RegisterFiremode(tab, "models/buildables/sapper_dispenser.mdl")
 		ScavData.RegisterFiremode(tab, "models/weapons/w_models/w_grenade_emp.mdl")
+		
+		SCAV_FIREMODES["PROPVIRUS"] = tab
 
 		--The Virus "item" (the scav gun is locked until these are removed)
 		local tab = {}
@@ -3252,4 +3285,6 @@ end
 		ScavData.RegisterFiremode(tab, "models/props_marines/ammocrate01_static.mdl")
 		ScavData.RegisterFiremode(tab, "models/props_blackmesa/shelves01.mdl")
 		ScavData.RegisterFiremode(tab, "models/props_junk/vegbox01.mdl")
+		
+		SCAV_FIREMODES["UPGRADESTORAGE"] = tab
 		

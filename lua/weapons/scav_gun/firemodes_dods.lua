@@ -79,6 +79,8 @@ end
 		ScavData.RegisterFiremode(tab, "models/weapons/w_30calpr.mdl", 150)
 		ScavData.RegisterFiremode(tab, "models/weapons/w_30calsr.mdl", 150)
 		
+		SCAV_FIREMODES["30CAL"] = tab
+		
 --[[==============================================================================================
 	--BAR
 ==============================================================================================]]--
@@ -142,6 +144,8 @@ end
 			end
 			tab.Cooldown = 0.12
 		ScavData.RegisterFiremode(tab, "models/weapons/w_bar.mdl", 20)
+		
+		SCAV_FIREMODES["BAR"] = tab
 
 --[[==============================================================================================
 	--C96
@@ -197,6 +201,8 @@ end
 			end
 			tab.Cooldown = 0.065
 		ScavData.RegisterFiremode(tab, "models/weapons/w_c96.mdl", 20)
+		
+		SCAV_FIREMODES["C96"] = tab
 
 --[[==============================================================================================
 	--Kar 98
@@ -244,6 +250,8 @@ end
 			tab.Cooldown = 1.6
 		ScavData.RegisterFiremode(tab, "models/weapons/w_k98.mdl", 5)
 		ScavData.RegisterFiremode(tab, "models/weapons/w_k98s.mdl", 5)
+		
+		SCAV_FIREMODES["KAR98"] = tab
 
 --[[==============================================================================================
 	--M1 Carbine
@@ -282,6 +290,8 @@ end
 			end
 			tab.Cooldown = 0.3
 		ScavData.RegisterFiremode(tab, "models/weapons/w_m1carb.mdl", 15)
+		
+		SCAV_FIREMODES["M1CARBINE"] = tab
 
 --[[==============================================================================================
 	--M1 Garand
@@ -356,6 +366,8 @@ end
 				end
 			tab.Cooldown = 0.74
 		ScavData.RegisterFiremode(tab, "models/weapons/w_garand.mdl", 8)
+		
+		SCAV_FIREMODES["GARAND"] = tab
 
 --[[==============================================================================================
 	--M1903 Springfield
@@ -400,6 +412,8 @@ end
 			end
 			tab.Cooldown = 1.85
 		ScavData.RegisterFiremode(tab, "models/weapons/w_spring.mdl", 5)
+		
+		SCAV_FIREMODES["SPRINGFIELD"] = tab
 
 --[[==============================================================================================
 	--M1911
@@ -445,6 +459,8 @@ end
 			end
 			tab.Cooldown = 0.3
 		ScavData.RegisterFiremode(tab, "models/weapons/w_colt.mdl", 7)
+		
+		SCAV_FIREMODES["1911"] = tab
 
 --[[==============================================================================================
 	--MG42
@@ -636,6 +652,8 @@ end
 		ScavData.RegisterFiremode(tab, "models/weapons/w_mg42pr.mdl", 250)
 		ScavData.RegisterFiremode(tab, "models/weapons/w_mg42sr.mdl", 250)
 		
+		SCAV_FIREMODES["MG42"] = tab
+		
 --[[==============================================================================================
 	--MP40
 ==============================================================================================]]--
@@ -690,6 +708,8 @@ end
 			end
 			tab.Cooldown = 0.09
 		ScavData.RegisterFiremode(tab, "models/weapons/w_mp40.mdl", 32)
+		
+		SCAV_FIREMODES["MP40"] = tab
 
 --[[==============================================================================================
 	--MP44
@@ -745,6 +765,8 @@ end
 			end
 			tab.Cooldown = 0.12
 		ScavData.RegisterFiremode(tab, "models/weapons/w_mp44.mdl", 30)
+		
+		SCAV_FIREMODES["MP44"] = tab
 
 --[[==============================================================================================
 	--P38
@@ -783,6 +805,8 @@ end
 			end
 			tab.Cooldown = 0.3
 		ScavData.RegisterFiremode(tab, "models/weapons/w_p38.mdl", 8)
+		
+		SCAV_FIREMODES["P38"] = tab
 
 --[[==============================================================================================
 	--Tommy Gun
@@ -838,3 +862,5 @@ end
 			end
 			tab.Cooldown = 0.085
 		ScavData.RegisterFiremode(tab, "models/weapons/w_thompson.mdl", 30)
+		
+		SCAV_FIREMODES["TOMMY"] = tab
