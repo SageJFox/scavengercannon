@@ -19,6 +19,7 @@ function GM:InitPostEntity()
 	self.Loader = NewGLoader("data/scavdata/maps/" .. mapinfo .. "/" .. GetConVarString("sdm_settingsfile"))
 	self.Loader:ParseGameVars()
 	self.Loader:Spawn()
+	ScavConfigOverrides(true)
 	self.BaseClass:InitPostEntity()
 	timer.Simple(15, function() self:StartRound() end)
 end

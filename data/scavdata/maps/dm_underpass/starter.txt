@@ -19,6 +19,18 @@
 		"sdm_main_mod_vamp": false,
 		"timelimit": 0
 	},
+	"firemodes": {
+		"override_all": false,
+		"models/props_c17/furniturewashingmachine001a.mdl": "NONE",
+		"models/props_junk/wood_crate001a_damaged.mdl": "NONE",
+		"models/props_wasteland/controlroom_desk001b.mdl": "NONE",
+		"models/props_wasteland/controlroom_filecabinet001a.mdl": "NONE",
+		"models/props_wasteland/controlroom_filecabinet002a.mdl": "NONE"
+	},
+	"collectfuncs": {
+		"override_all": false,
+		"models/props_c17/furniturewashingmachine001a.mdl": 1
+	},
 	"entities": [
 		{
 			"Outputs": {},

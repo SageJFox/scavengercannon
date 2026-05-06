@@ -21,7 +21,7 @@ local function CleanUpNulls(tab)
 	end
 end
 
---unfilled indices return and empty table instead of nil
+--unfilled indices return an empty table instead of nil
 local meta = {}
 meta.__index = meta
 
@@ -52,7 +52,7 @@ function meta:LoadFile(path, map, config)
 		--todo: actually handle this lmao
 	end
 	if not tab then
-		ErrorNoHalt("Warning! Could not parse '", path, "'! File may be corrupted!", not default and "" or " Attempting to load 'default.txt'!\n")
+		ErrorNoHalt("Warning! Could not parse '", path, "'! File may be corrupted!", default and "" or " Attempting to load 'default.txt'!\n")
 		if not default then
 			return self:LoadFile("data/scavdata/maps/" .. map .. "/default.txt", map, "default.txt")
 		end
@@ -61,6 +61,8 @@ function meta:LoadFile(path, map, config)
 	end
 	self.data = tab
 	self.templates = tab.entities or {}
+	self.firemodes = tab.firemodes or {}
+	self.collectfuncs = tab.collectfuncs or {}
 	self:VerifyGame()
 	--PrintTable(self.templates)
 end
@@ -498,6 +500,14 @@ function meta:FindEntTemplatesByClass(classname,exact)
 		end
 	end
 	return tab
+end
+
+function meta:GetFiremodes()
+	return self.firemodes
+end
+
+function meta:GetCollectFuncs()
+	return self.collectfuncs
 end
 
 local GM = GM or GAMEMODE

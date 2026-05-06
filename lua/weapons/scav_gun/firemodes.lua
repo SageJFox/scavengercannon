@@ -4227,3 +4227,50 @@ include("firemodes_dods.lua")
 include("firemodes_fof.lua")
 include("firemodes_utility.lua")
 include("firemodes_piles.lua")
+
+--SDM SUPPLIED OVERRIDES
+
+local apply_overrides = function(firemodes, collectfuncs)
+	if tobool(firemodes.override_all) then
+		ScavData.models = {}
+	end
+	for k, v in pairs(firemodes) do
+		if k == "override_all" then continue end
+		--print(k, v)
+		ScavData.models[ScavData.FormatModelname(k)] = SCAV_FIREMODES[v]
+	end
+	--no collectfuncs on client
+	if CLIENT then return end
+	if tobool(collectfuncs.override_all) then
+		ScavData.CollectFuncs = {}
+	end
+	for k, v in pairs(collectfuncs) do
+		if k == "override_all" then continue end
+		ScavData.CollectFuncs[k] = function(self, ent) return {{ScavData.FormatModelname(k), v, ent:GetSkin()}} end
+	end
+end
+
+if CLIENT then
+	net.Receive("scav_firemodes_override", function(len, pl)
+		apply_overrides(util.JSONToTable(util.Decompress(net.ReadData(len / 8)) or "", false, true) or {})
+	end)
+	
+	return
+end
+
+util.AddNetworkString("scav_firemodes_override")
+
+function ScavConfigOverrides(needbase, pl)
+	if not GAMEMODE.Loader then return end
+	local firemodes = GAMEMODE.Loader:GetFiremodes()
+	if needbase then
+		apply_overrides(firemodes, GAMEMODE.Loader:GetCollectFuncs())
+	end
+	net.Start("scav_firemodes_override")
+		net.WriteData(util.Compress(util.TableToJSON(firemodes)))
+	if pl then net.Send(pl) else net.Broadcast() end
+end
+
+hook.Add("PlayerInitialSpawn", "scav_firemodes_override", function(pl)
+	ScavConfigOverrides(false, pl)
+end)
