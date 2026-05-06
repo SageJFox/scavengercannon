@@ -4237,7 +4237,14 @@ local apply_overrides = function(firemodes, collectfuncs)
 	for k, v in pairs(firemodes) do
 		if k == "override_all" then continue end
 		--print(k, v)
-		ScavData.models[ScavData.FormatModelname(k)] = SCAV_FIREMODES[v]
+		ScavData.models[ScavData.FormatModelname(k)] = SCAV_FIREMODES[v.mode]
+		if not SCAV_FIREMODES[v.mode] then continue end
+		--try identify2 first, then identify if it (probably) doesn't have it
+		if SCAV_FIREMODES[v.mode].Identify2 then
+			SCAV_FIREMODES[v.mode].Identify2[k] = tonumber(v.identify)
+		elseif SCAV_FIREMODES[v.mode].Identify then
+			SCAV_FIREMODES[v.mode].Identify[k] = tonumber(v.identify)
+		end
 	end
 	--no collectfuncs on client
 	if CLIENT then return end
@@ -4254,7 +4261,7 @@ if CLIENT then
 	net.Receive("scav_firemodes_override", function(len, pl)
 		apply_overrides(util.JSONToTable(util.Decompress(net.ReadData(len / 8)) or "", false, true) or {})
 	end)
-	
+
 	return
 end
 

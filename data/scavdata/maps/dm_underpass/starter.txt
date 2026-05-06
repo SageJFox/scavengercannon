@@ -21,11 +21,11 @@
 	},
 	"firemodes": {
 		"override_all": false,
-		"models/props_c17/furniturewashingmachine001a.mdl": "NONE",
-		"models/props_junk/wood_crate001a_damaged.mdl": "NONE",
-		"models/props_wasteland/controlroom_desk001b.mdl": "NONE",
-		"models/props_wasteland/controlroom_filecabinet001a.mdl": "NONE",
-		"models/props_wasteland/controlroom_filecabinet002a.mdl": "NONE"
+		"models/props_c17/furniturewashingmachine001a.mdl": {"mode":"NONE"},
+		"models/props_junk/wood_crate001a_damaged.mdl": {"mode":"NONE"},
+		"models/props_wasteland/controlroom_desk001b.mdl": {"mode":"NONE"},
+		"models/props_wasteland/controlroom_filecabinet001a.mdl": {"mode":"NONE"},
+		"models/props_wasteland/controlroom_filecabinet002a.mdl": {"mode":"NONE"}
 	},
 	"collectfuncs": {
 		"override_all": false,
