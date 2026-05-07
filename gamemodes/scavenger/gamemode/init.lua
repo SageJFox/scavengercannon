@@ -41,6 +41,10 @@ function GM:GetGameVar(var)
 	return self.Loader.data.gamevars[var]
 end
 
+function GM:GetGameMod(var)
+	return self:GetGameVar("sdm_main_mod_" .. var)
+end
+
 function GM:SetGameVar(var, value)
 	self.Loader.data.gamevars[var] = value
 	hook.Call("GameVar", self, var, value)
