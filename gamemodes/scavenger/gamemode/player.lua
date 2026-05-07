@@ -660,12 +660,14 @@ else
 		return dmg
 	end
 	
-	--[[function GM:PlayerTraceAttack(pl, dmginfo, dir, trace)
-		if SERVER then
-			gamemode.Call("ScalePlayerDamage", pl, trace.HitGroup, dmginfo) --this is a redundant call, the engine calls ScalePlayerDamage on its own
-		end
+	hook.Add("EntityTakeDamage", "sdm_selfdamage", function(pl, dmginfo)
+		if GAMEMODE:GetGameMod("selfdamage") then return end 
+		if not pl:IsPlayer() then return end
+
+		if dmginfo:GetAttacker() ~= pl then return end
+		
 		return true
-	end]]
+	end)
 	
 	util.AddNetworkString("sdm_headshot")
 
