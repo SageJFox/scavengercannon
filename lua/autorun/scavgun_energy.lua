@@ -9,9 +9,10 @@ function PLAYER:SetupEnergy()
 	self.G_Energy.EnergyChanges = {}
 	self.G_Energy.ChargeChanges = {}
 	self.G_Energy.MaxEnergyChanges = {}
+	self.G_Energy.EnergyDrains = {} --temporary effects
 end
 
-function PLAYER:ClearEnergyStateChanges()
+function PLAYER:ClearEnergyStateChanges(drains)
 
 	if not self.G_Energy then
 		return
@@ -20,17 +21,24 @@ function PLAYER:ClearEnergyStateChanges()
 	local echanges = self.G_Energy.EnergyChanges
 	local cchanges = self.G_Energy.ChargeChanges
 	local mechanges = self.G_Energy.MaxEnergyChanges
+	local dchanges = self.G_Energy.EnergyDrains
 	
-	for k,v in ipairs(echanges) do
+	for k, _ in ipairs(echanges) do
 		echanges[k] = nil
 	end
 	
-	for k,v in ipairs(cchanges) do
+	for k, _ in ipairs(cchanges) do
 		cchanges[k] = nil
 	end
 	
-	for k,v in ipairs(mechanges) do
+	for k, _ in ipairs(mechanges) do
 		mechanges[k] = nil
+	end
+
+	if not drains then return end
+
+	for k, _ in pairs(dchanges) do
+		dchanges[k] = nil
 	end
 	
 end
@@ -82,12 +90,12 @@ function PLAYER:SetEnergy(amt)
 	
 	if SERVER then
 		net.Start("scv_ene")
-			net.WriteEntity(self)
+			net.WritePlayer(self)
 			net.WriteFloat(self.G_Energy.EnergyTime)
 			net.WriteFloat(CurTime())
 		net.Send(self)
 	else
-		table.insert(predictedtimes, 1, {entime,CurTime()})
+		table.insert(predictedtimes, 1, {entime, CurTime()})
 	end
 	
 end
@@ -103,7 +111,7 @@ if SERVER then
 	util.AddNetworkString("scv_enc")
 end
 
-function PLAYER:SetChargeRate(amt,dodelay) --if dodelay is true, this will be synchronized when the energy is changed in one second
+function PLAYER:SetChargeRate(amt, dodelay) --if dodelay is true, this will be synchronized when the energy is changed in one second
 
 	if not self.G_Energy then
 		self:SetupEnergy()
@@ -115,28 +123,28 @@ function PLAYER:SetChargeRate(amt,dodelay) --if dodelay is true, this will be sy
 		self:SetEnergy(en)
 		if SERVER and game.SinglePlayer() then
 			net.Start("scv_enc")
-				net.WriteEntity(self)
+				net.WritePlayer(self)
 				net.WriteFloat(amt)
 				net.WriteFloat(0)
 			net.Send(self)
 		end
 	else
-		self:SetChargeRateDelayed(amt,CurTime() + 1)
+		self:SetChargeRateDelayed(amt, CurTime() + 1)
 	end
 	
 end
 
-function PLAYER:SetChargeRateDelayed(amt,activatetime)
+function PLAYER:SetChargeRateDelayed(amt, activatetime)
 
 	if not self.G_Energy then
 		self:SetupEnergy()
 	end
 	
-	table.insert(self.G_Energy.ChargeChanges,{amt,activatetime})
+	table.insert(self.G_Energy.ChargeChanges, {amt, activatetime})
 	
 	if SERVER then
 		net.Start("scv_enc")
-			net.WriteEntity(self)
+			net.WritePlayer(self)
 			net.WriteFloat(amt)
 			net.WriteFloat(activatetime)
 		net.Send(self)
@@ -164,7 +172,7 @@ function PLAYER:SetMaxEnergy(amt,dodelay) --if dodelay is true, this will be syn
 		self.G_Energy.MaxEnergy = amt
 		if SERVER and game.SinglePlayer() then
 			net.Start("scv_enm")
-				net.WriteEntity(self)
+				net.WritePlayer(self)
 				net.WriteFloat(amt)
 				net.WriteFloat(0)
 			net.Send(self)
@@ -179,21 +187,56 @@ function PLAYER:SetMaxEnergyDelayed(amt,activatetime)
 	if not self.G_Energy then
 		self:SetupEnergy()
 	end
-	table.insert(self.G_Energy.MaxEnergyChanges,{amt,activatetime})
+	table.insert(self.G_Energy.MaxEnergyChanges, {amt, activatetime})
 	if SERVER then
 		net.Start("scv_enm")
-			net.WriteEntity(self)
+			net.WritePlayer(self)
 			net.WriteFloat(amt)
 			net.WriteFloat(activatetime)
 		net.Send(self)
 	end
 end
 
+
+if SERVER then
+	util.AddNetworkString("scv_end")
+end
+
+--add a named energy drain (or boost with a negative) of amt per second
+--amt can be a function on the server, taking the player as an argument and returning a number
+
+function PLAYER:AddEnergyDrain(name, amt)
+	local amt = amt
+	if not self.G_Energy then
+		self:SetupEnergy()
+	end
+	--drain is unchanged, don't bother networking
+	if self.G_Energy.EnergyDrains[name] == amt then return end
+
+	self.G_Energy.EnergyDrains[name] = amt
+
+	if CLIENT then return end
+
+	if isfunction(amt) then amt = amt(self) end
+
+	net.Start("scv_end")
+		net.WritePlayer(self)
+		net.WriteFloat(tonumber(amt) or 0)
+		net.WriteString(name)
+	net.Send(self)
+
+end
+
+function PLAYER:RemoveEnergyDrain(name)
+	self:AddEnergyDrain(name, nil)
+end
+
 if CLIENT then
 
-	net.Receive("scv_ene",function()
+	net.Receive("scv_ene", function()
 	
-		local pl = net.ReadEntity()
+		local pl = net.ReadPlayer()
+		if not pl:IsValid() then return end
 		local entime = net.ReadFloat()
 		local transmittime = net.ReadFloat()
 		
@@ -203,7 +246,7 @@ if CLIENT then
 
 		local remove = false
 		
-		for k,v in pairs(predictedtimes) do
+		for k, v in pairs(predictedtimes) do
 		
 			if v[1] == entime and v[2] == transmittime then
 				remove = true
@@ -224,7 +267,7 @@ if CLIENT then
 	
 	net.Receive("scv_enc",function()
 	
-		local pl = net.ReadEntity()
+		local pl = net.ReadPlayer()
 		local amt = net.ReadFloat()
 		local ctime = net.ReadFloat()
 		
@@ -232,13 +275,13 @@ if CLIENT then
 			pl:SetupEnergy()
 		end
 		
-		pl:SetChargeRateDelayed(amt,ctime)
+		pl:SetChargeRateDelayed(amt, ctime)
 		
 	end)
 	
-	net.Receive("scv_enm",function()
+	net.Receive("scv_enm", function()
 	
-		local pl = net.ReadEntity()
+		local pl = net.ReadPlayer()
 		local amt = net.ReadFloat()
 		local ctime = net.ReadFloat()
 		
@@ -246,71 +289,92 @@ if CLIENT then
 			pl:SetupEnergy()
 		end
 		
-		pl:SetMaxEnergyDelayed(amt,ctime)
+		pl:SetMaxEnergyDelayed(amt, ctime)
 		
 	end)
-	
+
+	net.Receive("scv_end", function()
+		local pl = net.ReadPlayer()
+		local amt = net.ReadFloat()
+		local name = net.ReadString()
+
+		if amt == 0 then amt = nil end
+
+		if not pl.G_Energy then
+			pl:SetupEnergy()
+		end
+
+		pl:AddEnergyDrain(name, amt)
+	end)
 end
 
 local expired_c = {}
 local expired_m = {}
 
-function PLAYER:ProcessEnergyChanges()
+function PLAYER:ProcessEnergyChanges(delta)
 
 	local cchanges = self.G_Energy.ChargeChanges
 	local mechanges = self.G_Energy.MaxEnergyChanges
+	local dchanges = self.G_Energy.EnergyDrains
 	local en = self:GetEnergy()
 	
 	--charge rate
-	for k,v in ipairs(cchanges) do
+	for k, v in ipairs(cchanges) do
 		if v[2] <= CurTime() then
 			self:SetChargeRate(v[1])
-			table.insert(expired_c,k)
+			table.insert(expired_c, k)
 		end
 	end
 	
 	local numexpcchanges = #expired_c
-	for i=0,numexpcchanges - 1 do
-		table.remove(cchanges,expired_c[numexpcchanges - i])
-		expired_c[numexpcchanges-i] = nil
+	for i = 0, numexpcchanges - 1 do
+		table.remove(cchanges, expired_c[numexpcchanges - i])
+		expired_c[numexpcchanges - i] = nil
 	end	
 	
 	--max energy
-	for k,v in ipairs(mechanges) do
+	for k, v in ipairs(mechanges) do
 		if v[2] <= CurTime() then
 			self:SetMaxEnergy(v[1])
-			table.insert(expired_m,k)
+			table.insert(expired_m, k)
 		end
 	end
 	
 	local numexpmchanges = #expired_m
-	for i=0,numexpmchanges - 1 do
-		table.remove(mechanges,expired_m[numexpmchanges-i])
+	for i = 0, numexpmchanges - 1 do
+		table.remove(mechanges, expired_m[numexpmchanges - i])
+	end
+
+	--apply drains
+	local drain = 0
+	for _, v in pairs(dchanges) do
+		drain = drain + v
 	end
 	
-	self:SetEnergy(en)
+	self:SetEnergy(en - drain * delta)
 	
 end
 
---local LastThink = CurTime()
+local LastThink = CurTime()
 
-hook.Add("Think","G_EnergyManage",function()
+hook.Add("Think", "G_EnergyManage", function()
 
-	--local delta = CurTime()-LastThink
+	local delta = CurTime() - LastThink
 	
-	for _,pl in ipairs(player.GetAll()) do
+	for _, pl in ipairs(player.GetAll()) do
 		if pl.G_Energy then
-			pl:ProcessEnergyChanges()
+			pl:ProcessEnergyChanges(delta)
 		end
 	end
 	
-	--LastThink = CurTime()
+	LastThink = CurTime()
 	
 end)
 
 if SERVER then
-	hook.Add("PlayerInitialSpawn","G_EnergySpawnSetup",function(pl)
+	hook.Add("PlayerInitialSpawn", "G_EnergySpawnSetup", function(pl)
 		pl:SetMaxEnergy(pl:GetMaxEnergy())
+		pl:SetEnergy(pl:GetMaxEnergy())
 		pl:SetChargeRate(pl:GetChargeRate())
 	end)
 end
