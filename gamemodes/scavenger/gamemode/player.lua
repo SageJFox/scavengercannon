@@ -33,7 +33,75 @@ if CLIENT then
 		return team.IsReal(t) and team.GetColorVector(t) or wcolor
 	end
 end
+if SERVER then
+	--todo: when we get to them, add rebreather gadget
+	function PLAYER:CanBreatheUnderwater()
+		return false
+	end
+	local drownthink = 0
 
+	local AIRTIME = 10
+	--local DROWNING_DAMAGE_INITIAL = 10
+	--local DROWNING_DAMAGE_MAX = 10
+
+	hook.Add("Think", "ScavPlayerDrown", function()
+		if drownthink > CurTime() then return end
+		drownthink = CurTime() + 1
+
+		if not GAMEMODE:GetGameMod("drown") then return end
+
+		--assess drowning of each player
+		for _, pl in ipairs(player.GetAll()) do
+			if not pl:Alive() then
+				pl.drowndmg = 0
+				pl.drownrestored = 0
+				pl.AirFinished = CurTime() + AIRTIME
+				continue
+			end
+			--not underwater
+			if pl:WaterLevel() < 3 then
+				-- play 'up for air' sound
+				if pl.AirFinished and pl.AirFinished < CurTime() then pl:EmitSound("Player.DrownStart") end
+
+				pl.AirFinished = CurTime() + AIRTIME
+				--pl.DrownDmgRate = DROWNING_DAMAGE_INITIAL --always max
+
+				-- if we took drowning damage, give it back slowly
+				if pl.drowndmg and pl.drownrestored and pl.drowndmg > pl.drownrestored then
+					local diff = math.min(5, pl.drowndmg - pl.drownrestored)
+					pl.drownrestored = pl.drownrestored + diff
+					pl:Heal(diff, game.GetWorld())
+				end
+
+				pl:RemoveEnergyDrain("Drowning")
+			--fully under water
+			else
+				--remove energy if we can't breathe
+				if not pl:CanBreatheUnderwater() then 
+					pl:AddEnergyDrain("Drowning", pl:GetMaxEnergy() / AIRTIME)
+				end
+				--delay drowning if we've still got energy
+				if pl:GetEnergy() > 0 or not pl.AirFinished then
+					pl.AirFinished = CurTime() + AIRTIME
+				end
+
+				if pl.AirFinished < CurTime() then	--drown!
+					--pl.DrownDmgRate = math.Min(pl.DrownDmgRate + 1, DROWNING_DAMAGE_MAX) --always max
+					--take drowning damage
+					local dmginfo = DamageInfo()
+						dmginfo:SetDamage(pl.DrownDmgRate)
+						dmginfo:SetDamageType(DMG_DROWN)
+						dmginfo:SetAttacker(game.GetWorld())
+						dmginfo:SetInflictor(game.GetWorld())
+					pl:TakeDamageInfo(dmginfo)
+					-- track drowning damage, give it back when
+					-- player finally takes a breath
+					pl.drowndmg = (pl.drowndmg or 0) + pl.DrownDmgRate
+				end
+			end
+		end
+	end)
+end
 
 function PLAYER:IsSpectator()
 	return (not team.IsReal(self:Team(), true) or (not self:Alive() and (self:Lives() == 0)))
@@ -74,6 +142,7 @@ if SERVER then
 		gamemode.Call("PlayerJoinTeam", pl, TEAM_SPECTATOR)
 		self:SendPlayerTeams(pl)
 		pl:KillSilent()
+		pl.DrownDmgRate = 10 --DROWNING_DAMAGE_INITIAL
 	end
 
 	--helper function, returns default if var matches a noset value (noset can be a function that takes var, return true to use default)
@@ -150,7 +219,6 @@ if SERVER then
 
 		pl:SetCharacterFromModel()
 		pl:SetChargeRateDelayed(5, 1)
-		pl:SetEnergy(pl:GetMaxEnergy())
 		pl:SetWalkSpeed(250)
 		pl:SetRunSpeed(400)
 		pl:SetStepSize(24)
@@ -583,13 +651,13 @@ else
 	end)
 
 	function GM:GetFallDamage(ply, vel)
-		if self:GetGameVar("sdm_main_mod_falldmg") then
-			local dmg = 0
-			if vel > 700 then
-				dmg = vel * 0.05
-			end
-			return dmg
+		if not self:GetGameMod("falldmg") then return 0 end
+		
+		local dmg = 0
+		if vel > 700 then
+			dmg = vel * 0.05
 		end
+		return dmg
 	end
 	
 	--[[function GM:PlayerTraceAttack(pl, dmginfo, dir, trace)
