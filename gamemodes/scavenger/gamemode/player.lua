@@ -659,14 +659,44 @@ else
 		end
 		return dmg
 	end
-	
-	hook.Add("EntityTakeDamage", "sdm_selfdamage", function(pl, dmginfo)
-		if GAMEMODE:GetGameMod("selfdamage") then return end 
-		if not pl:IsPlayer() then return end
 
+	--recreate damage force
+	local function applydamageforce(pl, inflictor, dmg)
+		--if not (pl:GetMoveType(MOVETYPE_WALK) or pl:GetMoveType(MOVETYPE_STEP)) then return end
+		local push = pl:WorldSpaceCenter()
+			push:Sub(inflictor:WorldSpaceCenter())
+			push:Normalize()
+		--size stuff just doesn't wanna give good results, despite apparently being what the engine uses
+		--so have a halfway decent approximation
+		--local min, size = inflictor:GetPhysicsObject():GetAABB()
+			--size:Sub(min)
+		local force = math.min(1000, dmg * 7.3728) --(32 * 32 * 72) / (size.x * size.y * size.z * 64)) * 5)
+			push:Mul(force)
+		pl:SetVelocity(push)
+	end
+
+	hook.Add("EntityTakeDamage", "sdm_selfdamage", function(pl, dmginfo)
+		if not pl:IsPlayer() then return end
 		if dmginfo:GetAttacker() ~= pl then return end
+
+		local canrocketjump = GAMEMODE:GetGameMod("rocketjump")
+
+		if not GAMEMODE:GetGameMod("selfdamage") then
+			local inflictor = dmginfo:GetInflictor()
+			if not canrocketjump or not IsValid(inflictor) --[[or not IsValid(inflictor:GetPhysicsObject())]] then return true end
+			--no self damage, but rocketjumping enabled
+			applydamageforce(pl, inflictor, dmginfo:GetDamage())
+
+			return true
+		end
+
+		if canrocketjump then return end
 		
-		return true
+		pl:AddEFlags(EFL_NO_DAMAGE_FORCES)
+		timer.Create("damwait" .. pl:Nick(), 0, 1, function()
+			if not IsValid(pl) then return end
+			pl:RemoveEFlags(EFL_NO_DAMAGE_FORCES)
+		end)
 	end)
 	
 	util.AddNetworkString("sdm_headshot")
