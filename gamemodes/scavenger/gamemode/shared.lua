@@ -119,7 +119,6 @@ else --include client files
 		local name = net.ReadString()
 		local setting = net.ReadBool()
 		GAMEMODE.gamevars[name] = setting
-		print(name, setting)
 	end)
 
 	function GM:GetGameMod(var)
