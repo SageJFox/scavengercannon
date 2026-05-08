@@ -59,6 +59,7 @@ function GM:GetModeName()
 end
 
 
+
 if SERVER then --include server files, send client files
 	AddCSLuaFile("vgui/commoncontrols.lua")
 	AddCSLuaFile("vgui/scoreboard.lua")
@@ -66,6 +67,38 @@ if SERVER then --include server files, send client files
 	AddCSLuaFile("vgui/teamsmenu.lua")
 	AddCSLuaFile("HUD.lua")
 	util.AddNetworkString("scav_gm_vote")
+	util.AddNetworkString("sdm_game_mods")
+
+	local sendallmods = function(pl)
+		for k, v in pairs(GAMEMODE.Loader.data.gamevars) do
+			local _, _, k = string.find(k, "sdm_main_mod_(.+)")
+			if not k then continue end
+
+			net.Start("sdm_game_mods")
+				net.WriteString(k)
+				net.WriteBool(v or false)
+			if pl then net.Send(pl) else net.Broadcast() end
+		end
+	end
+
+	hook.Add("OnGLoaderSpawn", "sdm_game_mods", function()
+		sendallmods()
+		hook.Add("PlayerInitialSpawn", "sdm_game_mods", sendallmods)
+	end)
+
+	net.Receive("sdm_game_mods", function()
+		local pl = net.ReadPlayer()
+		if not IsValid(pl) then return end
+		local gamevar = net.ReadString()
+		if gamevar == "" then return end
+
+		local mod = GAMEMODE:GetGameMod(gamevar)
+		net.Start("sdm_game_mods")
+			net.WriteString(gamevar)
+			net.WriteBool(mod or false)
+		net.Send(pl)
+	end)
+
 else --include client files
 	include("vgui/commoncontrols.lua")
 	include("vgui/scoreboard.lua")
@@ -79,10 +112,30 @@ else --include client files
 
 	function GM:AddDeathNotice(attacker, attackerteam, inflictor, victim, victimteam) return end
 	function GM:DrawDeathNotice(x, y) return end
+
+	GM.gamevars = {}
+
+	net.Receive("sdm_game_mods", function()
+		local name = net.ReadString()
+		local setting = net.ReadBool()
+		GAMEMODE.gamevars[name] = setting
+		print(name, setting)
+	end)
+
+	function GM:GetGameMod(var)
+		if not isstring(var) or var == "" then return end
+		if self.gamevars[var] ~= nil then return self.gamevars[var] end
+
+		net.Start("sdm_game_mods")
+			net.WritePlayer(LocalPlayer())
+			net.WriteString(var)
+		net.SendToServer()
+	end
 end
 
+if CLIENT then return end
+
 function GM:Think()
-	if CLIENT then return end
 	if self:IsRoundInProgress() then return end
 	if self:GetGNWFloat("MapEndTime") >= CurTime() then return end
 	if GetGlobalFloat("sdm_votedeadline") ~= 0 then return end

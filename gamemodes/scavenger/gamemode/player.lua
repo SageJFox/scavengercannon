@@ -546,6 +546,8 @@ local npcgibs = {}
 
 local shouldgib = function(victim, attacker, dmginfo)
 	if victim:IsNPC() and not npcgibs[victim:GetClass()] then return end
+	--Instagib on? yes
+	if GAMEMODE:GetGameMod("instagib") then return true end
 	--never gib? no
 	if victim.nogib or dmginfo:IsDamageType(DMG_NEVERGIB) then return false end
 	--always gib, big damage, or moderate explosion? yes
@@ -624,7 +626,7 @@ if CLIENT then
 			if npc.ScavLastAttacker then dmginfo:SetAttacker(npc.ScavLastAttacker) end
 		if not shouldgib(npc, npc.ScavLastAttacker, dmginfo) then return end
 		--there might be a ton of NPCs here, give a chance to not gib
-		if math.random(10) <= 3 then return end
+		if not self:GetGameMod("instagib") and math.random(10) <= 3 then return end
 		
 		ragdoll:Remove()
 		local gib = ents.CreateClientside("scav_gib")
@@ -675,7 +677,14 @@ else
 		pl:SetVelocity(push)
 	end
 
-	hook.Add("EntityTakeDamage", "sdm_selfdamage", function(pl, dmginfo)
+	hook.Add("EntityTakeDamage", "sdm_damagemods", function(pl, dmginfo)
+		--put the insta in instagib
+		if GAMEMODE:GetGameMod("instagib") then
+			local allhealth = pl:GetMaxHealth()
+			if pl:IsPlayer() then allhealth = allhealth + pl:GetMaxArmor() end
+			dmginfo:SetDamage(allhealth * 10) --for good measure
+		end
+
 		if not pl:IsPlayer() then return end
 		if dmginfo:GetAttacker() ~= pl then return end
 
