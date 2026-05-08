@@ -237,6 +237,10 @@ if SERVER then
 		pl:SetMaxEnergy(setifnotnoset(teamrules:GetMaxEnergy(), not_positive, 100), true)
 		pl:SetEnergy(setifnotnoset(teamrules:GetStartingEnergy(), not_positive, 100), true)
 		pl:SetChargeRate(setifnotnoset(teamrules:GetEnergyRegen(), not_positive, 5), true)
+
+		if self:GetGameMod("cloak") then
+			pl:InflictStatusEffect("Cloak", 1, 1, nil, true)
+		end
 	end
 	
 	function GM:PlayerCanSpawn(pl)
