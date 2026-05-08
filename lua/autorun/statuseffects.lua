@@ -104,11 +104,12 @@ function Status2.Inflict(ent, statustype, duration, value, attacker, infinite, i
 
 	if not IsValid(ent) or (SERVER and ent:IsPlayer() and not ent:Alive()) or (ent.StatusImmunities and ent.StatusImmunities[statustype]) then return end
 	
-	local tab = ent.StatusTable or {}
 	
 	if ent:GetClass() == "phys_bone_follower" then
 		ent = ent:GetOwner()
 	end
+
+	local tab = ent.StatusTable or {}
 	
 	ent.StatusTable = tab
 	tab.ent = ent
@@ -138,8 +139,8 @@ function Status2.Inflict(ent, statustype, duration, value, attacker, infinite, i
 			net.WriteFloat(duration)
 			net.WriteFloat(value)
 			net.WriteEntity(attacker)
-			net.WriteEntity(inflictor)
 			net.WriteBool(infinite)
+			net.WriteEntity(inflictor)
 		net.Send(rf)
 	end
 	
@@ -262,11 +263,8 @@ if CLIENT then
 				surface.SetTexture(surface.GetTextureID("hud/status/" .. string.lower(v.Name)))
 				local x = xbase + k * 64 - 64
 				surface.DrawTexturedRect(x, y, 32, 32)
-				if not v.Infinite then
-					draw.DrawText(math.max(math.floor(v.EndTime - CurTime()), 0), "Trebuchet18", x + 48, y + 8, color_white, TEXT_ALIGN_RIGHT)
-				else
-					draw.DrawText("#scav.scavcan.inf", "Trebuchet18", x + 48, y + 16, color_white, TEXT_ALIGN_RIGHT)
-				end
+				
+				draw.DrawText(v.Infinite and "#scav.scavcan.inf" or math.max(math.floor(v.EndTime - CurTime()), 0), "Trebuchet18", x + 48, y + 8, color_white, TEXT_ALIGN_RIGHT)
 			end
 			
 		end
