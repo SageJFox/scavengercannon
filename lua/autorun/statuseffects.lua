@@ -478,9 +478,8 @@ local STATUS = {}
 				local pos = self.Owner:GetPos()
 				pos.z = pos.z + 1
 				self.Owner:SetPos(pos)
-				--self.Owner:GetViewModel():SetMaterial("models/shadertest/predator")
-				self.Owner:GetViewModel():SetMaterial("effects/predator_camo")
-				self.Owner:GetHands():SetMaterial("effects/predator_camo")
+				self.novm = true
+				self.nohands = true
 			end
 		end
 		self.Owner:EmitSound(TF2 and "player/spy_cloak.wav" or "friends/friend_online.wav")
@@ -488,6 +487,16 @@ local STATUS = {}
 	end
 	
 	function STATUS:Think()
+		--if we're lacking a viewmodel or hands, it's *probably* because this was the first frame of our spawn
+		--if not, our think is the least of the game's problems
+		if self.nohands and IsValid(self.Owner:GetHands()) then
+			self.Owner:GetHands():SetMaterial("effects/predator_camo")
+			self.nohands = nil
+		end
+		if self.novm and IsValid(self.Owner:GetViewModel()) then
+			self.Owner:GetViewModel():SetMaterial("effects/predator_camo")
+			self.novm = nil
+		end
 	end
 	
 	function STATUS:Finish()
