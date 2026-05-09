@@ -1183,11 +1183,9 @@ if CLIENT then
 
 
 	function PANEL:PlayerColor()
-		local bgcol = Vector(0, 0, 0)
 		if IsValid(LocalPlayer()) then
 			if LocalPlayer():Team() == TEAM_UNASSIGNED then
-				bgcol = LocalPlayer():GetPlayerColor()
-				self.BGColor = Color(bgcol.r * 255, bgcol.g * 255, bgcol.b * 255, 255)
+				self.BGColor = LocalPlayer():GetPlayerColor():ToColor()
 			else
 				self.BGColor = team.GetColor(LocalPlayer():Team())
 			end
@@ -1726,25 +1724,31 @@ if CLIENT then
 		end
 	end
 
+	local function getplayercolorwmodel(self)
+		if not IsValid(self:GetParent()) then return vector_origin end
+		return self:GetParent():GetPlayerColor()
+	end
+
 	function SWEP:BuildWModel() --using a cmodel since SetPoseParameter only works on the LocalPlayer's weapon normally
 		if not IsValid(self) then return end
 		self:DestroyWModel()
 		self.wmodel = ClientsideModel(self.WorldModel, RENDERGROUP_OPAQUE)
-		if IsValid(self.wmodel) then
-			self.wmodel:SetParent(self:GetOwner()) --just a heads up, if you parent it to the weapon its pose parameters won't work because of bonemerging to existing bones
-			local meffects = bit.bor(EF_BONEMERGE, EF_NODRAW, EF_NOSHADOW)
-			self.wmodel:AddEffects(meffects)
-			if IsValid(self.Owner) then
-				local reskin = skins[self.Owner:AccountID()]
-				--team skins
-				if not reskin then
-					reskin = skins[self.Owner:Team()]
-				end
-				if reskin then
-					self.wmodel:SetSubMaterial(0, reskin)
-				end
+		if not IsValid(self.wmodel) then return end
+
+		self.wmodel:SetParent(self:GetOwner()) --just a heads up, if you parent it to the weapon its pose parameters won't work because of bonemerging to existing bones
+		local meffects = bit.bor(EF_BONEMERGE, EF_NODRAW, EF_NOSHADOW)
+		self.wmodel:AddEffects(meffects)
+		if IsValid(self.Owner) then
+			local reskin = skins[self.Owner:AccountID()]
+			--team skins
+			if not reskin then
+				reskin = skins[self.Owner:Team()]
+			end
+			if reskin then
+				self.wmodel:SetSubMaterial(0, reskin)
 			end
 		end
+		self.wmodel.GetPlayerColor = getplayercolorwmodel
 	end
 
 	function SWEP:DrawWorldModel()
