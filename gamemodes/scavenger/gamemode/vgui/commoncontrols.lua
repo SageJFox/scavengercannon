@@ -910,11 +910,12 @@ local PANEL = {}
 				end
 				local bodygroups = "000000000"
 				for k, v in pairs(inflictor:GetBodyGroups()) do
+					if k > 9 then break end
 					local str = inflictor:GetBodygroup(v.id)
 					if str < 10 then
 						str = tostring(str)
 					else
-						str = string.char(31 + str) -- 10 = A, 11 = B, etc.
+						str = string.char(87 + str) -- 10 = 'a', 11 = 'b', etc.
 					end
 					bodygroups = bodygroups:SetChar( v.id + 1, str)
 				end
