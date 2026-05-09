@@ -105,6 +105,11 @@ function GM:EntityTakeDamage(ent, dmginfo)
 	local inflictor = dmginfo:GetInflictor()
 	local attacker = dmginfo:GetAttacker()
 	local amount = dmginfo:GetDamage()
+
+	--reduce high-end physics damage (and buff low end a smidge)
+	if string.find(inflictor:GetClass(), "^prop_") and dmginfo:IsDamageType(DMG_CRUSH) then
+		dmginfo:SetDamage(math.Remap(dmginfo:GetDamage(), 0, 500, 10, 50))
+	end
 	
 	if attacker:IsPlayer() then
 		umsg.Start("sdm_pldmged", attacker)
