@@ -175,6 +175,11 @@ local function nametomodelname(modelname)
 	return list.GetForEdit("PlayerOptionsModel")[modelname] or player_manager.TranslatePlayerModel(GetConVarString("cl_playermodel"))
 end
 	
+local bgroups = string.Split(GetConVar("cl_playerbodygroups"):GetString(), " ")
+for k, v in ipairs(bgroups) do
+	bgroups[k] = tonumber(v)
+end
+
 local PANEL = {}
 
 	local function updateplayercolor(pan)
@@ -213,11 +218,11 @@ local PANEL = {}
 				self.ModelSkin:SetMin(0)
 				self.ModelSkin:SetDefaultValue(0)
 				self.ModelSkin:SetMax(skins)
-				self.ModelSkin:SetValue(0)
-				self.ModelSkin:SetConVar("cl_playerskin")
+				self.ModelSkin:SetValue(GetConVar("cl_playerskin"):GetInt() or 0)
 				self.ModelSkin.OnValueChanged = function(p, v)
 					local v = math.Round(v)
 					self.ModelSkin:SetValue(v)
+					RunConsoleCommand("cl_playerskin", tostring(v))
 					ent:SetSkin(v)
 				end
 			y = y + h + sep
@@ -226,7 +231,7 @@ local PANEL = {}
 		self.ModelBodyGroups = {}
 
 		local function updateBodyGroups()
-			local bgroups = {}
+			bgroups = {}
 			for k, v in pairs(self.ModelBodyGroups) do
 				table.insert(bgroups, math.Round(v:GetValue()))
 			end
@@ -241,13 +246,12 @@ local PANEL = {}
 		y = y + lh + sep
 		
 		local anybodygroup = false
-
 		--adding controls for each bodygroup
 		for k = 0, ent:GetNumBodyGroups() - 1 do
 			local totalsub = ent:GetBodygroupCount(k) - 1
 			local empty = (totalsub <= 0)
+			local val = bgroups[k + 1] or 0
 			--make a slider for each bodygroup, even if it's useless (makes processing easier)
-
 			local slider = self.ModelSettings:Add("DNumSlider")
 				table.insert(self.ModelBodyGroups, k, slider)
 				slider:SetPos(x, y)
@@ -257,7 +261,7 @@ local PANEL = {}
 				slider:SetMin(0)
 				slider:SetDefaultValue(0)
 				slider:SetMax(totalsub)
-				slider:SetValue(0)
+				slider:SetValue(val)
 			--slider is actually usable
 			if not empty then
 				slider.OnValueChanged = function(p, v)
@@ -268,6 +272,8 @@ local PANEL = {}
 				end
 				y = y + h + sep
 				anybodygroup = true
+				--show on model on initial spawn
+				ent:SetBodygroup(k, val)
 			else
 				--slider:SetDark(true)
 				slider:SetVisible(false)
@@ -312,9 +318,12 @@ local PANEL = {}
 	
 	local function pmodelbuttonpressed(button)
 		RunConsoleCommand("cl_playermodel", button.nicename)
+		RunConsoleCommand("cl_playerbodygroups", "0")
+		RunConsoleCommand("cl_playerskin", "0")
 		LocalPlayer():EmitSound("buttons/button14.wav")
 		button.Preview:SetModel(button.modelname)
 		button.PreviewLabel:SetText(button.nicename)
+		bgroups = {}
 	end
 	
 	function PANEL:SetupPlayerModels()
@@ -341,6 +350,9 @@ local PANEL = {}
 			icon.OnMousePressed = function(button)
 				pmodelbuttonpressed(button)
 				updateModelSettings(self)
+				if self.ModelSkin then
+					self.ModelSkin:SetValue(0)
+				end
 			end
 			icon:SetEnabled(true)
 			icon.Preview = self.Preview
