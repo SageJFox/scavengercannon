@@ -383,7 +383,8 @@ SKIN.Damage[DMG_DIRECT] = SKIN.Damage[DMG_BURN]
 SKIN.Damage[DMG_BUCKSHOT] = dmgpaint(0, dmggridspace * 5, Color(238, 34, 79))
 SKIN.Damage[DMG_SNIPER] = dmgpaint(dmggridspace, dmggridspace * 5, Color(255, 69, 16))
 --hacky alternate icons
-SKIN.Damage[DMG_VEHICLE + 1] = dmgpaint(dmggridspace * 2, dmggridspace * 5, Color(64, 64, 64))
+SKIN.Damage[DMG_PREVENT_PHYSICS_FORCE + 1] = dmgpaint(0, dmggridspace * 2, Color(126, 108, 85)) --impaler
+SKIN.Damage[DMG_VEHICLE + 1] = dmgpaint(dmggridspace * 2, dmggridspace * 5, Color(64, 64, 64)) --vehicle
 --[[---------------------------------------------------------
 	Preview
 -----------------------------------------------------------]]

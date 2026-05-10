@@ -923,10 +923,29 @@ local PANEL = {}
 					bodygroups = bodygroups:SetChar( v.id + 1, str)
 				end
 				self.parts.Inflictor:SetModel(inflictor:GetModel(), inflictor:GetSkin(), bodygroups)
-				--hacky alternatives for damage icons
-				if damage == DMG_FREEZE and inflictor:IsVehicle() then damage = damage + 1 end
 				--print("inflictor:", fake and inflictor:GetModel() or inflictor, fake and "(fake)" or "")
-				if fake then inflictor:Remove() end
+				--if fake then inflictor:Remove() end
+			end
+			--hacky alternatives for damage icons
+			if IsValid(inflictor) then --iunno so far they all use the inflictor
+				if damage == DMG_FREEZE and inflictor:IsVehicle() then damage = damage + 1
+				elseif inflictor:GetClass() == "scav_projectile_impaler" then damage = DMG_PREVENT_PHYSICS_FORCE + 1
+				end
+				--fix up spotty NPC damage reporting where we reasonably can
+				if not IsValid(victim) or not victim:IsPlayer() or damage == 0 then
+					local inflictclass = inflictor:GetClass()
+					--fire
+					if inflictclass == "entityflame" then damage = DMG_BURN
+					--vehicles
+					elseif inflictor:IsVehicle() then damage = DMG_FREEZE + 1
+					--physics props, ragdolls
+					elseif string.StartsWith(inflictclass, "prop_") then damage = DMG_CRUSH
+					--pulse orb 
+					elseif inflictclass == "scav_projectile_comball" then damage = DMG_DISSOLVE
+					--drowned (idiot)
+					elseif inflictor == victim and victim:WaterLevel() > 2 then damage = DMG_DROWN
+					end
+				end
 			end
 			self.parts.Inflictor.Damage = damage
 			--print("damagetype:", damage)
