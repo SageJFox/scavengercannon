@@ -765,6 +765,8 @@ else
 					["s"] = (inflictor.item and inflictor.item.ammo == inflictor.currentmodel) and inflictor.item.data or 0,
 					--["b"] = "000000000"
 				})))
+			elseif attacker:IsVehicle() then
+				attacker = IsValid(attacker:GetDriver()) and attacker:GetDriver() or attacker
 			end
 			net.WriteEntity(attacker)
 			net.WriteUInt(npc.ScavLastDamageType or 0, 32)
@@ -880,6 +882,8 @@ else
 					["s"] = (inflictor.item and inflictor.item.ammo == inflictor.currentmodel) and inflictor.item.data or 0,
 					--["b"] = "000000000"
 				})))
+			elseif attacker:IsVehicle() then
+				attacker = IsValid(attacker:GetDriver()) and attacker:GetDriver() or attacker
 			end
 			net.WriteEntity(attacker)
 			net.WriteUInt(dmginfo:GetDamageType(), 32)
