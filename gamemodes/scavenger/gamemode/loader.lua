@@ -128,6 +128,9 @@ function meta:VerifyGame()
 		end
 	end
 
+	--mark if we're using teamplay
+	RunConsoleCommand("mp_teamplay", #teams > 1 and "1" or "0")
+
 	--for now, we have a pretty simple test: if we don't have spawns, we don't have a game on this map
 
 	--SPAWNING
