@@ -642,10 +642,9 @@ if CLIENT then
 		net.SendToServer()
 
 	end
-else
+else --SERVER
 	util.AddNetworkString("sdm_disconnect")
 	util.AddNetworkString("sdm_playerdeath")
-	util.AddNetworkString("sdm_killfeed")
 
 	hook.Add("PlayerDisconnected", "SDMTeamDisconnect", function(pl)
 		local plteam = pl:Team()
@@ -750,27 +749,49 @@ else
 		net.Broadcast()
 	end
 
-	hook.Add("OnNPCKilled", "sdm_killfeed", function(npc, attacker, inflictor)
-		--send to killfeed
+	--send death info to killfeed
+	util.AddNetworkString("sdm_killfeed")
+
+	function GM:Killfeed(victim, attacker, inflictor, dmginfo, sendnameonly)
 		local model = ""
 		net.Start("sdm_killfeed")
-			net.WriteBool(true)
-			net.WriteEntity(npc)
+			if sendnameonly or isstring(victim) then
+				net.WriteBool(false)
+				net.WriteString(IsValid(victim) and victim:GetClass() or victim)
+			else
+				net.WriteBool(true)
+				net.WriteEntity(victim)
+			end
 			net.WriteEntity(inflictor)
+			--pull out scav cannon prop info
 			if inflictor:GetClass() == "scav_gun" then
 				model = inflictor.currentmodel
+				--save some bits by stripping expected parts
 				local _, _, mdl = string.find(inflictor.currentmodel, "^models/(.-)%.mdl$")
 				net.WriteData(util.Compress(util.TableToJSON({
-					["m"] = mdl or inflictor.currentmodel,
-					["s"] = (inflictor.item and inflictor.item.ammo == inflictor.currentmodel) and inflictor.item.data or 0,
-					--["b"] = "000000000"
+					--save some bits not making keys longer than they need to be. [m]odel, [s]kin, and [b]odygroup
+					["m"] = mdl or model, --might not find it if it was a bmodel
+					["s"] = (inflictor.item and inflictor.item.ammo == model) and inflictor.item.data or 0,
+					--["b"] = "000000000" --we don't store bodygroup info, don't bother sending default
 				})))
+			--cars don't kill people, drivers kill people
 			elseif attacker:IsVehicle() then
 				attacker = IsValid(attacker:GetDriver()) and attacker:GetDriver() or attacker
 			end
 			net.WriteEntity(attacker)
-			net.WriteUInt(npc.ScavLastDamageType or 0, 32)
+			if dmginfo then
+				net.WriteUInt(dmginfo:GetDamageType(), 32)
+			else
+				--NPCs don't get damageinfo in their hook, so we had to try to store that info ourselves
+				net.WriteUInt(victim.ScavLastDamageType or 0, 32)
+			end
 		net.Broadcast()
+		--since we could change our attacker, report it back
+		return attacker, model
+	end
+
+	hook.Add("OnNPCKilled", "sdm_killfeed", function(npc, attacker, inflictor)
+		local attacker, model = GAMEMODE:Killfeed(npc, attacker, inflictor)
 		local attackname = attacker:IsPlayer() and attacker:Nick() or attacker:GetClass()
 		print(attackname .. " killed " .. npc:GetClass() .. " with " .. inflictor:GetClass() .. " " .. model)
 	end)
@@ -864,29 +885,12 @@ else
 			inflictor = dmginfo:GetInflictor()
 		end
 
+		local attacker = self:Killfeed(victim, attacker, inflictor, dmginfo)
+
 		net.Start("sdm_playerdeath")
 			net.WriteEntity(victim)
 			net.WriteEntity(attacker)
 			--net.WriteEntity(inflictor)
-		net.Broadcast()
-
-		--send to killfeed
-		net.Start("sdm_killfeed")
-			net.WriteBool(true)
-			net.WriteEntity(victim)
-			net.WriteEntity(inflictor)
-			if inflictor:GetClass() == "scav_gun" then
-				local _, _, mdl = string.find(inflictor.currentmodel, "^models/(.-)%.mdl$")
-				net.WriteData(util.Compress(util.TableToJSON({
-					["m"] = mdl or inflictor.currentmodel,
-					["s"] = (inflictor.item and inflictor.item.ammo == inflictor.currentmodel) and inflictor.item.data or 0,
-					--["b"] = "000000000"
-				})))
-			elseif attacker:IsVehicle() then
-				attacker = IsValid(attacker:GetDriver()) and attacker:GetDriver() or attacker
-			end
-			net.WriteEntity(attacker)
-			net.WriteUInt(dmginfo:GetDamageType(), 32)
 		net.Broadcast()
 
 		if (IsValid(attacker) and attacker:IsPlayer()) then
