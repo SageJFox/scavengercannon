@@ -392,18 +392,28 @@ function HUD.AddKillfeed(info)
 	HUD.PerformLayout()
 end
 
-net.Receive("sdm_killfeed", function()
+net.Receive("sdm_killfeed", function(len, pl)
+	local len = len - 33 - (MAX_EDICT_BITS * 2) --victim bool, damagetype uint32, inflictor and attacker ents
 	local victim = nil
 	local victimname = ""
+	local propdata = nil
 	if net.ReadBool() then
 		victim = net.ReadEntity()
+		len = len - MAX_EDICT_BITS
 	else
 		victimname = net.ReadString()
+		len = len - (#victimname + 1) * 8
 	end
 	local inflictor = net.ReadEntity()
+	if IsValid(inflictor) and inflictor:GetClass() == "scav_gun" then
+		propdata = util.JSONToTable(util.Decompress(net.ReadData(len / 8)))
+		if propdata.m and not string.StartsWith(propdata.m, "*") then propdata.m = "models/" .. propdata.m .. ".mdl" end
+	end
 	local attacker = net.ReadEntity()
 	if not IsValid(attacker) then attacker = Entity(0) end
-	if not IsValid(inflictor) then inflictor = attacker end
+	if not IsValid(inflictor) then
+		inflictor = ((attacker:IsPlayer() or attacker:IsNPC() or attacker:IsNextBot()) and IsValid(attacker:GetActiveWeapon())) and attacker:GetActiveWeapon() or attacker
+	end
 	local damage = net.ReadUInt(32)
 	--based on how often we're converting the info to and from them to ultimately get it to the panel,
 	--I'm beginning to think basing this off of a DamageInfo was a bad idea
@@ -413,13 +423,16 @@ net.Receive("sdm_killfeed", function()
 		dmginfo:SetDamageType(damage)
 		
 	local info = {}
-	info.dmginfo = dmginfo
-	info.victim = victim or victimname
+		info.dmginfo = dmginfo
+		info.victim = victim or victimname
+		info.propdata = propdata
 	local model = inflictor:GetModel()
 	if model then
 		info.model = model
 	end
-
+	local attackname = attacker:IsPlayer() and attacker:Nick() or ScavLocalize(attacker:GetClass())
+	if victimname == "" and IsValid(victim) then victimname = victim:IsPlayer() and victim:Nick() or victim:GetClass() end
+	print(attackname .. " killed " .. ScavLocalize(victimname) .. " with " .. (IsValid(inflictor) and ScavLocalize(inflictor:GetClass()) or ""), propdata and propdata.m or "")
 	HUD.AddKillfeed(info)
 end)
 

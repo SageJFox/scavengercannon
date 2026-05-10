@@ -852,7 +852,7 @@ local PANEL = {}
 	local displaydamage = bit.bnot(bit.bor(DMG_DROWNRECOVER, DMG_ALWAYSGIB, DMG_NEVERGIB, DMG_PREVENT_PHYSICS_FORCE, DMG_REMOVENORAGDOLL, DMG_PHYSGUN))
 
 	--translate a death event to our panel info
-	function PANEL:DamageInfo(victim, dmginfo)
+	function PANEL:DamageInfo(victim, dmginfo, propdata)
 		--handle attacker panel
 		local attacker = dmginfo:GetAttacker()
 		if self.parts.Attacker then
@@ -875,9 +875,10 @@ local PANEL = {}
 			if IsValid(victim) and victim:IsPlayer() then
 				self.parts.Victim:SetPlayer(victim)
 			else
-				local victimname = isstring(victim) and victim or victim:GetClass()
+				local victimname = isstring(victim) and victim 
+				if not victimname then victimname = IsValid(victim) and victim:GetClass() end
 				--todo: display name for NPCs
-				self.parts.Victim:SetText(ScavLocalize(victimname))
+				self.parts.Victim:SetText(ScavLocalize(victimname or "VICTIM"))
 			end
 			--print("victim:", victim)
 		end
@@ -900,14 +901,16 @@ local PANEL = {}
 			end
 			--prop what killed us
 			local inflictor = dmginfo:GetInflictor() or dmginfo:GetWeapon() or attacker
-			if IsValid(inflictor) then
+			if propdata then
+				self.parts.Inflictor:SetModel(propdata.m, propdata.s, propdata.b or "000000000")
+			elseif IsValid(inflictor) then
 				--get model from scav gun if it was a non-projectile mode
-				local fake = false
+				--[[local fake = false
 				if inflictor:GetClass() == "scav_gun" and inflictor:GetCurrentItem() then
 					--print("inflictor:", inflictor)
 					inflictor = ClientsideModel(inflictor:GetCurrentItem().ammo)
 					fake = true
-				end
+				end]]
 				local bodygroups = "000000000"
 				for k, v in pairs(inflictor:GetBodyGroups()) do
 					if k > 9 then break end
@@ -1014,7 +1017,7 @@ local PANEL = {}
 
 	function PANEL:SetInfo(info)
 		if info.victim and info.dmginfo then
-			self:DamageInfo(info.victim, info.dmginfo)
+			self:DamageInfo(info.victim, info.dmginfo, info.propdata)
 			return
 		end
 		if info.inflictor and info.victimname then

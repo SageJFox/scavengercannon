@@ -752,13 +752,25 @@ else
 
 	hook.Add("OnNPCKilled", "sdm_killfeed", function(npc, attacker, inflictor)
 		--send to killfeed
+		local model = ""
 		net.Start("sdm_killfeed")
 			net.WriteBool(true)
 			net.WriteEntity(npc)
 			net.WriteEntity(inflictor)
+			if inflictor:GetClass() == "scav_gun" then
+				model = inflictor.currentmodel
+				local _, _, mdl = string.find(inflictor.currentmodel, "^models/(.-)%.mdl$")
+				net.WriteData(util.Compress(util.TableToJSON({
+					["m"] = mdl or inflictor.currentmodel,
+					["s"] = (inflictor.item and inflictor.item.ammo == inflictor.currentmodel) and inflictor.item.data or 0,
+					--["b"] = "000000000"
+				})))
+			end
 			net.WriteEntity(attacker)
 			net.WriteUInt(npc.ScavLastDamageType or 0, 32)
 		net.Broadcast()
+		local attackname = attacker:IsPlayer() and attacker:Nick() or attacker:GetClass()
+		print(attackname .. " killed " .. npc:GetClass() .. " with " .. inflictor:GetClass() .. " " .. model)
 	end)
 
 	net.Receive("sdm_potentialclientgib", function()
@@ -861,6 +873,14 @@ else
 			net.WriteBool(true)
 			net.WriteEntity(victim)
 			net.WriteEntity(inflictor)
+			if inflictor:GetClass() == "scav_gun" then
+				local _, _, mdl = string.find(inflictor.currentmodel, "^models/(.-)%.mdl$")
+				net.WriteData(util.Compress(util.TableToJSON({
+					["m"] = mdl or inflictor.currentmodel,
+					["s"] = (inflictor.item and inflictor.item.ammo == inflictor.currentmodel) and inflictor.item.data or 0,
+					--["b"] = "000000000"
+				})))
+			end
 			net.WriteEntity(attacker)
 			net.WriteUInt(dmginfo:GetDamageType(), 32)
 		net.Broadcast()
