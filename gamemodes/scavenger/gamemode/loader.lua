@@ -76,7 +76,7 @@ local copytotemplate = function(ent, template)
 	template.pos = template.pos or ent:GetPos()
 	template.ang =template.ang or ent:GetAngles()
 	template.material = template.material or ent:GetMaterial()
-	template.skin =template.skin or ent:GetSkin()
+	template.skin = template.skin or ent:GetSkin()
 
 	if template.KeyValues.classname == "sdm_prop_spawn" then
 		template.KeyValues.spawnclass = template.KeyValues.spawnclass or ent:GetClass()
@@ -84,6 +84,7 @@ local copytotemplate = function(ent, template)
 		template.KeyValues.skin = template.KeyValues.skin or template.skin
 		--estimate a reasonable respawn time based on weight
 		template.KeyValues.delay = template.KeyValues.delay or math.min(25, math.max(5, math.Round(math.Remap(IsValid(ent:GetPhysicsObject()) and ent:GetPhysicsObject():GetMass() or 0, 15, 500, 10, 20), 1)))
+		if ent:HasSpawnFlags(SF_PHYSPROP_MOTIONDISABLED) then template.KeyValues.physfrozen = 1 end
 	else
 		template.KeyValues.classname = template.KeyValues.classname or ent:GetClass()
 	end
@@ -272,6 +273,7 @@ function meta:VerifyGame()
 		["prop_physics"] = true,
 		["prop_physics_multiplayer"] = true,
 		["prop_ragdoll"] = true,
+		--["func_physbox"] = true,
 	}
 	local validprop = function(ent)
 		if not IsValid(ent:GetPhysicsObject()) then return false end

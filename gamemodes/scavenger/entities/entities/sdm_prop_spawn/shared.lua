@@ -8,7 +8,7 @@ ENT.delay = 90
 ENT.value = 30
 ENT.lifetime = 0
 ENT.noscav = 0
-ENT.frozen = 0
+ENT.frozen = false
 ENT.resettime = 0
 ENT.sent = NULL
 ENT.timeofdeath = 0
@@ -31,29 +31,30 @@ function ENT:AcceptInput(name, activator, caller)
 end
 
 function ENT:KeyValue(key, value)
-	if string.lower(key) == "spawnclass" then
+	local key = string.lower(key)
+	if key == "spawnclass" then
 		self.spawnclass = value
 		if string.find(self.spawnclass, "prop_physics") and util.IsValidRagdoll(self.modelname) then
 			self.spawnclass = "prop_ragdoll"
 		elseif string.StartsWith(self.modelname, "*") then
 			self.spawnclass = "func_physbox"
 		end
-	elseif string.lower(key) == "modelname" then
+	elseif key == "modelname" then
 		self.modelname = value
 		if string.find(self.spawnclass, "prop_physics") and util.IsValidRagdoll(self.modelname) then
 			self.spawnclass = "prop_ragdoll"
 		elseif string.StartsWith(self.modelname, "*") then
 			self.spawnclass = "func_physbox"
 		end
-	elseif string.lower(key) == "skin" then
+	elseif key == "skin" then
 		self.skin = value
-	elseif string.lower(key) == "delay" then
+	elseif key == "delay" then
 		self.delay = tonumber(value)
-	elseif string.lower(key) == "lifetime" then
+	elseif key == "lifetime" then
 		self.lifetime = tonumber(value)
-	elseif string.lower(key) == "frozen" then
+	elseif key == "frozen" or key == "physfrozen" then
 		self.frozen = tobool(value)
-	elseif string.lower(key) == "noscav" then
+	elseif key == "noscav" then
 		self.noscav = tobool(value)
 	end
 end
@@ -118,7 +119,7 @@ function ENT:SpawnEntity()
 	self.resettime = CurTime() + self.lifetime
 	if self.noscav == 1 then
 		self.sent.NoScav = true
-	else
+	--else
 		--ParticleEffectAttach("scav_propspawn", PATTACH_ABSORIGIN_FOLLOW, self.sent, 0)
 
 		-- effect *can* be put in by throwing a copy of propspawn.lua from 
@@ -131,7 +132,7 @@ function ENT:SpawnEntity()
 		edata:SetEntity(self.sent)
 		util.Effect("PropSpawn", edata)]]
 	end
-	if self.frozen == 1 and self.sent:GetPhysicsObject():IsValid() then
+	if self.frozen and self.sent:GetPhysicsObject():IsValid() then
 		self.sent:GetPhysicsObject():EnableMotion(false)
 	end
 end
