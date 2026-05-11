@@ -35,11 +35,15 @@ function ENT:KeyValue(key, value)
 		self.spawnclass = value
 		if string.find(self.spawnclass, "prop_physics") and util.IsValidRagdoll(self.modelname) then
 			self.spawnclass = "prop_ragdoll"
+		elseif string.StartsWith(self.modelname, "*") then
+			self.spawnclass = "func_physbox"
 		end
 	elseif string.lower(key) == "modelname" then
 		self.modelname = value
 		if string.find(self.spawnclass, "prop_physics") and util.IsValidRagdoll(self.modelname) then
 			self.spawnclass = "prop_ragdoll"
+		elseif string.StartsWith(self.modelname, "*") then
+			self.spawnclass = "func_physbox"
 		end
 	elseif string.lower(key) == "skin" then
 		self.skin = value
