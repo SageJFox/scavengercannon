@@ -2,7 +2,6 @@ s_proj 				= {}
 s_proj.Version 		= 1.1
 s_proj.proj 		= {}
 s_proj.callbacks 	= {} -- we'll keep callbacks here for convenience
-wspawn 				= ents.FindByClass("worldspawn")[1]
 
 local lastplayer = NULL
 local CurTimeOld = CurTime
@@ -211,6 +210,14 @@ function Projectile:SetMaxRange(range)
 		error("bad argument #1 to 'SetMaxRange' (expected number, got "..type(range)..")", 2)
 	end
 	self.MaxRange = range
+end
+
+function Projectile:SetModel(mdl)
+	self.model = mdl
+end
+
+function Projectile:GetModel()
+	return self.model
 end
 
 function Projectile:Fire()

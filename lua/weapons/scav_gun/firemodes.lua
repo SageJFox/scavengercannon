@@ -2024,8 +2024,13 @@ PrecacheParticleSystem("scav_exp_plasma")
 						dmg:SetDamage(15)
 						dmg:SetDamageForce(vector_origin)
 						dmg:SetDamagePosition(tr.HitPos)
-						if IsValid(self:GetOwner()) then
-							dmg:SetAttacker(self:GetOwner())
+						local owner = self:GetOwner()
+						if IsValid(owner) then
+							dmg:SetAttacker(owner)
+							local gun = owner:GetWeapon("scav_gun")
+							if IsValid(gun) then
+								gun.currentmodel = self:GetModel()
+							end
 						end
 						if IsValid(self:GetInflictor()) then
 							dmg:SetInflictor(self:GetInflictor())
@@ -2063,6 +2068,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 						proj:SetVelocity(vel)
 						proj:SetFilter(self.Owner)
 						proj:Fire()
+						proj:SetModel(item.ammo)
 						--self.Owner:EmitToAllButSelf("weapons/physcannon/energy_bounce2.wav", 80, 150)
 						item.lastsound = item.lastsound or 0
 						self.Owner:StopSound("weapons/physcannon/energy_disintegrate" .. (4 + item.lastsound) .. ".wav")
