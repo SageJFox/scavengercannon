@@ -25,10 +25,27 @@ function GM:InitPostEntity()
 end
 
 function GM:RemoveVPhysEntities()
-	for _, v in pairs(ents.GetAll()) do
-		if v:GetMoveType() == MOVETYPE_VPHYSICS then
-			v:Remove()
+	for _, v in ipairs(ents.GetAll()) do
+		if v:GetMoveType() ~= MOVETYPE_VPHYSICS then continue end
+		if v:GetClass() == "func_physbox" then continue end
+
+		--detach ropes, as otherwise they stretch to the map origin
+		for _, c in ipairs(v:GetChildren()) do
+			if string.find(c:GetClass(), "e_rope$") then
+				c:SetParent()
+				c:SetSaveValue("m_RopeFlags", bit.bor(16 --[[ROPE_BREAKABLE]], c:GetInternalVariable("m_RopeFlags")))
+				timer.Create("ScavBreak" .. tostring(c), 0, 1, function() 
+					if not IsValid(c) then return end
+					c:Fire("Break")
+				end)
+			end
 		end
+
+		if v.TriggerOutput then
+			v:TriggerOutput("OnBreak", game.GetWorld())
+		end
+		
+		v:Remove()
 	end
 end
 
