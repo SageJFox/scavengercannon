@@ -397,6 +397,7 @@ net.Receive("sdm_killfeed", function(len, pl)
 	local victim = nil
 	local victimname = ""
 	local propdata = nil
+
 	if net.ReadBool() then
 		victim = net.ReadEntity()
 		len = len - MAX_EDICT_BITS
@@ -404,16 +405,21 @@ net.Receive("sdm_killfeed", function(len, pl)
 		victimname = net.ReadString()
 		len = len - (#victimname + 1) * 8
 	end
+
 	local inflictor = net.ReadEntity()
+
 	if net.ReadBool() then
 		propdata = util.JSONToTable(util.Decompress(net.ReadData(len / 8)))
 		if propdata.m and not string.StartsWith(propdata.m, "*") then propdata.m = "models/" .. propdata.m .. ".mdl" end
 	end
+
 	local attacker = net.ReadEntity()
 	if not IsValid(attacker) then attacker = Entity(0) end
+
 	if not IsValid(inflictor) then
 		inflictor = ((attacker:IsPlayer() or attacker:IsNPC() or attacker:IsNextBot()) and IsValid(attacker:GetActiveWeapon())) and attacker:GetActiveWeapon() or attacker
 	end
+
 	local damage = net.ReadUInt(32)
 	--based on how often we're converting the info to and from them to ultimately get it to the panel,
 	--I'm beginning to think basing this off of a DamageInfo was a bad idea
@@ -426,13 +432,22 @@ net.Receive("sdm_killfeed", function(len, pl)
 		info.dmginfo = dmginfo
 		info.victim = victim or victimname
 		info.propdata = propdata
+
 	local model = inflictor:GetModel()
-	if model then
+	if model and model ~= "" and model ~= "models/error.mdl" then
 		info.model = model
 	end
+
 	local attackname = attacker:IsPlayer() and attacker:Nick() or ScavLocalize(attacker:GetClass())
-	if victimname == "" and IsValid(victim) then victimname = victim:IsPlayer() and victim:Nick() or victim:GetClass() end
-	print(attackname .. " killed " .. ScavLocalize(victimname) .. " with " .. (IsValid(inflictor) and ScavLocalize(inflictor:GetClass()) or ""), propdata and propdata.m or "")
+	if victimname == "" and IsValid(victim) then victimname = victim:IsPlayer() and victim:Nick() or ScavLocalize(victim:GetClass()) end
+	local inflictor = IsValid(inflictor) and ScavLocalize(inflictor:GetClass()) or ""
+	if propdata then
+		inflictor = ScavLocalize("scav.feed.log.modelformat", false, inflictor, false, propdata.m)
+	elseif info.model then
+		inflictor = ScavLocalize("scav.feed.log.modelformat", false, inflictor, false, info.model)
+	end
+	
+	print(ScavLocalize("scav.feed.log", false, attackname, false, victimname, false, inflictor))
 	HUD.AddKillfeed(info)
 end)
 
