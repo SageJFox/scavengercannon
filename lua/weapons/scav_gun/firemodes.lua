@@ -2184,8 +2184,13 @@ PrecacheParticleSystem("scav_exp_plasma")
 						dmg:SetDamageForce(vector_origin)
 						dmg:SetDamagePosition(tr.HitPos)
 						dmg:SetDamageType(DMG_BULLET)
-					if IsValid(self:GetOwner()) then
-						dmg:SetAttacker(self:GetOwner())
+					local owner = self:GetOwner()
+					if IsValid(owner) then
+						dmg:SetAttacker(owner)
+						local gun = owner:GetWeapon("scav_gun")
+						if IsValid(gun) then
+							gun.currentmodel = self:GetModel()
+						end
 					end
 					if IsValid(self:GetInflictor()) then
 						dmg:SetInflictor(self:GetInflictor())
@@ -2225,6 +2230,7 @@ PrecacheParticleSystem("scav_exp_plasma")
 						proj:SetPos(pos)
 						proj:SetVelocity(vel)
 						proj:SetFilter(self.Owner)
+						proj:SetModel(item.ammo)
 						proj:Fire()
 						self:TakeSubammo(item, 1)
 						if item.subammo == 0 then
@@ -2806,7 +2812,7 @@ end
 			tab.MaxAmmo = 1000
 			tab.Cooldown = 0.1
 			function tab.ChargeAttack(self, item)
-				if SERVER then --SERVER
+				if SERVER then
 					local tab = ScavData.models[item.ammo]
 					local proj = tab.proj
 					local extpos = self.Owner:GetShootPos() + self:GetAimVector() * 75
@@ -2821,6 +2827,7 @@ end
 						proj:SetPos(self.Owner:GetShootPos())
 						proj:SetVelocity((self:GetAimVector() + VectorRand(-0.1, 0.1)):GetNormalized() * 360) --was 460 -- + self.Owner:GetVelocity()
 						proj:SetLifetime(self:GetForceScale())
+						proj:SetModel(item.ammo)
 						proj:Fire()
 					if self.Owner:GetGroundEntity() == NULL then
 						self.Owner:SetVelocity(self:GetAimVector() * -45)
@@ -2857,8 +2864,13 @@ end
 						dmg:SetDamage((self.deathtime - CurTime()) * 7)
 						dmg:SetDamageForce(tr.Normal * 30)
 						dmg:SetDamagePosition(tr.HitPos)
-						if IsValid(self:GetOwner()) then
-							dmg:SetAttacker(self:GetOwner())
+						local owner = self:GetOwner()
+						if IsValid(owner) then
+							dmg:SetAttacker(owner)
+							local gun = owner:GetWeapon("scav_gun")
+							if IsValid(gun) then
+								gun.currentmodel = self:GetModel()
+							end
 						end
 						if IsValid(self:GetInflictor()) then
 							dmg:SetInflictor(self:GetInflictor())
@@ -2955,8 +2967,13 @@ end
 								dmg:SetDamage((15 + (self.deathtime - CurTime()) * 5) * multiplier) -- 15-20 damage per shot, tripled if the target is on fire
 								dmg:SetDamageForce(tr.Normal * 30)
 								dmg:SetDamagePosition(tr.HitPos)
-								if IsValid(self:GetOwner()) then
-									dmg:SetAttacker(self:GetOwner())
+								local owner = self:GetOwner()
+								if IsValid(owner) then
+									dmg:SetAttacker(owner)
+									local gun = owner:GetWeapon("scav_gun")
+									if IsValid(gun) then
+										gun.currentmodel = self:GetModel()
+									end
 								end
 								if IsValid(self:GetInflictor()) then
 									dmg:SetInflictor(self:GetInflictor())
@@ -3026,6 +3043,7 @@ end
 					local vel = self:GetAimVector() * 3000 * self:GetForceScale()
 					proj:SetVelocity(vel)
 					proj:SetLifetime(lifetime * self:GetForceScale())
+					proj:SetModel(item.ammo)
 					proj:Fire()
 
 					local pos = self.Owner:GetShootPos() + self:GetAimVector() * 24 + self:GetAimVector():Angle():Right() * 4 - self:GetAimVector():Angle():Up() * 4
@@ -3095,6 +3113,7 @@ end
 							proj:SetFilter(self.Owner)
 							proj:SetPos(self.Owner:GetShootPos())
 							proj:SetVelocity((self:GetAimVector() + VectorRand(-0.1, 0.1)):GetNormalized() * math.Rand(100, 600) * self:GetForceScale() + self.Owner:GetVelocity())
+							proj:SetModel(item.ammo)
 							proj:Fire()
 						if self.Owner:GetGroundEntity() == NULL then
 							self.Owner:SetVelocity(self:GetAimVector() * -35)
@@ -3126,6 +3145,13 @@ end
 						if IsValid(ent) and (not ent:IsPlayer() or gamemode.Call("PlayerShouldTakeDamage", ent, self.Owner)) then
 							ent:InflictStatusEffect("Acid", 100, (self.deathtime - CurTime()) / 2, self:GetOwner(), nil, self:GetOwner():GetActiveWeapon())
 							ent:EmitSound("ambient/levels/canals/toxic_slime_sizzle" .. math.random(2, 4) .. ".wav")
+						end
+						local owner = self:GetOwner()
+						if IsValid(owner) then
+							local gun = owner:GetWeapon("scav_gun")
+							if IsValid(gun) then
+								gun.currentmodel = self:GetModel()
+							end
 						end
 						if not (tr.Entity:IsPlayer() or tr.Entity:IsNPC() or tr.Entity:IsNextBot()) then
 							self:SetPiercing(false)
@@ -3190,13 +3216,14 @@ end
 				tab.MaxAmmo = 200
 				tab.Cooldown = 0.1
 				function tab.ChargeAttack(self, item)
-					if SERVER then --SERVER
+					if SERVER then
 						local proj = tab.proj
 							proj:SetOwner(self.Owner)
 							proj:SetInflictor(self)
 							proj:SetFilter(self.Owner)
 							proj:SetPos(self.Owner:GetShootPos())
 							proj:SetVelocity((self:GetAimVector() + VectorRand(-0.1, 0.1)):GetNormalized() * math.Rand(100, 600) * self:GetForceScale() + self.Owner:GetVelocity())
+							proj:SetModel(item.ammo)
 							proj:Fire()
 						if self.Owner:GetGroundEntity() == NULL then
 							self.Owner:SetVelocity(self:GetAimVector() * -35)
@@ -3225,11 +3252,15 @@ end
 					local proj = GProjectile()
 					local function callback(self, tr)
 						local ent = tr.Entity
-						if IsValid(ent) and (not ent:IsPlayer() or gamemode.Call("PlayerShouldTakeDamage", ent, self:GetOwner())) then
+						local owner = self:GetOwner()
+						if IsValid(ent) and (not ent:IsPlayer() or gamemode.Call("PlayerShouldTakeDamage", ent, owner)) then
 							local dmg = DamageInfo()
-							dmg:SetAttacker(self:GetOwner())
-							if IsValid(self:GetOwner()) then
-								dmg:SetAttacker(self:GetOwner())
+							if IsValid(owner) then
+								dmg:SetAttacker(owner)
+								local gun = owner:GetWeapon("scav_gun")
+								if IsValid(gun) then
+									gun.currentmodel = self:GetModel()
+								end
 							end
 							if IsValid(self:GetInflictor()) then
 								dmg:SetInflictor(self:GetInflictor())
