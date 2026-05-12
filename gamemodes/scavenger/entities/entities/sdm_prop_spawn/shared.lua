@@ -54,6 +54,8 @@ function ENT:KeyValue(key, value)
 		self.lifetime = tonumber(value)
 	elseif key == "frozen" or key == "physfrozen" then
 		self.frozen = tobool(value)
+	elseif key == "physasleep" then
+		self.asleep = tobool(value)
 	elseif key == "noscav" then
 		self.noscav = tobool(value)
 	end
@@ -132,8 +134,14 @@ function ENT:SpawnEntity()
 		edata:SetEntity(self.sent)
 		util.Effect("PropSpawn", edata)]]
 	end
-	if self.frozen and self.sent:GetPhysicsObject():IsValid() then
-		self.sent:GetPhysicsObject():EnableMotion(false)
+	local phys = self.sent:GetPhysicsObject()
+	if not IsValid(phys) then return end
+	
+	if self.frozen then
+		phys:EnableMotion(false)
+	end
+	if self.asleep then
+		phys:Sleep()
 	end
 end
 

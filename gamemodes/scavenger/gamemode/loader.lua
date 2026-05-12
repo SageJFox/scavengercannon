@@ -85,6 +85,7 @@ local copytotemplate = function(ent, template)
 		--estimate a reasonable respawn time based on weight
 		template.KeyValues.delay = template.KeyValues.delay or math.min(25, math.max(5, math.Round(math.Remap(IsValid(ent:GetPhysicsObject()) and ent:GetPhysicsObject():GetMass() or 0, 15, 500, 10, 20), 1)))
 		if ent:HasSpawnFlags(SF_PHYSPROP_MOTIONDISABLED) then template.KeyValues.physfrozen = 1 end
+		if ent:HasSpawnFlags(1--[[Start Asleep]]) then template.KeyValues.physasleep = 1 end
 	else
 		template.KeyValues.classname = template.KeyValues.classname or ent:GetClass()
 	end
