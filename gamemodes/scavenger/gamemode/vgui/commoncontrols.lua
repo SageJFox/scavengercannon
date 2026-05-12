@@ -902,7 +902,8 @@ local PANEL = {}
 			--prop what killed us
 			local inflictor = dmginfo:GetInflictor() or dmginfo:GetWeapon() or attacker
 			if propdata then
-				self.parts.Inflictor:SetModel(propdata.m, propdata.s, propdata.b or "000000000")
+				self.parts.Inflictor:SetModel(propdata.m, propdata.s or 0, propdata.b or "000000000")
+				damage = propdata.d or damage
 			elseif IsValid(inflictor) then
 				--get model from scav gun if it was a non-projectile mode
 				--[[local fake = false

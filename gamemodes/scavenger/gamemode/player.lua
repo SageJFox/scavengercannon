@@ -752,8 +752,28 @@ else --SERVER
 	--send death info to killfeed
 	util.AddNetworkString("sdm_killfeed")
 
-	function GM:Killfeed(victim, attacker, inflictor, dmginfo, sendnameonly)
+	local killfeedinfo = {}
+	killfeedinfo.scav_gun = function(ent)
 		local model = ""
+		model = ent.currentmodel
+		--save some bits by stripping expected parts
+		local _, _, mdl = string.find(ent.currentmodel, "^models/(.-)%.mdl$")
+		return {
+			--save some bits not making keys longer than they need to be. [m]odel, [s]kin, and [b]odygroup
+			["m"] = mdl or model, --might not find it if it was a bmodel
+			["s"] = (ent.item and ent.item.ammo == model) and ent.item.data or 0,
+			--["b"] = "000000000" --we don't store bodygroup info, don't bother sending default
+		}
+	end
+	killfeedinfo.trigger_waterydeath = function(ent)
+		return {
+			["m"] = "leech", --as before, will become models/leech.mdl
+			["d"] = DMG_DROWN, --[d]amage, override the border
+		}
+	end
+
+	function GM:Killfeed(victim, attacker, inflictor, dmginfo, sendnameonly)
+
 		net.Start("sdm_killfeed")
 			if sendnameonly or isstring(victim) then
 				net.WriteBool(false)
@@ -763,17 +783,11 @@ else --SERVER
 				net.WriteEntity(victim)
 			end
 			net.WriteEntity(inflictor)
-			--pull out scav cannon prop info
-			if inflictor:GetClass() == "scav_gun" then
-				model = inflictor.currentmodel
-				--save some bits by stripping expected parts
-				local _, _, mdl = string.find(inflictor.currentmodel, "^models/(.-)%.mdl$")
-				net.WriteData(util.Compress(util.TableToJSON({
-					--save some bits not making keys longer than they need to be. [m]odel, [s]kin, and [b]odygroup
-					["m"] = mdl or model, --might not find it if it was a bmodel
-					["s"] = (inflictor.item and inflictor.item.ammo == model) and inflictor.item.data or 0,
-					--["b"] = "000000000" --we don't store bodygroup info, don't bother sending default
-				})))
+			--grab necessary prop info
+			local overrideclass = inflictor:GetClass()
+			net.WriteBool(killfeedinfo[overrideclass] and true or false)
+			if killfeedinfo[overrideclass] then
+				net.WriteData(util.Compress(util.TableToJSON(killfeedinfo[overrideclass](inflictor))))
 			--cars don't kill people, drivers kill people
 			elseif attacker:IsVehicle() then
 				attacker = IsValid(attacker:GetDriver()) and attacker:GetDriver() or attacker
@@ -787,13 +801,13 @@ else --SERVER
 			end
 		net.Broadcast()
 		--since we could change our attacker, report it back
-		return attacker, model
+		return attacker
 	end
 
 	hook.Add("OnNPCKilled", "sdm_killfeed", function(npc, attacker, inflictor)
-		local attacker, model = GAMEMODE:Killfeed(npc, attacker, inflictor)
-		local attackname = attacker:IsPlayer() and attacker:Nick() or attacker:GetClass()
-		print(attackname .. " killed " .. npc:GetClass() .. " with " .. inflictor:GetClass() .. " " .. model)
+		local attacker = GAMEMODE:Killfeed(npc, attacker, inflictor)
+		--local attackname = attacker:IsPlayer() and attacker:Nick() or attacker:GetClass()
+		--print(attackname .. " killed " .. npc:GetClass() .. " with " .. inflictor:GetClass() .. " " .. model)
 	end)
 
 	net.Receive("sdm_potentialclientgib", function()

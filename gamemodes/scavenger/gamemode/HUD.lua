@@ -393,7 +393,7 @@ function HUD.AddKillfeed(info)
 end
 
 net.Receive("sdm_killfeed", function(len, pl)
-	local len = len - 33 - (MAX_EDICT_BITS * 2) --victim bool, damagetype uint32, inflictor and attacker ents
+	local len = len - 34 - (MAX_EDICT_BITS * 2) --victim and propdata bools, damagetype uint32, inflictor and attacker ents
 	local victim = nil
 	local victimname = ""
 	local propdata = nil
@@ -405,7 +405,7 @@ net.Receive("sdm_killfeed", function(len, pl)
 		len = len - (#victimname + 1) * 8
 	end
 	local inflictor = net.ReadEntity()
-	if IsValid(inflictor) and inflictor:GetClass() == "scav_gun" then
+	if net.ReadBool() then
 		propdata = util.JSONToTable(util.Decompress(net.ReadData(len / 8)))
 		if propdata.m and not string.StartsWith(propdata.m, "*") then propdata.m = "models/" .. propdata.m .. ".mdl" end
 	end
