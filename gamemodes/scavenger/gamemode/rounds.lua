@@ -62,8 +62,8 @@ function GM:AddRoundTime(time)
 end
 
 function GM:StartRound(timelimit, delay)
-	local timelimit = self:GetGNWFloat("TimeLimit")
-	local delay = 3
+	local timelimit = timelimit or self:GetGNWFloat("TimeLimit")
+	local delay = delay or 3
 	if not self:IsRoundInProgress() then
 		gamemode.Call("OnPreRoundStart", delay)
 		game.CleanUpMap()
@@ -164,8 +164,8 @@ local endroundlogic = {
 endroundlogic[SDM_MODE_CTF][ENDCONDITION_TIME] = endroundlogic[SDM_MODE_DM_TEAM][ENDCONDITION_TIME]
 
 function GM:EndRound(endcondition)
-	if not self:IsRoundInProgress() then end
-	gamemode.Call("OnRoundEnd", endcondition, enddata)
+	if not self:IsRoundInProgress() then return end
+	gamemode.Call("OnRoundEnd")
 
 	if endroundlogic[self:GetMode()] and endroundlogic[self:GetMode()][endcondition] then
 		endroundlogic[self:GetMode()][endcondition]()
