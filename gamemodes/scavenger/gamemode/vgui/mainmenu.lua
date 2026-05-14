@@ -209,6 +209,7 @@ local PANEL = {}
 
 		--First skin selection, if we've got any
 		local skins = ent:SkinCount() - 1
+		local currentskin = GetConVar("cl_playerskin"):GetInt() or 0
 		if skins > 0 then
 			self.ModelSkin = self.ModelSettings:Add("DNumSlider")
 				self.ModelSkin:SetPos(x, y)
@@ -218,13 +219,14 @@ local PANEL = {}
 				self.ModelSkin:SetMin(0)
 				self.ModelSkin:SetDefaultValue(0)
 				self.ModelSkin:SetMax(skins)
-				self.ModelSkin:SetValue(GetConVar("cl_playerskin"):GetInt() or 0)
+				self.ModelSkin:SetValue(currentskin)
 				self.ModelSkin.OnValueChanged = function(p, v)
 					local v = math.Round(v)
 					self.ModelSkin:SetValue(v)
 					RunConsoleCommand("cl_playerskin", tostring(v))
 					ent:SetSkin(v)
 				end
+			ent:SetSkin(currentskin)
 			y = y + h + sep
 		end
 
@@ -350,7 +352,7 @@ local PANEL = {}
 			icon.OnMousePressed = function(button)
 				pmodelbuttonpressed(button)
 				updateModelSettings(self)
-				if self.ModelSkin then
+				if IsValid(self.ModelSkin) then
 					self.ModelSkin:SetValue(0)
 				end
 			end
