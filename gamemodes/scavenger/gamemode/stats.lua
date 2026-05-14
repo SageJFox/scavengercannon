@@ -241,6 +241,13 @@ if SERVER then
 
 	local function commitonremove(pl)
 		print("committing scav stats for " .. pl.ScavStatsNick .. " (" .. pl.ScavStatsID .. ")...")
+
+		--leaving after losing all lives in a gamemode that uses them means you lost
+		if team.IsReal(pl:Team(), true) and pl:Lives() == 0 then
+			pl:AddScavStat(SCAVSTAT_GAMESPLAYED)
+			pl:AddScavStat(SCAVSTAT_LOSSES)
+		end
+		
 		countplayerlife(pl)
 		pl:CommitScavStats()
 		print("committed.")

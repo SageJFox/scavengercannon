@@ -329,13 +329,18 @@ if SERVER then
 
 
 	function GM:OnPlayerChangedTeam(pl, oldteam, newteam)
-		if (oldteam == newteam) then
-			return
-		end
+		if oldteam == newteam then return end
 
-		if (newteam ~= TEAM_SPECTATOR) then
+		if newteam == TEAM_SPECTATOR then
+			--joining spectator without lives? you lost lmao
+			if pl:Lives() == 0 then
+				pl:AddScavStat(SCAVSTAT_GAMESPLAYED)
+				pl:AddScavStat(SCAVSTAT_LOSSES)
+			end
+		else
 			pl.NextTeamswitch = CurTime() + 10
 		end
+		
 		displayinchat(pl, oldteam, newteam, SWAPPED)
 	end
 else

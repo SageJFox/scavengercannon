@@ -5,19 +5,113 @@ GM:SetGNWVar("PreRound", false)
 
 ENDCONDITION_TIME = 0
 ENDCONDITION_FRAG = 1
-ENDCONDITION_CANCELED = 2
-ENDCONDITION_CUSTOM = 3
+ENDCONDITION_LIVES = 2
+ENDCONDITION_CANCELED = 3
+ENDCONDITION_CUSTOM = 4
 
 --SetNextRoundStartTime
 --CanStartRound
 
+
 if SERVER then
+	local roundinprogress = function()
+		return (not GAMEMODE:GetGNWVar("PreRound") and GAMEMODE:IsRoundInProgress())
+	end
 	hook.Add("Think", "RoundManage", function()
 		local self = GAMEMODE
-		if not self:GetGNWVar("PreRound") and self:IsRoundInProgress() and (self:GetGNWVar("RoundEndTime") ~= 0) and (CurTime() > self:GetGNWVar("RoundEndTime")) then
-			self:SetGNWVar("RoundEndTime", 0)
+		if roundinprogress() and self:GetGNWVar("RoundEndTime") ~= 0 and CurTime() > self:GetGNWVar("RoundEndTime") then
 			self:EndRound(ENDCONDITION_TIME)
 		end
+	end)
+
+	local teaments = {}
+	local teamcount = 0
+
+	hook.Add("Think", "PreLivesManage", function()
+
+		--can't lifethink if we haven't had our teams init yet
+		if teamcount == 0 then
+			teaments = team.GetInfoEnts()
+			teamcount = table.Count(teaments)
+
+			--putting the "gamemode not using lives" check in here, as we only want it running once
+			if teamcount > 0 then
+				--check through our teams, if one uses lives, get outta here...
+				for t, teaminfo in pairs(teaments) do
+					print(team.GetName(t))
+					if teaminfo:GetPooledLives() then print("pooled!") return end
+					print("unpooled!")
+					if teaminfo:GetLives() > 0 then print("uses lives!") return end
+					print("no lives used!")
+				end
+				--...otherwise none of the following logic matters, and we shouldn't waste our time thinkin' it
+				hook.Remove("Think", "PreLivesManage")
+				print("NO LIVES USED")
+			end
+			print("no idea on teams, thinkin'")
+			return
+		end
+
+		--if our game is using lives, end the round if all but one team/player is spent
+		hook.Add("Think", "LivesManage", function()
+			local self = GAMEMODE
+
+			if not self:HasEnoughPlayersForRound() then return end
+			if not roundinprogress() then return end
+
+			local teamsout = {}
+
+			for t, teaminfo in pairs(teaments) do
+				local pooled = teaminfo:GetPooledLives()
+				local lives = teaminfo:GetLives()
+				--team's still got lives, they're still in
+				if not pooled and lives <= 0 then continue end
+
+				local stillin = false
+				--team may be out of pooled lives, but players could still be living
+				if pooled then
+					if lives > 0 then continue end
+					for _, pl in ipairs(team.GetPlayers(t)) do
+						if not pl:Alive() then continue end
+						stillin = true 
+						break
+					end
+					if not stillin then teamsout[t] = true continue end
+				end
+				--a non-pooled team's only out if every player has exhausted their lives and is currently dead
+				for _, pl in ipairs(team.GetPlayers(t)) do
+					if not pl:Alive() and pl:Lives() == 0 then continue end
+					stillin = true 
+					break
+				end
+				if #team.GetPlayers(t) == 0 then stillin = true end --don't let a team drop out before it ever had players
+				if not stillin then teamsout[t] = true continue end
+			end
+
+			--we still have multiple teams in, no win by lives yet
+			local activeteams = teamcount - table.Count(teamsout)
+			if activeteams > 1 then return end
+			local mode = self:GetMode()
+
+			--if we only have one team in, check if it's a mode that only *has* one team
+			if mode == SDM_MODE_DM or mode == SDM_MODE_SURVIVAL then
+				local playercount = 0
+				for _, pl in ipairs(player.GetAll()) do
+					if not team.IsReal(pl:Team(), true) then continue end
+					if not pl:Alive() and pl:Lives() == 0 then continue end
+
+					playercount = playercount + 1
+				end
+				--we've got more than one player left, it ain't over yet
+				if playercount > 1 then return end
+			end
+
+			
+			self:EndRound(ENDCONDITION_LIVES)
+		end)
+
+		--we put in our Lives manager, now we can rest
+		hook.Remove("Think", "PreLivesManage")
 	end)
 end
 
@@ -78,11 +172,9 @@ function GM:StartRound(timelimit, delay)
 	end
 end
 
---[[
 function GM:HasEnoughPlayersForRound()
-	
+	return true
 end
-]]
 
 function GM:OnPreRoundStart(delay)
 end
@@ -117,6 +209,33 @@ local endroundlogic = {
 			--womp womp
 			for _, loser in ipairs(losers) do
 				loser:AddScavStat(highscore <= 0 and SCAVSTAT_DRAWS or SCAVSTAT_LOSSES)
+			end
+		end,
+		[ENDCONDITION_LIVES] = function()
+			local winners, losers = {}, {}
+			--find our winners (should only be one if this wasn't for a timeout)
+			for _, pl in ipairs(player.GetAll()) do
+				if not team.IsReal(pl:Team(), true) then continue end
+				if pl:Alive() or pl:Lives() > 0 then
+					table.insert(winners, pl)
+					continue
+				end
+
+				if pl:IsBot() then continue end
+				table.insert(losers, pl)
+			end
+			--stats awarding
+			--hand out losses, or draws if zero surviving players
+			for _, loser in ipairs(losers) do
+				loser:AddScavStat(SCAVSTAT_GAMESPLAYED)
+				loser:AddScavStat(#winners == 0 and SCAVSTAT_DRAWS or SCAVSTAT_LOSSES)
+			end
+			--hand out a win, or draws if multiple surviving players
+			for _, winner in ipairs(winners) do
+				if winner:IsBot() then continue end
+				--a winner is you
+				winner:AddScavStat(SCAVSTAT_GAMESPLAYED)
+				winner:AddScavStat(#winners == 1 and SCAVSTAT_WINS or SCAVSTAT_DRAWS)
 			end
 		end,
 	},
@@ -160,15 +279,43 @@ local endroundlogic = {
 		end,
 	},
 	[SDM_MODE_CTF] = {},
+	[SDM_MODE_SURVIVAL] = {},
 }
+endroundlogic[SDM_MODE_DM_TEAM][ENDCONDITION_LIVES] = endroundlogic[SDM_MODE_DM][ENDCONDITION_LIVES]
 endroundlogic[SDM_MODE_CTF][ENDCONDITION_TIME] = endroundlogic[SDM_MODE_DM_TEAM][ENDCONDITION_TIME]
+endroundlogic[SDM_MODE_CTF][ENDCONDITION_LIVES] = endroundlogic[SDM_MODE_DM_TEAM][ENDCONDITION_LIVES]
+endroundlogic[SDM_MODE_SURVIVAL][ENDCONDITION_TIME] = endroundlogic[SDM_MODE_DM][ENDCONDITION_LIVES]
+endroundlogic[SDM_MODE_SURVIVAL][ENDCONDITION_LIVES] = endroundlogic[SDM_MODE_DM][ENDCONDITION_LIVES]
 
 function GM:EndRound(endcondition)
 	if not self:IsRoundInProgress() then return end
+	self:SetGNWVar("RoundEndTime", 0)
 	gamemode.Call("OnRoundEnd")
 
 	if endroundlogic[self:GetMode()] and endroundlogic[self:GetMode()][endcondition] then
 		endroundlogic[self:GetMode()][endcondition]()
+	end
+
+	--reset all players' lives (ensures spectators get to choose a team and respawn)
+	for _, pl in ipairs(player.GetAll()) do
+		pl:SetLives(-1)
+	end
+	--reset teams' lives from its template
+	for t, teaminfo in pairs(team.GetInfoEnts()) do
+		if not teaminfo.TemplateID or not self.Loader or not self.Loader.templates then continue end
+
+		local template = self.Loader.templates[teaminfo.TemplateID]
+
+		if not template or not template.KeyValues or not template.KeyValues.lives then continue end
+		local lives = template.KeyValues.lives
+		--not using lives, team's lives never changed
+		if lives < 0 then continue end
+
+		teaminfo:SetLives(lives)
+		--grant this team's players their appropriate lives
+		for _, pl in ipairs(team.GetPlayers(t)) do
+			pl:SetLives(lives)
+		end
 	end
 end
 
