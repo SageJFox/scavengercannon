@@ -96,7 +96,7 @@ local endroundlogic = {
 			for _, pl in ipairs(losers) do
 				if not team.IsReal(pl:Team(), true) then continue end
 
-				pl:AddScavStat(SCAVSTAT_GAMESPLAYED, 1)
+				pl:AddScavStat(SCAVSTAT_GAMESPLAYED)
 				local score = pl:Frags()
 				if score < highscore then continue end
 
@@ -111,12 +111,12 @@ local endroundlogic = {
 			--award a win, or draws
 			local tie = (#winners > 1 or highscore <= 0)
 			for _, winner in ipairs(winners) do
-				winner:AddScavStat(tie and SCAVSTAT_DRAWS or SCAVSTAT_WINS, 1)
+				winner:AddScavStat(tie and SCAVSTAT_DRAWS or SCAVSTAT_WINS)
 				table.RemoveByValue(losers, winner)
 			end
 			--womp womp
 			for _, loser in ipairs(losers) do
-				loser:AddScavStat(highscore <= 0 and SCAVSTAT_DRAWS or SCAVSTAT_LOSSES, 1)
+				loser:AddScavStat(highscore <= 0 and SCAVSTAT_DRAWS or SCAVSTAT_LOSSES)
 			end
 		end,
 	},
@@ -148,14 +148,14 @@ local endroundlogic = {
 				table.RemoveByValue(losers, winner)
 				if winner:IsBot() then continue end
 
-				winner:AddScavStat(tie and SCAVSTAT_DRAWS or SCAVSTAT_WINS, 1)
-				winner:AddScavStat(SCAVSTAT_GAMESPLAYED, 1)
+				winner:AddScavStat(tie and SCAVSTAT_DRAWS or SCAVSTAT_WINS)
+				winner:AddScavStat(SCAVSTAT_GAMESPLAYED)
 			end
 			--womp womp
 			for _, loser in ipairs(losers) do
 				if loser:IsBot() then continue end
-				loser:AddScavStat(highscore <= 0 and SCAVSTAT_DRAWS or SCAVSTAT_LOSSES, 1)
-				loser:AddScavStat(SCAVSTAT_GAMESPLAYED, 1)
+				loser:AddScavStat(highscore <= 0 and SCAVSTAT_DRAWS or SCAVSTAT_LOSSES)
+				loser:AddScavStat(SCAVSTAT_GAMESPLAYED)
 			end
 		end,
 	},
@@ -181,14 +181,14 @@ function GM:EndRoundTeam(winningteam, wincondition)
 	for _, winner in ipairs(winners) do
 		table.RemoveByValue(losers, winner)
 		if winner:IsBot() then continue end
-		winner:AddScavStat(SCAVSTAT_GAMESPLAYED, 1)
-		winner:AddScavStat(SCAVSTAT_WINS, 1)
+		winner:AddScavStat(SCAVSTAT_GAMESPLAYED)
+		winner:AddScavStat(SCAVSTAT_WINS)
 	end
 
 	for _, loser in ipairs(losers) do
 		if loser:IsBot() then continue end
-		loser:AddScavStat(SCAVSTAT_GAMESPLAYED, 1)
-		loser:AddScavStat(SCAVSTAT_LOSSES, 1)
+		loser:AddScavStat(SCAVSTAT_GAMESPLAYED)
+		loser:AddScavStat(SCAVSTAT_LOSSES)
 	end
 end
 
@@ -196,14 +196,14 @@ function GM:EndRoundPlayer(winningplayer, wincondition)
 	if not self:IsRoundInProgress() then return end
 	gamemode.Call("OnRoundEnd")
 
-	winningplayer:AddScavStat(SCAVSTAT_GAMESPLAYED, 1)
-	winningplayer:AddScavStat(SCAVSTAT_WINS, 1)
+	winningplayer:AddScavStat(SCAVSTAT_GAMESPLAYED)
+	winningplayer:AddScavStat(SCAVSTAT_WINS)
 
 	local losers = player.GetHumans()
 	table.RemoveByValue(losers, winningplayer)
 	for _, loser in ipairs(losers) do
-		loser:AddScavStat(SCAVSTAT_GAMESPLAYED, 1)
-		loser:AddScavStat(SCAVSTAT_LOSSES, 1)
+		loser:AddScavStat(SCAVSTAT_GAMESPLAYED)
+		loser:AddScavStat(SCAVSTAT_LOSSES)
 	end
 end
 

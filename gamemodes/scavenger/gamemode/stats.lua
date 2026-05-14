@@ -108,6 +108,7 @@ if SERVER then
 	end
 
 	function PLAYER:AddScavStat(name, amt, nostreak)
+		local amt = amt or 1
 		self.ScavStats[name] = (self.ScavStats[name] or 0) + amt
 
 		if nostreak then return end
