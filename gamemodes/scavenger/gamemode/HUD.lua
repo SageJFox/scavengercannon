@@ -478,6 +478,8 @@ local setuphud = {
 		HUD.AddElement(flagtracker)
 		HUD.Elements["flagtracker"].Panel:SetupFlags()
 	end,
+	[SDM_MODE_SURVIVAL] = standardhud,
+	[SDM_MODE_CUSTOM] = standardhud,
 }
 setmetatable(setuphud, {__index = function() return setuphud[SDM_MODE_DM] end})
 
