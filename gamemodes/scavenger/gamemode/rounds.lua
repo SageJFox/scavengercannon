@@ -38,17 +38,12 @@ if SERVER then
 			if teamcount > 0 then
 				--check through our teams, if one uses lives, get outta here...
 				for t, teaminfo in pairs(teaments) do
-					print(team.GetName(t))
-					if teaminfo:GetPooledLives() then print("pooled!") return end
-					print("unpooled!")
-					if teaminfo:GetLives() > 0 then print("uses lives!") return end
-					print("no lives used!")
+					if teaminfo:GetPooledLives() then return end
+					if teaminfo:GetLives() > 0 then return end
 				end
 				--...otherwise none of the following logic matters, and we shouldn't waste our time thinkin' it
 				hook.Remove("Think", "PreLivesManage")
-				print("NO LIVES USED")
 			end
-			print("no idea on teams, thinkin'")
 			return
 		end
 
