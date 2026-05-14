@@ -9,6 +9,10 @@ function team.GetInfoEnt(teamnumber)
 	return TeamEnts[teamnumber] or NULL
 end
 
+function team.GetInfoEnts()
+	return TeamEnts
+end
+
 function team.PrintName(teamnumber, short)
 	local self = team.GetInfoEnt(teamnumber)
 	local name = IsValid(self) and self:GetTeamName() or ""
