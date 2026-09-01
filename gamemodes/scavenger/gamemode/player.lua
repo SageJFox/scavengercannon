@@ -891,7 +891,7 @@ else --SERVER
 			dmginfo:SetInflictor(inflictor)
 		end	
 		local suicide = (attacker == victim)
-		local friendlyfire = (IsValid(attacker) and attacker:IsPlayer() and victim:Team() ~= TEAM_UNASSIGNED and attacker:Team() == victim:Team())
+		local friendlyfire = (IsValid(attacker) and attacker:IsPlayer() and team.IsReal(victim:Team()) and attacker:Team() == victim:Team())
 		victim.fragsthislife = 0
 		victim:AddScavStat(SCAVSTAT_DEATHS, 1)
 		victim:AddDeaths(1)

@@ -219,7 +219,7 @@ local PANEL = {}
 		local bgcol = Vector(0, 0, 0)
 		if not col then
 			local pl = LocalPlayer()
-			if self.GetPlayer then pl = self:GetPlayer() end
+			if self.Player then pl = self.Player end
 
 			if IsValid(pl) then
 				if team.IsReal(pl:Team()) then
