@@ -1261,9 +1261,9 @@ if CLIENT then
 		end
 
 		local wep = self.wep
-		local item = wep:GetCurrentItem()
-
 		if not IsValid(wep) or wep:GetClass() ~= "scav_gun" then return end
+
+		local item = wep:GetCurrentItem()
 
 		surface.SetTextColor(self.TextColor)
 		surface.SetFont("Scav_MenuLarge")
@@ -1288,7 +1288,8 @@ if CLIENT then
 		surface.DrawText(ScavLocalize("scav.scavcan.ammo", wep.inv:GetItemCount(), wep:GetCapacity()))
 		surface.SetTextPos(104, 64)
 		surface.SetDrawColor(255, 255, 255, 200)
-		surface.DrawRect(16, 80, (wep.nextfire - UnPredictedCurTime()) * 256 / (wep.nextfire - wep.receivednextfire) - 32, 8)
+		local rectsize = (wep.nextfire - UnPredictedCurTime()) * 256 / (wep.nextfire - wep.receivednextfire) - 32
+		if rectsize > 0 then surface.DrawRect(16, 80, rectsize, 8) end
 
 		if item then
 			if self.item.subammo == SCAV_SHORT_MAX then
